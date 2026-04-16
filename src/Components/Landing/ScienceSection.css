@@ -1,0 +1,151 @@
+/* components/landing/ScienceSection.css */
+
+/* === Science: clone of HOW skin, with SAME gradient overlay ===
+   - Same box look as HOW
+   - Background + overlay controlled here (no inline styles)
+   - Desktop parallax; mobile scroll for performance
+*/
+
+/* TUNABLES */
+.science-section {
+  --science-img: url("../../Assets/images/hero-dna2.png");
+  --science-overlay: 0.48;
+}
+
+/* Wrapper */
+.science-section.section {
+  padding: clamp(40px, 8vw, 80px) clamp(24px, 6vw, 60px);
+  background-color: #0a1730;
+  background-image: var(--science-img);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* parallax on desktop */
+  text-align: center;
+  border-top: 0;
+  border-bottom: 0;
+  position: relative;
+  isolation: isolate;
+}
+
+/* Overlay */
+.science-section.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    rgba(6, 17, 38, var(--science-overlay)),
+    rgba(6, 17, 38, var(--science-overlay))
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Inner container */
+.section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* Heading */
+.science-section h2 {
+  color: #fff;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 700;
+  margin-bottom: 60px;
+}
+
+/* GRID — 3 cards on desktop */
+.science-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  position: relative;
+}
+
+/* CARD — same look as HOW cards */
+.science-card {
+  background-color: rgba(10, 23, 48, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 40px 24px 28px 24px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  position: relative;
+  text-align: left;
+  color: #eef4ff;
+  backdrop-filter: blur(10px) saturate(115%);
+  -webkit-backdrop-filter: blur(10px) saturate(115%);
+}
+
+/* Title/body */
+.science-card h3 {
+  color: #b3d4ff;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  margin-top: 10px;
+}
+.science-card p {
+  font-size: 1rem;
+  color: #eef4ff;
+  line-height: 1.6;
+}
+
+/* ICON */
+.science-icon {
+  position: absolute;
+  top: -20px;
+  left: 24px;
+  width: 40px;
+  height: 40px;
+  background-color: #2f80ed;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  font-size: 18px;
+}
+
+/* ===== Reveal on scroll (same pattern as Why/How) ===== */
+@media (min-width: 981px) {
+  .science-section.anim-ready .reveal-card {
+    opacity: 0;
+    transform-origin: left center;
+    transform: perspective(900px) rotateY(10deg) translateX(-42px) scale(0.985);
+    filter: blur(2px);
+    will-change: transform, opacity, filter;
+  }
+  .science-section.anim-ready .reveal-card.is-revealed {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition:
+      transform 720ms cubic-bezier(.2,.7,.2,1),
+      opacity 620ms ease,
+      filter 620ms ease;
+    transition-delay: var(--delay, 0ms);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .science-section.anim-ready .reveal-card,
+  .science-section.anim-ready .reveal-card.is-revealed {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .science-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .science-grid { grid-template-columns: 1fr; }
+  .science-section.section { background-attachment: scroll; }
+}

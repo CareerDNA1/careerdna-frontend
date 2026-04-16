@@ -1,0 +1,185 @@
+/* === HOW: CSS-only background & overlay (same as Science) === */
+.how-section {
+  --how-img: url("../../Assets/images/hero-dna.png");
+  --how-overlay: 0.50;
+
+  /* Gutters and connector styling */
+  --gutter-l: clamp(14px, 3vw, 28px);
+  --gutter-r: clamp(24px, 4vw, 40px);
+  --gap: 20px;                          /* reduced spacing between cards */
+  --arrow-color: rgba(255,255,255,0.35);
+}
+
+.how-section.section {
+  /* top | right | bottom | left */
+  padding: clamp(40px, 8vw, 80px) var(--gutter-r) clamp(40px, 8vw, 80px) var(--gutter-l);
+  background-color: #0a1730;
+  background-image: var(--how-img);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  text-align: center;
+  border-top: 0;
+  border-bottom: 0;
+  position: relative;
+  isolation: isolate;
+}
+
+.how-section.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    rgba(6, 17, 38, var(--how-overlay)),
+    rgba(6, 17, 38, var(--how-overlay))
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Inner container spans the section; no centering offset */
+.how-section .section-inner {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.how-section h2 {
+  color: #fff;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 700;
+  margin-bottom: 48px;
+}
+
+/* ===== GRID ===== */
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(260px, 1fr)); /* keep current width */
+  gap: var(--gap);
+  position: relative;
+
+  /* ✅ force equal heights per row */
+  align-items: stretch;
+  grid-auto-rows: 1fr;
+}
+
+/* === Card styling === */
+.how-card {
+  background-color: rgba(10, 23, 48, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 22px 22px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  position: relative;
+  text-align: left;
+  color: #eef4ff;
+  backdrop-filter: blur(10px) saturate(115%);
+  -webkit-backdrop-filter: blur(10px) saturate(115%);
+
+  /* ✅ stretch to the full track height */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.step-badge {
+  position: absolute;
+  top: -16px;
+  left: 20px;
+  width: 36px;
+  height: 36px;
+  background-color: #2f80ed;
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.how-card h3 {
+  color: #b3d4ff;
+  font-size: 19px;
+  font-weight: 600;
+  margin: 6px 0 8px;
+}
+
+.how-card p {
+  font-size: 0.96rem;
+  color: #eef4ff;
+  line-height: 1.48;
+
+  /* keep content from squashing the layout while allowing stretch */
+  flex: 1 1 auto;
+}
+
+/* === Discreet chevron arrows between cards === */
+@media (min-width: 1025px) {
+  .how-card:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -12px; /* positions arrow in reduced 20px gap */
+    transform: translateY(-50%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid var(--arrow-color);
+    border-right: 2px solid var(--arrow-color);
+    border-radius: 1px;
+    filter: drop-shadow(0 0 1px rgba(0,0,0,0.25));
+    pointer-events: none;
+  }
+}
+
+/* keep rows aligned */
+.step-2, .step-3, .step-4 { margin-top: 0; }
+
+/* ===== Reveal on scroll (same pattern as WhySection) ===== */
+@media (min-width: 981px) {
+  .how-section.anim-ready .reveal-card {
+    opacity: 0;
+    transform-origin: left center;
+    transform: perspective(900px) rotateY(10deg) translateX(-42px) scale(0.985);
+    filter: blur(2px);
+    will-change: transform, opacity, filter;
+  }
+  .how-section.anim-ready .reveal-card.is-revealed {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition:
+      transform 720ms cubic-bezier(.2,.7,.2,1),
+      opacity 620ms ease,
+      filter 620ms ease;
+    transition-delay: var(--delay, 0ms);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .how-section.anim-ready .reveal-card,
+  .how-section.anim-ready .reveal-card.is-revealed {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+}
+
+/* Responsive columns (connectors hidden when stacking) */
+@media (max-width: 1200px) {
+  .how-grid { grid-template-columns: repeat(3, minmax(240px, 1fr)); }
+}
+@media (max-width: 1024px) {
+  .how-grid { grid-template-columns: repeat(2, 1fr); }
+  .how-card::after { display: none; }
+}
+@media (max-width: 600px) {
+  .how-grid { grid-template-columns: 1fr; }
+  .how-section { background-attachment: scroll; }
+  .how-card::after { display: none; }
+}

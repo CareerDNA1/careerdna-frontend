@@ -1,0 +1,221 @@
+/* ============================
+   CareerDNA – Survey Page UI
+   ============================ */
+
+.survey-app {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 5px 20px;
+  color: #333;
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.survey-content { padding: 0; }
+
+.survey-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 40px 20px 28px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  font-family: 'Arial', sans-serif;
+}
+
+.survey-wrapper h1,
+.survey-wrapper .section-title {
+  color: #2f80ed;
+  font-size: 28px;
+  font-weight: 700;
+  text-align: left;
+  margin: 0 0 28px;
+}
+
+/* ---- Progress ---- */
+.progress-wrapper { margin-bottom: 12px; }
+
+/* NEW: top row for time pill */
+.progress-meta {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 6px;
+}
+
+.time-pill {
+  background: rgba(47,128,237,0.1);
+  border: 1px solid rgba(47,128,237,0.35);
+  color: #2f80ed;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  line-height: 1.2;
+}
+
+.progress-bar {
+  height: 14px;
+  background: #eee;
+  border-radius: 7px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #2f80ed;
+  transition: width .3s ease;
+}
+
+/* we no longer show text inside the bar, so this is unused but kept for safety */
+.progress-percent {
+  display: none;
+}
+
+.progress-label {
+  font-size: 13px;
+  color: #555;
+}
+
+/* ---- Question text ---- */
+.survey-question-text {
+  font-size: 18px;
+  margin: 28px 0 18px;
+  text-align: left;
+}
+
+.survey-question {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ---- Likert row ---- */
+.likert-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+  width: 100%;
+}
+
+.likert-buttons span {
+  font-size: 14px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  color: #445;
+}
+
+.likert-buttons button {
+  flex: 1 1 0;
+  min-width: 36px;
+  max-width: 54px;
+  padding: 9px 0;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #d5d7db;
+  background: #f5f6f8;
+  color: #2a2f36;
+  cursor: pointer;
+  transition:
+    transform .12s ease,
+    box-shadow .12s ease,
+    background-color .12s ease,
+    color .12s ease,
+    border-color .12s ease;
+}
+
+.likert-buttons button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(47,128,237,.18);
+  border-color: #c6cbe0;
+}
+
+.likert-buttons button.selected {
+  background: #2f80ed;
+  color: #fff;
+  border-color: #2f80ed;
+  box-shadow: 0 8px 18px rgba(47,128,237,.26);
+}
+
+.likert-buttons button:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px rgba(47,128,237,.7);
+}
+
+/* ---- Secondary/back button ---- */
+.secondary-button {
+  background: transparent;
+  border: 2px solid #2f80ed;
+  color: #2f80ed;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color .25s ease, color .25s ease;
+  display: inline-block;
+  margin: 0 auto;
+}
+.secondary-button:hover { background: #2f80ed; color: #fff; }
+
+.finish-cta {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ---- NEW: circular summary loader (copied style language from results) ---- */
+.summary-loader {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.circular-loader {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+}
+
+.progress-ring__circle {
+  transition: stroke-dashoffset 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 600;
+  font-size: 1rem;
+  color: #2f80ed;
+}
+
+.summary-text {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .survey-wrapper { padding: 30px 16px 22px; }
+  .survey-question-text { font-size: 16px; }
+  .likert-buttons { gap: 6px; }
+  .likert-buttons span { font-size: 13px; }
+  .likert-buttons button {
+    font-size: 13px;
+    padding: 7px 0;
+    max-width: 44px;
+  }
+  .progress-meta {
+    justify-content: flex-start; /* mobile: keep it visible */
+  }
+}

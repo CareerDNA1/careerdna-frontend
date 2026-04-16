@@ -1,0 +1,293 @@
+/* =============================
+   NAVBAR (polished, same layout)
+   ============================= */
+
+/* Fixed bar that only appears at the very top */
+.navbar-wrapper {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 30000;
+  background: transparent;
+  transform: translateY(0);
+  transition: transform .24s ease;
+  will-change: transform;
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Hide the bar whenever NOT at top (JS toggles this) */
+.navbar-wrapper.hidden { transform: translateY(-100%); }
+
+/* Core navbar layout */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px clamp(20px, 5vw, 40px);
+  height: 80px;
+  box-sizing: border-box;
+  position: relative;
+  min-width: 320px;
+}
+
+/* LOGO */
+.logo { flex-shrink: 0; }
+.navbar .logo img {
+  max-height: 80px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+  transform: translateZ(0);
+}
+
+/* ACCESSIBILITY */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap; border: 0;
+}
+
+/* =============================
+   DESKTOP INLINE LINKS
+   ============================= */
+.nav-links.desktop-only {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+}
+.nav-links.desktop-only li a {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  white-space: nowrap;
+  transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+.nav-links.desktop-only li a:hover,
+.nav-links.desktop-only li a:focus-visible {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.20);
+  outline: none;
+}
+.nav-links.desktop-only li a:active { transform: translateY(0); }
+
+/* =============================
+   HAMBURGER
+   ============================= */
+.menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px; height: 44px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity .15s ease, transform .15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.menu-icon svg { width: 28px; height: 28px; }
+.menu-icon:hover { opacity: .85; transform: translateY(-1px); }
+.menu-icon:active { transform: translateY(0); }
+
+/* Hide navbar icon while overlay is open on small screens */
+.menu-icon.hide-on-overlay { visibility: hidden; pointer-events: none; }
+
+/* =============================
+   RESPONSIVE BEHAVIOUR
+   ============================= */
+
+/* PHONE (≤900px): fullscreen overlay; hide desktop UI */
+@media (max-width: 900px) {
+  .desktop-only { display: none !important; }
+}
+
+/* TABLET (901–1180px): compact dropdown; no overlay */
+@media (min-width: 901px) and (max-width: 1180px) {
+  .nav-links.desktop-only { display: none !important; }
+  .nav-dropdown.vertical.desktop-only { display: block !important; }
+}
+
+/* DESKTOP (≥1181px): inline links; no overlay */
+@media (min-width: 1181px) {}
+
+/* =============================
+   DESKTOP/TABLET DROPDOWN (vertical)
+   ============================= */
+.nav-dropdown.vertical {
+  position: fixed;
+  top: 80px;
+  right: clamp(20px, 5vw, 40px);
+  z-index: 30010;
+  width: min(320px, 92vw);
+  background: rgba(10,12,36,0.90);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  box-shadow: 0 14px 44px rgba(0,0,0,0.38);
+  padding: 10px;
+  transform: translateY(-8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+}
+.nav-dropdown.vertical.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.dropdown-list {
+  list-style: none; margin: 0; padding: 6px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.dropdown-list li a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
+  cursor: pointer;
+}
+.dropdown-list li a:hover,
+.dropdown-list li a:focus-visible {
+  background: rgba(255,255,255,0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.20);
+  outline: none;
+}
+.dropdown-list li a:active { transform: translateY(0); }
+
+/* =============================
+   OVERLAY (phone/iPad ≤900px) — no blur, lighter backdrop
+   ============================= */
+.nav-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 30020;
+  background: rgba(0,0,0,0.35);               /* lighter, no blur */
+  /* removed backdrop-filter to avoid heavy blur of the hero */
+  transform: translateY(-100%);
+  transition: transform 0.3s ease, opacity .2s ease;
+  opacity: 0;
+  pointer-events: none;
+  min-height: 100dvh;
+  -webkit-overflow-scrolling: touch;
+  display: none;
+}
+.nav-menu.active {
+  transform: translateY(0%);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Render overlay only on phones; visibility still controlled by .active */
+@media (max-width: 900px) {
+  .nav-menu { display: block; }
+}
+
+/* =============================
+   PANEL INSIDE OVERLAY
+   ============================= */
+
+/* Default (phones): centered card */
+.nav-panel {
+  position: relative;
+  margin: 96px auto 40px;
+  background: rgba(10,12,36,0.95);            /* opaque so text is clear */
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  width: min(92vw, 520px);
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 24px 18px 28px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.42);
+  z-index: 30030;
+}
+
+/* iPad portrait (roughly 700–900px): left-docked narrow sheet */
+@media (min-width: 700px) and (max-width: 900px) {
+  .nav-panel {
+    /* push panel to the right side */
+    margin: 96px calc(24px + env(safe-area-inset-right)) 40px auto;
+    width: 420px;
+  }
+}
+
+/* Very small phones: keep margins neat */
+@media (max-width: 380px) {
+  .nav-panel { width: calc(100% - 24px); margin: 84px 12px 24px; }
+}
+
+/* Mobile close button */
+.nav-close {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 44px; height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: none; color: #fff; cursor: pointer;
+  transition: opacity .15s ease, transform .15s ease;
+}
+.nav-close svg { width: 24px; height: 24px; }
+.nav-close:hover { opacity: .85; transform: translateY(-1px); }
+
+/* Links inside overlay */
+.nav-links {
+  list-style: none;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.nav-links li a {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 500;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  white-space: nowrap;
+  display: block;
+  transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
+  cursor: pointer;
+}
+.nav-links li a:hover,
+.nav-links li a:focus-visible {
+  background-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.20);
+  outline: none;
+}
+.nav-links li a:active { transform: translateY(0); }
+
+/* Keep the nav/menu over everything */
+.navbar-wrapper { z-index: 30000 !important; }
+.nav-dropdown   { z-index: 30010 !important; }
+.nav-menu       { z-index: 30020 !important; }
+.nav-panel      { z-index: 30030 !important; }
+
+
+.nav-profile-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.nav-user-email {
+  color: #ffffff;
+  opacity: 0.82;
+  padding: 2px 12px 8px;
+  font-size: 0.9rem;
+  word-break: break-all;
+  line-height: 1.35;
+}

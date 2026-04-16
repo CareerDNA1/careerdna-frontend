@@ -1,0 +1,61 @@
+/* ===== CTA (layout only) ===== */
+.cta-section {
+  position: relative;
+  width: 100%;
+  margin-top: 0;
+  padding: clamp(40px, 8vw, 80px) clamp(24px, 6vw, 80px);
+  text-align: center;
+  background: linear-gradient(to top, #f7faff 0%, #ffffff 100%);
+  border-top: 1px solid rgba(0,0,0,0.06);
+  scroll-margin-top: 96px;
+}
+
+.section-inner { max-width: 960px; margin: 0 auto; }
+
+.cta-section h2 {
+  color: #2f80ed;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 700;
+  margin: 0 0 20px;
+}
+
+.cta-section p {
+  font-size: 18px;
+  color: #333;
+  max-width: 720px;
+  margin: 0 auto 28px;
+  line-height: 1.6;
+}
+
+.cta-button-wrap { margin-bottom: 16px; }
+/* Only spacing hook for the Button; does NOT restyle it */
+.cta-btn { margin: 0 auto; }
+
+/* === Beta disclaimer === */
+.cta-section .disclaimer {
+  font-family: inherit;
+  font-style: italic;
+  font-size: 14px;
+  color: #666;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.cta-section .disclaimer::before {
+  content: 'β';
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  background: #2f80ed;
+  border-radius: 9999px;
+  padding: 4px 8px;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cta-section { scroll-behavior: auto; }
+}

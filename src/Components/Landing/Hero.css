@@ -1,0 +1,177 @@
+:root {
+  --hero-max: 70rem;
+  --nav-h-desktop: 80px;
+  --nav-h-mobile: 64px;
+  --spacing-base: 1rem;
+  --vertical-offset: 0px;
+}
+
+.hero {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  color: #fff;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 16px 96px;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed; /* keep fixed everywhere (like How/Science) */
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(10,10,50,0.5));
+  z-index: 0;
+}
+
+.hero-overlay {
+  position: relative;
+  z-index: 1;
+  width: min(92%, var(--hero-max));
+  margin: 0 auto;
+  padding: 0 1rem;
+  padding-top: var(--vertical-offset, 0px);
+  overflow: visible; /* allow CTA to shift visually without clipping */
+}
+
+.hero-title {
+  font-size: clamp(28px, 4vw, 56px);
+  font-weight: 700;
+  line-height: 1.10;
+  margin: 0 auto 40px;
+}
+
+.hero-title .no-break { white-space: nowrap; display: block; }
+.hero-title .accent { display: block; color: #b3d4ff; margin-top: 0.15em; }
+
+.hero-combined {
+  max-width: 800px;
+  margin: 15px auto 50px;
+  color: #f5faff;
+  font-size: clamp(16px, 2vw, 20px);
+  line-height: 1.55;
+  font-weight: 500;
+}
+
+.cta-button-wrapper {
+  position: relative; /* stays in flow on desktop */
+  z-index: 10;
+  margin-top: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* ==============================
+   HERO CTA BUTTON (variant)
+   ============================== */
+
+/* Desktop default: a touch less transparent; thin frame only on hover */
+.hero-variant {
+  background: transparent !important;
+  background-image: none !important;
+  color: #fff !important;
+  position: relative;
+
+  /* slightly less transparent baseline than before */
+  background-color: rgba(255,255,255,0.06) !important;
+
+  border: 1px solid transparent !important; /* frame appears on hover */
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.38),
+    0 0 18px rgba(165, 200, 255, 0.48);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease;
+}
+.hero-variant::before { content: none !important; }
+
+.hero-variant:hover {
+  transform: translateY(-2px);
+  background-color: rgba(255, 255, 255, 0.10) !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important; /* thinner frame */
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.48),
+    0 0 28px rgba(165, 200, 255, 0.65),
+    0 0 12px rgba(255, 255, 255, 0.55);
+}
+
+.hero-variant:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  background-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+.hero-variant:active { transform: scale(0.98); }
+
+/* ==============================
+   Responsive
+   ============================== */
+
+@media (max-width: 600px) {
+  :root { --vertical-offset: 0px; }
+
+  .hero {
+    min-height: 100svh;
+    padding-top: calc(var(--nav-h-mobile) + env(safe-area-inset-top) + 30px);
+    padding-bottom: 70px;
+    background-position: 50% 20%;
+  }
+
+  .hero-title { font-size: clamp(26px, 7.5vw, 36px); margin: 0 auto 40px; max-width: 90vw; }
+  .hero-combined { max-width: 35ch; font-size: 1rem; margin: 15px auto 50px; }
+
+  /* MOVE ONLY THE BUTTON (visual shift; layout unaffected) */
+  .cta-button-wrapper {
+    margin-top: 5rem;              /* keep your original flow spacing */
+    transform: translateY(6vh);    /* push CTA down visually */
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  :root { --vertical-offset: 8px; }
+
+  .hero {
+    min-height: 100svh;
+    padding-top: calc(var(--nav-h-desktop) + env(safe-area-inset-top) + 32px);
+    padding-bottom: 140px;
+  }
+
+  .hero-overlay { transform: translateY(-12vh); max-width: 720px; }
+  .hero-title { font-size: clamp(52px, 6vw, 70px); line-height: 1.14; margin-bottom: 12px; }
+  .hero-combined { max-width: 60ch; font-size: 23.5px; line-height: 1.6; margin: 25px auto 60px; }
+
+  /* MOVE ONLY THE BUTTON (visual shift; layout unaffected) */
+  .cta-button-wrapper {
+    margin-top: 16vh;              /* keep your original value */
+    transform: translateY(14vh);   /* extra visual push for iPad */
+  }
+}
+
+@media (min-width: 1200px) {
+  :root { --vertical-offset: 6px; }
+  .hero { padding-top: 140px; padding-bottom: 100px; }
+  .hero-overlay { padding-top: var(--vertical-offset, 10px); }
+}
+
+@supports (-webkit-touch-callout: none) {
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .hero { min-height: 100svh; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-variant { transition: none; }
+  .hero-variant:hover { transform: none; }
+}

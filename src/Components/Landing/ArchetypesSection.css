@@ -1,0 +1,197 @@
+/* components/landing/ArchetypesSection.css */
+
+/* ===== Section ===== */
+.archetypes-section {
+  padding: clamp(40px, 8vw, 80px);
+  text-align: center;
+  background: #ffffff;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+/* let the carousel stretch */
+.archetypes-section .section-inner { padding: 0; }
+
+.archetypes-section h2 {
+  color: #2f80ed;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.archetypes-section .intro-text {
+  font-size: 1rem;
+  color: #333;
+  max-width: 720px;
+  margin: 0 auto 32px;
+}
+
+/* ===== Carousel shell ===== */
+.archetype-slider {
+  position: relative;
+  padding: 8px 0 40px; /* leave room for bottom arrows on tablet/phone */
+  min-height: 320px;
+  overflow: visible;   /* so bottom arrows aren't clipped */
+}
+
+.archetype-slider .slick-track {
+  display: flex !important;
+  align-items: flex-start;
+}
+
+/* desktop: expand list so side cards peek */
+.archetype-slider .slick-list {
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+@media (min-width: 1025px) {
+  .archetype-slider .slick-list {
+    width: calc(100% + 64px) !important;
+    margin-left: -32px !important;
+    margin-right: -32px !important;
+  }
+}
+
+/* center each slick child */
+.archetype-slider .slick-slide > div {
+  display: flex;
+  justify-content: center;
+}
+
+/* desktop: no curtains */
+@media (min-width: 1025px) {
+  .archetype-slider::before,
+  .archetype-slider::after {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 0; /* set to 2px + gradient if you want a tiny fade */
+    pointer-events: none;
+    z-index: 4;
+  }
+}
+
+/* ===== Cards ===== */
+.archetype-card {
+  background-color: #f4f8ff;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  width: 100%;
+  max-width: 250px;
+  padding: 24px 20px;
+  margin: 0 14px;
+}
+
+.archetype-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.archetype-card h3 {
+  font-size: 1.18rem;
+  line-height: 1.2;
+  color: #2f80ed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.archetype-card .icon { font-size: 1.8rem; margin-bottom: 6px; }
+.archetype-card .title-text { margin: 0; padding: 0; line-height: 1; }
+.archetype-card p { font-size: 0.98rem; line-height: 1.55; color: #333; margin: 0; }
+
+/* ===== Arrows (base style) ===== */
+.slick-arrow { z-index: 6; }
+.slick-prev::before,
+.slick-next::before {
+  font-size: 36px !important;
+  color: #2f80ed !important;
+  opacity: 1 !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* desktop: keep arrows just outside left/right */
+@media (min-width: 1025px) {
+  .archetypes-section .slick-prev { left: -50px; }
+  .archetypes-section .slick-next { right: -35px; }
+}
+
+/* ===== Tablets (iPad) — arrows UNDER the cards, left & right ===== */
+@media (max-width: 1024px) {
+  /* Always show arrows on tablet */
+  .archetypes-section .slick-prev,
+  .archetypes-section .slick-next {
+    display: block !important;
+    position: absolute !important;
+    bottom: 8px !important;
+    top: auto !important;
+    transform: none !important;
+  }
+  .archetypes-section .slick-prev { left: 12px; right: auto; }
+  .archetypes-section .slick-next { right: 12px; left: auto; }
+  .archetypes-section .slick-prev::before,
+  .archetypes-section .slick-next::before { font-size: 30px !important; }
+
+  /* tighter gutter so the next card clearly peeks */
+  .archetype-slider .slick-list {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 8px !important;
+    overflow: visible !important;
+  }
+
+  .archetype-card { max-width: 236px; margin: 0 8px; }
+}
+
+/* ===== Phones (iPhone) — make gaps tiny + force arrows visible ===== */
+@media (max-width: 600px) {
+  .archetype-slider { padding-bottom: 56px; }
+
+  /* Kill big side padding from slick and show neighbors */
+  .archetype-slider .slick-list { padding: 0 1px !important; }
+
+  /* Force each slide width so slick doesn’t inject huge gaps */
+  .archetype-slider .slick-slide {
+    width: calc(66vw + 4px) !important;  /* 66vw card + 2px margin each side */
+  }
+  .archetype-slider .slick-slide > div { width: auto !important; }
+
+  .archetype-card {
+    width: 66vw;          /* compact so adjacent cards are visible */
+    max-width: 220px;
+    padding: 20px 16px;
+    margin: 0 2px;        /* minimal inter-card gap (no overlap) */
+  }
+
+  /* FORCE arrows to be visible and at the bottom, left/right */
+  .archetypes-section .slick-prev,
+  .archetypes-section .slick-next {
+    display: block !important;
+    position: absolute !important;
+    bottom: 8px !important;
+    top: auto !important;
+    transform: none !important;
+    z-index: 10;
+  }
+  .archetypes-section .slick-prev { left: 8px; right: auto; }
+  .archetypes-section .slick-next { right: 8px; left: auto; }
+  .archetypes-section .slick-prev::before,
+  .archetypes-section .slick-next::before { font-size: 26px !important; }
+}
+
+/* ultra-small phones */
+@media (max-width: 360px) {
+  .archetype-slider .slick-slide { width: calc(70vw + 4px) !important; }
+  .archetype-card { width: 70vw; margin: 0 2px; }
+  .archetypes-section .slick-prev { left: 6px; }
+  .archetypes-section .slick-next { right: 6px; }
+  .archetypes-section .slick-prev::before,
+  .archetypes-section .slick-next::before { font-size: 24px !important; }
+}

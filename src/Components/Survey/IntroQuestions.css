@@ -1,0 +1,126 @@
+/* ================================
+   IntroQuestions.css (full file)
+   ================================ */
+
+.intro-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+  color: #3a3a3a;
+}
+
+.intro-container h2 {
+  margin-bottom: 1rem;
+  font-size: 1.75rem;
+  color: #2f80ed;
+  font-weight: 600;
+}
+
+.intro-text {
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  color: #555;
+}
+
+/* Generic field wrapper to apply error styles uniformly */
+.field { margin-bottom: 14px; }
+.field.has-error .introSelect__control,
+.field.has-error input[type="text"] {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 2px rgba(220,38,38,0.10);
+}
+.error-text {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #b91c1c;
+}
+
+/* Required asterisk */
+.required::after {
+  content: " *";
+  color: #dc2626;
+  margin-left: 2px;
+}
+
+.intro-container label {
+  display: block;
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.intro-container input[type="text"] {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #3a3a3a;
+}
+
+/* -------- inline hint next to label -------- */
+.label-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+}
+.label-row > label { margin: 0; }
+.field-hint {
+  font-size: 12px;
+  color: #6b7280;
+  background: #f3f6fb;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 2px 8px;
+  line-height: 1.6;
+}
+
+/* ============================
+   React-Select theming (scoped)
+   ============================ */
+.introSelect__control { border-color: #d1d5db; box-shadow: none !important; }
+.introSelect__control:hover { border-color: #bfc6d1; }
+.introSelect__single-value { color: #3e3e3e; }
+.introSelect__placeholder { color: #8a8f98; }
+.introSelect__input-container { color: #3e3e3e; }
+.introSelect__menu { color: #3e3e3e; z-index: 9999; }
+.introSelect__option { color: #3e3e3e; }
+.introSelect__option--is-focused { background: #f3f6fb; }
+.introSelect__option--is-selected { background: #e7f0ff; color: #2b6fd6; }
+
+/* ============================
+   Start Survey button wrapper
+   ============================ */
+.intro-start-wrap {
+  margin-top: 2.0rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* ----- Prominent callout under Subjects ----- */
+.subject-callout {
+  background: #eaf4ff;
+  color: #155fa0;
+  border-left: 6px solid #2f80ed;
+  padding: 12px 14px;
+  margin-top: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  box-shadow: 0 2px 6px rgba(0,0,0,.04);
+}
+
+/* NEW: generic disabled option look (for non-school statuses) */
+.introSelect__option--is-disabled {
+  color: #999 !important;
+  background-color: #f9f9f9 !important;
+  cursor: not-allowed !important;
+}

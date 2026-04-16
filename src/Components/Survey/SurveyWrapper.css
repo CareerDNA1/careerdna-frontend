@@ -1,0 +1,47 @@
+.survey-app {
+  width: 100%;
+  max-width: 900px;       /* Restrict overly wide layout on large screens */
+  margin: 0 auto;          /* Center horizontally */
+  padding: 5px 20px;      /* Adds spacing on all sides, esp. mobile */
+  background: none;        /* Remove boxed look */
+  box-shadow: none;
+  border-radius: 0;
+  color: #333;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.survey-content {
+  padding: 0;              /* Let inner pages control vertical spacing */
+}
+
+/* src/components/Survey/SurveyComponent.css */
+
+/* existing styles… keep your current file content and add the block below */
+
+.dev-helper.dev-helper--bottom-center {
+  position: fixed;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.dev-button {
+  font-size: 12px;
+  padding: 6px 10px;
+  background: #f4f5f7;
+  color: #444;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+
+
+@media (max-width: 600px) {
+  .survey-app {
+    padding: 20px 12px;
+  }
+}

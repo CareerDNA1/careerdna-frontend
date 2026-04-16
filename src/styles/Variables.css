@@ -1,0 +1,13 @@
+/* styles/variables.css */
+/* Define CSS variables for reusable values like colors */
+
+:root {
+  --primary-blue: #2f80ed;
+  --secondary-blue: #1c65d1;
+  --background-light: #f9f9f9;
+  --text-dark: #333;
+  --shadow-light: rgba(0, 0, 0, 0.05);
+  --shadow-medium: rgba(0, 0, 0, 0.1);
+  --gradient-primary: linear-gradient(135deg, #2f80ed, #1c65d1);
+  /* Add more from your existing CSS, e.g., fonts, spacings */
+}
