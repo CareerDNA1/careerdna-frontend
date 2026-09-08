@@ -1,5 +1,6 @@
 // src/utils/fetchAiSummary.js
-import { BACKEND_URL } from './config';
+import { buildApiCandidates } from './config';
+import { supabase } from './supabaseClient';
 
 function normalizeStatus(raw) {
   const s = String(raw || '').trim().toLowerCase();
@@ -53,6 +54,8 @@ export async function fetchAiSummary(input) {
     status,
     schoolSubjects,
     uniSubject,
+    planUniversity,
+    uniNeed,
     introResponses,
     subdimensionScores,   // NEW
     subdimensions         // NEW (alias / pre-shaped)
@@ -64,6 +67,8 @@ export async function fetchAiSummary(input) {
     status = status ?? introResponses.status;
     schoolSubjects = schoolSubjects ?? introResponses.schoolSubjects;
     uniSubject = uniSubject ?? introResponses.uniSubject;
+    planUniversity = planUniversity ?? introResponses.planUniversity;
+    uniNeed = uniNeed ?? introResponses.uniNeed;
   }
 
   const normStatus = normalizeStatus(status);
@@ -118,7 +123,11 @@ export async function fetchAiSummary(input) {
           ? uniSubject.trim()
           : (Array.isArray(uniSubject) ? String(uniSubject[0] || '').trim() : '') }),
     // NEW: forward subdimension scores (empty array is fine; backend can ignore)
-    subdimensions: subdimsPayload
+    subdimensions: subdimsPayload,
+    // Uni-intent — lets the backend narrate the vocational ("no degree") worlds
+    // for students who are unsure about / not planning university.
+    ...(planUniversity ? { planUniversity: String(planUniversity) } : {}),
+    ...(uniNeed ? { uniNeed: String(uniNeed) } : {}),
   };
 
   // Client-side guard to avoid 400s:
@@ -132,23 +141,72 @@ export async function fetchAiSummary(input) {
   // Strip undefined keys
   Object.keys(payload).forEach(k => payload[k] === undefined && delete payload[k]);
 
-  const res = await fetch(`${BACKEND_URL}/api/summary`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  const accessToken = sessionData?.session?.access_token;
 
-  if (!res.ok) {
-    let msg = `Request failed: ${res.status}`;
-    try {
-      const err = await res.json();
-      // Your backend returns { summary: "...", error?: ... }
-      msg = err?.summary || err?.error || msg;
-    } catch {}
-    throw new Error(msg);
+  if (sessionError) {
+    throw new Error(sessionError.message || 'Could not verify your login session.');
   }
 
-  const data = await res.json();
-  return data || { summary: '' };
+  if (!accessToken) {
+    throw new Error('Please sign in again before generating your report.');
+  }
+
+  const candidates = buildApiCandidates('/api/summary');
+  let lastError = null;
+
+  for (const url of candidates) {
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.status === 404) {
+        lastError = new Error('Request failed: 404');
+        continue;
+      }
+
+      if (!res.ok) {
+        let msg = `Request failed: ${res.status}`;
+        try {
+          const err = await res.json();
+          const errorCode = err?.code || err?.error || '';
+
+          if (res.status === 403 && errorCode === 'REPORT_LIMIT_REACHED') {
+            const apiError = new Error('REPORT_LIMIT_REACHED');
+            apiError.status = 403;
+            apiError.code = 'REPORT_LIMIT_REACHED';
+            apiError.entitlement = err?.entitlement || null;
+            throw apiError;
+          }
+
+          msg = err?.summary || err?.message || err?.error || msg;
+          const apiError = new Error(msg);
+          apiError.status = res.status;
+          apiError.code = errorCode;
+          apiError.entitlement = err?.entitlement || null;
+          throw apiError;
+        } catch (parseError) {
+          if (parseError?.status) throw parseError;
+        }
+        throw new Error(msg);
+      }
+
+      const data = await res.json();
+      return data || { summary: '' };
+    } catch (error) {
+      if (error?.status && error.status !== 404) {
+        throw error;
+      }
+      lastError = error;
+    }
+  }
+
+  throw lastError || new Error('Could not generate summary right now.');
 }
 

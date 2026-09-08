@@ -1,61 +1,329 @@
-/* ===== CTA (layout only) ===== */
 .cta-section {
   position: relative;
   width: 100%;
-  margin-top: 0;
+  margin-top: -1px;
   padding: clamp(40px, 8vw, 80px) clamp(24px, 6vw, 80px);
   text-align: center;
   background: linear-gradient(to top, #f7faff 0%, #ffffff 100%);
-  border-top: 1px solid rgba(0,0,0,0.06);
+  border-top: 0;
   scroll-margin-top: 96px;
+}
+
+
+.cta-section::before {
+  content: none;
 }
 
 .section-inner { max-width: 960px; margin: 0 auto; }
 
 .cta-section h2 {
-  color: #2f80ed;
-  font-size: clamp(28px, 5vw, 40px);
-  font-weight: 700;
+  font-family: var(--cdna-font-sans);
+  color: var(--cdna-color-heading);
+  font-size: var(--cdna-type-display-size);
+  font-weight: var(--cdna-type-display-weight);
+  letter-spacing: var(--cdna-type-display-tracking);
+  line-height: var(--cdna-type-display-line);
   margin: 0 0 20px;
 }
 
 .cta-section p {
-  font-size: 18px;
-  color: #333;
+  font-family: var(--cdna-font-sans);
+  font-size: var(--cdna-type-body-size);
+  font-weight: var(--cdna-type-body-weight);
+  color: var(--cdna-color-text);
   max-width: 720px;
   margin: 0 auto 28px;
-  line-height: 1.6;
+  line-height: var(--cdna-type-body-line);
 }
 
 .cta-button-wrap { margin-bottom: 16px; }
-/* Only spacing hook for the Button; does NOT restyle it */
 .cta-btn { margin: 0 auto; }
 
-/* === Beta disclaimer === */
-.cta-section .disclaimer {
-  font-family: inherit;
-  font-style: italic;
-  font-size: 14px;
-  color: #666;
+.cta-footer {
+  position: relative;
+  max-width: 760px;
+  margin: 86px auto 0;
+  padding-top: 34px;
+  border-top: 0;
+  text-align: center;
+}
+
+.cta-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    rgba(47, 111, 237, 0),
+    rgba(47, 111, 237, 0.14) 18%,
+    rgba(47, 111, 237, 0.14) 82%,
+    rgba(47, 111, 237, 0)
+  );
+}
+
+.cta-section .cta-footer-tagline {
+  max-width: none;
+  margin: 0 0 12px;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  font-weight: 450;
+  letter-spacing: -0.01em;
+  color: rgba(23, 32, 51, 0.60);
+}
+
+.cta-footer-links {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 8px;
+  margin: 0 0 12px;
+  font-family: var(--cdna-font-sans);
+  font-size: var(--cdna-type-body-sm-size);
+  line-height: var(--cdna-type-body-sm-line);
+  color: rgba(75, 95, 118, 0.62);
+}
+
+.cta-footer-links a {
+  color: #2f6fe4;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.cta-footer-links a:hover,
+.cta-footer-links a:focus-visible {
+  text-decoration: underline;
+}
+
+.cta-section .cta-footer-copy {
+  max-width: none;
   margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(75, 95, 118, 0.68);
 }
 
-.cta-section .disclaimer::before {
-  content: 'β';
-  display: inline-block;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1;
-  color: #fff;
-  background: #2f80ed;
-  border-radius: 9999px;
-  padding: 4px 8px;
+
+@media (min-width: 981px) {
+  .cta-section.reveal .section-inner {
+    opacity: 0;
+    transform: translateY(34px) scale(0.985);
+    filter: blur(5px);
+    will-change: transform, opacity, filter;
+  }
+
+  .cta-section.reveal.is-in .section-inner {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition:
+      transform 860ms cubic-bezier(.16,.84,.24,1),
+      opacity 760ms ease,
+      filter 760ms ease;
+  }
 }
 
-/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .cta-section { scroll-behavior: auto; }
+  .cta-section.reveal .section-inner {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+}
+
+
+/* Final baseline: full-screen desktop section rhythm + professional mirrored section blending */
+@media (min-width: 1181px) {
+  .why-section,
+  .archetypes-section,
+  .dimensions-section,
+  .how-section.section,
+  .science-section.section,
+  .cta-section {
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  .why-section .section-inner,
+  .archetypes-section .section-inner,
+  .dimensions-section .section-inner,
+  .how-section .section-inner,
+  .science-section .section-inner,
+  .cta-section .section-inner {
+    width: 100%;
+  }
+}
+
+.hero,
+.how-section.section,
+.science-section.section {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.10),
+    0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.why-section,
+.dimensions-section,
+.archetypes-section,
+.cta-section {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    inset 0 -1px 0 rgba(7, 27, 54, 0.055);
+}
+
+.hero + .why-section,
+.why-section + .how-section,
+.how-section + .dimensions-section,
+.dimensions-section + .archetypes-section,
+.archetypes-section + .science-section,
+.science-section + .cta-section {
+  margin-top: 0;
+}
+
+.why-section,
+.dimensions-section,
+.archetypes-section,
+.cta-section,
+.how-section.section,
+.science-section.section {
+  border-top: 0;
+  border-bottom: 0;
+}
+
+/* FINAL CTA CLOSING-PANEL DESIGN:
+   Treat the CTA as the page ending rather than another full content section.
+   Adds a subtle top glow, more intentional breathing room, and keeps the footer attached. */
+.cta-section {
+  overflow: hidden;
+  background-color: #f8fbff;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(47, 128, 237, 0.105) 0%, rgba(47, 128, 237, 0.055) 30%, transparent 62%),
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 52%, #f4f8ff 100%);
+  padding-top: clamp(70px, 8vw, 112px);
+  padding-bottom: clamp(54px, 6.4vw, 84px);
+}
+
+.cta-section::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -78px;
+  width: min(820px, 88vw);
+  height: 210px;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(ellipse at center, rgba(47, 128, 237, 0.16) 0%, rgba(47, 128, 237, 0.075) 38%, transparent 72%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cta-section::after {
+  content: "";
+  position: absolute;
+  left: -100px;
+  bottom: -120px;
+  width: 320px;
+  height: 320px;
+  background-image: radial-gradient(rgba(47, 128, 237, 0.12) 1px, transparent 1px);
+  background-size: 14px 14px;
+  opacity: 0.11;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cta-section .section-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.cta-section h2 {
+  margin-bottom: clamp(18px, 1.6vw, 22px);
+}
+
+.cta-section p {
+  margin-bottom: clamp(28px, 2.6vw, 34px);
+}
+
+.cta-button-wrap {
+  margin-bottom: 0;
+}
+
+.cta-footer {
+  margin-top: clamp(76px, 7.4vw, 104px);
+  padding-top: clamp(28px, 3vw, 38px);
+}
+
+.cta-footer::before {
+  background: linear-gradient(
+    to right,
+    rgba(47, 111, 237, 0),
+    rgba(47, 111, 237, 0.16) 18%,
+    rgba(140, 124, 255, 0.16) 50%,
+    rgba(47, 111, 237, 0.16) 82%,
+    rgba(47, 111, 237, 0)
+  );
+}
+
+/* iPad/tablet: keep it content-led, but make the ending feel deliberate rather than empty. */
+@media (min-width: 768px) and (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+  .cta-section {
+    min-height: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    display: block !important;
+    padding: clamp(68px, 8.4vw, 94px) clamp(28px, 6vw, 70px) clamp(52px, 6.4vw, 76px) !important;
+  }
+
+  .cta-section h2 {
+    font-size: clamp(2.05rem, 4vw, 2.75rem);
+    margin-bottom: 18px;
+  }
+
+  .cta-section p {
+    max-width: 660px;
+    font-size: clamp(0.98rem, 1.75vw, 1.16rem);
+    margin-bottom: 30px;
+  }
+
+  .cta-footer {
+    margin-top: clamp(72px, 8vw, 96px);
+    padding-top: 32px;
+  }
+}
+
+@media (max-width: 640px) {
+  .cta-section {
+    padding: 56px 22px 44px;
+  }
+
+  .cta-section h2 {
+    font-size: clamp(1.55rem, 6.6vw, 2rem);
+    line-height: 1.14;
+    margin-bottom: 14px;
+  }
+
+  /* tighter intro paragraph — was inheriting the loose global line-height */
+  .cta-section p {
+    font-size: clamp(0.94rem, 4.1vw, 1.04rem);
+    line-height: 1.4;
+    margin: 0 auto 26px;
+  }
+
+  /* footer was pushed 58px down and felt detached (and fell below the fold).
+     Pull it up and space the links so the three parts read as one tidy block. */
+  .cta-footer {
+    margin-top: 40px;
+    padding-top: 24px;
+  }
+  .cta-footer-links {
+    gap: 8px 18px;
+  }
+  .cta-section .cta-footer-tagline { line-height: 1.42; }
 }

@@ -1,39 +1,89 @@
 // src/utils/subdimensionDefinitions.js
-// Detailed definitions aligned with final CareerDNA model (validated against questions and archetype weights)
+// CareerDNA v2 — detailed definitions for all 25 behavioural dimensions.
+// Keys match the subdimension label strings used in questions.js and archetypeWeights.js.
+// These describe the dimension itself without linking directly to archetypes.
 
 const SUBDIMENSION_DEFINITIONS = {
-  // Who You Are
-  openness: "Reflects imagination, curiosity, and comfort with new experiences. Higher scores indicate natural curiosity, openness to new ideas and creative thinking, typical of Explorer, Creator and Visionary archetypes.",
-  conscientiousness: "Indicates organisation, persistence, and sense of responsibility. Higher scores show strong planning, reliability, and task focus, central to Achiever and Organizer archetypes.",
-  emotionalStability: "Measures resilience and calmness under pressure. Higher scores mean you remain composed and adapt well to challenges, aligning with Connector and Organizer archetypes.",
-  riskTolerance: "Reflects comfort with unpredictability and risk. Higher scores mean confidence in change and uncertain situations, traits of Explorer, Visionary and Achiever archetypes.",
-  gritPersistence: "Shows sustained effort toward goals despite setbacks. High scorers display determination and endurance, hallmarks of Achiever and Organizer archetypes.",
-  extroversionSociability: "Indicates energy from social interaction and visibility. Higher scores reflect enthusiasm for teamwork, communication, and leadership, traits of the Connector archetype.",
 
-  // What You Love
-  investigativeCuriosity: "Represents a drive to question, analyse and understand complex ideas. Higher scores show enjoyment in exploring how things work, associated with Thinker, Explorer, and Visionary archetypes.",
-  creativeExpression: "Captures interest in imaginative thinking and artistic creation. Higher scores indicate a tendency to innovate and communicate ideas visually or conceptually, central to Creator and Visionary archetypes.",
-  helpingOrientation: "Shows motivation to support, teach, or care for others. Higher scores reflect empathy and a strong sense of social responsibility, typical of Connector archetypes.",
-  entrepreneurialDrive: "Represents initiative, leadership, and opportunity-seeking. Higher scores show energy for taking charge, improving systems, and driving outcomes, common in Achiever, Visionary and Explorer archetypes.",
-  handsOnEngagement: "Measures enjoyment of practical, tangible and experiential work. Higher scores show a preference for active, hands-on environments, traits of Creator, Organizer, and Explorer archetypes.",
-  noveltyVarietySeeking: "Reflects interest in change and new experiences. Higher scores indicate enjoyment of dynamic, varied tasks and dislike of monotony, consistent with Explorer, Visionary and Creator archetypes.",
+  // WHO YOU ARE
+  "Originality":
+    "Reflects a tendency to generate novel ideas, take unconventional approaches, and find original connections between different domains. Higher scores indicate natural creative thinking and a preference for finding new ways to approach problems.",
 
-  // What Matters
-  purposeImpact: "Shows motivation to make a positive difference through work or study. Higher scores reflect a drive for meaning and contribution, linked to Visionary and Connector archetypes.",
-  autonomyControl: "Indicates a desire for freedom and control over one’s actions. Higher scores show preference for self-direction and ownership, aligning with Explorer, Visionary, Achiever and Thinker archetypes.",
-  securityPredictability: "Measures comfort with structure, certainty and consistency. Higher scores indicate preference for routine and order, reflecting the mindset of Organizer archetypes.",
-  recognitionVisibility: "Represents motivation from acknowledgment and being seen. Higher scores indicate appreciation for recognition, praise, and visible success, traits of Achiever and Visionary archetypes.",
-  financialAmbition: "Reflects motivation driven by earning potential and reward. Higher scores show focus on financial goals, performance, and success, consistent with Achiever archetypes.",
-  belongingConnection: "Indicates importance placed on inclusion, community and shared purpose. Higher scores reflect engagement in teamwork and group belonging, linked to Connector archetypes.",
+  "Reliability":
+    "Reflects consistent follow-through on commitments, self-discipline, and the ability to complete tasks on time and to a high standard. Higher scores indicate strong planning, dependability, and follow-through even when work becomes difficult.",
 
-  // How You Work Best
-  paceIntensityPreference: "Reflects how you respond to activity level and pressure. Higher scores indicate comfort and energy in fast-moving, high-demand settings, typical of Achiever and Organizer archetypes.",
-  orderSystemsOrientation: "Measures enjoyment of structure, routines, and process design. Higher scores indicate appreciation for order and systematic work, consistent with Organizer and Thinker archetypes.",
-  structureClarityPreference: "Reflects how much you rely on clear expectations and defined processes. Higher scores indicate preference for clarity, direction, and well-defined tasks, aligned with Organizer and Thinker archetypes.",
-  soloVsCollaborativeWorking: "Measures how energised you feel by group work versus independent work. Higher scores indicate enjoyment of teamwork, collaboration, and shared goals, typical of Connector, Organizer and Visionary archetypes.",
-  guidanceVsSelfDirection: "Captures how self-directed you are when working. Higher scores indicate independence, initiative, and comfort with minimal supervision, aligning with Explorer, Visionary and Thinker archetypes.",
-  taskFocusDetail: "Reflects thoroughness, precision, and task completion. Higher scores indicate strong attention to quality and finishing work accurately, common in Achiever, Organizer and Thinker archetypes.",
+  "Resilience":
+    "Reflects the capacity to recover from setbacks and maintain progress toward goals under sustained difficulty. Higher scores indicate emotional steadiness and the ability to keep going when things are slow, hard, or frustrating.",
+
+  "Adaptability":
+    "Reflects comfort with change, ambiguity, and shifting expectations. Higher scores indicate ease when plans change unexpectedly and confidence navigating uncertain or unpredictable situations.",
+
+  "Social Confidence":
+    "Reflects comfort and energy in social and group settings, with ease of communication and interpersonal engagement. Higher scores indicate enthusiasm for group interaction and natural confidence around others.",
+
+  "Empathy":
+    "Reflects sensitivity to others' emotional states and consideration for how decisions affect other people. Higher scores indicate a natural ability to sense how others feel and a tendency to factor this into decisions and actions.",
+
+  // WHAT YOU LOVE
+  "Analytical Curiosity":
+    "Reflects a drive to investigate, question, and understand; satisfaction from deep analysis and systematic reasoning. Higher scores indicate enjoyment from researching topics thoroughly and making sense of complex information.",
+
+  "Creative Expression":
+    "Reflects motivation to make or design original work, and the importance of aesthetic quality and personal voice. Higher scores indicate a strong drive to create and genuine satisfaction in how work looks, sounds, or feels.",
+
+  "Helping & Caring":
+    "Reflects intrinsic motivation to support, teach, or improve outcomes for others. Higher scores indicate that helping people develop or overcome challenges is genuinely rewarding, not just incidental to the work.",
+
+  "Entrepreneurial Drive":
+    "Reflects energy from identifying opportunities, initiating action, and leading the building of something new. Higher scores indicate a preference for taking charge, spotting possibilities, and making things happen.",
+
+  "Technical Curiosity":
+    "Reflects interest in how tools, systems, and physical materials work, and motivation from hands-on practical engagement. Higher scores indicate satisfaction from building, fixing, making, or operating things.",
+
+  "Cultural & Global Curiosity":
+    "Reflects interest in diverse cultures, societies, politics, philosophy, history, and global affairs. Higher scores indicate that big questions about how the world works and differs are genuinely engaging and energising.",
+
+  "Data Curiosity":
+    "Reflects intrinsic interest in working with numbers, data, records, and information systems. Higher scores indicate satisfaction from organising and making sense of information, and comfort spending significant time with data.",
+
+  // WHAT MATTERS
+  "Purpose & Impact":
+    "Reflects the need for work to contribute to something meaningful beyond personal achievement, through lasting significance, systemic contribution, or being part of something larger. Distinct from Helping and Caring, which measures person-to-person altruistic motivation. Higher scores indicate that work without lasting significance or systemic contribution is difficult to sustain.",
+
+  "Autonomy":
+    "Reflects the need for freedom and self-determination in how work is approached. Higher scores indicate discomfort with close direction or micromanagement, and a strong preference for owning how things get done.",
+
+  "Belonging":
+    "Reflects the need for meaningful connection, inclusion, and team identity. Higher scores indicate that feeling genuinely part of a group or community is an important source of motivation and wellbeing.",
+
+  "Achievement":
+    "Reflects the drive for success, recognition, and high performance. Higher scores indicate strong motivation from being seen to excel, from visible achievement, and from financial reward as a marker of success.",
+
+  "Security":
+    "Reflects preference for career stability, predictable income, and low occupational risk. Higher scores indicate that knowing the career chosen is stable and unlikely to change drastically matters a great deal.",
+
+  "Mastery":
+    "Reflects the drive to develop deep expertise and the intrinsic satisfaction of sustained, deliberate pursuit of excellence. Higher scores indicate that getting better over time is a stronger motivator than external recognition.",
+
+  // HOW YOU WORK BEST
+  "Structure":
+    "Reflects preference for clear processes, organised environments, and well-defined procedures. Higher scores indicate that having a clear plan and knowing exactly what is expected enables consistently better performance.",
+
+  "Collaboration":
+    "Reflects preference for working with others, and motivation and productivity gains from shared goals and team dynamics. Higher scores indicate that working closely with a team produces better results than working alone.",
+
+  "Independence":
+    "Reflects preference for working alone and comfort with self-directed tasks requiring sustained individual effort. Higher scores indicate significantly higher productivity when working independently with minimal interruption.",
+
+  "Precision":
+    "Reflects attention to accuracy, detail, and quality, and thoroughness in completing tasks to a high standard. Higher scores indicate that noticing errors, checking work carefully, and producing accurate outputs come naturally.",
+
+  "Pace":
+    "Reflects comfort with and preference for fast-paced, high-intensity, dynamic environments. Higher scores indicate that pressure, urgency, and a busy workload are energising rather than draining.",
+
+  "Variety":
+    "Reflects preference for diverse tasks, varied responsibilities, and changing environments. Higher scores indicate that doing the same type of work day after day would make it very difficult to stay engaged and motivated.",
+
 };
 
 export default SUBDIMENSION_DEFINITIONS;
-

@@ -1,70 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&display=swap');
+
 /* ========================================
-   ResultsComponent.css
+   ResultsComponent.css - Geist Font Edition
    ======================================== */
+
+html:has(#results-root),
+body:has(#results-root),
+#root:has(#results-root) {
+  background: #f0f5ff;
+}
 
 #results-root {
   width: 100%;
-  padding: 40px 0;
+  min-height: 100vh;
+  margin-top: calc(-1 * var(--account-navbar-height, 56px));
+  padding: calc(var(--account-navbar-height, 56px) + 48px) 24px 60px;
   color: #222;
-  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   line-height: 1.6;
+  background: linear-gradient(180deg, #f0f5ff 0%, #f8fafc 100%);
+  display: flex;
+  flex-direction: column;
 }
 
 .results-container {
   width: 100%;
-  max-width: 1100px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0;
 }
 
 .section-intro {
   text-align: center;
+  margin-bottom: 32px;
 }
 
+/* Faded divider - gradient fade on both edges */
 .section-divider {
   height: 1px;
-  width: 80%;
-  max-width: 700px;
-  margin: 40px auto;
-  background: rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 600px;
+  margin: 28px auto 0;
+  background: linear-gradient(90deg, transparent 0%, #d1dbe8 50%, transparent 100%);
+  border: none;
 }
 
-h1 {
-  font-size: 2.2rem;
+#results-root h1 {
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 700;
-  color: #2f80ed;
-  margin-bottom: 0.5rem;
+  color: #2f6fed;
+  margin: 0 0 14px;
+  letter-spacing: -0.02em;
 }
 
-h2 {
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #2f80ed;
-  margin-bottom: 0.8rem;
-}
-
-h3 {
+#results-root .results-cta h2,
+#results-root .analysis-box__header h2 {
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: #2f6fed;
+  margin: 0 0 14px;
+  letter-spacing: -0.01em;
 }
 
-p {
+#results-root h3 {
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+#results-root p {
   margin-bottom: 1rem;
-  color: #333;
+  color: #4b5c6b;
+  line-height: 1.7;
 }
 
 .one-liner {
   max-width: 800px;
-  margin: 0.5rem auto 1rem auto;
-  font-size: 1.05rem;
+  margin: 0 auto;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #4b5c6b;
+  text-align: left;
 }
 
-.section {
+.one-liner strong {
+  color: #1f2a37;
+}
+
+#results-root .section {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 50px;
+  margin-bottom: 0;
 }
 
 .section-card {
@@ -72,34 +103,33 @@ p {
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   padding: 32px;
-  max-width: 1000px;
+  max-width: 900px;
   width: 100%;
-  transition: all 0.3s ease;
 }
 
 .section-card--full {
-  max-width: 1000px;
+  max-width: 900px;
 }
 
 .card-chart {
   width: 100%;
-  margin-top: 24px;
+  margin-top: 20px;
 }
 
 .results-cta {
   text-align: center;
-  max-width: 800px;
-  margin: 60px auto;
+  max-width: 700px;
+  margin: 40px auto;
 }
 
 .results-cta h2 {
-  color: #2f80ed;
+  color: #2f6fed;
   margin-bottom: 1rem;
 }
 
 .results-cta p {
-  color: #444;
-  font-size: 1.05rem;
+  color: #4b5c6b;
+  font-size: 1rem;
   margin-bottom: 2rem;
 }
 
@@ -134,59 +164,176 @@ p {
   transform: translate(-50%, -50%);
   font-weight: 600;
   font-size: 1rem;
-  color: #2f80ed;
+  color: #2f6fed;
 }
+
+/* ========================================
+   Accordions - Clean minimal style
+   ======================================== */
+
+.results-accordion-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.accordion-section {
+  margin-bottom: 0;
+}
+
+.accordion-card {
+  background: #ffffff;
+  border: 1px solid #e7edf5;
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(15, 22, 61, 0.04);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.accordion-card:hover {
+  border-color: #d1dbe8;
+}
+
+.accordion-card.is-open {
+  box-shadow: 0 8px 24px rgba(15, 22, 61, 0.08);
+  border-color: rgba(47, 111, 237, 0.2);
+}
+
+.accordion-toggle {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.accordion-toggle:hover {
+  background: #f8fafc;
+}
+
+.accordion-toggle__title {
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  text-align: left;
+  color: #2f6fed;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Simple grey chevron - NO background circle */
+.accordion-toggle__icon {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #7a8fa8;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  transition: transform 0.25s ease;
+}
+
+.accordion-toggle__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.accordion-card.is-open .accordion-toggle__icon {
+  transform: rotate(180deg);
+}
+
+.accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s ease;
+}
+
+.accordion-panel.is-open {
+  grid-template-rows: 1fr;
+}
+
+.accordion-panel__inner {
+  overflow: hidden;
+  padding: 0 24px;
+}
+
+.accordion-panel.is-open .accordion-panel__inner {
+  padding: 0 24px 24px;
+}
+
+/* ========================================
+   Analysis Box / Tabs
+   ======================================== */
 
 .analysis-box {
   background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid #e7edf5;
   border-radius: 16px;
-  padding: 32px;
-  margin: 24px auto 60px auto;
+  padding: 24px;
+  margin: 20px auto 40px auto;
   max-width: 900px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(15, 22, 61, 0.04);
 }
 
 .analysis-footer {
-  margin-top: 32px;
+  margin-top: 24px;
   text-align: center;
 }
 
 .analysis-box .markdown-content {
-  font-size: 1rem;
-  line-height: 1.65;
-  color: #222;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #4b5c6b;
+}
+
+.analysis-box .markdown-content strong {
+  color: #1f2a37;
 }
 
 .analysis-box .markdown-content h1 {
   font-size: 1.5rem;
   margin-bottom: 0.75rem;
-  color: #2f80ed;
+  color: #2f6fed;
 }
 
 .analysis-box .markdown-content h2 {
-  font-size: 1.25rem;
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
-  color: #2f80ed;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 0.65rem;
+  color: #2f6fed;
+  letter-spacing: -0.01em;
 }
 
 .analysis-box .markdown-content h3 {
   font-size: 1.05rem;
   margin-top: 1rem;
   margin-bottom: 0.35rem;
-  color: #2f80ed;
+  color: #2f6fed;
 }
 
 .analysis-box .markdown-content ol,
 .analysis-box .markdown-content ul {
-  padding-left: 1.8rem;
+  padding-left: 1.5rem;
   margin-bottom: 0.6rem;
 }
 
 .analysis-box .markdown-content li {
   margin-bottom: 0.35rem;
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
 .analysis-box .markdown-content p {
@@ -198,266 +345,407 @@ p {
 }
 
 .analysis-box__header {
-  padding: 28px 32px 18px;
-  border-bottom: 1px solid #e7eef8;
-  background: linear-gradient(180deg, #fcfeff 0%, #f9fbfe 100%);
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #eef3f9;
+  background: #f8fafc;
+  border-radius: 16px 16px 0 0;
 }
 
 .analysis-box__header h2 {
-  margin: 0 0 8px;
-  color: #2f80ed;
+  margin: 0 0 6px;
+  color: #2f6fed;
 }
 
 .analysis-box__header p {
   margin: 0;
-  color: #5f7087;
+  color: #5b6f87;
+  font-size: 0.9rem;
 }
 
 .analysis-box__body {
-  padding: 32px;
+  padding: 24px;
 }
 
 .analysis-box--tabbed {
-  max-width: 1080px;
+  max-width: 900px;
   padding: 0;
   overflow: hidden;
 }
 
 .analysis-tabs-layout {
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-columns: 178px minmax(0, 1fr);
   gap: 0;
   align-items: start;
 }
 
 .analysis-tabs-sidebar {
-  border-right: 1px solid #e7eef8;
-  background: #fbfdff;
-  padding: 18px 16px;
+  border-right: 1px solid #eef3f9;
+  background: #f8fafc;
+  padding: 18px 12px;
   min-height: 100%;
 }
 
 .analysis-tabs-sidebar__title {
-  font-size: 0.82rem;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #7b8aa0;
+  letter-spacing: 0.06em;
+  color: #7a8fa8;
   margin-bottom: 10px;
 }
 
 .analysis-tabs-sidebar__list {
-  display: grid;
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .analysis-tab-button {
   width: 100%;
-  border: 1px solid #e6edf8;
-  background: #fff;
-  border-radius: 14px;
-  padding: 12px 14px;
   text-align: left;
-  font-weight: 700;
-  color: #17355d;
+  padding: 8px 11px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #4b5c6b;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .analysis-tab-button:hover {
-  border-color: #cfe0ff;
-  transform: translateY(-1px);
+  background: #eef3f9;
 }
 
 .analysis-tab-button.is-active {
-  border-color: #2f80ed;
-  background: #f7fbff;
-  box-shadow: 0 6px 18px rgba(47, 128, 237, 0.12);
+  background: #fff;
+  border-color: #2f6fed;
+  color: #2f6fed;
+  font-weight: 600;
 }
 
 .analysis-tabs-panel {
-  padding: 32px;
+  padding: 18px 24px 24px;
   min-width: 0;
 }
 
+
+/* ========================================
+   Boxed result cards inside analysis
+   ======================================== */
+
+.analysis-box .markdown-content .cdna-card-list {
+  list-style: none;
+  counter-reset: cdna-card-counter;
+  margin: 0;
+  padding: 0;
+}
+
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item {
+  counter-increment: cdna-card-counter;
+  position: relative;
+  margin: 0 0 14px;
+  padding: 20px 26px 20px 58px;
+  border-radius: 18px;
+  border: 1px solid #e7edf5;
+  background: #f8fafc;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item:last-child {
+  margin-bottom: 0;
+}
+
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item::before {
+  content: counter(cdna-card-counter) '.';
+  position: absolute;
+  top: 15px;
+  left: 28px;
+  color: #2f6fed;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item::marker {
+  content: '';
+}
+
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item > strong:first-child {
+  display: inline;
+  margin: 0;
+  color: #14233c;
+  font-weight: 700;
+  font-size: 0.96rem;
+  letter-spacing: -0.01em;
+}
+
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item {
+  color: #4b5c6b;
+  line-height: 1.62;
+}
+
+
+/* ========================================
+   Signal Badge (Standout/Strong) - Clean pill
+   ======================================== */
+
 .analysis-box .markdown-content .cdna-signal-item {
   position: relative;
-  padding-right: 182px;
-  min-height: 46px;
+  padding-right: 26px;
+  min-height: 36px;
 }
 
 .analysis-box .markdown-content .cdna-item-rail {
-  position: absolute;
-  top: 0.02rem;
-  right: 0;
-  width: 164px;
+  float: right;
+  position: relative;
+  top: auto;
+  right: auto;
+  width: 138px;
+  margin: 0 0 10px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-}
-
-.analysis-box .markdown-content .cdna-item-signal {
-  width: 112px;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 6px 8px;
-  border-radius: 18px;
-  background: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
-  border: 1px solid #d7e6fb;
-  box-shadow: 0 2px 8px rgba(47, 128, 237, 0.08);
-}
-
-.analysis-box .markdown-content .cdna-item-signal-label {
-  display: block;
-  font-size: 0.69rem;
-  font-weight: 700;
-  line-height: 1.1;
-  color: #2f80ed;
-  white-space: nowrap;
-  text-align: center;
-}
-
-.analysis-box .markdown-content .cdna-item-signal-blocks {
-  display: inline-flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 2px;
-}
-
-.analysis-box .markdown-content .cdna-item-signal-block {
-  width: 7px;
-  height: 8px;
-  border-radius: 2px;
-  background: #d6e2f2;
-}
-
-.analysis-box .markdown-content .cdna-item-signal-block:nth-child(2) {
-  height: 10px;
-}
-
-.analysis-box .markdown-content .cdna-item-signal-block:nth-child(3) {
-  height: 12px;
-}
-
-.analysis-box .markdown-content .cdna-item-signal-block:nth-child(4) {
-  height: 14px;
-}
-
-.analysis-box .markdown-content .cdna-item-signal-block.is-filled {
-  background: #2f80ed;
-}
-
-.analysis-box .markdown-content .cdna-item-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: 10px;
 }
 
-
-.analysis-box .markdown-content .cdna-item-action {
-  width: 48px;
-  height: 48px;
+.cdna-item-signal,
+.analysis-box .markdown-content .cdna-item-signal {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  background: #eef5ff;
   border-radius: 999px;
-  border: 1px solid #d9e4f5;
-  background: #ffffff;
+  border: none;
+  box-shadow: none;
+}
+
+.cdna-item-signal-label,
+.analysis-box .markdown-content .cdna-item-signal-label {
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #2f6fed;
+  white-space: nowrap;
+}
+
+.cdna-item-signal-blocks,
+.analysis-box .markdown-content .cdna-item-signal-blocks {
+  display: flex;
+  gap: 2px;
+}
+
+.cdna-item-signal-block,
+.analysis-box .markdown-content .cdna-item-signal-block {
+  width: 5px;
+  height: 11px;
+  border-radius: 2px;
+  background: #d1dbe8;
+}
+
+.cdna-item-signal-block.is-filled,
+.analysis-box .markdown-content .cdna-item-signal-block.is-filled {
+  background: #2f6fed;
+}
+
+/* Match badge tooltip for Career Worlds / Career Pathways tabs. Mirrors Discover More. */
+#results-root .cdna-item-signal--has-tooltip,
+#results-root .analysis-box .markdown-content .cdna-item-signal--has-tooltip {
+  position: relative;
+  cursor: help;
+  outline: none;
+}
+
+#results-root .cdna-item-signal--has-tooltip:focus-visible,
+#results-root .analysis-box .markdown-content .cdna-item-signal--has-tooltip:focus-visible {
+  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.18);
+}
+
+#results-root .cdna-signal-tooltip,
+#results-root .analysis-box .markdown-content .cdna-signal-tooltip {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  width: min(380px, 86vw);
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity 0.14s ease, transform 0.14s ease, visibility 0.14s ease;
+  background: rgba(17,17,17,0.94);
+  color: #fff;
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+  text-align: left;
+  white-space: normal;
+}
+
+#results-root .cdna-signal-tooltip::after,
+#results-root .analysis-box .markdown-content .cdna-signal-tooltip::after {
+  content: '';
+  position: absolute;
+  right: 28px;
+  bottom: 100%;
+  border: 7px solid transparent;
+  border-bottom-color: rgba(17,17,17,0.94);
+}
+
+#results-root .cdna-signal-tooltip__headline,
+#results-root .analysis-box .markdown-content .cdna-signal-tooltip__headline {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1.35;
+  margin-bottom: 5px;
+}
+
+#results-root .cdna-signal-tooltip__body,
+#results-root .analysis-box .markdown-content .cdna-signal-tooltip__body {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 400;
+  line-height: 1.45;
+  opacity: 0.92;
+}
+
+#results-root .cdna-item-signal--has-tooltip:hover .cdna-signal-tooltip,
+#results-root .cdna-item-signal--has-tooltip:focus .cdna-signal-tooltip,
+#results-root .cdna-item-signal--has-tooltip:focus-within .cdna-signal-tooltip,
+#results-root .analysis-box .markdown-content .cdna-item-signal--has-tooltip:hover .cdna-signal-tooltip,
+#results-root .analysis-box .markdown-content .cdna-item-signal--has-tooltip:focus .cdna-signal-tooltip,
+#results-root .analysis-box .markdown-content .cdna-item-signal--has-tooltip:focus-within .cdna-signal-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+  #results-root .cdna-signal-tooltip,
+  #results-root .analysis-box .markdown-content .cdna-signal-tooltip {
+    right: auto;
+    left: 0;
+  }
+
+  #results-root .cdna-signal-tooltip::after,
+  #results-root .analysis-box .markdown-content .cdna-signal-tooltip::after {
+    right: auto;
+    left: 28px;
+  }
+}
+
+
+/* ========================================
+   Feedback Buttons (Like/Dislike) - Clean circles
+   ======================================== */
+
+.cdna-item-actions,
+.analysis-box .markdown-content .cdna-item-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.cdna-item-action,
+.analysis-box .markdown-content .cdna-item-action {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid #d7e0ec;
+  background: #fff;
+  color: #7a8fa8;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.18s ease;
-  box-shadow: 0 4px 12px rgba(20, 42, 74, 0.08);
-  position: relative;
-  overflow: visible;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  box-shadow: none;
 }
 
+.cdna-item-action:hover,
 .analysis-box .markdown-content .cdna-item-action:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 5px 14px rgba(20, 42, 74, 0.12);
+  background: #f5f8fc;
+  border-color: #d1d5db;
+  color: #4b5c6b;
 }
 
-.analysis-box .markdown-content .cdna-item-action:focus-visible {
-  outline: 2px solid #2f80ed;
-  outline-offset: 2px;
+.cdna-item-action:active,
+.analysis-box .markdown-content .cdna-item-action:active {
+  transform: scale(0.95);
 }
 
+.cdna-item-action-icon,
 .analysis-box .markdown-content .cdna-item-action-icon {
-  font-size: 1.32rem;
-  line-height: 1;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.analysis-box .markdown-content .cdna-item-action--dislike .cdna-item-action-icon {
-  font-size: 1.12rem;
-  transform: translateY(1px);
+.cdna-item-action-icon svg,
+.analysis-box .markdown-content .cdna-item-action-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
-.analysis-box .markdown-content .cdna-item-action--like.is-active {
-  color: #d7266d;
-  border-color: rgba(215, 38, 109, 0.28);
-  background: rgba(215, 38, 109, 0.1);
-}
-
+.cdna-item-action--like:hover,
 .analysis-box .markdown-content .cdna-item-action--like:hover {
-  border-color: rgba(215, 38, 109, 0.22);
+  border-color: #0f9d58;
+  background: #f0faf4;
+  color: #0f7a4e;
 }
 
-.analysis-box .markdown-content .cdna-item-action--dislike.is-active {
-  color: #51627f;
-  border-color: rgba(81, 98, 127, 0.3);
-  background: rgba(81, 98, 127, 0.1);
+.cdna-item-action--like.is-active,
+.analysis-box .markdown-content .cdna-item-action--like.is-active {
+  color: #ffffff;
+  border-color: #0f9d58;
+  background: #0f9d58;
 }
 
+.cdna-item-action--dislike:hover,
 .analysis-box .markdown-content .cdna-item-action--dislike:hover {
-  border-color: rgba(81, 98, 127, 0.22);
+  border-color: #fca5a5;
+  background: #fef8f8;
+  color: #dc2626;
 }
 
-.analysis-box .markdown-content .cdna-item-action::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: 50%;
-  top: calc(100% + 8px);
-  transform: translateX(-50%) translateY(-2px);
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: #17355d;
-  color: #fff;
-  font-size: 0.74rem;
-  font-weight: 700;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.16s ease, transform 0.16s ease;
-  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.18);
-  z-index: 5;
-}
-
-.analysis-box .markdown-content .cdna-item-action:hover::after,
-.analysis-box .markdown-content .cdna-item-action:focus-visible::after {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
+.cdna-item-action--dislike.is-active,
+.analysis-box .markdown-content .cdna-item-action--dislike.is-active {
+  color: #ffffff;
+  border-color: #dc2626;
+  background: #dc2626;
 }
 
 .selection-discover-wrap {
   display: flex;
   justify-content: center;
-  margin-top: 22px;
+  margin-top: 20px;
   margin-bottom: 10px;
 }
 
 .selection-discover-btn {
-  border: 1px solid #d7e6fb;
-  background: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
-  color: #2f80ed;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #2f6fed;
   border-radius: 999px;
-  padding: 12px 22px;
-  font-weight: 700;
-  font-size: 1rem;
+  padding: 10px 20px;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(47, 128, 237, 0.12);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.selection-discover-btn:hover {
+  background: #f5f8fc;
+  border-color: #d1d5db;
 }
 
 .analysis-footer .btn,
@@ -474,8 +762,29 @@ p {
 }
 
 .bottom-spacer {
-  height: 80px;
+  height: 0;
 }
+
+.results-cta--inside {
+  max-width: none;
+  margin: 12px 0 0;
+  text-align: left;
+}
+
+/* Match the other accordion bodies: left-aligned, standard body rhythm. */
+.results-cta--inside p {
+  line-height: 1.62;
+  color: #4b5c6b;
+}
+
+.results-cta--inside .results-actions {
+  justify-content: center;
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+
 
 @media (max-width: 920px) {
   .analysis-tabs-layout {
@@ -484,37 +793,1893 @@ p {
 
   .analysis-tabs-sidebar {
     border-right: none;
-    border-bottom: 1px solid #e7eef8;
+    border-bottom: 1px solid #eef3f9;
   }
 
   .analysis-tabs-sidebar__list {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    display: grid;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .analysis-tab-button {
+    flex: 1 1 auto;
+    text-align: center;
+    padding: 8px 12px;
+    font-size: 0.85rem;
   }
 
   .analysis-box .markdown-content .cdna-signal-item {
     padding-right: 0;
   }
 
-  .analysis-box .markdown-content .cdna-item-rail {
-    position: static;
-    width: auto;
-    margin-top: 8px;
-    align-items: flex-start;
+  .analysis-box .markdown-content .cdna-card-list > li.cdna-card-item {
+    padding: 20px 16px 18px 52px;
   }
 
-  .analysis-box .markdown-content .cdna-item-signal {
-    width: 112px;
+  .analysis-box .markdown-content .cdna-card-list > li.cdna-card-item::before {
+    top: 21px;
+    left: 18px;
   }
 
-  .analysis-box .markdown-content .cdna-item-actions {
-    justify-content: flex-start;
-  }
 
   .analysis-tabs-panel,
   .analysis-box__body,
   .analysis-box__header {
-    padding-left: 24px;
-    padding-right: 24px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
+}
+
+@media (max-width: 768px) {
+  #results-root {
+    padding: calc(var(--account-navbar-height, 56px) + 36px) 18px 40px;
+  }
+
+  .results-container {
+    padding: 0;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+  }
+
+  /* Tighter line-height (the phone paragraphs were too loose) throughout the
+     results, and a left-aligned intro so the narrow column reads calmly. */
+  #results-root p {
+    line-height: 1.5;
+  }
+
+  .one-liner {
+    font-size: 1rem;
+    line-height: 1.5;
+    text-align: left;
+    max-width: none;
+  }
+
+  .section-intro {
+    margin-bottom: 26px;
+  }
+
+  .section-divider {
+    margin-top: 24px;
+  }
+
+  /* More separation between the accordion cards and a touch more padding
+     inside them, so the four sections feel less packed. */
+  .results-accordion-wrap {
+    gap: 14px;
+  }
+
+  .accordion-toggle {
+    font-size: 0.98rem;
+    padding: 14px 18px;
+    line-height: 1.2;
+  }
+
+  /* the 24px chevron was the real height floor — shrink it on phone */
+  .accordion-toggle__icon {
+    width: 18px;
+    height: 18px;
+  }
+  .accordion-toggle__icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .accordion-panel__inner,
+  .accordion-panel.is-open .accordion-panel__inner {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  /* padding-bottom ONLY on the open panel — putting it on the collapsed inner
+     broke the grid-collapse and left empty space under the title. */
+  .accordion-panel.is-open .accordion-panel__inner {
+    padding-bottom: 20px;
+  }
+}
+
+
+/* ========================================
+   Analysis result card layout
+   ======================================== */
+
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  column-gap: 12px;
+  align-items: start;
+  padding: 22px 28px;
+  color: #34495f;
+  font-size: 0.96rem;
+  overflow: hidden;
+}
+
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item::before {
+  position: static;
+  grid-column: 1;
+  grid-row: 1;
+  align-self: start;
+  margin: 0;
+  padding: 0;
+  line-height: 1.62;
+}
+
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item > .cdna-item-content {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  line-height: 1.62;
+}
+
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item > .cdna-item-content > strong:first-child {
+  display: inline;
+  margin: 0;
+  color: #14233c;
+  font-weight: 700;
+  font-size: 0.96rem;
+  letter-spacing: -0.01em;
+}
+
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item p {
+  display: inline;
+  margin: 0;
+  line-height: inherit;
+}
+
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item .cdna-item-content > .cdna-item-rail {
+  float: right;
+  width: 132px;
+  margin: 0 -2px 8px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item .cdna-item-content::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+@media (max-width: 920px) {
+  .analysis-box .markdown-content .cdna-card-list > li.cdna-card-item {
+    grid-template-columns: 30px minmax(0, 1fr);
+    column-gap: 10px;
+    padding: 20px 18px;
+  }
+
+  .analysis-box .markdown-content .cdna-card-list > li.cdna-card-item .cdna-item-content > .cdna-item-rail {
+    width: 122px;
+    margin: 0 0 8px 12px;
+    gap: 9px;
+  }
+}
+
+@media (max-width: 640px) {
+  .analysis-box .markdown-content .cdna-card-list > li.cdna-card-item .cdna-item-content > .cdna-item-rail {
+    float: none;
+    width: auto;
+    margin: 12px 0 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+}
+
+/* Shared icon treatment for Strengths, Environments, Career Worlds and Career Pathways. */
+.analysis-box .markdown-content .cdna-card-list--with-icons > li.cdna-card-item {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* PHONE: make each analysis item read as a tidy, self-contained card —
+   subtle surface, its own padding, the bold label on its own line above the
+   text, and the zoom/thumb controls in a clean row at the bottom. */
+@media (max-width: 768px) {
+  /* Single column so the text uses the FULL card width; more inner padding so
+     it isn't squeezed against the border. Relative so the thumbs can pin to the
+     top-right corner. */
+  .analysis-box .markdown-content .cdna-card-list > li.cdna-card-item {
+    position: relative !important;
+    display: block !important;
+    padding: 16px 12px !important;
+    border: 1px solid #eaeef4 !important;
+    border-radius: 14px !important;
+    background: #fbfcff !important;
+    margin-bottom: 12px !important;
+    overflow: visible !important;
+  }
+
+  /* Icon sits on its own line at the top; the title and text flow full-width
+     from the left underneath it (same as desktop). */
+  .analysis-box .markdown-content .cdna-card-list--with-icons > li.cdna-card-item .cdna-card-icon {
+    float: none !important;
+    display: flex !important;
+    margin: 0 0 8px 0 !important;
+  }
+
+  .analysis-box .markdown-content .cdna-card-list > li.cdna-card-item > .cdna-item-content {
+    display: block !important;
+  }
+
+  /* Rail now only carries the "Standout match" badge — keep it on the LEFT,
+     above the title (the thumbs are pulled out to the top-right below). */
+  /* TOP ROW: standout badge on the left (if any), thumbs on the right — sits
+     ABOVE the icon + title so nothing overlaps the text. */
+  .analysis-box .markdown-content .cdna-card-list > li.cdna-card-item .cdna-item-content > .cdna-item-rail {
+    float: none !important;
+    width: 100% !important;
+    margin: 0 0 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    position: static !important;
+  }
+  /* Standout badge hugs its content (no full-width stretch). */
+  .analysis-box .markdown-content .cdna-card-list > li.cdna-card-item .cdna-item-signal {
+    display: inline-flex !important;
+    width: auto !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+  /* Like / dislike pushed to the right of the top row. */
+  .analysis-box .markdown-content .cdna-card-list > li.cdna-card-item .cdna-item-actions {
+    margin: 0 0 0 auto !important;
+  }
+
+  /* bold heading on its own line, full width, description beneath */
+  .analysis-box .markdown-content .cdna-card-list > li.cdna-card-item > .cdna-item-content > strong:first-child {
+    display: block !important;
+    margin-bottom: 4px !important;
+  }
+
+  /* Tighter body line-height (was a loose 1.7) and a smaller gap before the
+     blue section headings, so the whole panel has a consistent, premium rhythm. */
+  .analysis-box .markdown-content {
+    line-height: 1.55 !important;
+  }
+  .analysis-box .markdown-content h2 {
+    margin-top: 1.1rem !important;
+  }
+  .analysis-box .markdown-content h3 {
+    margin-top: 0.75rem !important;
+  }
+
+  /* Item cards stretch out toward the panel edges but keep a couple of pixels of
+     gap (full-bleed looked odd). -8px against the 12px panel padding leaves ~4px. */
+  .analysis-box .markdown-content .cdna-card-list {
+    margin-left: -8px !important;
+    margin-right: -8px !important;
+  }
+
+  /* Justify the item body text so a short line doesn't leave a big gap; hyphenate
+     to keep the word-spacing even on the narrow column. */
+  .analysis-box .markdown-content .cdna-card-list > li.cdna-card-item {
+    text-align: left !important;
+    -webkit-hyphens: auto !important;
+    hyphens: auto !important;
+  }
+}
+
+.analysis-box .markdown-content .cdna-card-list--with-icons > li.cdna-card-item::before {
+  content: none;
+}
+
+.analysis-box .markdown-content .cdna-card-list--with-icons > li.cdna-card-item .cdna-card-icon {
+  float: left;
+  margin: 2px 12px 4px 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 13px;
+  background: #eef5ff;
+  color: #2f6fed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.analysis-box .markdown-content .cdna-card-list--with-icons > li.cdna-card-item .cdna-card-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.analysis-box .markdown-content .cdna-card-list--with-icons > li.cdna-card-item > .cdna-item-content {
+  grid-column: 1;
+}
+
+@media (max-width: 920px) {
+  .analysis-box .markdown-content .cdna-card-list--with-icons > li.cdna-card-item {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .analysis-box .markdown-content .cdna-card-list--with-icons > li.cdna-card-item .cdna-card-icon {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Body-level tooltip used by analysis match badges and like/dislike controls. */
+#results-root .cdna-item-action[data-tooltip],
+#results-root .cdna-item-signal[data-tooltip] {
+  position: relative;
+}
+
+#results-root .cdna-item-action[data-tooltip]::before,
+#results-root .cdna-item-action[data-tooltip]::after,
+#results-root .cdna-item-signal[data-tooltip]::before,
+#results-root .cdna-item-signal[data-tooltip]::after {
+  content: none;
+  display: none;
+}
+
+.cdna-feedback-tooltip {
+  position: fixed;
+  z-index: 10000;
+  pointer-events: none;
+  background: #ffffff;
+  color: #1f2a37;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 11px 13px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+  width: max-content;
+  max-width: min(360px, calc(100vw - 24px));
+  text-align: left;
+  font: 13px/1.45 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  opacity: 0;
+  transition: opacity 120ms ease;
+  white-space: normal;
+}
+
+.cdna-feedback-tooltip__headline {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #0f172a;
+  margin-bottom: 3px;
+}
+
+.cdna-feedback-tooltip__body {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #45566b;
+}
+
+/* ========================================
+   Staged analysis loader
+   ======================================== */
+
+.analysis-loader--staged {
+  padding: 34px 18px 38px;
+  text-align: center;
+}
+
+.staged-loader-orb {
+  position: relative;
+  width: 82px;
+  height: 82px;
+  margin: 0 auto 22px;
+}
+
+.staged-loader-orb__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 8px solid #e5eefc;
+  border-top-color: #2f6fed;
+  animation: cdna-loader-spin 1.05s linear infinite;
+}
+
+.staged-loader-orb__dot {
+  position: absolute;
+  inset: 25px;
+  border-radius: 999px;
+  background: #2f6fed;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32), 0 4px 14px rgba(47, 111, 237, 0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.staged-loader-orb__logo-wrap {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.staged-loader-orb__logo {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: block;
+  transform: translateZ(0);
+}
+
+.staged-loader-orb__logo-sheen {
+  position: absolute;
+  left: 1px;
+  right: 1px;
+  top: -115%;
+  height: 75%;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 18%,
+    rgba(255, 255, 255, 0.72) 50%,
+    rgba(255, 255, 255, 0.12) 82%,
+    transparent 100%
+  );
+  filter: blur(0.2px);
+  opacity: 0.78;
+  mix-blend-mode: screen;
+  animation: cdna-logo-sand-pass 1.85s ease-in-out infinite;
+}
+
+.staged-loader-content {
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.staged-loader-eyebrow {
+  margin: 8px 0 0 !important;
+  color: #10294a !important;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  animation: cdna-loader-status-in 220ms ease both;
+}
+
+.staged-loader-title {
+  margin: 0 !important;
+  color: #2f6fed !important;
+  font-size: 1.02rem !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+}
+
+.staged-loader-text {
+  margin: 12px auto 0 !important;
+  color: #6f84a0 !important;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.staged-loader-progress-dots {
+  display: inline-flex;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 16px;
+}
+
+.staged-loader-progress-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #d1dbe8;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.staged-loader-progress-dot.is-active {
+  background: #2f6fed;
+  transform: scale(1.12);
+}
+
+@keyframes cdna-loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cdna-loader-status-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cdna-logo-sand-pass {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.75;
+  }
+  58% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(290%);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .staged-loader-orb__logo-sheen {
+    animation: none;
+    opacity: 0.35;
+    transform: translateY(95%);
+  }
+}
+
+@media (max-width: 640px) {
+  .analysis-loader--staged {
+    padding: 28px 8px 32px;
+  }
+}
+
+/* ========================================
+   v12: desktop layout refinement for analysis section
+   - Moderately wider results canvas on desktop
+   - Softer analysis container to avoid frame-inside-frame effect
+   - Narrower sidebar so report text has more room
+   ======================================== */
+
+@media (min-width: 921px) {
+  .results-container,
+  .results-accordion-wrap,
+  .section-card,
+  .section-card--full {
+    max-width: 1020px;
+  }
+
+  .one-liner {
+    max-width: 900px;
+  }
+
+  .analysis-box {
+    max-width: 100%;
+  }
+
+  .analysis-box--tabbed {
+    max-width: none;
+    margin: 8px 0 4px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .analysis-tabs-layout {
+    grid-template-columns: 165px minmax(0, 1fr);
+    background: transparent;
+  }
+
+  .analysis-tabs-sidebar {
+    padding: 16px 12px 16px 0;
+    background: transparent;
+    border-right: 1px solid #edf2f8;
+  }
+
+  .analysis-tabs-sidebar__title {
+    margin-bottom: 10px;
+    color: #8a9bb0;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: none;
+  }
+
+  .analysis-tabs-sidebar__list {
+    gap: 6px;
+  }
+
+  .analysis-tab-button {
+    padding: 10px 12px;
+    font-size: 0.93rem;
+    border-radius: 12px;
+  }
+
+  .analysis-tab-button.is-active {
+    background: #ffffff;
+    border-color: rgba(47, 111, 237, 0.65);
+    box-shadow: 0 1px 4px rgba(47, 111, 237, 0.08);
+  }
+
+  .analysis-tabs-panel {
+    padding: 14px 0 10px 28px;
+  }
+}
+
+
+/* Thinner analysis sidebar tabs */
+.analysis-tabs-layout {
+  grid-template-columns: 158px minmax(0, 1fr) !important;
+}
+
+.analysis-tabs-sidebar {
+   padding: 4px 10px 14px !important;
+}
+
+.analysis-tabs-sidebar__title {
+  font-size: 0.66rem !important;
+  margin-bottom: 8px !important;
+}
+
+.analysis-tabs-sidebar__list {
+  gap: 2px !important;
+}
+
+.analysis-tab-button {
+  padding: 7px 10px !important;
+  border-radius: 9px !important;
+  font-size: 0.83rem !important;
+  font-weight: 550 !important;
+  line-height: 1.22 !important;
+  min-height: 34px !important;
+}
+
+.analysis-tab-button.is-active {
+  font-weight: 560 !important;
+  box-shadow: none !important;
+}
+
+
+/* v13: restore readable analysis sidebar menu */
+.analysis-tabs-layout {
+  grid-template-columns: 172px minmax(0, 1fr) !important;
+}
+
+.analysis-tabs-sidebar {
+  padding: 8px 12px 16px 0 !important;
+}
+
+.analysis-tabs-sidebar__list {
+  gap: 5px !important;
+}
+
+.analysis-tab-button {
+  padding: 9px 12px !important;
+  border-radius: 11px !important;
+  font-size: 0.9rem !important;
+  font-weight: 560 !important;
+  line-height: 1.25 !important;
+  min-height: 38px !important;
+}
+
+.analysis-tab-button.is-active {
+  font-weight: 600 !important;
+}
+
+/* v15: keep AI Advisor Beta badge separated from the tab label */
+.analysis-tab-button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+}
+
+.analysis-tab-button__label {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.analysis-tab-beta-badge {
+  flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-left: 8px !important;
+  padding: 2px 6px !important;
+  border-radius: 999px !important;
+  background: #eef5ff !important;
+  color: #2f6fed !important;
+  border: 1px solid #d7e6ff !important;
+  font-size: 0.62rem !important;
+  font-weight: 650 !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0.01em !important;
+  white-space: nowrap !important;
+}
+
+.analysis-tab-button.is-active .analysis-tab-beta-badge {
+  background: #2f6fed !important;
+  color: #ffffff !important;
+  border-color: #2f6fed !important;
+}
+
+/* Gentle right-nudge that hints the tab strip can be swiped/scrolled. */
+@keyframes tabSwipeHint {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .analysis-tabs-sidebar::after { animation: none !important; }
+}
+
+/* PHONE: move the analysis tab menu to the TOP as a horizontal scroll strip so
+   the content gets the full width (side tabs squeeze it to a sliver). Placed
+   last + !important so it beats the earlier `!important` two-column rules. */
+@media (max-width: 768px) {
+  /* App-style horizontal tab bar on top: single scrollable row with an
+     underline for the active section. minmax(0,1fr) + min-width:0 keep it from
+     stretching the column past the card (which was clipping the content). */
+  .analysis-tabs-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .analysis-tabs-sidebar {
+    position: relative !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e6edf5 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Right-edge fade + chevron: the standard "more to swipe" cue. */
+  .analysis-tabs-sidebar::after {
+    content: '\203A';
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 1px !important;
+    width: 56px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    padding-right: 8px !important;
+    font-size: 1.4rem !important;
+    font-weight: 800 !important;
+    color: #2f6fed !important;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff 52%) !important;
+    pointer-events: none !important;
+    opacity: 1;
+    transition: opacity 160ms ease;
+    animation: tabSwipeHint 1.5s ease-in-out infinite;
+  }
+
+  /* Scrolled to the end (or nothing to scroll): drop the fade/chevron. */
+  .analysis-tabs-sidebar.is-scroll-end::after {
+    opacity: 0 !important;
+    animation: none !important;
+  }
+
+  .analysis-tabs-sidebar__title {
+    display: none !important; /* save vertical space on phone */
+  }
+
+  .analysis-tabs-sidebar__list {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 2px !important;
+    min-width: 0 !important;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .analysis-tabs-sidebar__list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .analysis-tab-button {
+    flex: 0 0 auto !important;
+    width: auto !important; /* base sets width:100% which hid all but the first */
+    white-space: nowrap !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    padding: 15px 13px !important;
+    min-height: 0 !important;
+    color: #64748b !important;
+    font-weight: 550 !important;
+    box-shadow: none !important;
+  }
+
+  .analysis-tab-button.is-active {
+    background: transparent !important;
+    border-bottom: 2px solid #2f6fed !important;
+    color: #2f6fed !important;
+    font-weight: 650 !important;
+    box-shadow: none !important;
+  }
+
+  .analysis-tab-button__label {
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  .analysis-tabs-panel {
+    padding: 16px 8px 14px !important;
+    min-width: 0 !important;
+  }
+}
+
+/* ========================================
+   Results page footer - minimal app footer
+   ======================================== */
+
+.results-footer {
+  width: 100%;
+  max-width: 760px;
+  margin: auto auto 0;
+  padding: 70px 20px 0;
+  text-align: center;
+  border-top: 1px solid rgba(47, 111, 237, 0.10);
+}
+
+.results-footer-inner {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.results-footer-links {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+  color: rgba(75, 95, 118, 0.62);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.results-footer-links a {
+  color: #2f6fed;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.results-footer-links a:hover,
+.results-footer-links a:focus-visible {
+  text-decoration: underline;
+}
+
+#results-root .results-footer-copy {
+  margin: 0;
+  color: rgba(75, 95, 118, 0.58);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .results-footer {
+    margin: auto auto 0;
+    padding-top: 56px;
+  }
+}
+
+
+/* ========================================
+   Results usefulness feedback card
+   ======================================== */
+.results-feedback-wrap {
+  margin-top: 18px;
+}
+
+.results-feedback-card {
+  width: 100%;
+  max-width: 1020px;
+  margin: 0 auto 26px;
+  padding: 24px;
+  border: 1px solid rgba(47, 111, 237, 0.14);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+  box-shadow: 0 8px 24px rgba(15, 22, 61, 0.06);
+}
+
+.results-feedback-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.results-feedback-card__eyebrow {
+  display: block;
+  margin-bottom: 4px;
+  color: #7a8fa8;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+#results-root .results-feedback-card h2 {
+  margin: 0 0 6px;
+  color: #2f6fed;
+  font-size: 1.18rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+#results-root .results-feedback-card p {
+  max-width: 690px;
+  margin: 0;
+  color: #53677f;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.results-feedback-card__save-state {
+  flex: 0 0 auto;
+  min-width: 72px;
+  color: #7a8fa8;
+  font-size: 0.78rem;
+  font-weight: 650;
+  text-align: right;
+}
+
+.results-feedback-card__save-state--saved {
+  color: #13864b;
+}
+
+.results-feedback-card__save-state--error {
+  color: #dc2626;
+}
+
+.results-feedback-rating {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.results-feedback-rating__button {
+  min-height: 66px;
+  border: 1px solid #d8e4f2;
+  border-radius: 15px;
+  background: #ffffff;
+  color: #53677f;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.results-feedback-rating__button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(47, 111, 237, 0.34);
+  background: #f7fbff;
+}
+
+.results-feedback-rating__button.is-active {
+  border-color: #2f6fed;
+  background: #eef5ff;
+  color: #2f6fed;
+  box-shadow: 0 8px 18px rgba(47, 111, 237, 0.12);
+}
+
+.results-feedback-rating__number {
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.results-feedback-rating__label {
+  font-size: 0.72rem;
+  font-weight: 650;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.results-feedback-comment-wrap {
+  margin-top: 18px;
+}
+
+.results-feedback-comment-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: #10294a;
+  font-size: 0.86rem;
+  font-weight: 650;
+}
+
+.results-feedback-comment-label span {
+  color: #8a9bb0;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.results-feedback-comment {
+  width: 100%;
+  resize: vertical;
+  min-height: 96px;
+  border: 1px solid #d8e4f2;
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: #1f2a37;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.results-feedback-comment:focus {
+  border-color: #2f6fed;
+  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.1);
+}
+
+@media (max-width: 768px) {
+  .results-feedback-card {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+
+  .results-feedback-card__header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .results-feedback-card__save-state {
+    min-width: 0;
+    text-align: left;
+  }
+
+  .results-feedback-rating {
+    grid-template-columns: 1fr;
+  }
+
+  .results-feedback-rating__button {
+    min-height: 48px;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 0 14px;
+  }
+}
+
+/* v17: quiet inline usefulness feedback, shown only inside the Career Worlds tab. */
+.results-feedback-wrap {
+  margin-top: 0;
+}
+
+.results-feedback-card {
+  width: 100%;
+  max-width: none;
+  margin: 26px 0 0;
+  padding: 18px 0 0;
+  border: 0;
+  border-top: 1px solid rgba(122, 143, 168, 0.16);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.results-feedback-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.results-feedback-card__eyebrow {
+  display: none;
+}
+
+#results-root .results-feedback-card h2 {
+  margin: 0;
+  color: rgba(83, 103, 127, 0.72);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+#results-root .results-feedback-card p {
+  display: none;
+}
+
+.results-feedback-card__save-state {
+  min-width: 0;
+  color: rgba(122, 143, 168, 0.62);
+  font-size: 0.72rem;
+  font-weight: 550;
+  text-align: right;
+}
+
+.results-feedback-card__save-state--saved {
+  color: rgba(19, 134, 75, 0.62);
+}
+
+.results-feedback-card__save-state--error {
+  color: rgba(220, 38, 38, 0.66);
+}
+
+.results-feedback-rating {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.results-feedback-rating__button {
+  min-height: 0;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(122, 143, 168, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+  color: rgba(83, 103, 127, 0.72);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.results-feedback-rating__button:hover {
+  transform: none;
+  border-color: rgba(47, 111, 237, 0.32);
+  background: rgba(255, 255, 255, 0.58);
+  color: rgba(47, 111, 237, 0.76);
+}
+
+.results-feedback-rating__button.is-active {
+  border-color: rgba(47, 111, 237, 0.62);
+  background: rgba(238, 245, 255, 0.72);
+  color: #2f6fed;
+  box-shadow: none;
+}
+
+.results-feedback-rating__number {
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.results-feedback-rating__label {
+  display: none;
+}
+
+.results-feedback-comment-wrap {
+  margin-top: 10px;
+}
+
+.results-feedback-comment-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+  color: rgba(83, 103, 127, 0.72);
+  font-size: 0.78rem;
+  font-weight: 550;
+}
+
+.results-feedback-comment-label span {
+  color: rgba(122, 143, 168, 0.62);
+  font-size: 0.72rem;
+  font-weight: 500;
+}
+
+.results-feedback-comment {
+  width: 100%;
+  resize: vertical;
+  min-height: 74px;
+  border: 1px solid rgba(122, 143, 168, 0.18);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.34);
+  color: rgba(31, 42, 55, 0.86);
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.results-feedback-comment::placeholder {
+  color: rgba(122, 143, 168, 0.58);
+}
+
+.results-feedback-comment:focus {
+  border-color: rgba(47, 111, 237, 0.42);
+  box-shadow: none;
+  background: rgba(255, 255, 255, 0.52);
+}
+
+@media (max-width: 768px) {
+  .results-feedback-card {
+    padding: 16px 0 0;
+    border-radius: 0;
+  }
+
+  .results-feedback-card__header {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .results-feedback-card__save-state {
+    text-align: right;
+  }
+
+  .results-feedback-rating {
+    display: flex;
+  }
+
+  .results-feedback-rating__button {
+    width: 34px;
+    height: 34px;
+    flex-direction: row;
+    justify-content: center;
+    padding: 0;
+  }
+}
+
+
+/* v18: refined usefulness feedback strip - centered, labelled pills, no stray zero. */
+.results-feedback-card {
+  width: 100%;
+  max-width: 680px;
+  margin: 30px auto 0;
+  padding: 22px 0 0;
+  border: 0;
+  border-top: 1px solid rgba(122, 143, 168, 0.14);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+}
+
+.results-feedback-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.results-feedback-card__title-block {
+  text-align: center;
+}
+
+.results-feedback-card__eyebrow {
+  display: block;
+  margin: 0 0 4px;
+  color: rgba(47, 111, 237, 0.72);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+#results-root .results-feedback-card h2 {
+  margin: 0;
+  color: #2f6fed;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.results-feedback-rating {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.results-feedback-rating__button {
+  width: auto;
+  min-width: 104px;
+  height: 38px;
+  min-height: 0;
+  padding: 0 15px;
+  border: 1px solid rgba(122, 143, 168, 0.20);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.34);
+  color: rgba(83, 103, 127, 0.78);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  box-shadow: none;
+}
+
+.results-feedback-rating__button:hover {
+  transform: none;
+  border-color: rgba(47, 111, 237, 0.38);
+  background: rgba(238, 245, 255, 0.55);
+  color: #2f6fed;
+}
+
+.results-feedback-rating__button.is-active {
+  border-color: rgba(47, 111, 237, 0.72);
+  background: rgba(238, 245, 255, 0.88);
+  color: #2f6fed;
+  box-shadow: 0 6px 16px rgba(47, 111, 237, 0.08);
+}
+
+.results-feedback-rating__number {
+  display: none;
+}
+
+.results-feedback-rating__label {
+  display: inline;
+  font-size: 0.78rem;
+  font-weight: 650;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.results-feedback-comment-wrap {
+  max-width: 560px;
+  margin: 12px auto 0;
+  text-align: left;
+}
+
+.results-feedback-comment-label {
+  color: rgba(83, 103, 127, 0.72);
+}
+
+.results-feedback-card__save-state {
+  position: absolute;
+  right: 0;
+  color: rgba(122, 143, 168, 0.62);
+  font-size: 0.72rem;
+  font-weight: 550;
+}
+
+.results-feedback-card {
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .results-feedback-card {
+    max-width: 100%;
+    padding-top: 18px;
+  }
+
+  .results-feedback-card__header {
+    justify-content: center;
+  }
+
+  .results-feedback-card__save-state {
+    position: static;
+  }
+
+  .results-feedback-rating {
+    gap: 7px;
+  }
+
+  .results-feedback-rating__button {
+    min-width: 0;
+    height: 36px;
+    padding: 0 12px;
+    flex: 0 1 auto;
+  }
+}
+
+
+/* v19: final feedback strip cleanup - no status text, no label, manual comment save. */
+.results-feedback-card__eyebrow,
+.results-feedback-card__save-state,
+.results-feedback-comment-label,
+.results-feedback-rating__number {
+  display: none !important;
+}
+
+.results-feedback-card {
+  max-width: 680px;
+  margin: 30px auto 0;
+  padding: 22px 0 0;
+  border-top: 1px solid rgba(122, 143, 168, 0.14);
+  text-align: center;
+}
+
+.results-feedback-card__header {
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+#results-root .results-feedback-card h2 {
+  color: #2f6fed;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.results-feedback-rating {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.results-feedback-rating__button {
+  width: auto;
+  min-width: 104px;
+  height: 38px;
+  min-height: 0;
+  padding: 0 15px;
+  border-radius: 999px;
+}
+
+.results-feedback-rating__label {
+  display: inline !important;
+  font-size: 0.78rem;
+  font-weight: 650;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.results-feedback-comment-wrap {
+  max-width: 560px;
+  margin: 12px auto 0;
+  text-align: left;
+}
+
+.results-feedback-comment {
+  min-height: 74px;
+}
+
+.results-feedback-comment-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.results-feedback-comment-done {
+  border: 1px solid rgba(47, 111, 237, 0.28);
+  background: rgba(238, 245, 255, 0.72);
+  color: #2f6fed;
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.results-feedback-comment-done:hover:not(:disabled) {
+  border-color: rgba(47, 111, 237, 0.48);
+  background: rgba(238, 245, 255, 0.95);
+}
+
+.results-feedback-comment-done:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+@media (max-width: 768px) {
+  /* Two-per-row grid so all four options fit evenly instead of a 3 + 1 wrap. */
+  .results-feedback-rating {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .results-feedback-rating__button {
+    width: 100%;
+    min-width: 0;
+    height: 40px;
+    padding: 0 10px;
+  }
+}
+
+
+/* ========================================
+   Analysis quality gate modal
+   ======================================== */
+.analysis-quality-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.42);
+  backdrop-filter: blur(4px);
+}
+
+.analysis-quality-modal {
+  position: relative;
+  width: min(520px, calc(100vw - 32px));
+  border-radius: 24px;
+  border: 1px solid rgba(47, 111, 237, 0.14);
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+  padding: 34px 32px 28px;
+  text-align: center;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.analysis-quality-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 999px;
+  background: #f3f6fb;
+  color: #6b7788;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.analysis-quality-modal-close:hover {
+  background: #eaf1fb;
+}
+
+.analysis-quality-modal-icon {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 16px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef5ff;
+  color: #2f6fed;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+#results-root .analysis-quality-modal h3,
+.analysis-quality-modal h3 {
+  margin: 0 0 12px;
+  color: #2f6fed;
+  font-size: 1.22rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+#results-root .analysis-quality-modal p,
+.analysis-quality-modal p {
+  margin: 0 auto 24px;
+  max-width: 430px;
+  color: #4b5c6b;
+  font-size: 0.94rem;
+  line-height: 1.65;
+}
+
+.analysis-quality-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.analysis-quality-modal-secondary,
+.analysis-quality-modal-primary {
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+}
+
+.analysis-quality-modal-secondary {
+  border: 1px solid #d8e4f2;
+  background: #ffffff;
+  color: #53677f;
+}
+
+.analysis-quality-modal-secondary:hover {
+  background: #f5f8fc;
+}
+
+.analysis-quality-modal-primary {
+  border: 1px solid #2f6fed;
+  background: #2f6fed;
+  color: #ffffff;
+  box-shadow: 0 8px 22px rgba(47, 111, 237, 0.2);
+}
+
+.analysis-quality-modal-primary:hover {
+  background: #245fd4;
+  border-color: #245fd4;
+}
+
+.analysis-quality-modal-secondary:active,
+.analysis-quality-modal-primary:active {
+  transform: translateY(1px);
+}
+
+@media (max-width: 520px) {
+  .analysis-quality-modal {
+    padding: 30px 22px 24px;
+    border-radius: 20px;
+  }
+
+  .analysis-quality-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .analysis-quality-modal-secondary,
+  .analysis-quality-modal-primary {
+    width: 100%;
+  }
+}
+
+
+/* PHONE: justify all body/reading text throughout the results section — Summary,
+   Strengths, Environments, Career Worlds/Pathways, Discover More, and the other
+   result accordions (traits, clarity). Narrow phone columns read better justified.
+   Scoped to #results-root only, and non-!important so inline-centred utility text
+   (e.g. the "Tap a bar" chart hints) stays centred. */
+@media (max-width: 768px) {
+  #results-root p,
+  #results-root li {
+    text-align: left;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
+}
+
+/* Close (×) button for the bar-chart explainer tooltips (clarity, archetype,
+   trait). Shown only on touch devices, where the tooltip opens on tap and needs
+   a clear, reliable way to dismiss it. The tooltip itself stays
+   pointer-events:none; only this button is tappable, and its click bubbles to the
+   tooltip's own close handler. */
+.cdna-tooltip-close {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 26px;
+  height: 26px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.06);
+  color: #64748b;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .cdna-tooltip-close {
+    display: inline-flex;
+  }
+  .cdna-clarity-tooltip,
+  .cdna-archetype-tooltip,
+  .cdna-subdim-tooltip {
+    padding-right: 32px !important;
+  }
+}
+
+/* ---- Guided journey: simple next-step link (right-aligned) ---- */
+#results-root .cw-lower-worlds { margin-top: 18px; }
+#results-root .cw-lower-worlds__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #e7edf5;
+  background: #f7fafd;
+  color: #2f6fed;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+#results-root .cw-lower-worlds__toggle:hover { background: #eef5ff; border-color: #d1dbe8; }
+#results-root .cw-lower-worlds__chev { display: inline-flex; transition: transform 0.15s ease; }
+#results-root .cw-lower-worlds__chev.is-open { transform: rotate(180deg); }
+#results-root .cw-lower-worlds__intro { margin: 14px 0 10px; color: #4b5c6b; font-size: 0.95rem; line-height: 1.55; }
+
+#results-root .results-nextstep {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid #e7edf5;
+}
+
+#results-root .results-nextstep__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  color: #2f6fed;
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 4px 2px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+#results-root .results-nextstep__link:hover {
+  color: #245fd4;
+}
+
+#results-root .results-nextstep__label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #7a8fa8;
+}
+
+#results-root .results-nextstep__link:hover .results-nextstep__label {
+  color: #245fd4;
+}
+
+#results-root .results-nextstep__link svg {
+  transition: transform 0.15s ease;
+}
+
+#results-root .results-nextstep__link:hover svg {
+  transform: translateX(2px);
+}
+
+/* Strengths: "Powered by your traits" pill row inside each strength card. */
+.analysis-box .markdown-content .cdna-strength-traits { margin: 8px 0 10px; }
+.analysis-box .markdown-content .cdna-strength-traits__label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #2f6fed;
+  margin-bottom: 6px;
+}
+.analysis-box .markdown-content .cdna-strength-traits__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.analysis-box .markdown-content .cdna-strength-trait {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 3px 11px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  line-height: 1.4;
+}
+.cdna-strength-trait__star { font-size: 0.62rem; }
+.analysis-box .markdown-content .cdna-strength-trait--standout { background:#e2f2e4; border-color:#c6e6ca; color:#245e27; }
+.analysis-box .markdown-content .cdna-strength-trait--standout .cdna-strength-trait__star { color:#2f7d32; }
+.analysis-box .markdown-content .cdna-strength-trait--strong { background:#faeeda; border-color:#f0dcb6; color:#78520e; }
+.analysis-box .markdown-content .cdna-strength-trait--strong .cdna-strength-trait__star { color:#9a6a12; }
+.analysis-box .markdown-content .cdna-strength-trait--good { background:#e6f1fb; border-color:#c4ddf4; color:#123f6e; }
+.analysis-box .markdown-content .cdna-strength-trait--good .cdna-strength-trait__star { color:#185fa5; }
+.analysis-box .markdown-content .cdna-strength-trait--lower { background:#f0f2f5; border-color:#e0e4e9; color:#6f757e; opacity:0.82; }
+.analysis-box .markdown-content .cdna-strength-trait--lower .cdna-strength-trait__star { color:#868d96; }
+
+/* Inline trait pills embedded in the strength narrative text. */
+.analysis-box .markdown-content .cdna-strength-trait--inline {
+  vertical-align: middle;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0 9px;
+  margin: 0 1px;
+  position: relative;
+  top: -1px;
+}
+.analysis-box .markdown-content .cdna-strength-trait--inline .cdna-strength-trait__star { font-size: 0.58rem; }
+
+/* Strengths: big "Sounds like me / Not me" buttons at the bottom of each card. */
+.analysis-box .markdown-content .cdna-item-actions--bottom {
+  display: flex;
+  gap: 9px;
+  margin-top: 14px;
+  width: 100%;
+}
+.analysis-box .markdown-content .cdna-item-actions--bottom .cdna-item-action {
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1px solid #cdd8ea;
+  background: #ffffff;
+}
+.analysis-box .markdown-content .cdna-item-actions--bottom .cdna-item-action:hover { background: #eef3fb; }
+.analysis-box .markdown-content .cdna-item-actions--bottom .cdna-item-action-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #14233c;
+}
+.analysis-box .markdown-content .cdna-item-actions--bottom .cdna-item-action--like.is-active { background:#e1f5ee; border-color:#9fe1cb; }
+.analysis-box .markdown-content .cdna-item-actions--bottom .cdna-item-action--like.is-active .cdna-item-action-label { color:#0f6e56; }
+.analysis-box .markdown-content .cdna-item-actions--bottom .cdna-item-action--dislike.is-active { background:#fbeaf0; border-color:#f4c0d1; }
+.analysis-box .markdown-content .cdna-item-actions--bottom .cdna-item-action--dislike.is-active .cdna-item-action-label { color:#993556; }
+
+/* Strengths: icon + title on one header row; paragraph starts full-width below. */
+.analysis-box .markdown-content .cdna-strength-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.analysis-box .markdown-content .cdna-strength-header .cdna-card-icon {
+  float: none !important;
+  margin: 0 !important;
+  flex: 0 0 auto;
+}
+.analysis-box .markdown-content .cdna-strength-header > strong:first-child,
+.analysis-box .markdown-content .cdna-strength-header > strong {
+  display: inline;
+}
+
+/* No star on the inline text pills (keep it elsewhere). */
+.analysis-box .markdown-content .cdna-strength-trait--inline .cdna-strength-trait__star { display: none; }
+
+/* Tighten the strength/environment card: less gap under the header, less padding. */
+.analysis-box .markdown-content .cdna-strength-header { margin-bottom: 2px; }
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item--strength {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+/* Strength/environment cards: no extra top gap on the first paragraph after the header. */
+.analysis-box .markdown-content .cdna-card-item--strength .cdna-strength-header + p,
+.analysis-box .markdown-content .cdna-card-item--strength > .cdna-item-content > .cdna-strength-header + p,
+.analysis-box .markdown-content .cdna-card-item--strength p:first-of-type { margin-top: 0; }
+
+/* Kill any top spacing on the paragraph that follows the strength/env header,
+   then add a small, controlled gap. */
+.analysis-box .markdown-content .cdna-strength-header { margin-bottom: 10px; }
+.analysis-box .markdown-content .cdna-strength-header + * { margin-top: 0 !important; }
+
+/* Trait names inline in strength/environment narratives: bold green text, no pill. */
+.analysis-box .markdown-content .cdna-strength-trait-text {
+  font-weight: 700;
+  color: #2f7d32;
 }

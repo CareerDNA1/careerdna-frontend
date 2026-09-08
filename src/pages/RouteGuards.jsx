@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { readProgress } from '../Hooks/useProgress';
 import { useAuth } from '../context/AuthContext';
+import { getMyProfile, isCompleteProfile } from '../utils/profile';
 
 function hasValidStart(p) {
   return !!(p && p.started && p.nonce);
@@ -10,13 +11,73 @@ function hasValidStart(p) {
 export function RequireAuth() {
   const { user, loading } = useAuth();
   const location = useLocation();
+  const userId = user?.id || '';
+  const [profileState, setProfileState] = useState('checking');
+  const completeProfileUserIdRef = useRef('');
 
-  if (loading) {
+  useEffect(() => {
+    let cancelled = false;
+
+    async function checkProfile() {
+      if (loading) return;
+
+      if (!userId) {
+        completeProfileUserIdRef.current = '';
+        setProfileState('signed-out');
+        return;
+      }
+
+      // If we have already confirmed this signed-in user's profile during this
+      // app session, do not flash the whole app back to "Loading..." on token
+      // refresh, tab focus, or Supabase auth state refresh events.
+      if (completeProfileUserIdRef.current === userId) {
+        setProfileState('complete');
+        return;
+      }
+
+      try {
+        setProfileState((prev) => (prev === 'complete' ? prev : 'checking'));
+        const profile = await getMyProfile();
+        if (cancelled) return;
+
+        const complete = isCompleteProfile(profile);
+        if (complete) completeProfileUserIdRef.current = userId;
+        else completeProfileUserIdRef.current = '';
+
+        setProfileState(complete ? 'complete' : 'incomplete');
+      } catch (_) {
+        if (cancelled) return;
+        completeProfileUserIdRef.current = '';
+        setProfileState('incomplete');
+      }
+    }
+
+    checkProfile();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [userId, loading]);
+
+  if (loading || (userId && profileState === 'checking')) {
     return <div style={{ padding: '40px', textAlign: 'center' }}>Loading...</div>;
   }
 
-  if (!user) {
+  if (!userId) {
     return <Navigate to="/login" replace state={{ from: location }} />;
+  }
+
+  if (profileState !== 'complete') {
+    return (
+      <Navigate
+        to="/signup"
+        replace
+        state={{
+          message: 'Please complete your CareerDNA account before continuing.',
+          googleNeedsCompletion: true,
+        }}
+      />
+    );
   }
 
   return <Outlet />;

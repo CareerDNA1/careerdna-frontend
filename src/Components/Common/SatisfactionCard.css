@@ -1,0 +1,142 @@
+/* Discreet, inline satisfaction prompt that matches the app's card styling. */
+.satisfaction-card {
+  margin: 14px 0 0;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: 1px solid #e4ebf5;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.satisfaction-title {
+  font-size: 0.92rem;
+  font-weight: 650;
+  color: #14233c;
+}
+
+.satisfaction-faces {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.satisfaction-face {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px 7px 9px;
+  border: 1px solid #dbe4f1;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #7a8798;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  font-family: inherit;
+}
+.satisfaction-face svg {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+}
+.satisfaction-face-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #53647a;
+}
+
+.satisfaction-face:hover { border-color: #b9cbe6; background: #f4f7fc; }
+
+/* Selected state uses the app's semantic tints (grey / amber / green) so the
+   scale reads at a glance, tinted lightly rather than shouting. */
+.satisfaction-face.is-active { border-width: 1px; }
+.satisfaction-face--sad.is-active {
+  color: #64748b; background: #f1f4f9; border-color: #cbd5e3;
+}
+.satisfaction-face--ok.is-active {
+  color: #c67f16; background: #fdf6e9; border-color: #f0d59a;
+}
+.satisfaction-face--good.is-active {
+  color: #1f9d63; background: #eafaf1; border-color: #b6e6cd;
+}
+.satisfaction-face.is-active .satisfaction-face-label { color: inherit; }
+
+.satisfaction-comment-wrap {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.satisfaction-comment {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  resize: none;
+  min-height: 38px;
+  max-height: 120px;
+  padding: 9px 12px;
+  border: 1px solid #d7e0ee;
+  border-radius: 12px;
+  background: #ffffff;
+  font-size: 0.86rem;
+  line-height: 1.4;
+  color: #14233c;
+  font-family: inherit;
+}
+.satisfaction-comment:focus {
+  outline: none;
+  border-color: #2f6fed;
+  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.12);
+}
+
+.satisfaction-done-btn {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 999px;
+  background: #2f6fed;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.satisfaction-done-btn:hover { background: #2560d8; }
+.satisfaction-done-btn:disabled { opacity: 0.55; cursor: default; }
+
+.satisfaction-error {
+  font-size: 0.8rem;
+  color: #dc2626;
+}
+
+/* Collapsed thank-you */
+.satisfaction-card--done {
+  flex-direction: row;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 16px;
+}
+.satisfaction-done-icon {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: rgba(47, 111, 237, 0.1);
+  color: #2f6fed;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.satisfaction-done-text {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #14233c;
+}
+
+@media (max-width: 600px) {
+  .satisfaction-face { padding: 6px 11px 6px 8px; }
+}

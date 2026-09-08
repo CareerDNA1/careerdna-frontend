@@ -1,8 +1,4 @@
-// pages/LandingPage.js
-// Updated to compose extracted components with scroll target for "Start Your Journey"
-
 import React, { useState } from 'react';
-import '../styles/global.css';  // Import globals if needed
 import Navbar from '../Components/Landing/Navbar';
 import Hero from '../Components/Landing/Hero';
 import WhySection from '../Components/Landing/WhySection';

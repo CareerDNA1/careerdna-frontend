@@ -1,0 +1,122 @@
+.xp-root { display: flex; flex-direction: column; gap: 22px; }
+
+.xp-intro {
+  font-size: 0.9rem;
+  color: #5b6f87;
+  margin: 0 0 2px;
+  line-height: 1.5;
+}
+
+.xp-status {
+  padding: 24px 8px;
+  text-align: center;
+  color: #5b6f87;
+  font-size: 0.92rem;
+}
+.xp-status--error { color: #b4232f; }
+
+.xp-world { display: flex; flex-direction: column; gap: 12px; }
+
+.xp-world__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #e6ecf3;
+  padding-bottom: 8px;
+}
+.xp-world__title {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #0f2740;
+}
+
+.xp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .xp-grid { grid-template-columns: 1fr; }
+}
+
+.xp-card {
+  border: 1px solid #e6ecf3;
+  border-radius: 12px;
+  background: #fff;
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.xp-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.xp-card__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f2740;
+  line-height: 1.3;
+}
+.xp-card__def {
+  margin: 0;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: #45566b;
+  text-align: left;
+  hyphens: auto;
+}
+.xp-card__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+/* Match-strength pill */
+.xp-band {
+  flex: 0 0 auto;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.xp-band.is-standout { background: #d8f5ee; color: #0b7a63; }
+.xp-band.is-strong   { background: #e0f0fb; color: #1a6aa8; }
+.xp-band.is-good     { background: #eef1f6; color: #55637a; }
+.xp-band.is-lower    { background: #f2f4f7; color: #8a97a8; }
+
+/* Pathways tab: per-world list of pathway accordions */
+.xp-plist { display: flex; flex-direction: column; }
+.xp-p { border-top: 1px solid #eef1f6; }
+.xp-p:first-child { border-top: none; }
+.xp-p__toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 12px 2px;
+  text-align: left;
+}
+.xp-p__title { font-weight: 700; color: #0f2740; font-size: 0.92rem; }
+.xp-p__chev { color: #8a97a8; font-weight: 700; font-size: 1.1rem; line-height: 1; }
+.xp-p__body { padding: 0 2px 14px; display: flex; flex-direction: column; gap: 10px; }
+.xp-p__def {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: #45566b;
+  text-align: left;
+  hyphens: auto;
+}
+.xp-p__actions { display: flex; gap: 8px; }

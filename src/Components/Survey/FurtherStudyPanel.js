@@ -1,0 +1,480 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import './FurtherStudyPanel.css';
+import { Info, BookOpen, Compass, UsersThree, GraduationCap, BookmarkSimple } from 'phosphor-react';
+import { fetchFurtherStudy, peekFurtherStudyCache } from '../../utils/fetchFurtherStudy';
+import { OptionDropdown, showSelectionTooltip, hideSelectionTooltip, SignalBadge, PathwayReactionRow, SelectionTitle } from './SelectionInsightExplorer';
+import { getSubjectIcon } from '../../utils/iconMap';
+import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank } from './ResultsFilter';
+import { loadRankingSubjectIndex } from '../../utils/rankings';
+
+// A single study route rendered as an accordion item, mirroring the Pathway
+// Explorer item layout: leading icon, title, and (when open) the like/dislike
+// buttons on the same header line, next to the chevron.
+function RouteItem({ route, open = false, onToggle, reaction = '', onReact, hasRankings = false, rankCount = 0 }) {
+  const Icon = getSubjectIcon(route.title || '');
+  return (
+    <div className={`pathway-role-item ${open ? 'is-open' : ''}`}>
+      <button
+        type="button"
+        className="pathway-role-item__toggle"
+        onClick={onToggle}
+        aria-expanded={open}
+      >
+        <div className="pathway-role-item__topline pathway-role-item__topline--split">
+          <div className="pathway-role-item__title-wrap">
+            {Icon ? <span className="pathway-role-item__icon" aria-hidden="true">{Icon}</span> : null}
+            <span className="fs-title-col">
+              <span className="pathway-role-item__title">{route.title}</span>
+              {Array.isArray(route.leadsTo) && route.leadsTo.length ? (
+                <span className="fs-leadsto">Leads to: {route.leadsTo.join(' \u00b7 ')}</span>
+              ) : null}
+            </span>
+          </div>
+          <div className="pathway-role-item__right">
+            {!open && reaction === 'like' ? (
+              <span className="cdna-saved-mark" aria-label="Saved to favourites" title="Saved to favourites"><BookmarkSimple size={18} weight="fill" aria-hidden="true" /></span>
+            ) : null}
+            <span className="pathway-role-item__chevron">
+              <svg
+                className={`selection-chevron ${open ? 'is-open' : ''}`}
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </span>
+          </div>
+        </div>
+      </button>
+
+      {open ? (
+        <div className="pathway-role-item__body">
+          {(() => {
+            const paras = String(route.description || '')
+              .split(/\n\s*\n/)
+              .map((p) => p.trim())
+              .filter(Boolean);
+            // Degree definitions follow a four-paragraph structure, plus an
+            // optional fifth paragraph with typical UK entry subjects. Label them;
+            // fall back to plain paragraphs if a description has some other shape.
+            const labels = ['What it is', "What you'll study", 'Where it leads', 'Who it suits', 'Typical A-levels & GCSEs'];
+            const icons = [Info, BookOpen, Compass, UsersThree, GraduationCap];
+            // The rankings entry is the final grid cell — a live, clickable button
+            // that sits alongside the description sections (left/right/left/right...).
+            const rankingsCell = !hasRankings ? null : (
+              <button
+                type="button"
+                className="fs-degree-section fs-rank-cell"
+                data-rankings-subject={route.id || ''}
+                data-rankings-title={route.title || ''}
+                key="fs-rank-cell"
+              >
+                <span className="fs-degree-section__label fs-rank-cell__label">
+                  <GraduationCap size={14} weight="bold" aria-hidden="true" />
+                  Explore programmes &amp; rankings
+                </span>
+                <p className="pathway-role-item__summary">
+                  Our 2026 CareerDNA composite ranking of UK universities for {route.title}, built from official
+                  Office for Students data. Browse the subject-specific ranking and open links to each university&rsquo;s programmes.
+                </p>
+                {rankCount > 0 ? (
+                  <span className="fs-rank-cell__live">
+                    <span className="fs-rank-cell__dot" aria-hidden="true" />
+                    {rankCount} live {rankCount === 1 ? 'programme' : 'programmes'} ranked
+                  </span>
+                ) : null}
+                <span className="fs-rank-cell__go">Explore programmes and rankings <span aria-hidden="true">→</span></span>
+              </button>
+            );
+            if (paras.length === 4 || paras.length === 5) {
+              return (
+                <div className="fs-degree-grid">
+                  {paras.map((p, i) => {
+                    const SectionIcon = icons[i];
+                    return (
+                      <div className="fs-degree-section" key={`fs-sec-${i}`}>
+                        <span className="fs-degree-section__label">
+                          <SectionIcon size={14} weight="bold" aria-hidden="true" />
+                          {labels[i]}
+                        </span>
+                        <p className="pathway-role-item__summary">{p}</p>
+                      </div>
+                    );
+                  })}
+                  {rankingsCell}
+                </div>
+              );
+            }
+            return (
+              <>
+                {paras.map((p, i) => (
+                  <p className="pathway-role-item__summary" key={`fs-desc-${i}`}>{p}</p>
+                ))}
+                {rankingsCell ? <div className="fs-degree-grid">{rankingsCell}</div> : null}
+              </>
+            );
+          })()}
+
+          <PathwayReactionRow
+            reaction={reaction}
+            onReact={(next) => { if (onReact) onReact(next); }}
+            label="Degree feedback"
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles = [], archetypes = {}, subdimensions = [], savedReactions = {}, onItemReaction }) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  // Seed from the session cache so re-opening the tab shows instantly (no spinner).
+  const [groups, setGroups] = useState(() => {
+    const cached = peekFurtherStudyCache(likedWorlds, likedPathwayTitles);
+    return cached && Array.isArray(cached.groups) ? cached.groups : null;
+  });
+  const [activeKey, setActiveKey] = useState('');
+  const [rankIndex, setRankIndex] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    loadRankingSubjectIndex().then((idx) => { if (!cancelled) setRankIndex(idx); });
+    return () => { cancelled = true; };
+  }, []);
+  const subjectHasRankings = (r) => {
+    if (!rankIndex || !r) return false;
+    const nt = String(r.title || '').trim().toLowerCase();
+    return !!((r.id && rankIndex.ids.has(r.id)) || (nt && rankIndex.titles.has(nt)));
+  };
+  const subjectRankCount = (r) => {
+    if (!rankIndex || !r) return 0;
+    const nt = String(r.title || '').trim().toLowerCase();
+    return (r.id && rankIndex.countById.get(r.id)) || rankIndex.countByTitle.get(nt) || 0;
+  };
+  const mainRef = useRef(null);
+  const rootRef = useRef(null);
+
+  const handleRouteReact = (route, next) => {
+    const id = route?.id || route?.title;
+    if (!id || typeof onItemReaction !== 'function') return;
+    const current = savedReactions[id] || '';
+    onItemReaction({
+      itemType: 'subject',
+      itemId: id,
+      itemTitle: route.title,
+      reaction: next,
+      remove: current === next,
+    });
+  };
+
+  // Delegated white floating tooltips for the like/dislike buttons, matching the
+  // Career Worlds and Pathway Explorer behaviour (hover, focus, tap-then-close).
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return undefined;
+    const getTarget = (event) => (
+      event.target instanceof Element ? event.target.closest('[data-selection-tooltip="true"]') : null
+    );
+    let suppressUntil = 0;
+    let autoHideTimer = null;
+    const onOver = (event) => {
+      if (Date.now() < suppressUntil) return;
+      const t = getTarget(event);
+      if (t instanceof HTMLElement) showSelectionTooltip(t);
+    };
+    const onOut = (event) => { const t = getTarget(event); if (t instanceof HTMLElement) hideSelectionTooltip(); };
+    const onClick = (event) => {
+      const t = getTarget(event);
+      if (!(t instanceof HTMLElement)) return;
+      suppressUntil = Date.now() + 1600;
+      window.requestAnimationFrame(() => {
+        showSelectionTooltip(t);
+        if (autoHideTimer) clearTimeout(autoHideTimer);
+        autoHideTimer = setTimeout(() => { hideSelectionTooltip(); if (typeof t.blur === 'function') t.blur(); }, 1100);
+      });
+    };
+    root.addEventListener('pointerover', onOver);
+    root.addEventListener('pointerout', onOut);
+    root.addEventListener('focusin', onOver);
+    root.addEventListener('focusout', onOut);
+    root.addEventListener('click', onClick);
+    window.addEventListener('scroll', hideSelectionTooltip, { passive: true });
+    window.addEventListener('resize', hideSelectionTooltip);
+    return () => {
+      root.removeEventListener('pointerover', onOver);
+      root.removeEventListener('pointerout', onOut);
+      root.removeEventListener('focusin', onOver);
+      root.removeEventListener('focusout', onOut);
+      root.removeEventListener('click', onClick);
+      window.removeEventListener('scroll', hideSelectionTooltip);
+      window.removeEventListener('resize', hideSelectionTooltip);
+      if (autoHideTimer) clearTimeout(autoHideTimer);
+      hideSelectionTooltip();
+    };
+  }, []);
+  const hasSelectedRef = useRef(false);
+  // One degree open at a time across both the relevant and other lists.
+  const [openRouteKey, setOpenRouteKey] = useState('');
+  const [studyFilter, setStudyFilter] = useState(emptyFilter());
+  const isDegreeLiked = (r) => savedReactions[r?.id || r?.title] === 'like';
+
+  const likedKey = useMemo(
+    () => [
+      ...likedWorlds.map((p) => p.careerWorldId || p.id || p.title),
+      '::',
+      ...[...likedPathwayTitles].sort(),
+    ].join('|'),
+    [likedWorlds, likedPathwayTitles]
+  );
+
+  // Bring the detail into view when the selected world changes (tab/dropdown),
+  // and close any open degree so each world starts collapsed.
+  useEffect(() => {
+    setOpenRouteKey('');
+    if (hasSelectedRef.current && mainRef.current) {
+      mainRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    hasSelectedRef.current = true;
+  }, [activeKey]);
+
+  // Auto-load whenever the set of liked career worlds changes. Each liked world
+  // returns a consolidated range of degrees.
+  useEffect(() => {
+    if (!likedWorlds.length) {
+      setGroups(null);
+      return undefined;
+    }
+    let cancelled = false;
+    (async () => {
+      // Only show the spinner when there's nothing cached to show yet.
+      const hasCache = !!peekFurtherStudyCache(likedWorlds, likedPathwayTitles);
+      if (!hasCache) setLoading(true);
+      setError('');
+      try {
+        const data = await fetchFurtherStudy({
+          archetypes,
+          subdimensions,
+          likedItems: likedWorlds.map((w) => ({
+            id: w.id,
+            title: w.title,
+            type: 'career_world',
+            careerWorldId: w.careerWorldId || '',
+          })),
+          likedPathwayTitles,
+        });
+        if (cancelled) return;
+        const g = Array.isArray(data?.groups) ? data.groups : [];
+        setGroups(g);
+        setActiveKey((prev) => {
+          const keys = g.map((x) => x.pathwayId || x.pathwayTitle);
+          return keys.includes(prev) ? prev : keys[0] || '';
+        });
+      } catch (err) {
+        if (!cancelled) {
+          setError(err?.message || 'Could not load your study routes right now.');
+          setGroups([]);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [likedKey]);
+
+  if (!likedWorlds.length) {
+    return (
+      <section className="selection-explorer selection-explorer--empty">
+        <div className="selection-explorer__intro selection-explorer__intro--empty">
+          <h2>University</h2>
+          <p className="selection-explorer__empty-message">
+            Like the career worlds you&rsquo;re drawn to in the Career Worlds tab, then come back here to
+            see the university degrees that lead into them.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  const active =
+    (groups || []).find((g) => (g.pathwayId || g.pathwayTitle) === activeKey) || (groups || [])[0];
+  // Selected world pills ordered by match strength (Standout first).
+  const orderedGroups = (groups || []).slice().sort((a, b) => bandRank(b?.signalLabel) - bandRank(a?.signalLabel));
+
+  return (
+    <section className="selection-explorer" ref={rootRef}>
+      <div className="selection-explorer__intro selection-explorer__intro--active">
+        <h2>University</h2>
+        <p className="selection-explorer__intro-text">
+          The university degrees that lead into the career worlds you liked. Pick a career world to see
+          its range of degrees and how well each one fits you. Prefer to earn while you learn? The
+          Training &amp; Work tab shows the apprenticeship and work routes instead.
+        </p>
+      </div>
+
+      {loading ? (
+        <p className="fs-none">Finding your study routes&hellip;</p>
+      ) : error ? (
+        <p className="fs-error">{error}</p>
+      ) : (
+        <div className="selection-explorer__layout selection-explorer__layout--stacked">
+          {/* Desktop / iPad: dropdown selector (the pill tabs below are hidden on
+              larger screens by the shared CSS, so this is what lets you switch). */}
+          <div className="selection-explorer__selector-select-wrap">
+            <OptionDropdown
+              options={orderedGroups.map((g) => ({ key: g.pathwayId || g.pathwayTitle, title: g.pathwayTitle }))}
+              activeKey={active?.pathwayId || active?.pathwayTitle || ''}
+              onSelect={setActiveKey}
+            />
+          </div>
+
+          <div className="selection-explorer__selector-tabs" role="tablist" aria-label="Liked pathways">
+            {orderedGroups.map((g) => {
+              const key = g.pathwayId || g.pathwayTitle;
+              const isActive = key === (active?.pathwayId || active?.pathwayTitle);
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  role="tab"
+                  className={`selection-list-button ${isActive ? 'is-active' : ''}`}
+                  onClick={() => setActiveKey(key)}
+                >
+                  <span className="selection-list-button__title">{g.pathwayTitle}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div ref={mainRef} className="selection-explorer__main selection-explorer__main--full">
+            {active ? (() => {
+              const relevantAll = Array.isArray(active.relevantRoutes) ? active.relevantRoutes : [];
+              const otherAll = Array.isArray(active.otherRoutes)
+                ? active.otherRoutes
+                : (Array.isArray(active.routes) ? active.routes : []);
+              const relevant = applyResultsFilter(relevantAll, studyFilter, { isLiked: isDegreeLiked });
+              const other = applyResultsFilter(otherAll, studyFilter, { isLiked: isDegreeLiked });
+              const hasRelevant = relevant.length > 0;
+              const hasAny = relevant.length + other.length > 0;
+              const hasAnyUnfiltered = relevantAll.length + otherAll.length > 0;
+              const bandWord = active.signalLabel
+                || ((likedWorlds || []).find((w) => String(w?.title || '') === String(active.pathwayTitle || ''))?.signalLabel)
+                || '';
+              const headerLabel = bandWord
+                ? (/match$/i.test(bandWord) ? bandWord : `${bandWord} match`)
+                : '';
+              return (
+                <article className="selection-detail-card">
+                  <div className="selection-definition-card__header">
+                    <SelectionTitle item={{ title: active.pathwayTitle, type: 'career_world' }} />
+                    {headerLabel ? (
+                      <div className="selection-detail-card__signal-wrap"><SignalBadge label={headerLabel} /></div>
+                    ) : null}
+                  </div>
+                  {hasAnyUnfiltered ? (
+                    <div className="selection-explorer__toolbar">
+                      <ResultsFilterBar filter={studyFilter} onChange={setStudyFilter} groups={['favourites']} />
+                    </div>
+                  ) : null}
+
+                  {(() => {
+                    const clustersRaw = Array.isArray(active.pathwayGroups) ? active.pathwayGroups : [];
+                    const renderList = (list) => (
+                      <div className="pathway-role-list">
+                        {list.map((r) => {
+                          const rk = String(r.id || r.title);
+                          return (
+                            <RouteItem
+                              key={rk}
+                              route={r}
+                              open={openRouteKey === rk}
+                              onToggle={() => setOpenRouteKey((prev) => (prev === rk ? '' : rk))}
+                              reaction={savedReactions[r.id || r.title] || ''}
+                              onReact={(next) => handleRouteReact(r, next)}
+                              hasRankings={subjectHasRankings(r)}
+                              rankCount={subjectRankCount(r)}
+                            />
+                          );
+                        })}
+                      </div>
+                    );
+                    if (!hasAnyUnfiltered) {
+                      return <p className="fs-none">No degrees mapped for this world yet.</p>;
+                    }
+                    if (clustersRaw.length) {
+                      // De-duplicate into a single list; tag each degree with the
+                      // liked pathway(s) it leads to. Keeps the list short even when
+                      // many pathways are liked (a shared degree appears once).
+                      const byKey = new Map();
+                      clustersRaw.forEach((g) => {
+                        [...(g.primary || []), ...(g.adjacent || [])].forEach((r) => {
+                          const k = String(r.id || r.title);
+                          if (!byKey.has(k)) byKey.set(k, { ...r, leadsTo: [] });
+                          const entry = byKey.get(k);
+                          if (!entry.leadsTo.includes(g.pathwayTitle)) entry.leadsTo.push(g.pathwayTitle);
+                        });
+                      });
+                      let relevantDeduped = applyResultsFilter(Array.from(byKey.values()), studyFilter, { isLiked: isDegreeLiked });
+                      relevantDeduped.sort((a, b) => (b.leadsTo.length - a.leadsTo.length) || (Number(b.signalPct || 0) - Number(a.signalPct || 0)));
+                      const inRel = new Set(relevantDeduped.map((r) => String(r.id || r.title)));
+                      const otherOnly = other.filter((r) => !inRel.has(String(r.id || r.title)));
+                      if (!relevantDeduped.length && !otherOnly.length) {
+                        return <p className="results-filter-empty">None of your favourites are in this list. Try clearing the filter.</p>;
+                      }
+                      return (
+                        <>
+                          {relevantDeduped.length ? (
+                            <>
+                              <div className="fs-detail-heading">Degrees for the pathways you liked</div>
+                              {renderList(relevantDeduped)}
+                            </>
+                          ) : null}
+                          {otherOnly.length ? (
+                            <>
+                              <div className="fs-detail-heading" style={{ marginTop: 28 }}>Other degrees in this career world</div>
+                              {renderList(otherOnly)}
+                            </>
+                          ) : null}
+                        </>
+                      );
+                    }
+                    // Fallback (backend not yet sending pathwayGroups): show the
+                    // liked-pathway degrees first, then the rest of the world.
+                    if (!hasAny) {
+                      return <p className="results-filter-empty">None of your favourites are in this list. Try clearing the filter.</p>;
+                    }
+                    return (
+                      <>
+                        {relevant.length ? (
+                          <>
+                            <div className="fs-detail-heading">Most relevant to the pathways you liked</div>
+                            {renderList(relevant)}
+                            {other.length ? (
+                              <div className="fs-detail-heading" style={{ marginTop: 28 }}>Other degrees in this career world</div>
+                            ) : null}
+                          </>
+                        ) : (
+                          <div className="fs-detail-heading">Degrees you could study for this career world</div>
+                        )}
+                        {other.length ? renderList(other) : null}
+                      </>
+                    );
+                  })()}
+                </article>
+              );
+            })() : null}
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}

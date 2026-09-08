@@ -1,25 +1,27 @@
-import React, { useEffect, useId, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import './WhySection.css';
-import { Compass, BarChart2, Brain } from 'lucide-react';
+import {
+  Compass,
+  BarChart2,
+  Brain,
+  Users,
+  Briefcase,
+  TrendingDown,
+  Cpu,
+  Star,
+  GraduationCap,
+} from 'lucide-react';
 
-/** Reusable evidence line with accessible hover/focus tooltip */
-function Evidence({ children, source }) {
-  const [open, setOpen] = useState(false);
-  const tid = useId();
+function Evidence({ children, source, icon: Icon }) {
   return (
-    <div
-      className="stat-quote evidence"
-      aria-describedby={tid}
-      tabIndex={0}
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-      onFocus={() => setOpen(true)}
-      onBlur={() => setOpen(false)}
-    >
-      {children}
-      <span id={tid} role="tooltip" className={`evidence-tooltip ${open ? 'show' : ''}`}>
-        {source}
-      </span>
+    <div className="stat-quote evidence">
+      {Icon && (
+        <span className="evidence-icon" aria-hidden="true">
+          <Icon size={20} strokeWidth={1.8} />
+        </span>
+      )}
+      <span className="evidence-text">{children}</span>
+      <span className="evidence-source">Source: {source}</span>
     </div>
   );
 }
@@ -27,115 +29,225 @@ function Evidence({ children, source }) {
 export default function WhySection() {
   const sectionRef = useRef(null);
 
-  // Desktop-only, re-triggering reveal on scroll (respects reduced motion)
   useEffect(() => {
     const el = sectionRef.current;
-    if (!el) return;
+    if (!el) return undefined;
 
-    const isDesktop = window.matchMedia('(min-width: 981px)').matches;
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!isDesktop || prefersReduced) return;
+    // was 768px, which excluded phones entirely — they got everything dumped in at
+    // once with no reveal. A phone is a pure vertical scroll, which is the ideal
+    // case for the card-by-card reveal, so the gate now only skips tiny screens.
+    const canAnimate = window.matchMedia('(min-width: 360px)').matches;
 
+    if (!canAnimate || prefersReduced) {
+      el.classList.add('story-visible');
+      return undefined;
+    }
+
+    const columns = Array.from(el.querySelectorAll('.why-col'));
     el.classList.add('anim-ready');
 
-    const targets = [
-      ...el.querySelectorAll('.reveal-card'),
-      ...el.querySelectorAll('.reveal-evidence'),
-    ];
+    const cleanups = columns.map((column) => {
+      const lockEvidenceOpen = () => {
+        column.classList.add('evidence-revealed');
+      };
 
-    // Stagger: cards left→right, then evidence left→right
-    const cards = Array.from(el.querySelectorAll('.reveal-card'));
-    const evidences = Array.from(el.querySelectorAll('.reveal-evidence'));
-    cards.forEach((c, i) => c.style.setProperty('--delay', `${i * 160}ms`));
-    evidences.forEach((c, i) => c.style.setProperty('--delay', `${260 + i * 160}ms`));
+      column.addEventListener('mouseenter', lockEvidenceOpen);
+      column.addEventListener('focusin', lockEvidenceOpen);
+      column.addEventListener('click', lockEvidenceOpen);
 
-    // Reveal any targets already in view at mount
-    const revealIfVisible = (node) => {
-      const r = node.getBoundingClientRect();
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-      if (r.top < vh * 0.98 && r.bottom > 0) node.classList.add('is-revealed');
+      return () => {
+        column.removeEventListener('mouseenter', lockEvidenceOpen);
+        column.removeEventListener('focusin', lockEvidenceOpen);
+        column.removeEventListener('click', lockEvidenceOpen);
+      };
+    });
+
+    let revealTimers = [];
+    const clearRevealTimers = () => {
+      revealTimers.forEach(window.clearTimeout);
+      revealTimers = [];
     };
-    targets.forEach(revealIfVisible);
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add('is-revealed');
-          else entry.target.classList.remove('is-revealed');
-        });
+    // STAGE 1 — section scrolls into view: the three narrative cards appear.
+    const reveal = () => {
+      el.classList.add('story-visible');
+    };
+
+    const reset = () => {
+      el.classList.remove('story-visible');
+      // scrolled fully away — clear stage 2 and re-arm it so it can replay
+      resetEvidence();
+      observeEvidence();
+      statCards.forEach((c) => c.classList.remove('q-in'));
+      columns.forEach((c) => c.classList.remove('q-in'));
+      observeCards();
+    };
+
+    /* STAGE 2 — the evidence.
+       Anchored to each column's OWN .reveal-evidence element rather than to the
+       section. Anchoring to the section did not work: by the time you have scrolled
+       to the cards the section is already deep in view, so both stages fired at once.
+       The collapsed evidence block sits directly beneath its card, so watching it
+       means the reveal happens exactly when that part of the page arrives. */
+    const evidenceAnchors = columns
+      .map((column) => column.querySelector('.reveal-evidence'))
+      .filter(Boolean);
+
+    const resetEvidence = () => {
+      clearRevealTimers();
+      columns.forEach((column) => column.classList.remove('evidence-revealed'));
+    };
+
+    let hasRevealed = false;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          hasRevealed = true;
+          window.requestAnimationFrame(reveal);
+        } else if (!hasRevealed) {
+          reset();
+        }
       },
-      { threshold: 0.01, rootMargin: '0px' }
+      {
+        threshold: 0.18,
+        rootMargin: '0px 0px -10% 0px',
+      }
     );
 
-    targets.forEach((n) => io.observe(n));
-    return () => io.disconnect();
+    observer.observe(el);
+
+    /* Reveal is ONE-WAY per anchor: once revealed we stop observing it. The evidence
+       expands when revealed, which moves the anchor — if we kept observing, that
+       movement could immediately un-trigger it and cause a flicker loop.
+       rootMargin bottom -45% = fires when the anchor rises above the 55% line.
+       Increase the 45% to make the evidence appear later, decrease for earlier. */
+    const evidenceObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const column = entry.target.closest('.why-col');
+          if (column) column.classList.add('evidence-revealed');
+          evidenceObserver.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0,
+        rootMargin: '0px 0px -45% 0px',
+      }
+    );
+
+    const observeEvidence = () => evidenceAnchors.forEach((a) => evidenceObserver.observe(a));
+    observeEvidence();
+
+    /* Per-CARD reveal, used by the 2-column layout (768-1180) where the evidence
+       column is permanently open. Each .stat-quote fades up as it reaches the
+       viewport, so the right-hand column fills in one card at a time as you scroll.
+       One-way, same reasoning as above. Harmless at >=1181: the class is added but
+       no CSS listens for it there, so the column-level reveal is unaffected. */
+    // narrative cards included so phones can reveal both card types as they scroll
+    const statCards = Array.from(el.querySelectorAll('.stat-quote, .why-card'));
+
+    const cardObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('q-in');
+          // mark the parent column too, so the phone timeline dot can fade in
+          // without needing CSS :has() (which would hide dots if unsupported)
+          if (entry.target.classList.contains('why-card')) {
+            const col = entry.target.closest('.why-col');
+            if (col) col.classList.add('q-in');
+          }
+          cardObserver.unobserve(entry.target);
+        });
+      },
+      {
+        threshold: 0,
+        rootMargin: '0px 0px -18% 0px',
+      }
+    );
+
+    const observeCards = () => statCards.forEach((c) => cardObserver.observe(c));
+    observeCards();
+
+    return () => {
+      observer.disconnect();
+      evidenceObserver.disconnect();
+      cardObserver.disconnect();
+      clearRevealTimers();
+      cleanups.forEach((cleanup) => cleanup());
+    };
   }, []);
 
   return (
     <section ref={sectionRef} id="why" className="why-section section" aria-labelledby="why-heading">
       <div className="section-inner">
-        <h2 id="why-heading">Why CareerDNA Matters</h2>
+        <h2 id="why-heading">
+          <span className="why-heading-dark">Why </span>
+          <span className="why-heading-blue">CareerDNA</span>
+          <span className="why-heading-dark"> matters</span>
+          <span className="why-heading-line" aria-hidden="true" />
+        </h2>
 
-        {/* NEW: three columns; each column = card + its evidence */}
         <div className="why-grid">
-          {/* Column 1 */}
           <div className="why-col">
             <article className="why-card reveal-card" aria-labelledby="why-problem">
-              <div className="icon-circle" aria-hidden="true"><Compass size={20} /></div>
+              <div className="icon-circle" aria-hidden="true"><Compass size={21} strokeWidth={1.8} /></div>
               <h3 id="why-problem" className="why-title">The early-choice trap</h3>
               <p className="why-body">
-                Students are asked to make life-shaping decisions before they fully understand themselves. This often leads to choices that don’t fit well, affecting their confidence and career outcomes.
+                Young people are asked to make subject and career choices before they fully understand themselves. The result is often a path that doesn’t fit, a knock to confidence and outcomes that are hard to undo.
               </p>
             </article>
 
             <div className="evidence-col reveal-evidence">
-              <Evidence source="HEPI Student Academic Experience Survey (2023)">
-                <strong>40%</strong> of undergraduates say they would choose a different subject if they could.
+              <Evidence source="HEPI/Advance HE, Student Academic Experience Survey (2024)" icon={Users}>
+                <strong className="stat-big">40%</strong> of undergraduates would make a different higher education choice if deciding again.
               </Evidence>
-              <Evidence source="Institute of Student Employers (2024)">
-                <strong>60%</strong> of graduates say they would switch industry entirely within just three years.
+              <Evidence source="Prospects/Jisc, Early Careers Survey 2024." icon={Briefcase}>
+                <strong className="stat-big">39%</strong> of early-careers respondents said their career plans had changed in the last year.
               </Evidence>
             </div>
           </div>
 
-          {/* Column 2 */}
           <div className="why-col">
             <article className="why-card reveal-card" aria-labelledby="why-market">
-              <div className="icon-circle" aria-hidden="true"><BarChart2 size={20} /></div>
+              <div className="icon-circle" aria-hidden="true"><BarChart2 size={21} strokeWidth={1.8} /></div>
               <h3 id="why-market" className="why-title">The graduate market reality</h3>
               <p className="why-body">
-                Technology, AI and new business models are reshaping early careers. Entry-level roles are fewer and competition is tougher. Employers now prize adaptability, AI literacy and human strengths over narrow technical skills.
+                AI and automation are reshaping entry-level work. There are fewer graduate roles and more competition, and employers increasingly hire for adaptability and human strengths rather than a list of technical skills.
               </p>
             </article>
 
             <div className="evidence-col reveal-evidence">
-              <Evidence source="Financial Times (2025)">
-                Graduate vacancies are at a <strong>five-year low</strong>, and outcomes are stalling.
+              <Evidence source="Institute of Student Employers, Student Recruitment Survey 2025" icon={TrendingDown}>
+                Graduate hiring fell by <strong className="stat-big">8%</strong> year-on-year, while the wider entry-level market declined by <strong className="stat-big">5%</strong>.
               </Evidence>
-              <Evidence source="World Economic Forum (2025)">
-                <strong>30%</strong> of graduate jobs will be disrupted by 2030 as automation absorbs routine tasks once defining
-                entry routes.
+              <Evidence source="World Economic Forum, Future of Jobs Report 2025." icon={Cpu}>
+                Employers expect <strong className="stat-big">39%</strong> of workers’ core skills to change by 2030 as technology reshapes work.
               </Evidence>
             </div>
           </div>
 
-          {/* Column 3 */}
           <div className="why-col">
             <article className="why-card reveal-card" aria-labelledby="why-solution">
-              <div className="icon-circle" aria-hidden="true"><Brain size={20} /></div>
-              <h3 id="why-solution" className="why-title">The solution</h3>
+              <div className="icon-circle" aria-hidden="true"><Brain size={21} strokeWidth={1.8} /></div>
+              <h3 id="why-solution" className="why-title">A smarter way forward</h3>
               <p className="why-body">
-                <span className="brand">CareerDNA</span> helps young people uncover how they think, what motivates them and where they thrive. With these insights, they can make better study and career choices and adapt with confidence as the world of work keeps shifting.
-              </p>
+  Amid endless options and conflicting advice, {' '}
+  <span className="brand">CareerDNA</span> gives young people the clarity,
+  confidence and self-awareness to choose subjects and careers that genuinely fit,
+  and to trust the decision.
+</p>
             </article>
 
+
             <div className="evidence-col reveal-evidence">
-              <Evidence source="Harvard Business Review (2018)">
-                Self-awareness is the <strong>strongest</strong> predictor of career success, ahead of technical skill.
+              <Evidence source="NACE Career Readiness Competencies (2025)" icon={Star}>
+                Career self-development and awareness are recognised as core career readiness competencies.
               </Evidence>
-              <Evidence source="Korn Ferry Institute (2020)">
-                People with higher self-awareness show <strong>20–30%</strong> higher job satisfaction and persistence, boosting
-                long-term career success.
+              <Evidence source="OECD Career Readiness Indicators (2021)" icon={GraduationCap}>
+                Evidence across <strong>8 countries</strong> links teenage career exploration with better adult employment outcomes.
               </Evidence>
             </div>
           </div>

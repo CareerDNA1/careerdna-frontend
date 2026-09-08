@@ -1,122 +1,301 @@
-/* ===== Page ===== */
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&display=swap');
+
+/* ── Page shell ── */
+
 .instp {
-  background: #f6f8fb;
-  padding: 18px 20px 22px;
-  font-family: 'Arial', sans-serif;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100svh;
+  z-index: 20;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  isolation: isolate;
+  padding: 20px clamp(56px, 8vw, 130px) 80px;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(47,128,237,0.09) 0%, transparent 65%),
+    linear-gradient(170deg, #f5f9ff 0%, #ffffff 55%, #f4f8ff 100%);
+  font-family: var(--cdna-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+  color: #071a3d;
+  box-sizing: border-box;
 }
 
-/* FONT SYNC */
-.instp, .instp * { font-family: 'Arial', sans-serif; }
+.instp *, .instp *::before, .instp *::after { box-sizing: border-box; font-family: inherit; }
 
-/* Two-column container */
-.instp-container {
-  max-width: 1360px;
-  margin: 0 auto;
+/* ── Logo: scrolls with page, top-left ──
+   Positioned to match the header logo spot used on the survey/wrapper pages
+   (Header.module.css: top ~8px, left 32px). */
+
+/* Logo sized to mirror the landing navbar (height-based) instead of the old
+   82px width. Desktop: absolute top-left, clamp up to 44px. */
+.instp-logo {
+  position: absolute;
+  top: 16px;
+  left: clamp(28px, 6vw, 56px);
+  height: clamp(32px, 2.3vw, 44px);
+  width: auto;
+  z-index: 5;
+}
+
+/* ── Two-column stage ── */
+
+.instp-stage {
+  position: relative;
+  width: min(100%, 1200px);
+  margin: 134px auto 0; /* clears the fixed top-left logo with room to spare */
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
-  align-items: stretch;
+  grid-template-columns: minmax(0, 1fr) clamp(260px, 24vw, 310px);
+  column-gap: clamp(40px, 5vw, 80px);
+  align-items: start; /* text column sizes the row */
 }
 
-/* Card base */
-.card {
-  --card-border: rgba(17, 24, 39, 0.04);
-  background: #fff;
-  border: 1px solid var(--card-border);
-  border-radius: 20px;
-  box-shadow:
-    0 1px 0 rgba(17,24,39,0.02),
-    0 10px 30px rgba(17,24,39,0.05);
+.instp-copy { min-width: 0; }
+
+/* ── Illustration card ──
+   align-self: stretch makes the card exactly as tall as the text column.
+   No aspect-ratio needed — card height is always locked to the text. */
+
+.instp-visual {
+  align-self: stretch;
+  margin-top: -38px; /* raises the card slightly relative to the text column */
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
 }
 
-/* LEFT content */
-.content-card {
-  padding: 26px 32px;
-  height: 100%;
+.instp-blob {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.content-card h1 {
-  margin: 0 0 28px;
-  color: #2f80ed;
+
+.instp-blob::before, .instp-blob::after { display: none; }
+
+.instp-graphic {
+  width: 90%;
+  height: auto;
+  aspect-ratio: 1024 / 1536; /* reserve space before the image loads (no reflow) */
+  object-fit: contain;
+  display: block;
+  -webkit-mask-image: radial-gradient(circle, #000 30%, transparent 80%);
+  mask-image: radial-gradient(circle, #000 30%, transparent 80%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* Mobile-only duplicate, floated top-right so paragraph text wraps around it.
+   Hidden outside mobile — the boxed .instp-blob copy is used there instead. */
+.instp-mobile-graphic {
+  display: none;
+}
+
+/* ── CTA — fixed to viewport bottom, always visible ── */
+
+.instp-left-cta {
+  position: fixed;
+  bottom: 22px;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  will-change: transform; /* keeps it on its own GPU layer during scroll */
+}
+
+.instp-left-cta .panel-cta,
+.instp-left-cta .btn,
+.instp-left-cta button {
+  width: 264px !important;
+  min-height: 44px !important;
+  max-height: 44px !important;
+  padding: 0 22px !important;
+  border-radius: 999px !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  box-shadow: 0 8px 28px rgba(47,111,237,0.30) !important;
+}
+
+/* ── Typography ── */
+
+.instp-copy h1 {
+  margin: 0 0 10px;
+  font-size: clamp(1.75rem, 2.3vw, 2.45rem);
   font-weight: 700;
-  font-size: clamp(26px, 2.4vw, 32px);
-  line-height: 1.15;
+  letter-spacing: -0.036em;
+  line-height: 1.08;
+  white-space: nowrap;
 }
 
-/* List */
+.instp-title-dark { color: #071a3d; }
+.instp-title-blue { color: #2f6fed; }
+
+.instp-subtitle {
+  margin: 0 0 26px;
+  color: #3d5478;
+  font-size: clamp(0.95rem, 1vw, 1.05rem);
+  line-height: 1.5;
+}
+
+/* ── List ── */
+
 .instp-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: grid;
-  gap: 14px;
+  border-top: 1px solid rgba(47,128,237,0.11);
 }
+
 .instp-list li {
   display: grid;
-  grid-template-columns: 26px 1fr;
+  grid-template-columns: 36px minmax(0, 1fr);
   gap: 10px;
-  align-items: start;
-  font-size: clamp(15.5px, 1.05vw, 17.5px);
-  line-height: 1.7;
-  color: #1f2328;
-}
-.instp-list .i {
-  font-size: 19px;
-  line-height: 1;
-  margin-top: 2px;
-}
-
-/* ===== RIGHT blue panel (image + button inside) ===== */
-.image-panel {
-  border-radius: 20px;
-  border: 1px solid rgba(17,24,39,0.03);
-  background: #eaf2ff;
-  box-shadow:
-    0 1px 0 rgba(17,24,39,0.02),
-    0 10px 30px rgba(17,24,39,0.04);
-  padding: 24px;
-
-  display: flex;
-  flex-direction: column;     /* stack image and button */
   align-items: center;
-  min-height: 520px;          /* guarantees space for both */
+  min-height: 44px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(47,128,237,0.11);
+  color: #3a536e;
+  font-size: clamp(0.95rem, 1vw, 1.05rem);
+  line-height: 1.44;
 }
 
-/* Image scales but leaves space for button */
-.image-panel img {
-  width: 100%;
-  max-width: 380px;
-  height: auto;
-  object-fit: contain;
-  margin: 0 auto 20px;
-  flex: 1 1 auto;             /* take remaining space above button */
+.instp-list li strong { color: #071a3d; font-weight: 700; }
+.instp-list li em { font-style: normal; color: #2f6fed; font-weight: 600; }
+
+.instp-list .i {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #e8f2ff 0%, #d4e5ff 100%);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 0 2px 6px rgba(47,111,237,0.1);
 }
 
-/* Button INSIDE the image panel */
-.image-panel .panel-cta,
-.image-panel .btn,
-.image-panel button {
-  margin-top: auto;           /* stick to bottom */
+/* ── Hover ── */
+
+@media (hover: hover) and (pointer: fine) {
+  .instp-list li { transition: background 160ms ease, padding-left 160ms ease; border-radius: 4px; }
+  .instp-list li:hover { background: rgba(47,128,237,0.035); padding-left: 5px; }
 }
 
-/* ===== Responsive ===== */
-@media (max-width: 1140px) {
-  .instp-container { grid-template-columns: 1.7fr 1fr; }
-  .image-panel img { max-width: 340px; }
+/* ── Entrance animation ── */
+
+.instp.instp-anim-ready .instp-copy h1,
+.instp.instp-anim-ready .instp-subtitle,
+.instp.instp-anim-ready .instp-list li,
+.instp.instp-anim-ready .instp-visual,
+.instp.instp-anim-ready .instp-left-cta {
+  opacity: 0; transform: translateY(20px); filter: blur(4px);
 }
 
-@media (max-width: 700px) {
-  .instp { padding: 16px 14px 24px; }
-  .instp-container { grid-template-columns: 1fr; }
-  .content-card { padding: 22px 18px; }
-  .image-panel { margin-top: 12px; padding: 18px; min-height: 440px; }
-  .image-panel img { max-width: 320px; margin-bottom: 16px; }
-  .image-panel .panel-cta,
-  .image-panel .btn,
-  .image-panel button { width: 100%; max-width: none; }
+.instp.instp-visible .instp-copy h1,
+.instp.instp-visible .instp-subtitle,
+.instp.instp-visible .instp-list li,
+.instp.instp-visible .instp-visual,
+.instp.instp-visible .instp-left-cta {
+  opacity: 1; transform: none; filter: none;
+  transition: transform 680ms cubic-bezier(.16,.84,.24,1), opacity 560ms ease, filter 560ms ease;
 }
 
-/* Short-desktop tightening (keeps content above the fold) */
-@media (min-width: 1024px) and (max-height: 820px) {
-  .content-card h1 { margin-bottom: 24px; }
-  .image-panel img { max-width: 340px; }
+.instp.instp-visible .instp-copy h1   { transition-delay: 30ms; }
+.instp.instp-visible .instp-subtitle  { transition-delay: 80ms; }
+.instp.instp-visible .instp-list li   { transition-delay: var(--instp-delay, 140ms); }
+.instp.instp-visible .instp-visual    { transition-delay: 240ms; }
+.instp.instp-visible .instp-left-cta { transition-delay: 360ms; }
+
+/* ── Compact shell (phones through iPad Pro portrait, ≤1100px) ──
+   Shared shell rules. .instp-stage is a flex item, which auto-contains
+   any floated child (see .instp-copy below) — that's what lets the
+   tablet float-wrap work without the parent collapsing around it. */
+
+/* ── Compact layout (phones through iPad portrait, ≤1100px) ──
+   Clean single column: a centred header illustration above the title,
+   centred title + subtitle, left-aligned tips list, full-width CTA. */
+
+@media (max-width: 1100px) {
+  .instp { padding: 18px clamp(24px, 7vw, 56px) 40px; }
+  .instp-logo { position: static; height: 38px; width: auto; margin: 0 0 8px; }
+  .instp-stage { width: 100%; max-width: 620px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+
+  /* Centred header illustration (was floated / gappy). */
+  .instp-mobile-graphic {
+    display: block;
+    float: none;
+    width: clamp(160px, 40vw, 240px);
+    height: auto;
+    aspect-ratio: 1024 / 1536; /* reserve space before the image loads */
+    margin: 4px auto 6px;
+    -webkit-mask-image: radial-gradient(circle, #000 30%, transparent 80%);
+    mask-image: radial-gradient(circle, #000 30%, transparent 80%);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+
+  .instp-copy h1 { font-size: clamp(1.7rem, 5vw, 2.3rem); white-space: normal; text-align: center; margin: 0 0 8px; }
+  .instp-subtitle { font-size: clamp(1.0rem, 2vw, 1.15rem); text-align: center; margin: 0 auto 24px; max-width: 46ch; }
+  .instp-list li { font-size: clamp(1.0rem, 2vw, 1.14rem); min-height: 44px; }
+
+  .instp-blob { display: none; }
+  .instp-visual {
+    display: block;
+    width: 100%;
+    align-self: unset;
+    margin-top: 0;
+    min-height: auto;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  /* CTA flows right after the list, full width, centred. */
+  .instp-left-cta {
+    position: static;
+    display: block;
+    width: 100%;
+    margin-top: 28px;
+  }
+  .instp-left-cta .panel-cta,
+  .instp-left-cta .btn,
+  .instp-left-cta button {
+    display: block !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 280px !important;
+    max-height: none !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* Phone: slightly smaller header illustration, and let the subtitle flow as one
+   paragraph (the forced <br> left a lone "started." stranded on its own line). */
+@media (max-width: 599px) {
+  .instp-mobile-graphic { width: clamp(140px, 44vw, 190px); }
+  .instp-subtitle br { display: none; }
+}
+
+/* ── Reduced motion ── */
+
+@media (prefers-reduced-motion: reduce) {
+  .instp.instp-anim-ready .instp-copy h1,
+  .instp.instp-anim-ready .instp-subtitle,
+  .instp.instp-anim-ready .instp-list li,
+  .instp.instp-anim-ready .instp-visual,
+  .instp.instp-anim-ready .instp-left-cta,
+  .instp.instp-visible .instp-copy h1,
+  .instp.instp-visible .instp-subtitle,
+  .instp.instp-visible .instp-list li,
+  .instp.instp-visible .instp-visual,
+  .instp.instp-visible .instp-left-cta {
+    opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important;
+  }
 }

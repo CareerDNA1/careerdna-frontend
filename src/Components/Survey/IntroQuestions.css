@@ -1,42 +1,68 @@
 /* ================================
-   IntroQuestions.css (full file)
+   IntroQuestions.css
+   Polished CareerDNA survey intro styling
    ================================ */
 
 .intro-container {
-  max-width: 600px;
+  position: relative;
+  overflow: visible;
+  width: min(100%, 580px);
+  max-width: 580px;
   margin: 0 auto;
-  padding: 2rem;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  font-family: 'Arial', sans-serif;
-  color: #3a3a3a;
+  padding: 30px 38px 32px;
+  background: #ffffff;
+  border: 1px solid rgba(47, 111, 237, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  font-family: var(--cdna-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+  color: var(--cdna-color-text-strong, #1f2a37);
 }
 
 .intro-container h2 {
-  margin-bottom: 1rem;
-  font-size: 1.75rem;
-  color: #2f80ed;
-  font-weight: 600;
+  margin: 0 0 14px;
+  font-size: clamp(1.5rem, 2.2vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  color: var(--cdna-color-primary, #2f6fed);
+  text-align: center;
 }
 
 .intro-text {
-  font-size: 0.95rem;
-  margin-bottom: 2rem;
-  color: #555;
+  max-width: 500px;
+  margin: 0 auto 24px;
+  color: var(--cdna-color-text, #4b5c6b);
+  font-size: 0.98rem;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: center;
 }
 
-/* Generic field wrapper to apply error styles uniformly */
-.field { margin-bottom: 14px; }
-.field.has-error .introSelect__control,
-.field.has-error input[type="text"] {
-  border-color: #dc2626 !important;
-  box-shadow: 0 0 0 2px rgba(220,38,38,0.10);
+/* Generic field wrapper */
+.field {
+  position: relative;
+  overflow: visible;
+  margin-bottom: 14px;
 }
+
+.field.has-error .introSelect__control {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.10) !important;
+}
+
+.field.has-error > input[type="text"],
+.field.has-error #institutionInput,
+.field.has-error #otherActivityInput {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.10) !important;
+}
+
 .error-text {
   margin-top: 6px;
-  font-size: 12px;
-  color: #b91c1c;
+  color: #dc2626;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.35;
 }
 
 /* Required asterisk */
@@ -48,19 +74,33 @@
 
 .intro-container label {
   display: block;
-  margin-top: 1rem;
-  margin-bottom: 0.25rem;
-  font-weight: bold;
-  color: #333;
+  margin: 0 0 6px;
+  color: var(--cdna-color-text-strong, #1f2a37);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
 .intro-container input[type="text"] {
   width: 100%;
-  padding: 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-  color: #3a3a3a;
+  min-height: 40px;
+  box-sizing: border-box;
+  padding: 8px 14px;
+  border: 1px solid #d2dff0;
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--cdna-color-text-strong, #1f2a37);
+  font-family: inherit;
+  font-size: 0.94rem;
+  font-weight: 400;
+  line-height: 1.35;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.intro-container input[type="text"]:focus {
+  border-color: #2f6fed;
+  box-shadow: 0 0 0 2px rgba(47, 111, 237, 0.12);
 }
 
 /* -------- inline hint next to label -------- */
@@ -72,55 +112,259 @@
   margin-top: 1rem;
   margin-bottom: 0.25rem;
 }
-.label-row > label { margin: 0; }
+
+.label-row > label {
+  margin: 0;
+}
+
 .field-hint {
-  font-size: 12px;
-  color: #6b7280;
-  background: #f3f6fb;
-  border: 1px solid #e5e7eb;
-  border-radius: 999px;
-  padding: 2px 8px;
-  line-height: 1.6;
+  margin-top: 8px;
+  padding: 11px 13px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #475569;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
 }
 
 /* ============================
    React-Select theming (scoped)
    ============================ */
-.introSelect__control { border-color: #d1d5db; box-shadow: none !important; }
-.introSelect__control:hover { border-color: #bfc6d1; }
-.introSelect__single-value { color: #3e3e3e; }
-.introSelect__placeholder { color: #8a8f98; }
-.introSelect__input-container { color: #3e3e3e; }
-.introSelect__menu { color: #3e3e3e; z-index: 9999; }
-.introSelect__option { color: #3e3e3e; }
-.introSelect__option--is-focused { background: #f3f6fb; }
-.introSelect__option--is-selected { background: #e7f0ff; color: #2b6fd6; }
+.introSelect__control {
+  min-height: 40px !important;
+  border-color: #d2dff0 !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.introSelect__control:hover {
+  border-color: #bfc6d1 !important;
+}
+
+.introSelect__control--is-focused {
+  border-color: #2f6fed !important;
+  box-shadow: 0 0 0 2px rgba(47, 111, 237, 0.12) !important;
+}
+
+.introSelect__value-container {
+  min-height: 38px !important;
+  padding: 0 14px !important;
+}
+
+.introSelect__single-value {
+  color: var(--cdna-color-text-strong, #1f2a37) !important;
+  font-size: 0.94rem !important;
+  line-height: 1.35 !important;
+}
+
+.introSelect__placeholder {
+  color: #8fa0b7 !important;
+  font-size: 0.94rem !important;
+  line-height: 1.35 !important;
+}
+
+.introSelect__input-container {
+  margin: 0 !important;
+  padding: 0 !important;
+  color: var(--cdna-color-text-strong, #1f2a37) !important;
+}
+
+/* Prevent the internal react-select text input from inheriting red error borders. */
+.introSelect__input,
+.introSelect__input-container input {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  caret-color: transparent !important;
+}
+
+.introSelect__indicator-separator {
+  background-color: #dbe5f3 !important;
+}
+
+.introSelect__dropdown-indicator {
+  padding: 6px 12px !important;
+  color: #6f8198 !important;
+}
+
+.introSelect__clear-indicator {
+  padding: 6px 8px !important;
+  color: #6f8198 !important;
+}
+
+.introSelect__menu {
+  z-index: 99999 !important;
+  color: #3e3e3e;
+  border: 1px solid #dbe5f3;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+}
+
+.introSelect__menu-list {
+  max-height: min(260px, 42vh) !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.introSelect__option {
+  color: #3e3e3e;
+  font-size: 0.9rem;
+}
+
+.introSelect__option--is-focused {
+  background: #f3f6fb;
+}
+
+.introSelect__option--is-selected {
+  background: #e7f0ff;
+  color: #2b6fd6;
+}
+
+.introSelect__multi-value {
+  border-radius: 999px !important;
+  background: #eef5ff !important;
+}
+
+.introSelect__multi-value__label {
+  color: #2f6fed !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+}
 
 /* ============================
    Start Survey button wrapper
    ============================ */
 .intro-start-wrap {
-  margin-top: 2.0rem;
+  margin-top: 24px;
   display: flex;
   justify-content: center;
+  gap: 10px;
 }
 
 /* ----- Prominent callout under Subjects ----- */
 .subject-callout {
-  background: #eaf4ff;
-  color: #155fa0;
-  border-left: 6px solid #2f80ed;
-  padding: 12px 14px;
-  margin-top: 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  line-height: 1.5;
-  box-shadow: 0 2px 6px rgba(0,0,0,.04);
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-left: 4px solid #2f6fed;
+  border-radius: 10px;
+  background: #eef5ff;
+  color: #33517a;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  box-shadow: none;
 }
 
-/* NEW: generic disabled option look (for non-school statuses) */
+
+/* GCSE subject timing warning */
+.early-subject-warning {
+  margin-top: 10px;
+  padding: 13px 14px;
+  border: 1px solid #dbe7ff;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.10);
+  color: #1f2a37;
+}
+
+.early-subject-warning__copy strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #2f6fed;
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.early-subject-warning__copy p {
+  margin: 0;
+  color: #4b5c6b;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.early-subject-warning__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.early-subject-warning__primary,
+.early-subject-warning__secondary {
+  min-height: 32px;
+  padding: 0 13px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.early-subject-warning__primary {
+  border: 0;
+  background: #2f6fed;
+  color: #ffffff;
+  box-shadow: 0 6px 14px rgba(47, 111, 237, 0.16);
+}
+
+.early-subject-warning__secondary {
+  border: 1px solid #d2dff0;
+  background: #ffffff;
+  color: #54657b;
+}
+
+.early-subject-warning__primary:hover,
+.early-subject-warning__secondary:hover {
+  transform: translateY(-1px);
+}
+
+/* Disabled option look */
 .introSelect__option--is-disabled {
   color: #999 !important;
   background-color: #f9f9f9 !important;
   cursor: not-allowed !important;
+}
+
+@media (max-width: 720px) {
+  .intro-container {
+    width: min(100%, 520px);
+    padding: 28px 22px;
+    border-radius: 18px;
+  }
+
+  .intro-text {
+    font-size: 0.94rem;
+  }
+}
+
+/* Date of birth input (matches the intro selects) */
+.introDateInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: var(--cdna-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+  font-size: 0.94rem;
+  color: #1f2937;
+  background: #fff;
+  box-sizing: border-box;
+}
+.introDateInput:focus {
+  outline: none;
+  border-color: #2f6bff;
+  box-shadow: 0 0 0 3px rgba(47, 107, 255, 0.15);
+}
+.introDateInput[readonly] {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
 }

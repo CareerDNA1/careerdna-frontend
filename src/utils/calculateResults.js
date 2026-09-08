@@ -1,41 +1,18 @@
 // src/utils/calculateResults.js
-// Reverse-aware legacy-scale scoring for the current CareerDNA matrix.
-// - Likert answers stay on a 1..5 scale after reverse correction.
-// - Forced A/B answers are mapped to 1 or 5 to match the legacy scale.
-// - Archetypes are scored as weighted averages on the 1..5 scale.
-// - Percentages are reported as (weightedAverage / 5) * 100.
+// CareerDNA v2 — BD-first archetype scoring.
 //
-// This preserves the older score shape while fixing the old bug where
-// reverse-coded items were not handled correctly.
+// Step 1 (BD scores): average all Likert items per Behavioural Dimension → 0–100%.
+//   Each BD gets exactly one score regardless of how many questions measure it.
+//
+// Step 2 (archetype scores): weighted average of BD scores using archetypeWeights.
+//   BDs with weight 0 are skipped; each contributing BD counts once in the denominator.
+//
+// Return shape: { archetypeScores: { Achiever: 72, … }, subdimensionScores: { Originality: 68, … } }
+//
+// Forced A/B handling is retained below but disabled — no v2 questions use type:'forced'.
 
 import archetypeWeights from './archetypeWeights';
-
-const LIKERT_MIN = 1;
-const LIKERT_MAX = 5;
-const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
-
-const getAnswerValue = raw => (raw && typeof raw === 'object' && 'value' in raw ? raw.value : raw);
-const isMissing = v => v === undefined || v === null || (typeof v === 'string' && v.trim() === '');
-const normType = t => (typeof t === 'string' ? t.trim().toLowerCase() : '');
-
-/** Map a Likert 1..5 to 1..5 after reverse correction */
-function toLegacyLikert(v, reverse) {
-  const n = Number(v);
-  if (Number.isNaN(n)) return null;
-  const clamped = clamp(n, LIKERT_MIN, LIKERT_MAX);
-  return reverse ? (LIKERT_MAX + LIKERT_MIN - clamped) : clamped;
-}
-
-/** Forced A/B -> 1 or 5 after reverse correction */
-function toLegacyForced(raw, reverse) {
-  if (raw == null) return null;
-  const letter = String(raw).trim().toUpperCase();
-  let value = null;
-  if (letter === 'A') value = 1;
-  else if (letter === 'B') value = 5;
-  else return null;
-  return reverse ? (LIKERT_MAX + LIKERT_MIN - value) : value;
-}
+import { scoreSubdimensions } from './scoreSubdimensions';
 
 function getArchetypeKeys(weights) {
   const firstRowKey = Object.keys(weights || {})[0];
@@ -43,6 +20,19 @@ function getArchetypeKeys(weights) {
 }
 
 export function calculateResults(answers, questions) {
+  // ── Step 1: BD scores (0–100) via scoreSubdimensions ────────────────────────
+  const bdRows = scoreSubdimensions(answers, questions || []);
+
+  // Build a lookup map: BD name string → score_pct
+  const bdScoreMap = {};
+  for (const row of bdRows) {
+    bdScoreMap[row.name] = row.score_pct;
+  }
+
+  // subdimensionScores keyed by BD name for the chart / advisor
+  const subdimensionScores = { ...bdScoreMap };
+
+  // ── Step 2: archetype scores (weighted average of BD scores) ─────────────────
   const archetypes = getArchetypeKeys(archetypeWeights);
 
   const weightedSums = {};
@@ -52,48 +42,32 @@ export function calculateResults(answers, questions) {
     weightDenoms[a] = 0;
   });
 
-  for (const q of questions || []) {
-    const qid = q?.id;
-    const subdim = String(q?.subdimension || '').trim();
-    const qType = normType(q?.type);
-    const rawAns = getAnswerValue(answers?.[qid]);
-
-    if (isMissing(rawAns)) continue;
-
-    let value = null;
-    if (qType === 'forced') {
-      value = toLegacyForced(rawAns, !!q?.reverse);
-    } else {
-      value = toLegacyLikert(rawAns, !!q?.reverse);
-    }
-    if (value == null) continue;
-
-    const weightRow = archetypeWeights[subdim];
-    if (!weightRow) continue;
+  for (const [bdName, weightRow] of Object.entries(archetypeWeights)) {
+    const bdScore = bdScoreMap[bdName];
+    if (bdScore === undefined) continue; // BD not answered / not in questions
 
     for (const [arch, w] of Object.entries(weightRow)) {
       const weightNum = Number(w);
       if (!Number.isFinite(weightNum) || weightNum <= 0) continue;
 
-      weightedSums[arch] += value * weightNum;
+      weightedSums[arch] += bdScore * weightNum;
       weightDenoms[arch] += weightNum;
     }
   }
 
-  const resultPercentages = {};
+  const archetypeScores = {};
   for (const arch of archetypes) {
     const denom = weightDenoms[arch] || 0;
     if (denom === 0) {
-      resultPercentages[arch] = 0;
+      archetypeScores[arch] = 0;
       continue;
     }
-
-    const weightedAverage = weightedSums[arch] / denom; // 1..5 scale
-    const pct = (weightedAverage / LIKERT_MAX) * 100;
-    resultPercentages[arch] = Math.max(0, Math.min(100, Math.round(pct)));
+    // bdScore values are already 0–100, so no /5×100 needed
+    const pct = weightedSums[arch] / denom;
+    archetypeScores[arch] = Math.max(0, Math.min(100, Math.round(pct)));
   }
 
-  return resultPercentages;
+  return { archetypeScores, subdimensionScores };
 }
 
 export default calculateResults;

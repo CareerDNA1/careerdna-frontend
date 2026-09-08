@@ -1,0 +1,529 @@
+/* Non-University Routes tab — builds on FurtherStudyPanel.css shared classes. */
+
+.nu-route-headline {
+  font-weight: 650;
+  color: #12233c;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  margin: 2px 0 10px;
+}
+
+.nu-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.nu-chip {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #2f6fed;
+  background: #eef4ff;
+  border: 1px solid #dbe7fb;
+  border-radius: 999px;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+/* Grouped apprenticeship standards ("ways in") inside a pathway card. */
+.nu-standards { display: flex; flex-direction: column; gap: 0; }
+.nu-standard { padding: 12px 0; border-top: 1px solid #edf1f7; }
+.nu-standard:first-child { padding-top: 4px; border-top: none; }
+.nu-standard:last-child { padding-bottom: 2px; }
+.nu-standard__name {
+  font-weight: 700;
+  color: #12233c;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+a.nu-standard__link { display: inline-block; text-decoration: none; }
+a.nu-standard__link:hover { text-decoration: underline; }
+.nu-standard__ext { color: #2f6fed; font-weight: 700; }
+.nu-standard__overview {
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: #4b5c6b;
+  margin: 0 0 8px;
+}
+.nu-chip--level {
+  cursor: help;
+  border-style: dashed;
+}
+.nu-chip--level:hover { background: #e2ecff; }
+.nu-chip--level:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
+/* Consistent "Degree included" tag — green so it stands apart from the blue
+   level/duration chips and reads as a positive, distinct fact. */
+.nu-chip--degree {
+  color: #148a4e;
+  background: #e8f8ef;
+  border-color: #bfe8d0;
+  cursor: help;
+}
+.nu-chip--degree:hover { background: #dbf3e6; }
+.nu-chip--degree:focus-visible { outline: 2px solid #148a4e; outline-offset: 2px; }
+/* Non-interactive copies of the chips, used inline in the intro explainer. */
+.nu-chip--static { cursor: default; margin-right: 8px; }
+
+.nu-explainer {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.nu-explainer__line {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: #4b5c6b;
+}
+
+/* Labelled facts under each way in: qualification, entry, professional body. */
+.nu-facts {
+  margin: 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.nu-fact { margin: 0; }
+.nu-fact__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #2f6fed;
+  margin: 0 0 1px;
+}
+.nu-fact__value {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #33475b;
+}
+.nu-fact__optional { color: #8a99ad; font-size: 0.8rem; }
+
+.nu-section { margin-top: 14px; }
+.nu-section--waysin { margin-top: 20px; padding-top: 16px; border-top: 1px solid #edf1f7; }
+.nu-section__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #2f6fed;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.nu-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.nu-role-chip {
+  font-size: 0.78rem;
+  color: #243447;
+  background: #f3f6fb;
+  border: 1px solid #e4ebf4;
+  border-radius: 8px;
+  padding: 4px 10px;
+}
+
+/* --- live vacancies (compact single line) --- */
+.nu-vacancies {
+  margin-top: 8px;
+}
+.nu-vac-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 0.8rem;
+  margin: 6px 0 0;
+}
+.nu-vac-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+  margin-right: 2px;
+}
+.nu-vac-count-inline { font-weight: 700; color: #148a4e; }
+.nu-vac-count-inline--muted { font-weight: 600; color: #7a8798; }
+.nu-vac-link { color: #2f6fed; font-weight: 600; text-decoration: none; }
+.nu-vac-link:hover { text-decoration: underline; }
+.nu-roles-more {
+  border: 1px solid #dbe7fb;
+  background: #eef4ff;
+  color: #2f6fed;
+  font-size: 0.76rem;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.nu-roles-more:hover { background: #e2ecff; }
+.nu-applyvia { margin: 0 0 6px; }
+.nu-vac-note { font-size: 0.78rem; color: #7a8798; margin: 6px 0 0; }
+.nu-vac-count {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #148a4e;
+  margin: 8px 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nu-vac-count::before {
+  content: '';
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+}
+.nu-vac-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.nu-vac-item { display: flex; flex-direction: column; text-decoration: none; }
+.nu-vac-item__title { font-size: 0.8rem; font-weight: 600; color: #2f6fed; }
+.nu-vac-item:hover .nu-vac-item__title { text-decoration: underline; }
+.nu-vac-item__meta { font-size: 0.72rem; color: #6b7788; }
+.nu-vac-all {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #2f6fed;
+  text-decoration: none;
+}
+.nu-vac-all:hover { text-decoration: underline; }
+
+/* Divider label separating the vocational worlds in the selector pill row */
+.nu-voc-label {
+  flex-basis: 100%;
+  width: 100%;
+  margin: 6px 2px 2px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8a99ad;
+}
+
+.nu-empty-hint {
+  margin: 4px 2px 18px;
+  font-size: 0.85rem;
+  color: #56657a;
+  background: #eef4ff;
+  border: 1px solid #dbe7fb;
+  border-radius: 10px;
+  padding: 12px 14px;
+  line-height: 1.5;
+}
+
+.nu-popular { margin-top: 22px; }
+.nu-popular__sub {
+  font-size: 0.8rem;
+  color: #6b7788;
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+
+/* Collapsible "way in" row: summary (title + level + openings) opens a detail card. */
+.nu-standard--accordion { padding: 0; }
+.nu-standard__toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  width: 100%; padding: 11px 14px; border: 0; background: transparent;
+  font-family: inherit; text-align: left; cursor: pointer; border-radius: 12px;
+}
+.nu-standard__toggle:hover { background: #F6F8FC; }
+.nu-standard__toggle-title { font-size: 14.5px; font-weight: 700; color: #1F2430; }
+.nu-standard__toggle-meta { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.nu-standard__openings {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12.5px; font-weight: 600; color: #1E9E5A; white-space: nowrap;
+}
+.nu-standard__body { padding: 2px 14px 14px; }
+.nu-standard--accordion .selection-chevron { transition: transform .18s; color: #8A90A0; }
+.nu-standard--accordion .selection-chevron.is-open { transform: rotate(180deg); }
+
+/* Collapsed "other pathways" toggle (Training & Work) */
+.nu-show-other {
+  margin: 22px 0 10px;
+  background: none;
+  border: none;
+  padding: 6px 0;
+  color: #2f6fed;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+.nu-show-other:hover { text-decoration: underline; }
+
+/* "Leads to" jobs subtitle under each Training pathway card title */
+.nu-title-col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.nu-leadsto { font-size: 0.78rem; color: #5b6b8c; font-weight: 600; line-height: 1.3; }
+
+/* Way-in rows that open a pop-up (Training) */
+.nu-standard__toggle--row { cursor: pointer; }
+.nu-standard__toggle--row:hover { background: #f4f7ff; }
+.nu-standard__toggle--row .nu-standard__ext { color: #2f6fed; font-weight: 700; }
+
+/* Way-in pop-up: roomier, polished spacing (scoped so it doesn't touch other modals) */
+.nu-wayin-modal { display: flex; flex-direction: column; gap: 18px; }
+.nu-wayin-overview { font-size: 1rem; line-height: 1.6; color: #2b2f38; margin: 0; }
+.nu-wayin-modal .nu-chips { margin: 0; gap: 8px; }
+.nu-wayin-modal .nu-facts { margin: 0; display: flex; flex-direction: column; gap: 14px; }
+.nu-wayin-modal .nu-fact__label { letter-spacing: 0.04em; }
+.nu-wayin-modal .nu-vac-line { margin: 0; }
+.nu-wayin-officiallink { display: inline-block; margin-top: 2px; font-size: 0.85rem; color: #5b6b8c; font-weight: 600; text-decoration: none; }
+.nu-wayin-officiallink:hover { text-decoration: underline; color: #2f6fed; }
+
+/* Card layout tweaks: full-width lead, centred 'Where it leads', non-bold way-in titles */
+.nu-lead-section { margin-bottom: 16px; }
+.nu-leads-section { margin-top: 8px; text-align: center; }
+.nu-leads-section .nu-section__label { justify-content: center; }
+.nu-roles--centre { justify-content: center; }
+.nu-standard__toggle--row .nu-standard__toggle-title { font-weight: 500; }
+
+/* Training pathway card: more breathing room under the title and between sections */
+.nu-pathway-card .pathway-role-item__toggle { padding-bottom: 6px; }
+.nu-pathway-card .nu-leadsto { margin-bottom: 2px; }
+.nu-pathway-card .pathway-role-item__body { padding-top: 18px; }
+.nu-pathway-card .fs-degree-grid { margin-top: 4px; row-gap: 24px; column-gap: 40px; }
+.nu-pathway-card .nu-lead-section { margin: 6px 0 20px; }
+.nu-pathway-card .nu-leads-section { margin-top: 20px; margin-bottom: 4px; }
+.nu-pathway-card .nu-section--waysin { margin-top: 26px; }
+.nu-pathway-card .fs-degree-section__label,
+.nu-pathway-card .nu-section__label { margin-bottom: 8px; }
+
+/* Way-in rows: align metadata into tidy columns (title | level | degree | openings | arrow) */
+.nu-standard__toggle--row {
+  display: grid;
+  grid-template-columns: 1fr 76px 84px 72px 18px;
+  align-items: center;
+  column-gap: 12px;
+  width: 100%;
+  text-align: left;
+}
+.nu-wayin__cell { display: flex; justify-content: flex-end; align-items: center; }
+.nu-standard__toggle--row .nu-standard__ext { justify-self: end; }
+
+/* Four contained "blocks": What you'd do | Who it suits (top row), then
+   Where it leads and Ways in as full-width panels. */
+.nu-pathway-card .fs-degree-section,
+.nu-pathway-card .nu-leads-section,
+.nu-pathway-card .nu-section--waysin {
+  background: #fbfcff;
+  border: 1px solid #e9edf6;
+  border-radius: 14px;
+  padding: 16px 18px;
+}
+.nu-pathway-card .nu-lead-section { background: transparent; border: 0; padding: 0; }
+.nu-pathway-card .fs-degree-grid { column-gap: 18px; row-gap: 18px; margin-top: 4px; }
+.nu-pathway-card .nu-leads-section { margin-top: 18px; }
+.nu-pathway-card .nu-section--waysin { margin-top: 18px; }
+
+/* 2x2 quadrant layout (match University card): no block borders, left-aligned, compact rows */
+.nu-pathway-card .fs-degree-section { background: transparent; border: 0; padding: 0; }
+.nu-pathway-card .fs-degree-section--lead { margin-bottom: 14px; }
+.nu-pathway-card .fs-degree-grid { row-gap: 22px; column-gap: 26px; }
+.nu-pathway-card .nu-roles { justify-content: flex-start; }
+.nu-pathway-card .nu-standards { margin-top: 2px; }
+.nu-pathway-card .nu-standard__toggle--row { grid-template-columns: 1fr 60px 68px 58px 16px; column-gap: 8px; }
+
+/* Layout v3: top row (what you'd do | where it leads capped), who it suits centred, ways in full width */
+.nu-pathway-card .nu-whosuits { margin: 22px auto 0; max-width: 760px; text-align: center; }
+.nu-pathway-card .nu-whosuits .fs-degree-section__label { justify-content: center; }
+.nu-pathway-card .nu-standard__toggle--row { grid-template-columns: 1fr 76px 84px 72px 18px; column-gap: 12px; }
+
+/* Way-in pop-up: cleaner footer with a divider; official link demoted and subtle */
+.cw-def-modal--wayin .cw-def-modal__box { max-width: 560px; }
+.nu-wayin-footer { border-top: 1px solid #e9edf6; padding-top: 14px; margin-top: 2px; display: flex; flex-direction: column; gap: 8px; }
+.nu-wayin-openings { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 5px; font-size: 0.9rem; }
+
+/* ---- University-style 2x2 grid for the Training pathway card ---- */
+.nu-grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 26px;
+  margin-top: 10px;
+}
+@media (max-width: 640px) {
+  .nu-grid2 { grid-template-columns: 1fr; gap: 14px; }
+}
+.nu-grid2 .fs-degree-section { margin-bottom: 0; }
+
+/* ---- "Ways in & live openings" info box (bottom-right grid cell) ---- */
+.nu-wayin-cell { display: flex; }
+.nu-wayin-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #cddbf0;
+  border-radius: 12px;
+  background: #f4f8ff;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.nu-wayin-box:hover {
+  background: #eaf1fe;
+  border-color: #b9cbe6;
+  box-shadow: 0 3px 10px rgba(47, 111, 237, 0.14);
+}
+.nu-wayin-box__help {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #6b7686;
+}
+.nu-wayin-box__go {
+  margin-top: 2px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #2f6fed;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.nu-wayin-box:hover .nu-wayin-box__go { text-decoration: underline; }
+.nu-wayin-box__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #2f6fed;
+}
+.nu-wayin-box__intro {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #35414f;
+}
+.nu-wayin-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 2px 0 2px;
+}
+.nu-wayin-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #35414f;
+}
+.nu-wayin-dot__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+.nu-wayin-box__stats {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 2px;
+}
+.nu-wayin-box__stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #35414f;
+}
+.nu-wayin-box__stat--live { color: #1f9e6b; }
+.nu-wayin-box__stat--muted { color: #8a93a2; font-weight: 500; }
+.nu-wayin-box__link {
+  align-self: flex-start;
+  margin-top: 4px;
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #2f6fed;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.nu-wayin-box__link:hover { text-decoration: underline; }
+
+/* Short explainer under the "Where it leads" label. */
+.nu-roles-intro {
+  margin: 0 0 8px;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: #556171;
+}
+
+/* Way-in detail pop-up: title left, pills on the right, definition below. */
+.cw-def-modal__head--wayin {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding-right: 34px;
+  position: relative;
+}
+.cw-def-modal__head--wayin .cw-def-modal__title { margin-right: auto; }
+.cw-def-modal__head--wayin .cw-def-modal__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.nu-chips--head {
+  margin: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ---- Ways-in list pop-up ---- */
+.nu-wayin-list-intro {
+  margin: 0 0 12px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #556171;
+}
+
+/* ---- Mobile: training way-in rows + pop-up ---- */
+@media (max-width: 640px) {
+  /* The way-in rows (both inside the card and inside the pop-up) use a fixed
+     5-column grid that is wider than a phone screen, which clips the live-openings
+     count on the right. On mobile, stack them: the title takes its own line and
+     the level/degree chips, live openings and the arrow wrap onto the next line
+     so nothing is cut off. */
+  .nu-standard__toggle--row,
+  .nu-pathway-card .nu-standard__toggle--row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 8px;
+    row-gap: 6px;
+  }
+  .nu-standard__toggle--row .nu-standard__toggle-title { flex: 1 1 100%; }
+  .nu-standard__toggle--row .nu-wayin__cell { justify-content: flex-start; }
+  .nu-standard__toggle--row .nu-standard__ext { margin-left: auto; }
+
+  /* Way-in pop-up fills the viewport width with comfortable side padding. */
+  .cw-def-modal--wayin .cw-def-modal__box {
+    max-width: 100%;
+    width: calc(100vw - 28px);
+  }
+  .cw-def-modal--wayin .cw-def-modal__head--wayin { padding-right: 30px; }
+  .nu-wayin-openings { font-size: 0.85rem; }
+}

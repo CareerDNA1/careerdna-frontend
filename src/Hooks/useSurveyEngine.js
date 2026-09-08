@@ -2,7 +2,7 @@
 import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { fetchAiSummary } from '../utils/fetchAiSummary';
 import { readProgress, writeProgress } from './useProgress';
-import QUESTIONS from '../utils/questions';
+import QUESTIONS from '../utils/questions_a'; // Form A — interleaved, auditable ordering
 import { calculateResults } from '../utils/calculateResults';
 import scoreSubdimensions from '../utils/scoreSubdimensions';
 
@@ -24,6 +24,8 @@ function coerceArray(x) {
     .map(v => v.trim())
     .filter(Boolean);
 }
+
+
 
 export function useSurveyEngine(initialIntroResponses) {
   const persisted = readProgress();
@@ -58,7 +60,7 @@ export function useSurveyEngine(initialIntroResponses) {
   const archetypes = useMemo(() => {
     if (!answers || typeof answers !== 'object') return {};
     if (!Array.isArray(QUESTIONS)) return {};
-    return calculateResults(answers, QUESTIONS);
+    return calculateResults(answers, QUESTIONS).archetypeScores;
   }, [answers]);
 
   const results = archetypes;
@@ -87,19 +89,23 @@ export function useSurveyEngine(initialIntroResponses) {
     }
 
     try {
-      let { age, status, schoolSubjects, uniSubject } = introResponsesState || {};
+      let { age, status, schoolSubjects, uniSubject, planUniversity, uniNeed } = introResponsesState || {};
 
-      const ageNum = typeof age === 'number' ? age : Number(age);
+      const ageValue = String(age || '').trim();
       let normStatus = normalizeStatus(status);
 
-      if (!normStatus && Number.isFinite(ageNum)) {
-        if (ageNum <= 18) normStatus = 'school';
-        else normStatus = 'undergraduate';
+      if (!normStatus) {
+        if (['13-15', '16-18'].includes(ageValue)) {
+          normStatus = 'school';
+        } else if (['19-21', '22-24', '25+'].includes(ageValue)) {
+          normStatus = 'undergraduate';
+        }
       }
 
       const payload = {
+        surveyForm: 'A',  // counterbalanced form version
         archetypes: archetypes || {},
-        age: Number.isFinite(ageNum) ? ageNum : undefined,
+        age: ageValue || undefined,
         status: normStatus || undefined,
         ...(normStatus === 'school'
           ? { schoolSubjects: coerceArray(schoolSubjects) }
@@ -112,6 +118,8 @@ export function useSurveyEngine(initialIntroResponses) {
                   : '',
             }),
         subdimensions: subdimensionScores,
+        ...(planUniversity ? { planUniversity: String(planUniversity) } : {}),
+        ...(uniNeed ? { uniNeed: String(uniNeed) } : {}),
       };
 
       const response = await fetchAiSummary(payload);

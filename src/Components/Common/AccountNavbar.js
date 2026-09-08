@@ -1,51 +1,93 @@
-
 import React, { useEffect, useRef, useState } from 'react';
-import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import logo from '../../Assets/images/logo-career-dna.png';
 import { useAuth } from '../../context/AuthContext';
+import { clearLocalUserState } from '../../utils/clearLocalUserState';
 import './AccountNavbar.css';
+
+const ChevronIcon = () => (
+  <svg className="account-user-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="6 9 12 15 18 9" />
+  </svg>
+);
+
+// Profile icon
+const ProfileIcon = ({ className = 'account-dropdown-icon' }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
+// Sign out icon
+const SignOutIcon = () => (
+  <svg className="account-dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <polyline points="16,17 21,12 16,7" />
+    <line x1="21" y1="12" x2="9" y2="12" />
+  </svg>
+);
+
+const getDisplayFirstName = (user) => {
+  const metadata = user?.user_metadata || user?.user?.user_metadata || {};
+  const rawName =
+    metadata.first_name ||
+    metadata.firstName ||
+    metadata.name ||
+    metadata.full_name ||
+    metadata.fullName ||
+    user?.name ||
+    user?.full_name ||
+    user?.email?.split('@')?.[0] ||
+    'Profile';
+
+  return String(rawName).trim().split(/\s+/)[0] || 'Profile';
+};
 
 export default function AccountNavbar({ menuOpen, setMenuOpen }) {
   const [atTop, setAtTop] = useState(true);
-  const [isPhone, setIsPhone] = useState(
-    typeof window !== 'undefined' ? window.innerWidth <= 900 : true
-  );
+  const [signOutConfirmOpen, setSignOutConfirmOpen] = useState(false);
   const lastScrollY = useRef(0);
-  const startYRef = useRef(null);
 
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
+  const displayFirstName = getDisplayFirstName(user);
 
-  const toggleMenu = () => setMenuOpen((v) => !v);
-  const closeMenu = () => setMenuOpen(false);
+  const closeAccountMenu = () => setMenuOpen(false);
+  const closeAllMenus = closeAccountMenu;
+
+  const toggleAccountMenu = () => {
+    setMenuOpen((v) => !v);
+  };
+
+  const requestSignOut = () => {
+    setSignOutConfirmOpen(true);
+  };
+
+  const closeSignOutConfirm = () => {
+    setSignOutConfirmOpen(false);
+  };
 
   const handleSignOut = async () => {
     try {
+      setSignOutConfirmOpen(false);
+      closeAllMenus();
+
+      // Move away from the protected account page before clearing auth.
+      // This prevents the protected-route guard from briefly sending the user to /login.
+      if (typeof window !== 'undefined') {
+        window.history.replaceState({}, document.title, '/');
+      }
+      navigate('/', { replace: true });
+
+      clearLocalUserState();
       await signOut();
-      closeMenu();
-      navigate('/');
+
+      navigate('/', { replace: true });
     } catch (err) {
       console.error('Sign out failed:', err);
     }
   };
-
-  const handleRetake = () => {
-    closeMenu();
-    navigate('/start');
-  };
-
-  useEffect(() => {
-    const onResize = () => setIsPhone(window.innerWidth <= 900);
-    onResize();
-    window.addEventListener('resize', onResize);
-    window.addEventListener('orientationchange', onResize);
-    return () => {
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('orientationchange', onResize);
-    };
-  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -62,7 +104,7 @@ export default function AccountNavbar({ menuOpen, setMenuOpen }) {
       if (!menuOpen) return;
       const y = window.scrollY ?? 0;
       const goingDown = y > lastScrollY.current + 8;
-      if (goingDown) closeMenu();
+      if (goingDown) closeAllMenus();
       lastScrollY.current = y;
     };
     lastScrollY.current = window.scrollY ?? 0;
@@ -72,18 +114,14 @@ export default function AccountNavbar({ menuOpen, setMenuOpen }) {
 
   useEffect(() => {
     if (!menuOpen) return;
-    const dropdown = document.getElementById('account-nav-dropdown');
+
+    const accountDropdown = document.getElementById('account-nav-dropdown');
     const bar = document.querySelector('.account-navbar-wrapper');
-    const overlay = document.getElementById('account-nav-menu');
 
     const handler = (e) => {
-      if (overlay && overlay.contains(e.target)) return;
-      if (dropdown && dropdown.contains(e.target)) return;
-      if (bar && bar.contains(e.target)) {
-        const isHamburger = e.target.closest?.('.account-menu-icon');
-        if (isHamburger) return;
-      }
-      closeMenu();
+      if (accountDropdown && accountDropdown.contains(e.target)) return;
+      if (bar && bar.contains(e.target)) return;
+      closeAllMenus();
     };
 
     document.addEventListener('mousedown', handler);
@@ -95,107 +133,100 @@ export default function AccountNavbar({ menuOpen, setMenuOpen }) {
   }, [menuOpen]);
 
   const wrapperClasses = `account-navbar-wrapper ${!menuOpen && !atTop ? 'hidden' : ''}`;
-
-  const onOverlayTouchStart = (e) => {
-    startYRef.current = e.touches?.[0]?.clientY ?? null;
-  };
-
-  const onOverlayTouchMove = (e) => {
-    if (!menuOpen) return;
-    const startY = startYRef.current;
-    const currentY = e.touches?.[0]?.clientY ?? 0;
-    if (startY != null && currentY - startY > 24) {
-      closeMenu();
-      startYRef.current = null;
-    }
-  };
-
-  const email = user?.email || '';
-  const onProfilePage = location.pathname === '/profile';
-
   return (
     <>
       <div className={wrapperClasses}>
         <nav className="account-navbar">
-          <RouterLink to={onProfilePage ? '/profile' : '/'} className="account-logo-link" onClick={closeMenu}>
+          <RouterLink to="/" className="account-logo-link" onClick={closeAllMenus}>
             <div className="account-logo">
               <img src={logo} alt="CareerDNA Logo" loading="lazy" />
               <span className="sr-only">CareerDNA</span>
             </div>
           </RouterLink>
 
-          <button
-            type="button"
-            className={`account-menu-icon ${(isPhone && menuOpen) ? 'hide-on-overlay' : ''}`}
-            onClick={toggleMenu}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={menuOpen}
-            aria-controls="account-nav-dropdown account-nav-menu"
-          >
-            {menuOpen ? <FaTimes /> : <FaBars />}
-          </button>
+          <div className="account-navbar-actions">
+            <button
+              type="button"
+              className="account-user-trigger"
+              onClick={toggleAccountMenu}
+              aria-label={menuOpen ? 'Close account menu' : 'Open account menu'}
+              aria-expanded={menuOpen}
+              aria-controls="account-nav-dropdown"
+            >
+              <span className="account-user-avatar" aria-hidden="true">
+                <ProfileIcon className="account-user-avatar-icon" />
+              </span>
+              <span className="account-user-name">{displayFirstName}</span>
+              <ChevronIcon />
+            </button>
+
+          </div>
         </nav>
       </div>
 
       <div
         id="account-nav-dropdown"
-        className={`account-nav-dropdown vertical ${!isPhone && menuOpen ? 'open' : ''}`}
+        className={`account-nav-dropdown vertical ${menuOpen ? 'open' : ''}`}
         role="region"
         aria-label="Account menu"
       >
         <ul className="account-dropdown-list">
           <li>
-            <RouterLink to="/profile" onClick={closeMenu}>Profile</RouterLink>
+            <RouterLink to="/profile" onClick={closeAllMenus}>
+              <ProfileIcon />
+              Profile
+            </RouterLink>
           </li>
-          <li className="account-nav-user-email">{email}</li>
+          <li className="account-dropdown-divider" role="separator" />
           <li>
-            <button type="button" className="account-dropdown-btn" onClick={handleRetake}>
-              Take Survey Again
-            </button>
-          </li>
-          <li>
-            <button type="button" className="account-dropdown-btn" onClick={handleSignOut}>
+            <button type="button" className="account-dropdown-btn signout" onClick={requestSignOut}>
+              <SignOutIcon />
               Sign out
             </button>
           </li>
         </ul>
       </div>
 
-      <div
-        id="account-nav-menu"
-        className={`account-nav-menu ${isPhone && menuOpen ? 'active' : ''}`}
-        onClick={closeMenu}
-        onTouchStart={onOverlayTouchStart}
-        onTouchMove={onOverlayTouchMove}
-      >
-        <div className="account-nav-panel" onClick={(e) => e.stopPropagation()}>
-          <button
-            type="button"
-            className="account-nav-close"
-            aria-label="Close menu"
-            onClick={closeMenu}
+      {signOutConfirmOpen ? (
+        <div className="account-signout-confirm-overlay" onClick={closeSignOutConfirm}>
+          <section
+            className="account-signout-confirm-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="accountSignOutTitle"
+            onClick={(e) => e.stopPropagation()}
           >
-            <FaTimes />
-          </button>
+            <button
+              type="button"
+              className="account-signout-confirm-close"
+              onClick={closeSignOutConfirm}
+              aria-label="Close sign out confirmation"
+            >
+              ×
+            </button>
 
-          <ul className="account-nav-links">
-            <li>
-              <RouterLink to="/profile" onClick={closeMenu}>Profile</RouterLink>
-            </li>
-            <li className="account-nav-user-email">{email}</li>
-            <li>
-              <button type="button" className="account-mobile-btn" onClick={handleRetake}>
-                Take Survey Again
+            <h3 id="accountSignOutTitle">Sign out?</h3>
+            <p>Are you sure you want to sign out of your CareerDNA account?</p>
+
+            <div className="account-signout-confirm-actions">
+              <button
+                type="button"
+                className="account-signout-confirm-secondary"
+                onClick={closeSignOutConfirm}
+              >
+                Cancel
               </button>
-            </li>
-            <li>
-              <button type="button" className="account-mobile-btn" onClick={handleSignOut}>
+              <button
+                type="button"
+                className="account-signout-confirm-primary"
+                onClick={handleSignOut}
+              >
                 Sign out
               </button>
-            </li>
-          </ul>
+            </div>
+          </section>
         </div>
-      </div>
+      ) : null}
     </>
   );
 }

@@ -1,5 +1,14 @@
 import { supabase } from './supabaseClient';
 import { fetchAiSummary } from './fetchAiSummary';
+import { calculateProfileQualityGate } from './profileQualityGate';
+import { OUTPUT_VERSION } from './outputVersion';
+import { saveIdentityProfile } from './identityProfile';
+
+function eduLevelFromStatus(status) {
+  if (status === 'undergraduate') return 'undergraduate';
+  if (status === 'postgraduate') return 'postgraduate';
+  return 'school';
+}
 
 export async function saveAssessmentRun({
   introAnswers = {},
@@ -21,6 +30,7 @@ export async function saveAssessmentRun({
     survey_answers_json: surveyAnswers || {},
     results_json: resultsJson || {},
     summary_markdown: summaryMarkdown || '',
+    output_version: OUTPUT_VERSION,
   };
 
   const { data, error } = await supabase
@@ -30,6 +40,22 @@ export async function saveAssessmentRun({
     .single();
 
   if (error) throw error;
+
+  // Best-effort: persist locked identity + progression to the profile.
+  // DOB/country are only set if not already present (they are locked), while
+  // education level / course start year are progression fields and update.
+  try {
+    await saveIdentityProfile({
+      dateOfBirth: introAnswers?.dateOfBirth,
+      country: introAnswers?.country,
+      educationLevel: eduLevelFromStatus(introAnswers?.status),
+      courseStartYear: introAnswers?.courseStartYear,
+    });
+  } catch (e) {
+    // Never fail the run save because of a profile write.
+    console.warn('Identity profile persist failed:', e?.message || e);
+  }
+
   return data;
 }
 
@@ -131,7 +157,7 @@ export async function deleteAssessmentRun(runId) {
   return true;
 }
 
-async function updateAssessmentRun(runId, patch) {
+export async function updateAssessmentRun(runId, patch) {
   const {
     data: { user },
     error: userError,
@@ -167,6 +193,14 @@ export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswe
     ...(updatedIntroAnswers || {}),
   };
 
+  const subdimensionRows = Array.isArray(savedResults.subdimensionRows) ? savedResults.subdimensionRows : [];
+  const claritySummary = savedResults.claritySummary || null;
+  const profileQualityGate = calculateProfileQualityGate({
+    archetypes,
+    subdimensionRows,
+    claritySummary,
+  });
+
   const newRun = await saveAssessmentRun({
     introAnswers: intro,
     surveyAnswers: run.survey_answers_json || {},
@@ -175,8 +209,9 @@ export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswe
       archetypes,
       analysisMeta: null,
       introName: intro?.name || '',
-      subdimensionRows: Array.isArray(savedResults.subdimensionRows) ? savedResults.subdimensionRows : [],
-      claritySummary: savedResults.claritySummary || null,
+      subdimensionRows,
+      claritySummary,
+      profileQualityGate,
     },
     summaryMarkdown: '',
   });
@@ -184,7 +219,7 @@ export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswe
   return newRun;
 }
 
-export async function runAiSummaryForSavedRun(runId) {
+export async function runAiSummaryForSavedRun(runId, { bypassQualityGate = false } = {}) {
   const run = await getAssessmentRunById(runId);
   if (!run) throw new Error('Saved run not found.');
 
@@ -194,16 +229,38 @@ export async function runAiSummaryForSavedRun(runId) {
     ? savedResults.subdimensionRows
     : [];
   const intro = run.intro_answers_json || {};
+  const claritySummary = savedResults.claritySummary || null;
+  const profileQualityGate = calculateProfileQualityGate({
+    archetypes,
+    subdimensionRows: subdimensions,
+    claritySummary,
+  });
 
   if (!archetypes || !Object.keys(archetypes).length) {
     throw new Error('This saved run does not contain archetype data.');
   }
 
-  const response = await fetchAiSummary({
-    archetypes,
-    introResponses: intro,
-    subdimensions,
-  });
+  if (!bypassQualityGate && profileQualityGate.shouldBlockAnalysis) {
+    const err = new Error('PROFILE_QUALITY_GATE_BLOCKED');
+    err.code = 'PROFILE_QUALITY_GATE_BLOCKED';
+    err.profileQualityGate = profileQualityGate;
+    throw err;
+  }
+
+  let response;
+
+  try {
+    response = await fetchAiSummary({
+      archetypes,
+      introResponses: intro,
+      subdimensions,
+    });
+  } catch (err) {
+    if (err?.code === 'REPORT_LIMIT_REACHED') {
+      throw err;
+    }
+    throw err;
+  }
 
   const newSummary = typeof response === 'string' ? response : response?.summary || '';
   const newAnalysisMeta =
@@ -213,12 +270,15 @@ export async function runAiSummaryForSavedRun(runId) {
 
   const updatedRun = await updateAssessmentRun(runId, {
     summary_markdown: newSummary,
+    output_version: OUTPUT_VERSION,
     results_json: {
       ...savedResults,
       analysisMeta: newAnalysisMeta,
       introName: intro?.name || '',
       subdimensionRows: Array.isArray(savedResults.subdimensionRows) ? savedResults.subdimensionRows : [],
-      claritySummary: savedResults.claritySummary || null,
+      claritySummary,
+      profileQualityGate,
+      regeneratedAt: new Date().toISOString(),
     },
   });
 

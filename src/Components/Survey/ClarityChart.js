@@ -15,10 +15,30 @@ import { readProgress } from "../../Hooks/useProgress";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
+const CDNA_BAR_THICKNESS_DESKTOP = 38;
+const CDNA_BAR_THICKNESS_MOBILE = 28;
+const CDNA_BAR_RADIUS = 8;
+const CDNA_BAR_BORDER_WIDTH = 1.5;
+
 function getClarityLevel(score = 0) {
-  if (score >= 70) return "Very clear";
-  if (score >= 60) return "Taking shape";
-  return "Still exploring";
+  if (score >= 75) return "High clarity";
+  if (score >= 65) return "Developing clarity";
+  return "Low clarity";
+}
+
+function getClarityBandValue(score = 0) {
+  if (score >= 70) return 100;
+  if (score >= 60) return 66;
+  return 33;
+}
+
+// Tier palette — matches the tier PILLS: pale fill + soft same-hue border; on
+// hover the bar fills with the solid tier colour. high = Standout green,
+// medium = Strong amber, low = Lower grey.
+function getClarityBandColors(score = 0) {
+  if (score >= 70) return { background: "#9fe1cb", border: "#8ad9c1", hover: "#78d2b6" };
+  if (score >= 60) return { background: "#fac775", border: "#f4bd60", hover: "#f2b74f" };
+  return { background: "#d3d1c7", border: "#c6c3b7", hover: "#bfbcae" };
 }
 
 function getOrCreateBodyTooltip() {
@@ -26,15 +46,19 @@ function getOrCreateBodyTooltip() {
   if (!el) {
     el = document.createElement("div");
     el.className = "cdna-clarity-tooltip";
+    el.addEventListener("click", (e) => {
+      if (e.target.closest(".cdna-tooltip-close")) el.style.opacity = "0";
+    });
     Object.assign(el.style, {
       position: "fixed",
       zIndex: 9999,
       pointerEvents: "none",
-      background: "rgba(17,17,17,0.92)",
-      color: "#fff",
+      background: "#ffffff",
+      color: "#1f2a37",
+      border: "1px solid #e2e8f0",
       borderRadius: "10px",
-      padding: "10px 12px",
-      boxShadow: "0 10px 24px rgba(0,0,0,0.25)",
+      padding: "11px 13px",
+      boxShadow: "0 10px 24px rgba(15,23,42,0.16)",
       maxWidth: "360px",
       font: "13px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial",
       opacity: 0,
@@ -48,6 +72,39 @@ function hideTooltip() {
   const el = document.querySelector(".cdna-clarity-tooltip");
   if (el) el.style.opacity = 0;
 }
+function positionExternalTooltip({ el, chartRect, anchorX, anchorY, gap = 12, padding = 12 }) {
+  if (!el || !chartRect) return;
+
+  const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+
+  el.style.maxWidth = `min(360px, calc(100vw - ${padding * 2}px))`;
+  el.style.width = "max-content";
+  el.style.left = "0px";
+  el.style.top = "0px";
+
+  const tooltipWidth = el.offsetWidth || 220;
+  const tooltipHeight = el.offsetHeight || 80;
+
+  const rightLeft = anchorX + gap;
+  const leftLeft = anchorX - tooltipWidth - gap;
+  let left = rightLeft;
+  let top = anchorY - tooltipHeight / 2;
+
+  if (rightLeft + tooltipWidth > viewportWidth - padding && leftLeft >= padding) {
+    left = leftLeft;
+  } else if (rightLeft + tooltipWidth > viewportWidth - padding) {
+    left = chartRect.left + chartRect.width / 2 - tooltipWidth / 2;
+    top = anchorY + gap;
+  }
+
+  left = Math.max(padding, Math.min(left, viewportWidth - tooltipWidth - padding));
+  top = Math.max(padding, Math.min(top, viewportHeight - tooltipHeight - padding));
+
+  el.style.left = `${left}px`;
+  el.style.top = `${top}px`;
+}
+
 function externalTooltipRightOfBar(ctx) {
   const { chart, tooltip } = ctx;
   const el = getOrCreateBodyTooltip();
@@ -57,37 +114,50 @@ function externalTooltipRightOfBar(ctx) {
   if (!dp) return;
 
   const label = dp.label ?? "";
-  const numericVal = Number(dp.raw || 0);
-  const levelLabel = getClarityLevel(numericVal);
+  const ds = chart.data?.datasets?.[dp.datasetIndex] || {};
+  const rawScore = Number(ds.rawValues?.[dp.dataIndex] ?? dp.raw ?? 0);
+  const bandValue = Number(dp.raw || getClarityBandValue(rawScore));
+  const levelLabel = getClarityLevel(rawScore);
   let levelDesc = "";
-  if (numericVal >= 70) {
-    levelDesc = "Your answers are very consistent across the four CareerDNA dimensions, suggesting a well settled picture of how you see yourself right now.";
-  } else if (numericVal >= 60) {
-    levelDesc = "Your answers are starting to form a pattern. You have some self-awareness already, but parts of your picture are still settling into place.";
+  if (rawScore >= 75) {
+    levelDesc = "Your answers show a clear and consistent pattern across this dimension, suggesting your preferences and tendencies came through strongly throughout the questionnaire.";
+  } else if (rawScore >= 65) {
+    levelDesc = "Your answers show some clear patterns while also reflecting flexibility across different areas. This is common when interests and preferences are still developing or span multiple areas. If you feel your answers did not fully reflect you, you may wish to revisit the questionnaire in the future.";
   } else {
-    levelDesc = "Your answers suggest you are still working things out. That is completely normal and simply means there is more to discover about yourself.";
+    levelDesc = "Your answers suggest a broader or more mixed pattern in this area. This may indicate that your preferences vary across different situations, or that this is an area where your interests and tendencies are still developing. If you feel your answers did not fully reflect you, you may wish to revisit the questionnaire in the future.";
   }
 
   const xScale = chart.scales.x;
-  const rightPx = xScale.getPixelForValue(numericVal);
+  const rightPx = xScale.getPixelForValue(bandValue);
   const yPx = tooltip.caretY != null ? tooltip.caretY : chart.height / 2;
   const rect = chart.canvas.getBoundingClientRect();
   el.innerHTML = `
+    <button type="button" class="cdna-tooltip-close" aria-label="Close">&times;</button>
     <div style="font-weight:700;margin-bottom:6px">${label}</div>
     <div style="margin-bottom:4px">Level: ${levelLabel}</div>
     <div style="font-size:12px;opacity:.9">${levelDesc}</div>
   `;
-  el.style.left = `${rect.left + rightPx + 12}px`;
-  el.style.top  = `${rect.top + yPx - 14}px`;
+  positionExternalTooltip({
+    el,
+    chartRect: rect,
+    anchorX: rect.left + rightPx,
+    anchorY: rect.top + yPx,
+  });
+  // only one chart tooltip open at a time — hide the others
+  document.querySelectorAll(".cdna-clarity-tooltip, .cdna-archetype-tooltip, .cdna-subdim-tooltip").forEach((t) => { if (t !== el) t.style.opacity = "0"; });
   el.style.opacity = 1;
 }
 
 export default function ClarityChart({ answers: answersProp, minItems = 4, dpr, claritySummary }) {
   const [isMobile, setIsMobile] = useState(false);
+  const [isPhone, setIsPhone] = useState(false);
   const devicePR = dpr ?? Math.max(window.devicePixelRatio || 1, 2);
 
   useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 820);
+    const onResize = () => {
+      setIsMobile(window.innerWidth < 820);
+      setIsPhone(window.innerWidth < 600);
+    };
     onResize();
     window.addEventListener("resize", onResize);
     window.addEventListener("scroll", hideTooltip, { passive: true });
@@ -119,28 +189,30 @@ export default function ClarityChart({ answers: answersProp, minItems = 4, dpr, 
   }, [answers, minItems, claritySummary]);
 
   const labels = (clarity?.dimensions || []).map((d) => d.dimension);
-  const values = (clarity?.dimensions || []).map((d) => d.clarityPct ?? 0);
+  const rawValues = (clarity?.dimensions || []).map((d) => Number(d.clarityPct ?? 0));
+  const values = rawValues.map(getClarityBandValue);
 
-  const backgroundColors = values.map((v) => {
-    if (v >= 70) return "rgba(0, 200, 150, 0.85)";
-    if (v >= 60) return "rgba(120, 180, 220, 0.72)";
-    return "rgba(200,200,200,0.5)";
-  });
-  const borderColors = values.map((v) => {
-    if (v >= 70) return "rgba(0,150,120,1)";
-    if (v >= 60) return "rgba(90,150,200,1)";
-    return "rgba(160,160,160,1)";
-  });
+  const backgroundColors = rawValues.map((v) => getClarityBandColors(v).background);
+  const borderColors = rawValues.map((v) => getClarityBandColors(v).border);
+  const hoverColors = rawValues.map((v) => getClarityBandColors(v).hover);
 
   const data = {
     labels,
     datasets: [{
       label: "Clarity level",
       data: values,
+      rawValues,
       backgroundColor: backgroundColors,
       borderColor: borderColors,
-      borderWidth: 1.5,
-      borderRadius: 4,
+      hoverBackgroundColor: hoverColors,
+      hoverBorderColor: hoverColors,
+      borderWidth: CDNA_BAR_BORDER_WIDTH,
+      borderRadius: CDNA_BAR_RADIUS,
+      barThickness: isMobile ? CDNA_BAR_THICKNESS_MOBILE : CDNA_BAR_THICKNESS_DESKTOP,
+      maxBarThickness: isMobile ? CDNA_BAR_THICKNESS_MOBILE : CDNA_BAR_THICKNESS_DESKTOP,
+      borderSkipped: false,
+      inflateAmount: 1,
+      clip: false,
     }],
   };
 
@@ -154,21 +226,46 @@ export default function ClarityChart({ answers: answersProp, minItems = 4, dpr, 
       legend: { display: false },
       tooltip: { enabled: false, external: externalTooltipRightOfBar },
     },
-    interaction: { mode: "index", intersect: false, axis: "y" },
+    interaction: { mode: "nearest", intersect: true, axis: "xy" },
     scales: {
       x: {
-        min: 0, max: 100,
-        ticks: {
-          stepSize: 20,
-          color: "#444",
-          font: { size: isMobile ? 11 : 13 },
-          callback: (value) => `${value}%`
+        min: 0,
+        max: 112,
+        afterBuildTicks: (scale) => {
+          scale.ticks = [{ value: 33 }, { value: 66 }, { value: 100 }];
         },
-        grid: { color: "#eee" },
+        ticks: {
+          color: "#5b6f87",
+          font: { size: isPhone ? 10 : isMobile ? 11 : 13, weight: "600" },
+          // Phone: force horizontal and drop the repeated "clarity" word so the
+          // three labels fit without the diagonal rotation.
+          maxRotation: isPhone ? 0 : undefined,
+          minRotation: isPhone ? 0 : undefined,
+          autoSkip: false,
+          callback: (value) => {
+            if (isPhone) {
+              if (value === 33) return "Low";
+              if (value === 66) return "Developing";
+              if (value === 100) return "High";
+              return "";
+            }
+            if (value === 33) return "Low clarity";
+            if (value === 66) return "Developing clarity";
+            if (value === 100) return "High clarity";
+            return "";
+          }
+        },
+        grid: {
+          drawBorder: false,
+          color: "rgba(91, 111, 135, 0.18)",
+          lineWidth: 1,
+        },
+        border: { display: false },
       },
       y: {
         ticks: { color: "#444", font: { size: isMobile ? 14 : 16, weight: "700" } },
         grid: { display: false },
+        border: { display: false },
       },
     },
     layout: { padding: { right: 16 } },
@@ -176,9 +273,12 @@ export default function ClarityChart({ answers: answersProp, minItems = 4, dpr, 
 
   return (
     <div style={{ width: "100%" }} onMouseLeave={hideTooltip}>
-      <div style={{ width: "680px", maxWidth: "100%", height: isMobile ? "260px" : "320px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ width: "680px", maxWidth: "100%", height: isMobile ? "280px" : "340px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Bar data={data} options={options} />
       </div>
+      <p style={{ margin: "6px 0 0", textAlign: "center", fontSize: "0.72rem", fontWeight: 500, color: "#8a97a8" }}>
+        {isMobile ? "Tap" : "Hover over"} a bar to see what it means
+      </p>
     </div>
   );
 }

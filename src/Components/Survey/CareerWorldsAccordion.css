@@ -1,0 +1,475 @@
+/* Career Worlds accordion — reuses selection-explorer pill styling inside the
+   body (ItemPills), with its own card/header chrome. */
+
+.cw-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cw-accordion__intro {
+  margin: 0 0 18px;
+  color: #4b5c6b;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.cw-accordion__intro-p {
+  margin: 0 0 12px;
+  text-align: left;
+}
+.cw-accordion__intro-p:last-child {
+  margin-bottom: 0;
+}
+
+.cw-accordion-item {
+  border: 1px solid #e6eaf0;
+  border-radius: 16px;
+  background: #f8fafc;
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  /* When an item is opened and scrolled to the top of the viewport, leave a little
+     breathing room above it so the top of the box is fully visible. */
+  scroll-margin-top: 16px;
+}
+
+.cw-accordion-item.is-open {
+  border-color: #cdd8ea;
+  box-shadow: 0 6px 20px rgba(20, 35, 60, 0.06);
+  background: #ffffff;
+}
+
+/* Header: one tidy row — [icon + title toggle] [reactions + meter] [chevron]. */
+.cw-accordion-item__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.cw-accordion-item__toggle {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.cw-accordion-item__meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 0 0 auto;
+}
+
+.cw-accordion-item__reactions {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.cw-accordion-item__chev {
+  flex: 0 0 auto;
+  color: #8a97a8;
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.cw-accordion-item__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 11px;
+  background: rgba(47, 111, 237, 0.08);
+  color: #2f6fed;
+  font-size: 1rem;
+}
+
+.cw-accordion-item__icon svg { width: 18px; height: 18px; }
+
+.cw-accordion-item__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: #14233c;
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+
+.cw-accordion-item__band {
+  flex: 0 0 auto;
+}
+
+.cw-accordion-item__body {
+  padding: 4px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+/* Override the global #results-root p { margin-bottom: 1rem } so the flex gap
+   above controls spacing, not the inherited paragraph margin. */
+#results-root .cw-accordion-item__short,
+#results-root .cw-accordion-item__narrative,
+#results-root .cw-accordion__intro {
+  margin-bottom: 0;
+}
+
+.cw-accordion-item__short {
+  margin: 0;
+  color: #4b5c6b;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  font-weight: 400;
+  padding-left: 14px;
+  border-left: 3px solid #cdd8ea;
+}
+
+/* Pathway long definition (multi-paragraph): drop the per-paragraph accent bar so
+   the definition reads as a plain intro, not three stacked callout blocks. */
+.cw-accordion-item__short--plain {
+  padding-left: 0;
+  border-left: none;
+}
+
+.cw-accordion-item__narrative {
+  margin: 0;
+  color: #4b5c6b;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 640px) {
+  /* Two rows: [icon + title] [chevron] on top; [meter ....... reactions] below. */
+  .cw-accordion-item__head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "toggle chevron"
+      "meta meta";
+    align-items: center;
+    column-gap: 10px;
+    row-gap: 12px;
+    padding: 14px;
+  }
+  .cw-accordion-item__toggle { grid-area: toggle; }
+  .cw-accordion-item__chev { grid-area: chevron; align-self: start; }
+  .cw-accordion-item__title { font-size: 0.98rem; }
+  .cw-accordion-item__meta {
+    grid-area: meta;
+    justify-content: space-between;
+    width: 100%;
+  }
+  /* Open: meter on the left, like/dislike on the right. */
+  .cw-accordion-item__band { order: -1; }
+  /* Closed: the meta row holds only the meter — push it to the right edge so it
+     doesn't float alone on the left under the title. */
+  .cw-accordion-item:not(.is-open) .cw-accordion-item__meta { justify-content: flex-end; }
+  .cw-accordion-item__body { padding: 2px 14px 14px; }
+
+  /* Pilot cards on phones: a simple flex header — icon top-left level with the
+     title, heart + chevron pinned top-right, and a thinner card overall. */
+  .cw-accordion { gap: 10px; }
+  .cw-accordion-item--pilot .cw-accordion-item__head {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    grid-template-areas:
+      "toggle book chev"
+      "badge  badge badge";
+    align-items: start;
+    column-gap: 10px;
+    row-gap: 8px;
+    padding: 12px 14px;
+  }
+  .cw-accordion-item--pilot .cw-accordion-item__toggle {
+    grid-area: toggle;
+    align-items: flex-start;
+    gap: 9px;
+  }
+  /* Pill sits under the title as a subtitle, indented past the icon. */
+  .cw-accordion-item--pilot .cw-accordion-item__pilotbadge {
+    grid-area: badge;
+    justify-self: start;
+    margin-left: 41px;
+  }
+  /* Saved mark and open chevron stay at the top-right (as before on phones). */
+  .cw-accordion-item--pilot .cw-liked-mark {
+    grid-area: book;
+    align-self: start;
+  }
+  .cw-accordion-item--pilot .cw-accordion-item__chev {
+    grid-area: chev;
+    align-self: start;
+    margin: 0;
+  }
+  .cw-accordion-item--pilot .cw-accordion-item__icon {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+  .cw-accordion-item--pilot .cw-accordion-item__icon svg { width: 16px; height: 16px; }
+  .cw-accordion-item--pilot .cw-accordion-item__title { font-size: 0.94rem; }
+  .cw-accordion-item--pilot .cw-react-btn { padding: 8px; font-size: 0.85rem; }
+}
+
+/* Saved/liked marker on collapsed cards. */
+.cw-liked-mark {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f6e56;
+}
+
+/* ---- Career worlds pilot chrome (matches approved mockup) ---- */
+.cw-accordion-item--pilot {
+  border-width: 1.5px;
+}
+.cw-accordion-item--pilot.is-open {
+  border-color: #85b7eb;
+}
+
+.cw-accordion-item__titlewrap {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.cw-accordion-item__titlewrap .cw-accordion-item__title {
+  flex: 0 0 auto;
+}
+
+.cw-match-badge {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  cursor: default;
+}
+.cw-match-badge svg { flex: 0 0 auto; }
+.cw-match-badge--top { background: #e2f2e4; color: #2f7d32; }
+.cw-match-badge--strong { background: #faeeda; color: #9a6a12; }
+.cw-match-badge--good { background: #e6f1fb; color: #185fa5; }
+.cw-match-badge--lower { background: #f0f2f5; color: #6f757e; }
+
+/* Big reaction buttons at the bottom of the card. */
+.cw-react-row {
+  display: flex;
+  gap: 9px;
+  margin-top: 6px;
+}
+.cw-react-btn {
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #cdd8ea;
+  background: #f8fafc;
+  color: #14233c;
+  cursor: pointer;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.cw-react-btn:hover { background: #eef3fb; }
+.cw-react-btn--like.is-active { background: #e1f5ee; border-color: #9fe1cb; color: #0f6e56; }
+.cw-react-btn--dislike.is-active { background: #fbeaf0; border-color: #f4c0d1; color: #993556; }
+
+/* "Read more about this world" — opens the long-definition pop-up. */
+.cw-readmore {
+  align-self: flex-start;
+  border: none;
+  background: none;
+  padding: 0;
+  color: #2f6fed;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+.cw-readmore:hover {
+  text-decoration: underline;
+}
+
+/* Long-definition pop-up. */
+.cw-def-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(20, 35, 60, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.cw-def-modal__box {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 82vh;
+  overflow: auto;
+  box-shadow: 0 24px 64px rgba(20, 35, 60, 0.28);
+}
+.cw-def-modal__head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 12px;
+}
+.cw-def-modal__icon {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  border-radius: 11px;
+  background: rgba(47, 111, 237, 0.08);
+  color: #2f6fed;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+}
+.cw-def-modal__icon svg { width: 18px; height: 18px; }
+.cw-def-modal__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #14233c;
+}
+.cw-def-modal__close {
+  flex: 0 0 auto;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: #8a97a8;
+  cursor: pointer;
+}
+.cw-def-modal__body p {
+  margin: 0 0 10px;
+  color: #4b5c6b;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.cw-def-modal__done {
+  margin-top: 6px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #cdd8ea;
+  background: #f8fafc;
+  color: #14233c;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cw-def-modal__done:hover {
+  background: #eef3fb;
+}
+
+.cw-accordion-group + .cw-accordion-group {
+  margin-top: 24px;
+}
+
+.cw-accordion-group__heading {
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2f6fed;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
+}
+
+/* Keep clear spacing below the multi-paragraph intro (overrides the shared
+   #results-root reset that zeroes intro margins). */
+#results-root .cw-accordion__intro { margin-bottom: 18px; }
+#results-root .cw-accordion__intro-p { margin-bottom: 12px; }
+#results-root .cw-accordion__intro-p:last-child { margin-bottom: 0; }
+
+/* Honest route-mix line inside a career world card: how open the world is to
+   non-university entry. A soft green tint signals openness without a statistic. */
+.cw-accordion-item__routemix {
+  margin: 2px 0 0;
+  padding: 9px 12px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #1c5c3c;
+  background: #eef8f1;
+  border: 1px solid #cde7d5;
+  border-radius: 10px;
+}
+
+/* Route chips (ways in) — discreet dot + label under the title */
+.cw-route-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 5px;
+}
+.cw-route-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1;
+  color: #3d3d3a;
+  white-space: nowrap;
+  cursor: help;
+}
+.cw-route-chip:focus-visible {
+  outline: 2px solid #2F6FED;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.cw-route-chip__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+.cw-route-chips--body .cw-route-chips { gap: 16px; }
+
+/* Ways-in chips shown inside the opened world/pathway body */
+.cw-route-chips--body {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 2px 0 12px;
+}
+.cw-route-chips--body .cw-route-chips { margin-top: 0; }
+.cw-route-chips__label {
+  font-size: 12px;
+  color: #8a8a86;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 2px;
+}
+
+/* Filter toolbar (top-right of the worlds/pathways list). */
+.cw-accordion__toolbar { display: flex; justify-content: flex-end; margin-bottom: 10px; }

@@ -1,6 +1,7 @@
 // src/utils/generatePDF.js
 import jsPDF from "jspdf";
 import { marked } from "marked";
+import SUBDIMENSION_DEFINITIONS from "./subdimensionDefinitions";
 
 /* -------------------------------------------------------------
    1. FULL DEFINITIONS (inlined)
@@ -24,127 +25,7 @@ const ARCHETYPE_DEFINITIONS = {
     "A Visionary is future-focused, bold, and full of ideas. They’re passionate about making a difference and inspired by big-picture thinking. Visionaries thrive in spaces where they can lead change, innovate, and inspire others.",
 };
 
-// Long subdimension definitions (your long file)
-const SUBDIMENSION_DEFINITIONS = {
-  // WHO YOU ARE
-  openness:
-    "Reflects imagination, curiosity, and comfort with new experiences. Higher scores indicate natural curiosity, openness to new ideas and creative thinking.",
-  conscientiousness:
-    "Indicates organisation, persistence, and sense of responsibility. Higher scores show strong planning, reliability, and task focus.",
-  emotionalStability:
-    "Measures resilience and calmness under pressure. Higher scores mean you remain composed and adapt well to challenges.",
-  riskTolerance:
-    "Reflects comfort with unpredictability and risk. Higher scores mean confidence in change and uncertain situations.",
-  gritPersistence:
-    "Shows sustained effort toward goals despite setbacks. High scorers display determination and endurance.",
-  extroversionSociability:
-    "Indicates energy from social interaction and visibility. Higher scores reflect enthusiasm for teamwork, communication, and leadership.",
-
-  // WHAT YOU LOVE
-  investigativeCuriosity:
-    "Represents a drive to question, analyse and understand complex ideas. Higher scores show enjoyment in exploring how things work.",
-  creativeExpression:
-    "Captures interest in imaginative thinking and artistic creation. Higher scores indicate a tendency to innovate and communicate ideas.",
-  helpingOrientation:
-    "Shows motivation to support, teach, or care for others. Higher scores reflect empathy and a strong sense of social responsibility.",
-  entrepreneurialDrive:
-    "Represents initiative, leadership, and opportunity-seeking. Higher scores show energy for taking charge and driving outcomes.",
-  handsOnEngagement:
-    "Measures enjoyment of practical, tangible and experiential work. Higher scores show a preference for active, hands-on environments.",
-  noveltyVarietySeeking:
-    "Reflects interest in change and new experiences. Higher scores indicate enjoyment of dynamic, varied tasks and dislike of monotony.",
-
-  // WHAT MATTERS
-  purposeImpact:
-    "Shows motivation to make a positive difference through work or study. Higher scores reflect a drive for meaning and contribution.",
-  autonomyControl:
-    "Indicates a desire for freedom and control over one’s actions. Higher scores show preference for self-direction and ownership.",
-  securityPredictability:
-    "Measures comfort with structure, certainty and consistency. Higher scores indicate preference for routine and order.",
-  recognitionVisibility:
-    "Represents motivation from acknowledgment and being seen. Higher scores indicate appreciation for recognition, praise, and visible success.",
-  financialAmbition:
-    "Reflects motivation driven by earning potential and reward. Higher scores show focus on financial goals, performance, and success.",
-  belongingConnection:
-    "Indicates importance placed on inclusion, community and shared purpose. Higher scores reflect engagement in teamwork and group belonging.",
-
-  // HOW YOU WORK BEST
-  paceIntensityPreference:
-    "Reflects how you respond to activity level and pressure. Higher scores show you stay energised and motivated in busy or high-demand environments.",
-  orderSystemsOrientation:
-    "Shows comfort with structured systems and processes. Higher scores mean you like order, routines, and efficiency.",
-  structureClarityPreference:
-    "Shows need for clear expectations and defined tasks. Higher scores mean you like knowing what good performance looks like.",
-  soloVsCollaborativeWorking:
-    "Shows comfort working with others toward shared goals. Higher scores mean you enjoy cooperation and open communication.",
-  guidanceVsSelfDirection:
-    "Shows comfort working autonomously. Higher scores mean you like to set your own direction and make progress independently.",
-  taskFocusDetail:
-    "Shows precision, accuracy, and thoroughness. Higher scores mean you take care to complete work properly and to a high standard.",
-};
-
-// THIS was missing — pretty label by key (from your Dimensions.js)
-const SUBDIMENSION_LABELS_BY_KEY = {
-  // Who You Are
-  openness: "Curiosity & Openness",
-  conscientiousness: "Reliability & Focus",
-  emotionalStability: "Emotional Stability",
-  riskTolerance: "Uncertainty Tolerance",
-  gritPersistence: "Perseverance",
-  extroversionSociability: "Sociability & Extroversion",
-  // What You Love
-  investigativeCuriosity: "Investigative Curiosity",
-  creativeExpression: "Creative Expression",
-  helpingOrientation: "Helping Orientation",
-  entrepreneurialDrive: "Entrepreneurial Drive",
-  handsOnEngagement: "Hands-On Engagement",
-  noveltyVarietySeeking: "Novelty & Variety Seeking",
-  // What Matters
-  purposeImpact: "Purpose & Impact",
-  autonomyControl: "Independence & Autonomy",
-  securityPredictability: "Stability & Predictability",
-  recognitionVisibility: "Recognition & Visibility",
-  financialAmbition: "Financial Ambition",
-  belongingConnection: "Belonging & Connection",
-  // How You Work Best
-  paceIntensityPreference: "Pace & Intensity Preference",
-  orderSystemsOrientation: "Organisation & Systems Orientation",
-  structureClarityPreference: "Clarity & Structure Preference",
-  soloVsCollaborativeWorking: "Team Collaboration",
-  guidanceVsSelfDirection: "Independent Working Approach",
-  taskFocusDetail: "Attention to Detail",
-};
-
-// label → key (covers the “coming from UI label” case)
-const LABEL_TO_KEY = {
-  "Curiosity & Openness": "openness",
-  "Reliability & Focus": "conscientiousness",
-  "Emotional Stability": "emotionalStability",
-  "Uncertainty Tolerance": "riskTolerance",
-  Perseverance: "gritPersistence",
-  "Sociability & Extroversion": "extroversionSociability",
-
-  "Investigative Curiosity": "investigativeCuriosity",
-  "Creative Expression": "creativeExpression",
-  "Helping Orientation": "helpingOrientation",
-  "Entrepreneurial Drive": "entrepreneurialDrive",
-  "Hands-On Engagement": "handsOnEngagement",
-  "Novelty & Variety Seeking": "noveltyVarietySeeking",
-
-  "Purpose & Impact": "purposeImpact",
-  "Independence & Autonomy": "autonomyControl",
-  "Stability & Predictability": "securityPredictability",
-  "Recognition & Visibility": "recognitionVisibility",
-  "Financial Ambition": "financialAmbition",
-  "Belonging & Connection": "belongingConnection",
-
-  "Pace & Intensity Preference": "paceIntensityPreference",
-  "Organisation & Systems Orientation": "orderSystemsOrientation",
-  "Clarity & Structure Preference": "structureClarityPreference",
-  "Team Collaboration": "soloVsCollaborativeWorking",
-  "Independent Working Approach": "guidanceVsSelfDirection",
-  "Attention to Detail": "taskFocusDetail",
-};
+// SUBDIMENSION_DEFINITIONS imported from subdimensionDefinitions.js (v2 string keys)
 
 /* -------------------------------------------------------------
    Layout helpers
@@ -358,29 +239,15 @@ export function generateCareerDNAPdf({
     // chart data with pretty labels
     const chartData = {};
     sorted.forEach((it) => {
-      const labelFromKey =
-        (it.key && SUBDIMENSION_LABELS_BY_KEY[it.key]) || null;
-      const label =
-        labelFromKey ||
-        it.label ||
-        it.key ||
-        "Subdimension";
+      const label = it.label || it.key || "Subdimension";
       chartData[label] = it.score;
     });
     y = drawBars(doc, chartData, y, maxWidth);
 
     // definitions
     const defsForDim = sorted.map((it) => {
-      // figure out the key
-      let key = it.key;
-      if (!key) {
-        key = LABEL_TO_KEY[it.label] || null;
-      }
-      const label =
-        (key && SUBDIMENSION_LABELS_BY_KEY[key]) ||
-        it.label ||
-        it.key ||
-        "Subdimension";
+      const key = it.key || it.label || null;
+      const label = it.label || it.key || "Subdimension";
       const definition =
         (key && SUBDIMENSION_DEFINITIONS[key]) ||
         it.definition ||

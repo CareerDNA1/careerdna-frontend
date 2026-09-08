@@ -1,0 +1,937 @@
+/* =========================================================
+   AuthPage.css — CareerDNA auth screens
+   Matches the compact card language used on Profile/Results
+   ========================================================= */
+
+.auth-page {
+  min-height: 100dvh;
+  padding: 54px 20px 30px;
+  background: linear-gradient(180deg, #f4f7fb 0%, #eef3f9 100%);
+  font-family: var(--cdna-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+  color: var(--cdna-color-text-strong, #1f2a37);
+}
+
+.auth-page-logo-link {
+  position: fixed;
+  top: 20px !important;
+  left: clamp(20px, 5vw, 40px) !important;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  z-index: 3;
+}
+
+/* Logo sized to EXACTLY mirror the landing navbar: height-based, 30px phone →
+   38px tablet → clamp up to 44px laptop/desktop, consistent across every page. */
+.auth-page-logo {
+  height: 30px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+@media (min-width: 700px) and (max-width: 1366px) and (max-aspect-ratio: 8/5) {
+  .auth-page-logo { height: 38px; }
+}
+@media (min-width: 700px) and (max-width: 1366px) and (max-aspect-ratio: 8/5) and (max-height: 820px) {
+  .auth-page-logo { height: 32px; }
+}
+@media (min-width: 1367px),
+       (min-width: 1181px) and (min-aspect-ratio: 8/5) {
+  .auth-page-logo { height: clamp(32px, 2.3vw, 44px); }
+}
+
+.auth-page-shell {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-card {
+  width: min(100%, 460px);
+  background: #ffffff;
+  border: 1px solid rgba(47, 111, 237, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  padding: 28px 38px 30px;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.auth-title {
+  margin: 0;
+  font-family: var(--cdna-font-sans, inherit);
+  font-size: clamp(1.5rem, 2.35vw, 1.85rem);
+  font-weight: var(--cdna-type-display-weight, 700);
+  letter-spacing: var(--cdna-type-display-tracking, -0.02em);
+  line-height: 1.12;
+  color: var(--cdna-color-primary, #2f6fed);
+}
+
+.auth-subtitle {
+  max-width: 360px;
+  margin: 8px auto 0;
+  font-family: var(--cdna-font-sans, inherit);
+  font-size: 0.98rem;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--cdna-color-text, #4b5c6b);
+}
+
+.auth-form {
+  display: grid;
+  gap: 13px;
+}
+
+.auth-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.auth-label {
+  display: grid;
+  gap: 6px;
+  font-family: var(--cdna-font-sans, inherit);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--cdna-color-text-strong, #1f2a37);
+}
+
+.auth-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid #d2dff0;
+  border-radius: 12px;
+  background: #eaf2ff;
+  color: var(--cdna-color-text-strong, #1f2a37);
+  font-family: var(--cdna-font-sans, inherit);
+  font-size: 0.96rem;
+  font-weight: 400;
+  line-height: 1.35;
+  box-shadow: none;
+  outline: none;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.auth-input:focus {
+  border-color: #2f6fed;
+  background: #eaf2ff;
+  box-shadow: none;
+  outline: 2px solid #2f6fed;
+  outline-offset: 0;
+}
+
+.auth-input-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.auth-input-icon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: #8da2bd;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.auth-input-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.auth-input::placeholder {
+  color: #9aaac0;
+}
+
+.auth-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--cdna-color-text, #4b5c6b);
+  flex-wrap: wrap;
+}
+
+.auth-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.auth-remember input {
+  width: 15px;
+  height: 15px;
+  accent-color: #2f6fed;
+}
+
+.auth-button {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 2px;
+  border: 0;
+  border-radius: 12px;
+  background: #2f6fed;
+  color: #ffffff;
+  font-family: var(--cdna-font-sans, inherit);
+  font-size: 0.96rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(47, 111, 237, 0.18);
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, opacity 160ms ease;
+}
+
+.auth-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: #2563df;
+  box-shadow: 0 12px 24px rgba(47, 111, 237, 0.22);
+}
+
+.auth-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.auth-message {
+  margin: 0 0 16px;
+  padding: 11px 13px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.auth-message.success {
+  background: #ecfdf3;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.auth-message.error {
+  background: #fef2f2;
+  color: #b42318;
+  border: 1px solid #fecaca;
+}
+
+.auth-links {
+  margin-top: 16px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(47, 111, 237, 0.10);
+  text-align: center;
+  color: var(--cdna-color-text, #4b5c6b);
+  font-size: 0.95rem;
+}
+
+.auth-links p {
+  margin: 0;
+}
+
+.auth-links a,
+.auth-inline-link {
+  color: #2f6fed;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-links a:hover,
+.auth-inline-link:hover {
+  text-decoration: underline;
+}
+
+.auth-security-note {
+  margin: 18px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(47, 111, 237, 0.08);
+  color: #7a8797;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  text-align: center;
+}
+
+
+@media (min-width: 721px) and (max-height: 820px) {
+  .auth-page {
+    padding-top: 44px;
+    padding-bottom: 24px;
+  }
+
+  .auth-card {
+    width: min(100%, 500px);
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  .auth-title {
+    font-size: clamp(1.45rem, 2.2vw, 1.7rem);
+  }
+
+  .auth-subtitle {
+    font-size: 0.94rem;
+    line-height: 1.4;
+  }
+
+  .auth-header {
+    margin-bottom: 16px;
+  }
+
+  .auth-form {
+    gap: 11px;
+  }
+
+  .auth-input {
+    min-height: 42px;
+  }
+
+  .auth-links {
+    margin-top: 14px;
+    padding-top: 13px;
+  }
+}
+
+@media (max-width: 720px) {
+  .auth-page {
+    padding: 24px 16px 32px;
+  }
+
+  .auth-page-logo-link {
+    position: static;
+    margin: 0 0 22px;
+  }
+
+  /* logo now inherits the 30px navbar-matched base height — no override needed */
+
+  .auth-card {
+    padding: 28px 22px;
+    border-radius: 18px;
+  }
+
+  .auth-row {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* Password visibility toggle used by login and reset-password screens */
+.auth-password-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.auth-input.auth-input--password-toggle {
+  padding-right: 48px;
+}
+
+.auth-password-toggle {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #6f8198;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.auth-password-toggle:hover {
+  background: rgba(47, 111, 237, 0.08);
+  color: #2f6fed;
+}
+
+.auth-password-toggle svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.auth-inline-button {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  color: #2f6fed;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+
+/* Auth consistency refinements */
+.auth-input:-webkit-autofill,
+.auth-input:-webkit-autofill:hover,
+.auth-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #eaf2ff inset !important;
+  -webkit-text-fill-color: #1f2a37 !important;
+  caret-color: #1f2a37;
+}
+
+.auth-input-wrap .auth-input {
+  padding-left: 18px;
+}
+
+.auth-actions.auth-actions--forgot-only {
+  justify-content: flex-end;
+}
+
+@media (max-width: 520px) {
+  .auth-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .auth-actions.auth-actions--forgot-only {
+    align-items: flex-end;
+  }
+}
+
+/* =========================================================
+   Auth premium polish: icons, dividers, trust strip
+   ========================================================= */
+.auth-page-shell--with-trust {
+  min-height: calc(100vh - 96px);
+  flex-direction: column;
+  gap: 34px;
+}
+
+.auth-page-shell--with-trust .auth-card {
+  width: min(100%, 500px);
+  padding: 30px 38px 28px;
+}
+
+.auth-page-shell--with-trust .auth-card[aria-labelledby="signup-title"] {
+  width: min(100%, 540px);
+}
+
+.auth-input-wrap .auth-input.auth-input--with-icon {
+  padding-left: 46px;
+}
+
+.auth-input-wrap .auth-input.auth-input--with-icon.auth-input--password-toggle {
+  padding-right: 48px;
+}
+
+.auth-input-icon {
+  left: 16px;
+  color: #6f8198;
+}
+
+.auth-input-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.auth-password-wrap .auth-input-icon {
+  z-index: 2;
+}
+
+.auth-required {
+  color: #b42318;
+  font-weight: 700;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 18px 0 12px;
+  color: #6d7d91;
+  font-size: 0.86rem;
+  line-height: 1;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, rgba(47, 111, 237, 0.04), rgba(47, 111, 237, 0.18));
+}
+
+.auth-divider::after {
+  background: linear-gradient(90deg, rgba(47, 111, 237, 0.18), rgba(47, 111, 237, 0.04));
+}
+
+.auth-divider span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+}
+
+.auth-links--plain {
+  margin-top: 18px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.auth-legal-check {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--cdna-color-text, #4b5c6b);
+  font-size: 0.84rem;
+  line-height: 1.35;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.auth-legal-check input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  flex: 0 0 auto;
+  accent-color: #2f6fed;
+}
+
+.auth-foot-group {
+  width: min(100%, 820px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.auth-legal-footer {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: rgba(75, 95, 118, 0.72);
+  text-align: center;
+}
+
+.auth-legal-footer a {
+  color: #2f6fe4;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.auth-legal-footer a:hover,
+.auth-legal-footer a:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
+.auth-trust-strip {
+  width: min(100%, 820px);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  color: #28405f;
+}
+
+.auth-trust-item {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.auth-trust-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #2f6fed;
+  background: rgba(47, 111, 237, 0.06);
+}
+
+.auth-trust-icon svg {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.auth-trust-item strong,
+.auth-trust-item small {
+  display: block;
+}
+
+.auth-trust-item strong {
+  color: #1f3b63;
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.auth-trust-item small {
+  margin-top: 3px;
+  color: #58708c;
+  font-size: 0.78rem;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.auth-input:focus {
+  outline: 2px solid #2f6fed;
+  outline-offset: 0;
+  box-shadow: none;
+}
+
+@media (min-width: 721px) and (max-height: 820px) {
+  .auth-page-shell--with-trust {
+    gap: 24px;
+  }
+
+  .auth-trust-strip {
+    gap: 16px;
+  }
+
+  .auth-trust-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .auth-trust-icon svg {
+    width: 23px;
+    height: 23px;
+  }
+}
+
+/* Portrait tablet / iPad: the card was vertically centred in the full viewport,
+   leaving it marooned in ~280px of empty space top and bottom. Anchor the
+   content near the top and enlarge the card a touch so it reads as intentional. */
+@media (min-width: 721px) and (max-width: 1180px) and (min-height: 900px) {
+  .auth-page {
+    padding-top: 104px;
+    padding-bottom: 56px;
+  }
+
+  /* drop the login box down toward the middle of the tall iPad viewport
+     (was pinned to the top) — centre the card + footer group vertically. */
+  .auth-page-shell--with-trust {
+    min-height: calc(100dvh - 160px);
+    justify-content: center;
+    gap: 52px;
+  }
+
+  .auth-page-shell--with-trust .auth-card,
+  .auth-page-shell--with-trust .auth-card[aria-labelledby="signup-title"] {
+    width: min(100%, 560px);
+    padding: 36px 44px 34px;
+  }
+
+  .auth-title {
+    font-size: 2rem;
+  }
+
+  .auth-subtitle {
+    font-size: 1.02rem;
+  }
+
+  /* bigger gap between the trust strip and the Privacy · Terms · © line */
+  .auth-foot-group {
+    gap: 26px;
+  }
+}
+
+@media (max-width: 720px) {
+  /* drop the card down: centre the card + footer group in the space below the
+     logo instead of letting it sit at the top. */
+  .auth-page-shell--with-trust {
+    min-height: calc(100dvh - 120px);
+    justify-content: center;
+    gap: 24px;
+  }
+
+  .auth-page-shell--with-trust .auth-card,
+  .auth-page-shell--with-trust .auth-card[aria-labelledby="signup-title"] {
+    width: 100%;
+    padding: 28px 22px;
+  }
+
+  .auth-legal-check {
+    align-items: flex-start;
+    white-space: normal;
+  }
+
+  .auth-legal-check input {
+    margin-top: 3px;
+  }
+
+  /* Phone: compact icon-LEFT rows, but the whole 3-row block is centred in the
+     card width (width:max-content + auto margins) so it's tidy without eating
+     vertical space. */
+  .auth-trust-strip {
+    grid-template-columns: 1fr;
+    gap: 13px;
+    width: max-content;
+    max-width: 100%;
+    margin: 0 auto;
+    justify-items: start;
+  }
+
+  .auth-trust-item {
+    grid-template-columns: 38px minmax(0, 1fr);
+    align-items: center;
+    text-align: left;
+    gap: 12px;
+  }
+
+  .auth-trust-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  /* bigger gap so Privacy · Terms · © sits clearly below the trust block */
+  .auth-foot-group {
+    gap: 24px;
+  }
+}
+
+/* =========================================================================
+   SPLIT AUTH LAYOUT (login) — professional top bar / centred card / footer.
+   Scoped to .auth-page--split so signup & reset-password are unaffected.
+   ========================================================================= */
+.auth-page--split {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding: 0;
+}
+
+/* Top bar: logo left, Back-to-home right (mirrors the content pages' nav). */
+.auth-page--split .auth-topbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  padding: 20px clamp(20px, 5vw, 40px);
+  box-sizing: border-box;
+}
+
+.auth-page--split .auth-page-logo-link {
+  position: static;
+  top: auto !important;
+  left: auto !important;
+  margin: 0;
+}
+
+.auth-home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #2f6fed;
+  text-decoration: none;
+  font-family: var(--cdna-font-sans, inherit);
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  padding: 10px 13px;
+  border-radius: 999px;
+  transition: background 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.auth-home-link:hover,
+.auth-home-link:focus-visible {
+  background: rgba(47, 111, 237, 0.08);
+  box-shadow: 0 8px 22px rgba(47, 111, 237, 0.10);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.auth-home-icon,
+.auth-home-arrow {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* Card fills the flexible middle and is centred; footer is a separate block
+   pinned at the page bottom. This is the same rule on every device — the only
+   per-device change is how far down the card sits (below). */
+.auth-page--split .auth-page-shell--with-trust {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px;
+  gap: 0;
+}
+
+.auth-page--split .auth-footer {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 20px calc(30px + env(safe-area-inset-bottom));
+}
+
+/* Tall portrait tablet (iPad): dead-centre reads as too low on a 1366px-tall
+   screen, so bias the card into the upper-middle; footer stays at the bottom. */
+@media (min-width: 721px) and (max-width: 1180px) and (min-height: 900px) {
+  .auth-page--split .auth-page-shell--with-trust {
+    justify-content: flex-start;
+    padding-top: clamp(56px, 12vh, 160px);
+  }
+}
+
+/* Laptop / desktop: the card is tall enough that centring it pushes the trust
+   strip below the fold. Compact the card's internal spacing (padding + gaps,
+   NOT the inputs/button) and tighten the shell padding so the footer shows on
+   load without scrolling. */
+@media (min-width: 1181px) {
+  .auth-page--split .auth-page-shell--with-trust {
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  .auth-page--split .auth-card {
+    padding-top: 22px;
+    padding-bottom: 24px;
+  }
+
+  .auth-page--split .auth-header {
+    margin-bottom: 12px;
+  }
+
+  .auth-page--split .auth-subtitle {
+    margin-top: 6px;
+  }
+
+  .auth-page--split .auth-form {
+    gap: 10px;
+  }
+
+  .auth-page--split .auth-divider {
+    margin: 12px 0 10px;
+  }
+
+  .auth-page--split .auth-links--plain {
+    margin-top: 16px;
+  }
+
+  .auth-page--split .auth-footer {
+    gap: 28px;
+    padding-top: 6px;
+    padding-bottom: 22px;
+  }
+}
+
+/* =========================================================================
+   SIGNUP form (.auth-page--form): a taller form than login, so condense it
+   further and anchor it higher so "Create account" is visible without
+   scrolling on short laptops / phones. Scoped so login stays untouched.
+   ========================================================================= */
+@media (min-width: 1181px) {
+  .auth-page--form .auth-page-shell--with-trust {
+    justify-content: flex-start;
+    padding-top: 18px;
+  }
+
+  .auth-page--form .auth-card {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .auth-page--form .auth-header {
+    margin-bottom: 10px;
+  }
+
+  .auth-page--form .auth-form {
+    gap: 8px;
+  }
+
+  .auth-page--form .auth-input {
+    min-height: 42px;
+  }
+
+  .auth-page--form .auth-divider {
+    margin: 9px 0 8px;
+  }
+
+  .auth-page--form .auth-legal-check {
+    margin: 1px 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .auth-page--form .auth-page-shell--with-trust {
+    padding-top: 14px;
+  }
+
+  .auth-page--form .auth-card {
+    padding-top: 22px;
+    padding-bottom: 22px;
+  }
+
+  .auth-page--form .auth-header {
+    margin-bottom: 10px;
+  }
+
+  .auth-page--form .auth-form {
+    gap: 10px;
+  }
+
+  .auth-page--form .auth-input {
+    min-height: 42px;
+  }
+}
+
+/* Phone: a comfortable offset below the top bar, footer pinned at the bottom. */
+@media (max-width: 720px) {
+  .auth-page--split .auth-topbar {
+    height: 64px;
+    padding: 14px 18px;
+  }
+
+  .auth-page--split .auth-page-shell--with-trust {
+    justify-content: flex-start;
+    padding-top: clamp(20px, 6vh, 56px);
+  }
+
+  .auth-page--split .auth-footer {
+    gap: 22px;
+    padding-top: 8px;
+  }
+}

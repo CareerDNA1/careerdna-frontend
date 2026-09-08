@@ -2,176 +2,694 @@
   --hero-max: 70rem;
   --nav-h-desktop: 80px;
   --nav-h-mobile: 64px;
-  --spacing-base: 1rem;
   --vertical-offset: 0px;
 }
 
 .hero {
   position: relative;
+  z-index: 1;
+  isolation: isolate;
   width: 100%;
   max-width: 100%;
   color: #fff;
-  text-align: center;
+  text-align: left;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 120px 16px 96px;
+  padding: 120px clamp(24px, 6vw, 92px) 96px;
   min-height: 100vh;
+  background-color: #01193a;
+  background-image: linear-gradient(
+    to right,
+    #01193a 0%,
+    #011f4b 25%,
+    #012255 50%,
+    #062251 75%,
+    #1e1334 100%
+  );
+  overflow: hidden;
+}
+
+
+.hero-bg-motion {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100svh;
+  background-repeat: no-repeat;
   background-size: cover;
-  background-position: center top;
-  background-attachment: fixed; /* keep fixed everywhere (like How/Science) */
+  background-position: 62% 10%;
+  opacity: var(--hero-bg-opacity, 1);
+  transform: translate3d(var(--hero-scroll-x, 0px), var(--hero-scroll-y, 0px), 0) scale(var(--hero-scroll-scale, 1));
+  transform-origin: center center;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.hero-top-fade {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(
+    to bottom,
+    rgba(1, 25, 58, 0.92) 0%,
+    rgba(1, 25, 58, 0.5) 40%,
+    rgba(1, 25, 58, 0) 100%
+  );
+  z-index: 1;
+  opacity: var(--hero-bg-opacity, 1);
+  pointer-events: none;
+  will-change: opacity;
 }
 
 .hero::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(10,10,50,0.5));
-  z-index: 0;
+  background:
+    linear-gradient(90deg,
+      rgba(4, 14, 32, 0.60) 0%,
+      rgba(4, 14, 32, 0.44) 30%,
+      rgba(4, 14, 32, 0.20) 52%,
+      rgba(4, 14, 32, 0.00) 72%
+    );
+  z-index: 1;
+  pointer-events: none;
 }
 
 .hero-overlay {
   position: relative;
-  z-index: 1;
-  width: min(92%, var(--hero-max));
-  margin: 0 auto;
-  padding: 0 1rem;
+  z-index: 2;
+  width: min(37rem, 40vw);
+  margin: 0;
+  padding: 0;
   padding-top: var(--vertical-offset, 0px);
-  overflow: visible; /* allow CTA to shift visually without clipping */
+  overflow: visible;
+  /* SINGLE vertical anchoring system: hero is always flex-centred, and each
+     breakpoint only sets --hero-text-y. Do not add transform overrides below. */
+  transform: translateY(var(--hero-text-y, 0px));
+}
+
+/* Button.module.css loads AFTER this file and sets .btn{min-width:max-content}
+   and .xl{min-height:46px} at equal specificity, so a plain .hero-variant rule
+   never wins. This 2-class selector does. Breakpoints set the vars only. */
+.hero .hero-variant {
+  min-width: var(--btn-w, 230px);
+  min-height: var(--btn-h, 46px);
+  font-size: var(--btn-fs, 0.95rem);
 }
 
 .hero-title {
-  font-size: clamp(28px, 4vw, 56px);
+  font-family: var(--cdna-font-sans);
+    font-size: clamp(2.85rem, 3.7vw, 4.45rem);
   font-weight: 700;
-  line-height: 1.10;
-  margin: 0 auto 40px;
+  letter-spacing: -0.052em;
+  line-height: 1.05;
+  margin: 0 0 20px;
+  max-width: 670px;
+  text-shadow: 0 7px 22px rgba(0, 0, 0, 0.20);
 }
 
-.hero-title .no-break { white-space: nowrap; display: block; }
-.hero-title .accent { display: block; color: #b3d4ff; margin-top: 0.15em; }
+.hero-title .no-break { display: block; }
+
+.hero-title .accent {
+  display: block;
+  margin-top: 0.05em;
+  color: #79bdff;
+  background: linear-gradient(90deg, #79caff 0%, #73b8ff 52%, #9fc4ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-title-line {
+  width: min(280px, 50vw);
+  height: 1px;
+  border-radius: 999px;
+  margin: 0 0 34px;
+  background: linear-gradient(90deg, #22d8ff 0%, #78a8ff 58%, #ff2f91 100%);
+  box-shadow: 0 0 12px rgba(61, 174, 255, 0.34);
+}
 
 .hero-combined {
-  max-width: 800px;
-  margin: 15px auto 50px;
-  color: #f5faff;
-  font-size: clamp(16px, 2vw, 20px);
+  font-family: var(--cdna-font-sans);
+  max-width: 33rem;
+  margin: 0 0 34px;
+  color: rgba(245, 250, 255, 0.96);
+  font-size: clamp(1.02rem, 1.25vw, 1.35rem);
   line-height: 1.55;
-  font-weight: 500;
+  font-weight: var(--cdna-type-body-weight);
+  text-shadow: 0 3px 16px rgba(0, 0, 0, 0.20);
 }
 
 .cta-button-wrapper {
-  position: relative; /* stays in flow on desktop */
+  position: relative;
   z-index: 10;
-  margin-top: 5rem;
+  margin-top: 0;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
+  transform: none;
 }
 
-/* ==============================
-   HERO CTA BUTTON (variant)
-   ============================== */
-
-/* Desktop default: a touch less transparent; thin frame only on hover */
 .hero-variant {
+  min-width: 260px;
+  min-height: 56px;
   background: transparent !important;
   background-image: none !important;
   color: #fff !important;
   position: relative;
-
-  /* slightly less transparent baseline than before */
-  background-color: rgba(255,255,255,0.06) !important;
-
-  border: 1px solid transparent !important; /* frame appears on hover */
+  background-color: rgba(255,255,255,0.032) !important;
+  border: 1px solid rgba(137, 176, 230, 0.46) !important;
   box-shadow:
-    0 10px 28px rgba(0, 0, 0, 0.38),
-    0 0 18px rgba(165, 200, 255, 0.48);
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 26px rgba(0, 0, 0, 0.24),
+    0 0 16px rgba(120, 170, 255, 0.20);
   transition:
     transform 0.18s ease,
     box-shadow 0.22s ease,
     background-color 0.22s ease,
     border-color 0.22s ease;
 }
+
 .hero-variant::before { content: none !important; }
 
 .hero-variant:hover {
   transform: translateY(-2px);
-  background-color: rgba(255, 255, 255, 0.10) !important;
-  border: 1px solid rgba(255, 255, 255, 0.95) !important; /* thinner frame */
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(190, 215, 255, 0.82) !important;
   box-shadow:
-    0 14px 36px rgba(0, 0, 0, 0.48),
-    0 0 28px rgba(165, 200, 255, 0.65),
-    0 0 12px rgba(255, 255, 255, 0.55);
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 14px 36px rgba(0, 0, 0, 0.34),
+    0 0 25px rgba(120, 170, 255, 0.32);
 }
 
 .hero-variant:focus-visible {
   outline: 3px solid rgba(255, 255, 255, 0.85);
   outline-offset: 3px;
-  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.95) !important;
   background-color: rgba(255, 255, 255, 0.10) !important;
 }
 
 .hero-variant:active { transform: scale(0.98); }
 
-/* ==============================
-   Responsive
-   ============================== */
-
-@media (max-width: 600px) {
+@media (max-width: 699px) {
   :root { --vertical-offset: 0px; }
 
   .hero {
     min-height: 100svh;
-    padding-top: calc(var(--nav-h-mobile) + env(safe-area-inset-top) + 30px);
-    padding-bottom: 70px;
-    background-position: 50% 20%;
+    padding: calc(var(--nav-h-mobile) + env(safe-area-inset-top) + 34px) 22px 70px;
+    background-image: none !important;
+    background-attachment: scroll;
+    justify-content: center;
   }
 
-  .hero-title { font-size: clamp(26px, 7.5vw, 36px); margin: 0 auto 40px; max-width: 90vw; }
-  .hero-combined { max-width: 35ch; font-size: 1rem; margin: 15px auto 50px; }
+  /* Phone: full-bleed like everywhere else, but this is the ONE intentional
+     exception to the 62% rule. On a 402px screen the image is scaled to ~1311px
+     (3.3x the viewport), so 62% would drop his whole face across the text.
+     50% sits him to the right — eyes still clearly visible, text kept off them. */
+  .hero-bg-motion {
+    background-size: cover;
+    background-position: 54% 10%;
+  }
 
-  /* MOVE ONLY THE BUTTON (visual shift; layout unaffected) */
+  /* overlay intentionally NOT overridden — inherits the single base .hero::after.
+     The old phone gradient bottomed out at 0.28 instead of 0, which put a
+     permanent 28% veil over his face and made phones look darker than iPads. */
+
+  .hero-overlay {
+    width: min(68%, 23rem);
+    max-width: 23rem;
+    --hero-text-y: -5vh;
+  }
+
+  .hero-title {
+    font-size: clamp(1.55rem, 7.3vw, 2.15rem);
+    margin: 0 0 13px;
+  }
+
+  .hero-title-line {
+    width: 130px;
+    margin-bottom: 18px;
+  }
+
+  /* paragraph deliberately narrower than the title column — it is the widest
+     element, so compressing it is what frees space to bring him further left */
+  .hero-combined {
+    max-width: 26ch;
+    margin: 0 0 24px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
   .cta-button-wrapper {
-    margin-top: 5rem;              /* keep your original flow spacing */
-    transform: translateY(6vh);    /* push CTA down visually */
+    margin-top: 0;
+    transform: none;
+  }
+
+  .hero {
+    --btn-w: 190px;
+    --btn-h: 46px;
+    --btn-fs: 0.96rem;
   }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
-  :root { --vertical-offset: 8px; }
+/* Small phones (SE / older Androids). A single vw rule tuned for 402-440px always
+   reads oversized at 375px, so trim one more step here. */
+@media (max-width: 390px) {
+  .hero-title {
+    font-size: clamp(1.4rem, 6.3vw, 1.85rem);
+    margin: 0 0 11px;
+  }
+
+  .hero-combined {
+    max-width: 27ch;
+    font-size: 0.79rem;
+    line-height: 1.48;
+    margin: 0 0 18px;
+  }
+
+  .hero-title-line {
+    width: 100px;
+    margin-bottom: 14px;
+  }
+
+  .hero {
+    --btn-w: 152px;
+    --btn-h: 38px;
+    --btn-fs: 0.82rem;
+  }
+}
+
+@media (min-width: 700px) and (max-width: 1180px),
+       (min-width: 700px) and (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+  :root { --vertical-offset: 0px; }
 
   .hero {
     min-height: 100svh;
-    padding-top: calc(var(--nav-h-desktop) + env(safe-area-inset-top) + 32px);
-    padding-bottom: 140px;
+    padding: calc(var(--nav-h-desktop) + env(safe-area-inset-top) + 54px) clamp(34px, 5.2vw, 58px) 84px;
+    background-image: none !important;
+    background-attachment: scroll;
+    justify-content: center;
   }
 
-  .hero-overlay { transform: translateY(-12vh); max-width: 720px; }
-  .hero-title { font-size: clamp(52px, 6vw, 70px); line-height: 1.14; margin-bottom: 12px; }
-  .hero-combined { max-width: 60ch; font-size: 23.5px; line-height: 1.6; margin: 25px auto 60px; }
+  .hero-bg-motion {
+    background-size: cover;
+    background-position: 62% 10%;
+  }
 
-  /* MOVE ONLY THE BUTTON (visual shift; layout unaffected) */
+  /* overlay intentionally NOT overridden — inherits the single base .hero::after */
+
+  .hero-overlay {
+    width: min(430px, 50vw);
+    max-width: 430px;
+    --hero-text-y: 0px;
+  }
+
+  .hero-title {
+    font-size: clamp(2.2rem, 4.15vw, 3rem);
+    margin-bottom: 18px;
+  }
+
+  .hero-title-line {
+    width: 220px;
+    margin-bottom: 26px;
+  }
+
+  .hero-combined {
+    max-width: 35ch;
+    margin: 0 0 30px;
+    font-size: clamp(0.92rem, 1.32vw, 1.02rem);
+    line-height: 1.5;
+  }
+
   .cta-button-wrapper {
-    margin-top: 16vh;              /* keep your original value */
-    transform: translateY(14vh);   /* extra visual push for iPad */
+    margin-top: 0;
+    transform: none;
   }
 }
 
-@media (min-width: 1200px) {
-  :root { --vertical-offset: 6px; }
-  .hero { padding-top: 140px; padding-bottom: 100px; }
-  .hero-overlay { padding-top: var(--vertical-offset, 10px); }
+
+
+/* iPad / tablet portrait: keep the person to the right and lower the text block. */
+@media (min-width: 700px) and (max-width: 1024px) and (orientation: portrait) {
+  .hero {
+    padding-top: calc(var(--nav-h-desktop) + env(safe-area-inset-top) + 48px);
+    padding-bottom: 72px;
+    justify-content: center;
+  }
+
+  .hero-bg-motion {
+    background-size: cover;
+    background-position: 62% 10%;
+  }
+
+  /* overlay intentionally NOT overridden — inherits the single base .hero::after */
+
+  .hero-overlay {
+    width: min(520px, 40vw);
+    max-width: 520px;
+    /* lift onto his eye line (~30% of viewport height on portrait) */
+    --hero-text-y: -11vh;
+  }
+
+  .hero-title {
+    font-size: clamp(2.05rem, 4.6vw, 3rem);
+  }
+
+  .hero-title-line {
+    width: 240px;
+  }
+
+  /* was inheriting a 0.92rem floor from the 700-1180 block, so it sat at ~14.7px
+     even on a 1024px tablet — smaller than the phone. Scale it with the viewport. */
+  .hero-combined {
+    max-width: 34ch;
+    font-size: clamp(1.12rem, 2.1vw, 1.45rem);
+    line-height: 1.55;
+  }
+
+  .hero {
+    --btn-w: 250px;
+    --btn-h: 50px;
+    --btn-fs: 1rem;
+  }
+}
+
+
+/* Desktop: cover so the image always fills the viewport regardless of window height. */
+@media (hover: hover) and (pointer: fine) {
+  .hero-bg-motion {
+    background-size: cover;
+    background-position: 62% 10%;
+  }
+}
+
+/* Narrow desktop browser windows only:
+   keep the desktop-style hero and do not switch to the tablet motion layer. */
+@media (min-width: 700px) and (max-width: 1180px) and (hover: hover) and (pointer: fine) {
+  .hero {
+    padding-top: 128px;
+    padding-bottom: 96px;
+    justify-content: center;
+    /* combined rule above kills the gradient with !important — restore it for desktop */
+    background-image: linear-gradient(
+      to right,
+      #01193a 0%, #011f4b 25%, #012255 50%, #062251 75%, #1e1334 100%
+    ) !important;
+  }
+
+  /* overlay intentionally NOT overridden — inherits the single base .hero::after */
+
+  .hero-overlay {
+    /* narrowed so the column doesn't jump 566->472px crossing 1180->1181 */
+    width: min(37rem, 42vw);
+    --hero-text-y: 0px;
+  }
+
+  .hero-title {
+    font-size: clamp(2.35rem, 3.8vw, 3.4rem);
+  }
+}
+
+@media (min-width: 1181px) and (hover: hover) and (pointer: fine) {
+  :root { --vertical-offset: 0px; }
+
+  .hero {
+    padding-top: 138px;
+    padding-bottom: 104px;
+  }
+
+  .hero-overlay {
+    padding-top: var(--vertical-offset, 0px);
+    /* tracks his eye line. Image Y moved 25%->10% (down ~22px on a 16:9
+       laptop), so this lift reduced by the same amount to stay aligned. */
+    --hero-text-y: -8px;
+  }
+}
+
+@media (min-width: 1500px) and (hover: hover) and (pointer: fine) {
+  .hero {
+    padding-left: clamp(72px, 6.3vw, 116px);
+  }
+
+  .hero-bg-motion {
+    background-size: cover;
+  }
+
+  .hero-overlay {
+    width: min(41rem, 41vw);
+  }
+}
+
+/* Extreme widescreen desktop: viewport width far exceeds the height-scaled image.
+   Switch to width-based sizing so the image always fills the viewport horizontally
+   and calc(100%+60px) never drifts positive. */
+@media (min-aspect-ratio: 2/1) and (hover: hover) and (pointer: fine) {
+  .hero-bg-motion {
+    background-size: cover;
+    background-position: 62% 10%;
+  }
+}
+
+
+/* Short tablet / narrow landscape touch devices: prevent the logo from sitting over the title. */
+@media (min-width: 700px) and (max-width: 1180px) and (max-height: 760px) and (hover: none) and (pointer: coarse) {
+  .hero {
+    padding-top: calc(var(--nav-h-desktop) + env(safe-area-inset-top) + 42px);
+    padding-bottom: 60px;
+  }
+
+  .hero-overlay {
+    --hero-text-y: 0px;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 3.9vw, 2.75rem);
+  }
+
+  .hero-combined {
+    font-size: clamp(0.88rem, 1.2vw, 0.98rem);
+    line-height: 1.45;
+  }
 }
 
 @supports (-webkit-touch-callout: none) {
-  @media (min-width: 769px) and (max-width: 1024px) {
+  @media (min-width: 700px) and (max-width: 1024px) {
     .hero { min-height: 100svh; }
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-bg-motion { transform: none !important; }
   .hero-variant { transition: none; }
   .hero-variant:hover { transform: none; }
+}
+
+/* iPad Pro portrait: layout and typography sizing.
+   No touch qualifier — applies to desktop portrait edge case too (acceptable).
+   Touch-only overlay refinement is in the block below. */
+/* NOTE: starts at 1025px, NOT 1000px. iPad Pro 12.9 portrait is exactly 1024 wide,
+   so a 1000px start pulled it out of the standard <=1024 portrait rules that every
+   other iPad uses, and top-anchored it into the logo. Leave this at 1025. */
+@media (min-width: 1025px) and (max-width: 1100px) and (orientation: portrait) {
+  .hero {
+    padding-top: calc(var(--nav-h-desktop) + env(safe-area-inset-top) + 48px);
+    padding-bottom: 76px;
+    justify-content: center;
+  }
+
+  .hero-overlay {
+    width: min(530px, 50vw);
+    max-width: 530px;
+    --hero-text-y: 0px;
+  }
+
+  .hero-title {
+    font-size: clamp(3.05rem, 5.05vw, 3.75rem);
+    margin-bottom: 22px;
+  }
+
+  .hero-title-line {
+    width: 270px;
+    margin-bottom: 34px;
+  }
+
+  .hero-combined {
+    max-width: 37ch;
+    font-size: clamp(1.14rem, 1.78vw, 1.32rem);
+    line-height: 1.56;
+    margin-bottom: 38px;
+  }
+
+  .hero {
+    --btn-w: 250px;
+    --btn-h: 50px;
+    --btn-fs: 1rem;
+  }
+}
+
+/* All touch tablets: structural reset + final background position.
+   Sub-breakpoints below refine per orientation. */
+@media (min-width: 700px) and (max-width: 1366px) and (hover: none) and (pointer: coarse) {
+  .hero {
+    min-height: 100svh !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    background-image: none !important;
+    background-attachment: scroll !important;
+  }
+
+  .hero-bg-motion {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100svh !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: 62% 10% !important;
+    opacity: var(--hero-bg-opacity, 1) !important;
+    transform: translate3d(
+      var(--hero-scroll-x, 0px),
+      var(--hero-scroll-y, 0px),
+      0
+    ) scale(var(--hero-scroll-scale, 1)) !important;
+    transform-origin: center center !important;
+    will-change: transform, opacity !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+  }
+
+  /* overlay intentionally NOT overridden — inherits the single base .hero::after */
+}
+
+/* iPad Pro portrait touch (1025-1100px wide): larger overlay.
+   For the 1000-1024px overlap with the standard iPad block below, the standard block wins. */
+@media (min-width: 1000px) and (max-width: 1100px) and (orientation: portrait) and (hover: none) and (pointer: coarse) {
+  .hero-overlay {
+    width: min(430px, 42vw) !important;
+    max-width: 430px !important;
+    --hero-text-y: 0px;
+  }
+}
+
+/* Standard iPad portrait (≤1024px wide): push image to the right, lower text block. */
+@media (min-width: 700px) and (max-width: 1024px) and (orientation: portrait) and (hover: none) and (pointer: coarse) {
+  .hero-bg-motion {
+    background-size: cover !important;
+    background-position: 62% 10% !important;
+  }
+
+  .hero-overlay {
+    width: min(520px, 40vw) !important;
+    max-width: 520px !important;
+    /* lift onto his eye line (~30% of viewport height on portrait) */
+    --hero-text-y: -11vh;
+  }
+}
+
+/* Landscape tablets: smaller right shift so the image stays visible. */
+@media (min-width: 700px) and (max-width: 1366px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
+  .hero-bg-motion {
+    background-size: cover !important;
+    background-position: 62% 10% !important;
+  }
+
+  /* The 700-1180 block caps this at 430px via its touch clause, which is only 31%
+     of a 1366px iPad Pro. Landscape has width to spare — use it, and lift to the eye line. */
+  .hero-overlay {
+    width: min(40rem, 46vw);
+    max-width: 40rem;
+    /* lift intentionally NOT set here — inherits the single aspect-ratio rule
+       at the end of this file, so there is no jump at the square point. */
+  }
+
+  .hero-title {
+    font-size: clamp(2.4rem, 3.7vw, 3.5rem);
+  }
+
+  .hero-title-line {
+    width: 260px;
+  }
+
+  .hero-combined {
+    max-width: 42ch;
+    font-size: clamp(1.05rem, 1.45vw, 1.32rem);
+    line-height: 1.55;
+  }
+
+  .hero {
+    --btn-w: 250px;
+    --btn-h: 50px;
+    --btn-fs: 1rem;
+  }
+}
+
+/* Phone in landscape (e.g. 874x402). Width >700px so it gets tablet styling, but the
+   height is tiny — everything must shrink or the button falls below the fold.
+   Must come AFTER the landscape block above to win. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .hero {
+    min-height: auto;
+    padding-top: calc(var(--nav-h-desktop) + env(safe-area-inset-top) + 12px);
+    padding-bottom: 26px;
+    justify-content: center;
+  }
+
+  .hero-overlay {
+    width: min(34rem, 50vw);
+    max-width: 34rem;
+    --hero-text-y: 0px;
+  }
+
+  .hero-title {
+    font-size: clamp(1.35rem, 2.9vw, 1.9rem);
+    margin: 0 0 8px;
+  }
+
+  .hero-title-line {
+    width: 120px;
+    margin-bottom: 10px;
+  }
+
+  .hero-combined {
+    max-width: 46ch;
+    font-size: clamp(0.85rem, 1.15vw, 0.95rem);
+    line-height: 1.4;
+    margin: 0 0 14px;
+  }
+
+  .hero {
+    --btn-w: 180px;
+    --btn-h: 40px;
+    --btn-fs: 0.9rem;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   PORTRAIT viewports >=700px (iPads, and tall desktop windows).
+
+   This exists as ONE orientation-based rule rather than width-scoped blocks
+   because the lift used to live only inside (max-width: 1024px). Crossing
+   1024px it vanished entirely and the text dropped ~168px in a single pixel
+   of resize. Orientation is the correct signal: whenever the viewport is
+   taller than it is wide the image is height-constrained, so his eyes always
+   sit at ~30% of the height regardless of width.
+
+   Capped at -130px because -11vh alone becomes -168px on a 1531px-tall
+   window — far more lift than the value was tuned for (~-131px at 1194).
+   ───────────────────────────────────────────────────────────────────────── */
+@media (min-width: 700px) and (max-aspect-ratio: 3/2) {
+  .hero-overlay {
+    --hero-text-y: max(-130px, -11vh);
+  }
 }

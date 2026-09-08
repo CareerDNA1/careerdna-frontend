@@ -1,0 +1,286 @@
+/* Further Study reuses the Discover More explorer chrome (selection-explorer,
+   selection-list-button, pathway-role-item …). These are the few extras. */
+
+.fs-detail-head {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.fs-detail-title {
+  margin: 0;
+  color: #14233c;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.fs-detail-world {
+  margin-top: 2px;
+  color: #8a97a8;
+  font-size: 0.78rem;
+}
+
+/* Labelled degree sections: What it is / What you'll study / Where it leads / Who it suits.
+   Two columns on wider screens so the four sections use the card width instead of
+   stacking into one very tall block. */
+.fs-degree-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 26px;
+}
+@media (max-width: 640px) {
+  .fs-degree-grid { grid-template-columns: 1fr; gap: 12px; }
+}
+.fs-degree-section {
+  margin-bottom: 0;
+}
+/* Fifth section (typical A-levels & GCSEs) spans the full width and is set off
+   with a light divider, so it reads as a footer instead of an orphan column. */
+.fs-degree-section--full {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  padding-top: 14px;
+  border-top: 1px solid #e6eaf0;
+}
+.fs-degree-grid .fs-degree-section__label {
+  margin-top: 0;
+}
+.fs-degree-section__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #2f6fed;
+  margin-bottom: 4px;
+}
+.fs-degree-section .pathway-role-item__summary {
+  padding-bottom: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.fs-detail-heading {
+  margin: 20px 0 12px;
+  color: #2f6fed;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.fs-route-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.fs-route__type {
+  color: #5b6f87;
+  font-size: 0.78rem;
+}
+
+.fs-route__tier {
+  color: #2f6fed;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(47, 111, 237, 0.08);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.fs-route__tier--adj {
+  color: #64748b;
+  background: rgba(100, 116, 139, 0.1);
+}
+
+.fs-route-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.fs-route-desc {
+  margin: 0;
+  color: #4b5c6b;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.fs-none {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.fs-error {
+  color: #b42318;
+  font-size: 0.9rem;
+}
+
+/* "See university rankings" trigger on each degree card */
+.fs-rankings-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  padding: 9px 14px;
+  border: 1px solid #cddbf0;
+  border-radius: 999px;
+  background: #f4f8ff;
+  color: #2f6fed;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.fs-rankings-link:hover { background: #eaf1fe; border-color: #b9cbe6; }
+
+/* Compact "University rankings" pill on the degree header row (when open). */
+.fs-rankings-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 15px;
+  border: 1px solid #2f6fed;
+  border-radius: 999px;
+  background: #2f6fed;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(47, 111, 237, 0.28);
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+.fs-rankings-pill:hover {
+  background: #245fd6;
+  border-color: #245fd6;
+  box-shadow: 0 3px 10px rgba(47, 111, 237, 0.38);
+}
+.fs-rankings-pill:active { transform: scale(0.97); }
+.fs-rankings-pill:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
+.fs-rankings-pill__arrow { font-size: 0.95rem; }
+
+/* Sixth grid cell: the rankings entry, rendered as a live clickable button. */
+.fs-rank-cell {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 14px 16px;
+  border: 1px solid #cddbf0;
+  border-radius: 12px;
+  background: #f4f8ff;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.fs-rank-cell:hover {
+  background: #eaf1fe;
+  border-color: #b9cbe6;
+  box-shadow: 0 3px 10px rgba(47, 111, 237, 0.14);
+}
+.fs-rank-cell:active { transform: scale(0.995); }
+.fs-rank-cell__label { display: flex; align-items: center; gap: 6px; }
+.fs-rank-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: #1f9e6b;
+}
+.fs-rank-live__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+}
+.fs-rank-cell__go {
+  display: inline-block;
+  margin-top: 6px;
+  color: #2f6fed;
+  font-weight: 700;
+  font-size: 0.84rem;
+}
+
+/* Full-width call-to-action bar shown at the top of an expanded degree. */
+.fs-rankings-cta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border: 1px solid #cddbf0;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f4f8ff, #eaf1fe);
+  color: #2f6fed;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.fs-rankings-cta__text { flex: 1 1 auto; }
+.fs-rankings-cta__arrow { flex: 0 0 auto; font-size: 1.05rem; transition: transform 0.15s ease; }
+.fs-rankings-cta:hover {
+  background: linear-gradient(180deg, #eaf1fe, #dce8fd);
+  border-color: #b9cbe6;
+  box-shadow: 0 2px 8px rgba(47, 111, 237, 0.12);
+}
+.fs-rankings-cta:hover .fs-rankings-cta__arrow { transform: translateX(3px); }
+
+/* Ensure the detail header lays out title + badge + filter (filter pushed right). */
+.fs-detail-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+/* Degree clusters grouped by liked pathway (Further Study) */
+.fs-cluster { margin-bottom: 22px; }
+.fs-cluster .fs-detail-heading { margin-top: 8px; }
+.fs-subheading {
+  margin: 12px 0 6px;
+  color: #5b6b8c;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* De-duplicated degree list: "Leads to" pathway tags under each degree title */
+.fs-title-col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.fs-leadsto {
+  font-size: 0.78rem;
+  color: #5b6b8c;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Live "programmes ranked" indicator on the Explore programmes & rankings cell */
+.fs-rank-cell__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1f9e6b;
+}
+.fs-rank-cell__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+  flex: 0 0 auto;
+}

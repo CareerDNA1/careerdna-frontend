@@ -10,25 +10,35 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let mounted = true;
 
-    supabase.auth.getSession().then(({ data, error }) => {
+    async function loadInitialSession() {
+      const { data, error } = await supabase.auth.getSession();
+
       if (!mounted) return;
+
       if (error) {
-        console.error('Error getting session:', error.message);
+        console.error('Error getting auth session:', error.message);
+        setSession(null);
+        setLoading(false);
+        return;
       }
+
       setSession(data?.session ?? null);
       setLoading(false);
-    });
+    }
+
+    loadInitialSession();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      if (!mounted) return;
       setSession(newSession ?? null);
       setLoading(false);
     });
 
     return () => {
       mounted = false;
-      subscription.unsubscribe();
+      subscription?.unsubscribe?.();
     };
   }, []);
 
@@ -40,6 +50,7 @@ export function AuthProvider({ children }) {
       signOut: async () => {
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
+        setSession(null);
       },
     }),
     [session, loading]

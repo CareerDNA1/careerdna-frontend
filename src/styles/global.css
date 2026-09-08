@@ -1,32 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap');
+
 /* =========================================================
    Global Styles (CareerDNA)
-   - Base reset & defaults
-   - Media defaults
-   - Buttons
-   - Focus styles (pro-site pattern)
-   - Common containers
-   - Utilities
-   - Results page tuning
+   Single source of truth for landing-page typography
    ========================================================= */
 
-/* ========== Base reset & defaults ========== */
-html, body {
+:root {
+  --cdna-font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --cdna-font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --cdna-color-text: #4b5c6b;
+  --cdna-color-text-strong: #1f2a37;
+  --cdna-color-heading: #2f6fed;
+  --cdna-color-heading-light: #b3d4ff;
+
+
+  --cdna-type-hero-size: clamp(1.9rem, 4.2vw, 3rem);
+  --cdna-type-hero-weight: 700;
+  --cdna-type-hero-tracking: -0.02em;
+
+  --cdna-type-display-size: clamp(1.7rem, 3.8vw, 2.5rem);
+  --cdna-type-display-weight: 700;
+  --cdna-type-display-tracking: -0.02em;
+
+
+  --cdna-type-title-size: 1.2em;
+  --cdna-type-title-weight: 700;
+  --cdna-type-title-tracking: -0.01em;
+
+  --cdna-type-body-size: 1.15rem;
+  --cdna-type-body-weight: 400;
+  --cdna-type-body-line: 1.7;
+
+  --cdna-type-card-body-size: 0.95rem;
+  --cdna-type-card-body-weight: 400;
+  --cdna-type-card-body-line: 1.6;
+
+  --cdna-type-body-sm-size: 0.88rem;
+  --cdna-type-body-sm-line: 1.5;
+
+  --cdna-type-nav-size: 0.95rem;
+  --cdna-type-nav-weight: 500;
+  --cdna-type-nav-line: 1.2;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Inter', sans-serif;
+  caret-color: transparent;
+}
+
+body {
+  font-family: var(--cdna-font-sans);
   background-color: #f9f9f9;
   color: #333;
   line-height: 1.6;
-  overflow-x: hidden;
+  /* was overflow-x: hidden — on mobile that makes <body> a scroll container and
+     can leave the last stretch of the page unreachable. 'clip' hides horizontal
+     overflow without creating a scroll container, so vertical scroll reaches the end. */
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
-/* Respect reduced-motion users */
+input,
+textarea,
+select,
+button {
+  font: inherit;
+  color: inherit;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+  caret-color: auto;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;
@@ -35,41 +95,41 @@ html, body {
   }
 }
 
-/* ========== Media defaults ========== */
-/* Keep media responsive without crushing layout containers */
-img, video, iframe {
+img,
+video,
+iframe {
   max-width: 100%;
   height: auto;
   display: block;
 }
 
-/* ========== Buttons ========== */
 .default-button {
+  font-family: var(--cdna-font-sans);
   font-size: 16px;
+  font-weight: 600;
   padding: 12px 20px;
   margin: 8px 4px;
   border-radius: 8px;
   border: none;
-  background-color: #2f80ed; /* brand blue */
+  background-color: #2f80ed;
   color: #fff;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
+
 .default-button:hover {
   background-color: #1c65d1;
 }
+
 button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
 
-/* ========== Focus styles (professional pattern) ========== */
-/* Hide legacy focus (prevents big black outlines on containers) */
 :focus {
   outline: none;
 }
 
-/* Show a tasteful ring ONLY for keyboard focus on interactive controls */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -80,8 +140,6 @@ textarea:focus-visible {
   border-radius: 8px;
 }
 
-/* ========== Common containers ========== */
-/* Optional: card-like rounding so rings/edges look consistent */
 .card,
 .intro-container,
 .survey-container,
@@ -89,8 +147,6 @@ textarea:focus-visible {
   border-radius: 12px;
 }
 
-/* ========== Utilities ========== */
-/* Visually hidden (keeps DOM for CSS hooks and screen readers) */
 .sr-only {
   position: absolute !important;
   width: 1px;
@@ -103,7 +159,19 @@ textarea:focus-visible {
   border: 0;
 }
 
-/* ========== Results page tuning ========== */
+.landing-wrapper,
+.landing-wrapper input,
+.landing-wrapper textarea,
+.landing-wrapper select,
+.landing-wrapper button {
+  font-family: var(--cdna-font-sans);
+}
+
+.landing-wrapper code,
+.landing-wrapper pre {
+  font-family: var(--cdna-font-mono);
+}
+
 .results-container .summary-panel,
 .results-container .ai-summary,
 .results-container .bio,
@@ -117,18 +185,4 @@ textarea:focus-visible {
   font-size: 1.1rem;
   line-height: 1.3;
   margin: 0 0 8px;
-}
-
-/* ===== Fix: hide accidental global caret ===== */
-html,
-body,
-#root {
-  caret-color: transparent; /* hides any stray text cursor */
-}
-
-/* keep caret visible for real input fields and editable content */
-input,
-textarea,
-[contenteditable="true"] {
-  caret-color: auto;
 }

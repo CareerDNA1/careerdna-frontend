@@ -1,0 +1,156 @@
+/* Mirrors the app's standard confirmation modal (profile-retake-confirm) so the
+   "Report a problem" popup looks identical to every other popup in the app. */
+.report-problem-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 97000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(15, 23, 42, 0.44);
+  backdrop-filter: blur(3px);
+}
+
+.report-problem-modal {
+  position: relative;
+  width: min(100%, 460px);
+  padding: 22px;
+  border-radius: 20px;
+  background: #ffffff;
+  color: #1f2a37;
+  border: 1px solid #dbe7f6;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.report-problem-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: #f3f6fb;
+  color: #64748b;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.report-problem-title {
+  margin: 0 42px 10px 0;
+  color: #2f6fed;
+  font-size: 1.2rem;
+  line-height: 1.2;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.report-problem-intro {
+  margin: 0 0 14px;
+  color: #53647a;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.report-problem-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 108px;
+  padding: 11px 14px;
+  border: 1px solid #cfd8e6;
+  border-radius: 14px;
+  background: #ffffff;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #1f2a37;
+  font-family: inherit;
+}
+.report-problem-textarea:focus {
+  outline: none;
+  border-color: #2f6fed;
+  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.12);
+}
+
+.report-problem-error {
+  margin-top: 10px;
+  font-size: 0.84rem;
+  color: #dc2626;
+}
+
+.report-problem-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.report-problem-primary,
+.report-problem-secondary {
+  min-height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 550;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+  font-family: inherit;
+}
+.report-problem-primary:hover,
+.report-problem-secondary:hover { transform: translateY(-1px); }
+
+.report-problem-primary {
+  border: 0;
+  background: #2f6fed;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(47, 111, 237, 0.18);
+}
+
+.report-problem-secondary {
+  border: 1px solid #cfd8e6;
+  background: #ffffff;
+  color: #53647a;
+}
+
+.report-problem-primary:disabled,
+.report-problem-secondary:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+}
+
+/* Success state — same card, centered confirmation. */
+.report-problem-done { text-align: center; padding: 4px 2px 2px; }
+.report-problem-done-icon {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 12px;
+  border-radius: 999px;
+  background: rgba(47, 111, 237, 0.1);
+  color: #2f6fed;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.report-problem-done h2 {
+  margin: 0 0 6px;
+  color: #2f6fed;
+  font-size: 1.15rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+.report-problem-done p {
+  margin: 0 0 18px;
+  font-size: 0.9rem;
+  color: #53647a;
+}
+
+@media (max-width: 520px) {
+  .report-problem-actions { flex-direction: column-reverse; }
+  .report-problem-primary,
+  .report-problem-secondary { width: 100%; }
+}

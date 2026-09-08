@@ -1,116 +1,380 @@
-/* components/landing/ScienceSection.css */
-
-/* === Science: clone of HOW skin, with SAME gradient overlay ===
-   - Same box look as HOW
-   - Background + overlay controlled here (no inline styles)
-   - Desktop parallax; mobile scroll for performance
-*/
-
-/* TUNABLES */
 .science-section {
-  --science-img: url("../../Assets/images/hero-dna2.png");
-  --science-overlay: 0.48;
+  --science-img: url("../../Assets/images/hero-dna2.jpg");
+  --science-overlay: 0.36;
+  --gutter-l: clamp(24px, 5vw, 92px);
+  --gutter-r: clamp(24px, 5vw, 92px);
+  --gap: clamp(20px, 2.35vw, 36px);
 }
 
-/* Wrapper */
 .science-section.section {
-  padding: clamp(40px, 8vw, 80px) clamp(24px, 6vw, 60px);
-  background-color: #0a1730;
+  padding: clamp(46px, 5.2vw, 72px) var(--gutter-r) clamp(64px, 7vw, 96px) var(--gutter-l);
+  background-color: #071b36;
   background-image: var(--science-img);
   background-size: cover;
-  background-position: center;
+  background-position: 62% 10%;
   background-repeat: no-repeat;
-  background-attachment: fixed; /* parallax on desktop */
+  background-attachment: scroll;
   text-align: center;
   border-top: 0;
   border-bottom: 0;
   position: relative;
   isolation: isolate;
+  overflow: hidden;
 }
 
-/* Overlay */
 .science-section.section::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    rgba(6, 17, 38, var(--science-overlay)),
-    rgba(6, 17, 38, var(--science-overlay))
-  );
+  background:
+    radial-gradient(circle at 72% 20%, rgba(69, 133, 255, 0.18), transparent 34%),
+    linear-gradient(90deg,
+      rgba(4, 14, 32, 0.82) 0%,
+      rgba(4, 14, 32, 0.68) 42%,
+      rgba(4, 14, 32, 0.42) 68%,
+      rgba(4, 14, 32, 0.56) 100%
+    ),
+    linear-gradient(
+      rgba(6, 17, 38, var(--science-overlay)),
+      rgba(6, 17, 38, var(--science-overlay))
+    );
   pointer-events: none;
   z-index: 0;
 }
 
-/* Inner container */
-.section-inner {
-  max-width: 1100px;
-  margin: 0 auto;
+.science-section.section::after {
+  content: "";
+  position: absolute;
+  left: -80px;
+  bottom: -110px;
+  width: 310px;
+  height: 310px;
+  background-image: radial-gradient(rgba(87, 166, 255, 0.22) 1px, transparent 1px);
+  background-size: 14px 14px;
+  opacity: 0.16;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.science-section .section-inner {
+  max-width: none;
+  width: 100%;
+  margin: 0;
   position: relative;
   z-index: 1;
 }
 
-/* Heading */
-.science-section h2 {
-  color: #fff;
-  font-size: clamp(28px, 5vw, 40px);
+.science-heading {
+  font-family: var(--cdna-font-sans);
+  font-size: clamp(2.55rem, 3.25vw, 3.85rem);
   font-weight: 700;
-  margin-bottom: 60px;
+  letter-spacing: -0.052em;
+  line-height: 1.05;
+  color: #fff;
+  margin: 0 0 clamp(28px, 3vw, 38px);
+  text-align: center;
+  text-shadow: 0 7px 22px rgba(0, 0, 0, 0.24);
 }
 
-/* GRID — 3 cards on desktop */
+.science-heading-white { color: #fff; }
+
+.science-heading-blue {
+  color: #79bdff;
+  background: linear-gradient(90deg, #79caff 0%, #73b8ff 52%, #9c8cff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.science-heading-line {
+  display: block;
+  width: 176px;
+  height: 2px;
+  border-radius: 999px;
+  margin: 18px auto 0;
+  background: linear-gradient(90deg, #22d8ff 0%, #78a8ff 58%, #ff2f91 100%);
+  box-shadow: 0 0 18px rgba(61, 174, 255, 0.34);
+}
+
 .science-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(34px, 3.4vw, 52px);
+  width: min(100%, 1360px);
+  margin: 0 auto;
   position: relative;
+  align-items: stretch;
+  grid-auto-rows: 1fr;
 }
 
-/* CARD — same look as HOW cards */
+/* Dot carpet hidden on desktop — only the tablet connector (set in the max-width:1180px block) should show */
+.science-grid::before {
+  display: none;
+}
+
+.science-grid::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 38%;
+  height: 2px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.30;
+  background: linear-gradient(
+    90deg,
+    rgba(96, 180, 255, 0) 0%,
+    rgba(96, 180, 255, 0.85) 18%,
+    rgba(142, 128, 255, 0.66) 52%,
+    rgba(255, 82, 178, 0.62) 82%,
+    rgba(255, 82, 178, 0) 100%
+  );
+  filter: blur(10px);
+}
+
 .science-card {
-  background-color: rgba(10, 23, 48, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 40px 24px 28px 24px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  --accent: #79caff;
+  --accent-soft: rgba(121, 202, 255, 0.16);
+  --accent-border: rgba(121, 202, 255, 0.42);
+  background: linear-gradient(180deg, rgba(10, 29, 58, 0.82) 0%, rgba(8, 21, 46, 0.76) 100%);
+  border: 1px solid var(--accent-border);
+  border-radius: 22px;
+  padding: clamp(22px, 1.75vw, 30px) clamp(26px, 2.35vw, 38px) clamp(22px, 1.8vw, 30px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 18px 42px rgba(0, 0, 0, 0.24),
+    0 0 24px rgba(47, 128, 237, 0.08);
   position: relative;
+  z-index: 1;
   text-align: left;
   color: #eef4ff;
-  backdrop-filter: blur(10px) saturate(115%);
-  -webkit-backdrop-filter: blur(10px) saturate(115%);
-}
-
-/* Title/body */
-.science-card h3 {
-  color: #b3d4ff;
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  margin-top: 10px;
-}
-.science-card p {
-  font-size: 1rem;
-  color: #eef4ff;
-  line-height: 1.6;
-}
-
-/* ICON */
-.science-icon {
-  position: absolute;
-  top: -20px;
-  left: 24px;
-  width: 40px;
-  height: 40px;
-  background-color: #2f80ed;
-  color: #fff;
-  border-radius: 50%;
+  min-height: 405px;
+  height: 100%;
   display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+
+.science-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(circle at 18% 9%, var(--accent-soft), transparent 28%);
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.science-card--science {
+  --accent: #57b5ff;
+  --accent-soft: rgba(87, 181, 255, 0.16);
+  --accent-border: rgba(87, 181, 255, 0.52);
+}
+
+.science-card--engine {
+  --accent: #b879ff;
+  --accent-soft: rgba(184, 121, 255, 0.16);
+  --accent-border: rgba(184, 121, 255, 0.52);
+}
+
+.science-card--insight {
+  --accent: #ff5fa8;
+  --accent-soft: rgba(255, 95, 168, 0.15);
+  --accent-border: rgba(255, 95, 168, 0.48);
+}
+
+.science-icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+  background: linear-gradient(180deg, rgba(226, 240, 255, 0.11) 0%, var(--accent-soft) 100%);
+  border: 1px solid var(--accent-border);
+  color: var(--accent);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  font-size: 18px;
+  margin-bottom: 18px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 0 22px var(--accent-soft);
 }
 
-/* ===== Reveal on scroll (same pattern as Why/How) ===== */
+.science-card h3 {
+  font-family: var(--cdna-font-sans);
+  color: #fff;
+  font-size: clamp(1.18rem, 1.28vw, 1.46rem);
+  font-weight: var(--cdna-type-title-weight);
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  margin: 0 0 14px;
+}
+
+.science-card p {
+  font-family: var(--cdna-font-sans);
+  font-size: clamp(0.86rem, 0.86vw, 0.98rem);
+  font-weight: var(--cdna-type-card-body-weight);
+  color: rgba(239, 246, 255, 0.92);
+  line-height: 1.46;
+  margin: 0;
+  flex: 1 1 auto;
+}
+
+.science-card-detail {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(174, 204, 245, 0.16);
+}
+
+.science-card-detail h4 {
+  font-family: var(--cdna-font-sans);
+  color: var(--accent);
+  font-size: clamp(0.86rem, 0.82vw, 0.94rem);
+  font-weight: 750;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin: 0 0 14px;
+}
+
+.science-bullet-list {
+  list-style: none;
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+}
+
+.science-bullet-list li {
+  position: relative;
+  padding-left: 18px;
+  font-family: var(--cdna-font-sans);
+  font-size: clamp(0.84rem, 0.82vw, 0.93rem);
+  font-weight: 540;
+  line-height: 1.24;
+  color: rgba(245, 250, 255, 0.92);
+}
+
+.science-bullet-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.54em;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent-soft);
+}
+
+.science-stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+}
+
+.science-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  padding: 0 8px;
+  min-width: 0;
+  overflow: hidden;
+  color: rgba(245, 250, 255, 0.92);
+}
+
+.science-stat + .science-stat {
+  border-left: 1px solid rgba(174, 204, 245, 0.18);
+}
+
+.science-stat svg {
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.science-stat strong {
+  display: block;
+  color: #ffffff;
+  font-family: var(--cdna-font-sans);
+  font-size: clamp(1.04rem, 1.10vw, 1.28rem);
+  font-weight: 780;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.science-stat span {
+  display: block;
+  font-family: var(--cdna-font-sans);
+  color: rgba(239, 246, 255, 0.88);
+  font-size: clamp(0.57rem, 0.58vw, 0.66rem);
+  font-weight: 560;
+  line-height: 1.08;
+  max-width: 72px;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+  margin: 0 auto;
+}
+
+.science-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 8px;
+}
+
+.science-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  min-height: 30px;
+  padding: 6px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--accent-border);
+  background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.025));
+  color: rgba(255,255,255,0.92);
+  font-family: var(--cdna-font-sans);
+  font-size: clamp(0.64rem, 0.62vw, 0.72rem);
+  font-weight: 650;
+  line-height: 1.1;
+  white-space: nowrap;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.science-chip svg {
+  color: var(--accent);
+  flex: 0 0 auto;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .science-card {
+    transition:
+      border-color 220ms ease,
+      box-shadow 220ms ease,
+      background 220ms ease,
+      opacity 220ms ease;
+  }
+
+  .science-grid:hover .science-card {
+    opacity: 0.94;
+  }
+
+  .science-grid .science-card:hover {
+    opacity: 1;
+    border-color: var(--accent);
+    background: linear-gradient(180deg, rgba(12, 36, 72, 0.66) 0%, rgba(9, 25, 54, 0.54) 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.10),
+      0 22px 50px rgba(0, 0, 0, 0.30),
+      0 0 34px var(--accent-soft);
+  }
+}
+
 @media (min-width: 981px) {
   .science-section.anim-ready .reveal-card {
     opacity: 0;
@@ -119,6 +383,7 @@
     filter: blur(2px);
     will-change: transform, opacity, filter;
   }
+
   .science-section.anim-ready .reveal-card.is-revealed {
     opacity: 1;
     transform: none;
@@ -127,13 +392,17 @@
       transform 720ms cubic-bezier(.2,.7,.2,1),
       opacity 620ms ease,
       filter 620ms ease;
-    transition-delay: var(--delay, 0ms);
   }
+
+  /* Staggered cascade — cards unfold one after another, like the dimensions. */
+  .science-section.anim-ready .reveal-card:nth-child(1).is-revealed { transition-delay: 120ms; }
+  .science-section.anim-ready .reveal-card:nth-child(2).is-revealed { transition-delay: 260ms; }
+  .science-section.anim-ready .reveal-card:nth-child(3).is-revealed { transition-delay: 400ms; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .science-section.anim-ready .reveal-card,
-  .science-section.anim-ready .reveal-card.is-revealed {
+  .science-section.anim-ready .science-card.reveal-card.is-revealed {
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
@@ -141,11 +410,597 @@
   }
 }
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .science-grid { grid-template-columns: repeat(2, 1fr); }
+
+@media (max-width: 1320px) and (min-width: 981px) {
+  .science-card {
+    padding-left: clamp(24px, 2vw, 30px);
+    padding-right: clamp(24px, 2vw, 30px);
+  }
+
+  .science-stat { padding: 0 6px; }
+  .science-stat strong { font-size: clamp(1rem, 1.02vw, 1.18rem); }
+  .science-stat span { font-size: clamp(0.54rem, 0.54vw, 0.62rem); max-width: 68px; }
 }
+
+@media (max-width: 1200px) {
+  .science-grid {
+    grid-template-columns: repeat(2, minmax(0, 420px));
+    justify-content: center;
+  }
+
+  .science-card { min-height: 410px; }
+}
+
+@media (max-width: 1024px) {
+  .science-section.section {
+    background-size: cover;
+    background-position: 62% 10%;
+    background-attachment: scroll;
+  }
+}
+
+@media (max-width: 760px) {
+  .science-grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+  }
+
+  .science-card { min-height: 0; }
+}
+
 @media (max-width: 600px) {
-  .science-grid { grid-template-columns: 1fr; }
-  .science-section.section { background-attachment: scroll; }
+  .science-section.section {
+    padding: 48px 22px;
+    background-size: cover;
+    background-position: 62% 10%;
+  }
+
+  .science-heading {
+    font-size: clamp(2.15rem, 10vw, 3.05rem);
+  }
+
+  .science-grid::before { display: none; }
+  .science-card { padding: 24px 20px; }
+  .science-heading-line { width: 150px; }
+  .science-stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 18px; }
+  .science-stat:nth-child(3) { border-left: 0; }
+  .science-chip-grid { grid-template-columns: 1fr; }
+}
+
+.science-bg-motion {
+  display: none;
+}
+
+/* Tablet / narrow desktop: same structure as How section — single column, horizontal card layout */
+@media (max-width: 1180px) {
+  .science-section.section {
+    min-height: 100svh;
+    height: auto;
+    max-height: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: clamp(58px, 6.2vw, 82px) clamp(22px, 4.4vw, 54px) clamp(34px, 4.4vw, 56px);
+    overflow: visible;
+  }
+
+  .science-bg-motion {
+    display: none !important;
+  }
+
+  .science-section.section::before {
+    z-index: 1;
+    background:
+      radial-gradient(circle at 74% 18%, rgba(69, 133, 255, 0.12), transparent 32%),
+      linear-gradient(90deg,
+        rgba(4, 14, 32, 0.92) 0%,
+        rgba(4, 14, 32, 0.82) 36%,
+        rgba(4, 14, 32, 0.58) 68%,
+        rgba(4, 14, 32, 0.10) 100%
+      ),
+      linear-gradient(rgba(6, 17, 38, 0.18), rgba(6, 17, 38, 0.18));
+  }
+
+  .science-section.section::after { z-index: 1; }
+
+  .science-section .section-inner {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .science-heading {
+    font-size: clamp(2.08rem, 4.05vw, 3.05rem);
+    line-height: 1.04;
+    margin: 0 0 clamp(44px, 5.2vw, 64px);
+    transform: none;
+  }
+
+  .science-heading-line {
+    width: 176px;
+    margin-top: 14px;
+  }
+
+  .science-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0;
+    position: relative;
+  }
+
+  /* Left connector line — tracks card left edge: (grid_width - card_width) / 2 - 16px */
+  .science-grid::before,
+  .science-grid.path-visible::before {
+    display: block;
+    content: "";
+    position: absolute;
+    left: calc((100% - clamp(430px, 58vw, 560px)) / 2 - 26px);
+    top: 28px;
+    bottom: 28px;
+    width: 2px;
+    height: auto;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.42;
+    transform: none !important;
+    background: linear-gradient(
+      180deg,
+      rgba(87, 181, 255, 0) 0%,
+      rgba(87, 181, 255, 0.9) 12%,
+      rgba(184, 121, 255, 0.82) 50%,
+      rgba(255, 95, 168, 0.88) 88%,
+      rgba(255, 95, 168, 0) 100%
+    );
+    box-shadow: 0 0 12px rgba(87, 181, 255, 0.32), 0 0 18px rgba(255, 95, 168, 0.20);
+  }
+
+  /* 3 glowing dots (one per card) centred on the connector line */
+  .science-grid::after {
+    display: block;
+    content: "";
+    position: absolute;
+    left: calc((100% - clamp(430px, 58vw, 560px)) / 2 - 31px);
+    top: 28px;
+    bottom: 28px;
+    width: 10px;
+    height: auto;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.72;
+    background:
+      radial-gradient(circle, rgba(87, 181, 255, 1) 0 3px, rgba(87, 181, 255, 0.26) 4px, transparent 7px) center 8%  / 10px 10px no-repeat,
+      radial-gradient(circle, rgba(184, 121, 255, 1) 0 3px, rgba(184, 121, 255, 0.26) 4px, transparent 7px) center 50% / 10px 10px no-repeat,
+      radial-gradient(circle, rgba(255, 95, 168, 1) 0 3px, rgba(255, 95, 168, 0.26) 4px, transparent 7px) center 92% / 10px 10px no-repeat;
+    filter:
+      drop-shadow(0 0 7px rgba(87, 181, 255, 0.42))
+      drop-shadow(0 0 8px rgba(255, 95, 168, 0.26));
+  }
+
+  .science-card::before {
+    opacity: 0.18;
+    background: radial-gradient(circle at 16% 10%, rgba(255, 255, 255, 0.05), transparent 28%);
+  }
+
+  .science-card {
+    width: clamp(430px, 58vw, 560px);
+    min-height: clamp(232px, 24vw, 282px);
+    height: auto;
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) minmax(140px, 0.58fr);
+    grid-template-areas:
+      "icon title detail"
+      "icon body detail";
+    column-gap: 12px;
+    row-gap: 8px;
+    align-items: start;
+    padding: clamp(19px, 2.05vw, 24px) clamp(16px, 2vw, 24px);
+    margin: 0 auto clamp(28px, 3.35vw, 40px);
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(7, 22, 48, 0.82) 0%, rgba(6, 18, 42, 0.72) 100%);
+    overflow: hidden;
+  }
+
+  .science-card:nth-child(odd),
+  .science-card:nth-child(even) {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .science-card:last-child { margin-bottom: 0; }
+
+  .science-icon-circle {
+    grid-area: icon;
+    width: clamp(32px, 3.6vw, 38px);
+    height: clamp(32px, 3.6vw, 38px);
+    margin: 1px 0 0;
+  }
+
+  .science-icon-circle svg {
+    width: clamp(16px, 1.8vw, 19px);
+    height: clamp(16px, 1.8vw, 19px);
+  }
+
+  .science-card h3 {
+    grid-area: title;
+    font-size: clamp(1.04rem, 1.42vw, 1.24rem);
+    line-height: 1.08;
+    margin: 0;
+  }
+
+  .science-card p {
+    grid-area: body;
+    font-size: clamp(0.74rem, 0.96vw, 0.88rem);
+    line-height: 1.34;
+    margin: 0;
+    max-width: none;
+  }
+
+  .science-card-detail {
+    grid-area: detail;
+    margin-top: 0;
+    padding-top: 0;
+    padding-left: clamp(10px, 1.5vw, 16px);
+    border-top: 0;
+    border-left: 1px solid rgba(174, 204, 245, 0.20);
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .science-card-detail h4 {
+    font-size: clamp(0.70rem, 0.9vw, 0.84rem);
+    line-height: 1.12;
+    margin: 0 0 9px;
+  }
+
+  .science-stat-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 0;
+  }
+
+  .science-stat { padding: 0 5px; }
+  .science-stat:nth-child(3) { border-left: 0; }
+
+  .science-stat svg {
+    width: clamp(13px, 1.35vw, 15px);
+    height: clamp(13px, 1.35vw, 15px);
+    margin-bottom: 3px;
+  }
+
+  .science-stat strong {
+    font-size: clamp(0.86rem, 1.08vw, 1.06rem);
+    margin-bottom: 2px;
+  }
+
+  .science-stat span {
+    font-size: clamp(0.49rem, 0.64vw, 0.60rem);
+    line-height: 1.05;
+    max-width: 68px;
+  }
+
+  .science-chip-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .science-chip {
+    justify-content: center;
+    min-height: clamp(22px, 2.3vw, 26px);
+    padding: 4px 7px;
+    font-size: clamp(0.56rem, 0.72vw, 0.68rem);
+    line-height: 1.06;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .science-chip svg {
+    width: 9px;
+    height: 9px;
+  }
+
+  .science-section.anim-ready .reveal-card {
+    opacity: 0;
+    filter: blur(8px);
+    will-change: transform, opacity, filter;
+  }
+
+  .science-section.anim-ready .science-card.reveal-card {
+    transform: translateY(30px) scale(0.965);
+  }
+
+  .science-section.anim-ready .reveal-card.is-revealed {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition:
+      transform 920ms cubic-bezier(.16,.84,.24,1),
+      opacity 760ms ease,
+      filter 760ms ease;
+  }
+}
+
+
+/* Phone: revert to fully stacked card */
+@media (max-width: 600px) {
+  .science-section.section {
+    padding: 48px 20px 64px;
+    min-height: auto;
+    align-items: flex-start;
+    background-size: cover;
+    background-position: 62% 10%;
+  }
+
+  .science-heading { font-size: clamp(2rem, 9vw, 2.8rem); }
+  .science-heading-line { width: 140px; margin-top: 10px; }
+
+  /* Phone: timeline rail + left-aligned cards + per-card accent — matches Why / How. */
+  .science-grid {
+    max-width: none;
+    display: flex !important;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+    padding-left: 26px;
+    position: relative;
+  }
+
+  /* selector matches .path-visible too — the tablet rule targets
+     .science-grid.path-visible::before (higher specificity) and would otherwise
+     win on position once JS adds path-visible, throwing the rail off-screen. */
+  .science-grid::before,
+  .science-grid.path-visible::before {
+    display: block !important;
+    content: "" !important;
+    position: absolute !important;
+    left: 9px !important;
+    top: 18px !important;
+    bottom: 18px !important;
+    right: auto !important;
+    width: 2px !important;
+    height: auto !important;
+    transform: none !important;
+    border-radius: 999px;
+    background: linear-gradient(180deg,
+      rgba(87,181,255,0) 0%, #57b5ff 8%, #b879ff 50%, #ff5fa8 92%, rgba(255,95,168,0) 100%) !important;
+    box-shadow: 0 0 12px rgba(120,150,255,0.32);
+    opacity: 0.5;
+    filter: none;
+    z-index: 0;
+  }
+  .science-grid::after { display: none !important; }
+
+  /* Icon sits BESIDE the title on row 1; body + detail span both columns below. */
+  .science-card {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "icon  title"
+      "body  body"
+      "detail detail";
+    column-gap: 13px;
+    row-gap: 11px;
+    align-items: start;
+    text-align: left;
+    padding: 20px;
+    min-height: 0;
+    border-radius: 18px;
+    margin: 0;
+    overflow: visible;               /* was hidden — clipped the timeline dot */
+    position: relative;
+    z-index: 1;
+    border-left: 3px solid var(--accent);
+    background-image:
+      radial-gradient(circle at 16% 8%, var(--accent-soft), transparent 32%),
+      linear-gradient(180deg, rgba(10,29,58,0.66) 0%, rgba(8,21,46,0.55) 100%);
+  }
+
+  .science-card::after {
+    content: "";
+    position: absolute;
+    left: -23px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px #071b36, 0 0 10px var(--accent);
+    z-index: 2;
+  }
+
+  .science-icon-circle { grid-area: icon; width: 42px; height: 42px; margin: 0; align-self: center; }
+  .science-icon-circle svg { width: 21px; height: 21px; }
+  .science-card h3 { grid-area: title; margin: 0; font-size: clamp(1.05rem, 4.5vw, 1.22rem); line-height: 1.12; text-align: left; align-self: center; }
+  .science-card p { grid-area: body; margin: 0; font-size: 0.85rem; line-height: 1.42; text-align: left; }
+
+  .science-card-detail {
+    grid-area: detail;
+    margin-top: 14px;
+    padding-top: 12px;
+    padding-left: 0;
+    border-top: 1px solid rgba(174, 204, 245, 0.16);
+    border-left: 0;
+    display: block;
+    text-align: left;
+  }
+
+  .science-stat-row { grid-template-columns: repeat(2, 1fr); }
+  .science-chip-grid { grid-template-columns: 1fr 1fr; gap: 7px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .science-bg-motion { transform: none; }
+  .science-grid::before { transform: none !important; transition: none !important; }
+}
+/* Desktop connector rail — 3-col layout (≥1201px above the 2-column breakpoint) */
+/* Desktop connector line. Width-only: it used to require (hover:hover) and
+   (pointer:fine), so the line silently vanished on any device reporting touch
+   — including DevTools entries set to "Mobile". Nothing in here is hover-related. */
+@media (min-width: 1181px) {
+  .science-grid::before {
+    display: block;
+    content: "";
+    position: absolute;
+    left: 8%; right: 8%;
+    top: 50%; height: 2px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.54;
+    background: linear-gradient(90deg,
+      rgba(87, 181, 255, 0) 0%,
+      rgba(87, 181, 255, 0.62) 16%,
+      rgba(184, 121, 255, 0.55) 50%,
+      rgba(255, 95, 168, 0.58) 84%,
+      rgba(255, 95, 168, 0) 100%);
+    box-shadow: 0 0 14px rgba(87, 181, 255, 0.20), 0 0 22px rgba(255, 95, 168, 0.12);
+    filter: none;
+  }
+
+  /* 2 glowing dots — one per gap between the 3 cards */
+  .science-grid::after {
+    display: block;
+    content: "";
+    position: absolute;
+    left: 8%; right: 8%;
+    top: 50%; height: 18px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.82;
+    background:
+      radial-gradient(circle, rgba(87, 181, 255, 0.96) 0 3px, rgba(87, 181, 255, 0.22) 4px, transparent 8px) 33.33% 50% / 18px 18px no-repeat,
+      radial-gradient(circle, rgba(255, 95, 168, 0.96) 0 3px, rgba(255, 95, 168, 0.22) 4px, transparent 8px) 66.67% 50% / 18px 18px no-repeat;
+    filter:
+      drop-shadow(0 0 8px rgba(87, 181, 255, 0.28))
+      drop-shadow(0 0 8px rgba(255, 95, 168, 0.16));
+  }
+}
+
+/* Touch: keep parallax (background-attachment: fixed) everywhere — test on real devices.
+   NOTE: fixed attachment can stutter/mis-scale on iOS Safari; revisit if real-device testing shows issues. */
+@media (max-width: 1366px) and (hover: none) {
+  .science-section.section {
+    background-image: var(--science-img);
+    background-size: cover;
+    background-position: 62% 10%;
+    background-attachment: scroll;
+  }
+  .science-bg-motion { display: none !important; }
+}
+
+/* Phone: keep the person image behind the cards, parallax like the tablet/iPad. */
+@media (max-width: 600px) {
+  .science-section.section {
+    background-image: var(--science-img);
+    background-size: cover;
+    background-position: 62% 10%;
+    background-attachment: scroll;
+  }
+  .science-section.section::before {
+    background:
+      radial-gradient(circle at 72% 16%, rgba(69,133,255,0.14), transparent 36%),
+      linear-gradient(180deg, rgba(4,14,32,0.62) 0%, rgba(4,14,32,0.78) 60%, rgba(4,14,32,0.9) 100%),
+      linear-gradient(rgba(6,17,38,0.30), rgba(6,17,38,0.30));
+  }
+  .science-bg-motion { display: none !important; }
+}
+
+/* Phone reveal — desktop reveal is gated >=641px, so phones need their own.
+   JS adds .is-revealed to each card as it scrolls into view. */
+@media (max-width: 600px) {
+  .science-section.anim-ready .science-card {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.55s ease, transform 0.55s cubic-bezier(.2,.8,.2,1);
+    will-change: opacity, transform;
+  }
+  .science-section.anim-ready .science-card.is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .science-section.anim-ready .science-card {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* iOS FIX v2 (see HowSection): render the photo through a viewport-sized FIXED
+   layer on real touch devices — never oversized, can move, and desktop keeps its
+   own fixed-attachment parallax. Opacity default 0 until the section scrolls in. */
+@media (hover: none) and (pointer: coarse) {
+  .science-section.section {
+    background-image: none !important;
+  }
+  /* One consistent, moderate overlay for ALL touch devices, so iPhone isn't
+     darker than iPad and it reads like the hero. */
+  .science-section.section::before {
+    z-index: 1;
+    background:
+      radial-gradient(circle at 72% 18%, rgba(69, 133, 255, 0.15), transparent 36%),
+      linear-gradient(rgba(6, 17, 38, 0.42), rgba(6, 17, 38, 0.42)) !important;
+  }
+  .science-section .section-inner {
+    position: relative;
+    z-index: 1;
+  }
+  .science-bg-motion {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    width: 100vw;
+    height: 100svh;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 62% 10%;
+    opacity: var(--science-bg-opacity, 0);
+    transform: none;
+    will-change: opacity;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+  }
+}
+
+/* ── Desktop parallax ──────────────────────────────────────────────────────
+   A layer taller than the section, translated on scroll (transform = GPU-cheap)
+   and clipped by the section's overflow:hidden. The ::before overlay is raised
+   above the layer so it keeps darkening the image. */
+@media (min-width: 1181px) {
+  .science-section.section { background-image: none; }
+  .science-section.section::before { z-index: 1; }
+  .science-section .section-inner { position: relative; z-index: 2; }
+  /* Same fixed, hero-style layer as touch: anchored to the viewport so the content
+     floats over it. Faded in only while the section is on screen (JS sets the var). */
+  .science-bg-motion {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    width: 100vw;
+    height: 100svh;
+    background-image: var(--science-img);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 62% 10%;
+    opacity: var(--science-bg-opacity, 0);
+    transform: none;
+    will-change: opacity;
+    pointer-events: none;
+    transition: opacity 220ms ease;
+  }
 }

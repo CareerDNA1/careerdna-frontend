@@ -29,15 +29,15 @@ function getOrCreateBodyTooltip() {
       position: "fixed",
       zIndex: 9999,
       pointerEvents: "none",
-      background: "#fff",
-      border: "1px solid #e1e1e1",
+      background: "#ffffff",
+      border: "1px solid #e2e8f0",
       borderRadius: "10px",
-      padding: "10px 12px",
-      boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
+      padding: "11px 13px",
+      boxShadow: "0 10px 24px rgba(15,23,42,0.16)",
       maxWidth: "320px",
       lineHeight: "1.45",
       fontSize: "13px",
-      color: "#333",
+      color: "#1f2a37",
       display: "none",
     });
     document.body.appendChild(el);
@@ -129,6 +129,7 @@ export default function ResultsDimensionGrid({
   layout = "grid",
 }) {
   const [isMobile, setIsMobile] = useState(false);
+  const [isPhone, setIsPhone] = useState(false);
   const [index, setIndex] = useState(0); // for carousel
   const trackRef = useRef(null);
   const touch = useRef({ x: 0, dragging: false });
@@ -142,6 +143,7 @@ export default function ResultsDimensionGrid({
       else if (w <= 768) setMaxW(undefined); // full width on phones
       else setMaxW(CAROUSEL_MAX_WIDTH_DESKTOP);
       setIsMobile(w < 900);
+      setIsPhone(w < 600);
     };
     update();
     window.addEventListener("resize", update);
@@ -370,23 +372,28 @@ export default function ResultsDimensionGrid({
             ))}
           </div>
 
-          {/* Arrows (positioned against the enforced viewport) */}
-          <button
-            aria-label="Previous"
-            onClick={() => go(index - 1)}
-            disabled={index === 0}
-            style={arrowStyle("left", index === 0)}
-          >
-            ‹
-          </button>
-          <button
-            aria-label="Next"
-            onClick={() => go(index + 1)}
-            disabled={index === charts.length - 1}
-            style={arrowStyle("right", index === charts.length - 1)}
-          >
-            ›
-          </button>
+          {/* Arrows — hidden on phone (swipe + the dots below handle navigation
+              there) so they don't sit on top of the bars. */}
+          {!isPhone && (
+            <>
+              <button
+                aria-label="Previous"
+                onClick={() => go(index - 1)}
+                disabled={index === 0}
+                style={arrowStyle("left", index === 0)}
+              >
+                ‹
+              </button>
+              <button
+                aria-label="Next"
+                onClick={() => go(index + 1)}
+                disabled={index === charts.length - 1}
+                style={arrowStyle("right", index === charts.length - 1)}
+              >
+                ›
+              </button>
+            </>
+          )}
         </div>
 
         {/* Dots */}

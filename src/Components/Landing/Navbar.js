@@ -1,10 +1,57 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import './Navbar.css';
 import { Link as ScrollLink } from 'react-scroll';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { FaBars, FaTimes } from 'react-icons/fa';
 import logo from '../../Assets/images/logo-career-dna.png';
 import { useAuth } from '../../context/AuthContext';
+import { clearLocalUserState } from '../../utils/clearLocalUserState';
+
+
+const CloseIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="7" y1="7" x2="17" y2="17" />
+    <line x1="17" y1="7" x2="7" y2="17" />
+  </svg>
+);
+
+const MenuIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
+    <line x1="4" y1="7" x2="20" y2="7" />
+    <line x1="4" y1="12" x2="20" y2="12" />
+    <line x1="4" y1="17" x2="20" y2="17" />
+  </svg>
+);
+
+const ProfileIcon = () => (
+  <svg className="nav-account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
+const SignOutIcon = () => (
+  <svg className="nav-account-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <polyline points="16,17 21,12 16,7" />
+    <line x1="21" y1="12" x2="9" y2="12" />
+  </svg>
+);
+
+const getDisplayFirstName = (user) => {
+  const metadata = user?.user_metadata || user?.user?.user_metadata || {};
+  const rawName =
+    metadata.first_name ||
+    metadata.firstName ||
+    metadata.name ||
+    metadata.full_name ||
+    metadata.fullName ||
+    user?.name ||
+    user?.full_name ||
+    user?.email?.split('@')?.[0] ||
+    'Profile';
+
+  return String(rawName).trim().split(/\s+/)[0] || 'Profile';
+};
 
 export default function Navbar({ menuOpen, setMenuOpen }) {
   const [atTop, setAtTop] = useState(true);
@@ -16,13 +63,18 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
 
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const displayFirstName = getDisplayFirstName(user);
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
-  const closeMenu = () => setMenuOpen(false);
+  const toggleMenu = useCallback(() => setMenuOpen((prev) => !prev), [setMenuOpen]);
+  const closeMenu = useCallback(() => setMenuOpen(false), [setMenuOpen]);
   const noop = (e) => e.preventDefault();
 
   const handleSignOut = async () => {
+    const confirmed = window.confirm('Are you sure you want to sign out?');
+    if (!confirmed) return;
+
     try {
+      clearLocalUserState();
       await signOut();
       closeMenu();
       navigate('/');
@@ -63,7 +115,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
     lastScrollY.current = window.scrollY ?? 0;
     window.addEventListener('scroll', onScrollClose, { passive: true });
     return () => window.removeEventListener('scroll', onScrollClose);
-  }, [menuOpen]);
+  }, [menuOpen, closeMenu]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -87,7 +139,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
       document.removeEventListener('mousedown', handler);
       document.removeEventListener('touchstart', handler);
     };
-  }, [menuOpen]);
+  }, [menuOpen, closeMenu]);
 
   useEffect(() => {
     document.body.classList.remove('no-scroll');
@@ -112,26 +164,37 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
 
   const userMenu = user ? (
     <>
-      <li className="nav-profile-item">
-        <RouterLink to="/profile" onClick={closeMenu}>Profile</RouterLink>
-        <div className="nav-user-email">{user.email}</div>
-      </li>
-      <li>
-        <a
-          href="#!"
-          onClick={async (e) => {
-            e.preventDefault();
-            await handleSignOut();
-          }}
-        >
-          Sign out
-        </a>
+      <li className="nav-account-block">
+        <ul className="nav-account-list">
+          <li>
+            <RouterLink to="/profile" onClick={closeMenu} className="nav-account-link">
+              <ProfileIcon />
+              {displayFirstName}
+            </RouterLink>
+          </li>
+          <li className="nav-account-divider" role="separator" />
+          <li>
+            <button
+              type="button"
+              className="nav-account-link nav-account-signout"
+              onClick={handleSignOut}
+            >
+              <SignOutIcon />
+              Sign out
+            </button>
+          </li>
+        </ul>
       </li>
     </>
   ) : (
     <>
-      <li><RouterLink to="/login" onClick={closeMenu}>Log in</RouterLink></li>
-      <li><RouterLink to="/signup" onClick={closeMenu}>Sign up</RouterLink></li>
+      <li className="nav-auth-separator" role="separator" aria-hidden="true" />
+      <li className="nav-auth-item">
+        <RouterLink to="/login" onClick={closeMenu} className="nav-auth-link">Log in</RouterLink>
+      </li>
+      <li className="nav-auth-item">
+        <RouterLink to="/signup" onClick={closeMenu} className="nav-auth-link nav-auth-link--primary">Sign up</RouterLink>
+      </li>
     </>
   );
 
@@ -154,13 +217,13 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
 
           <button
             type="button"
-            className={`menu-icon ${ (isPhone && menuOpen) ? 'hide-on-overlay' : '' }`}
+            className={`menu-icon ${(isPhone && menuOpen) ? 'hide-on-overlay' : ''}`}
             onClick={toggleMenu}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
             aria-controls="nav-dropdown nav-menu"
           >
-            {menuOpen ? <FaTimes /> : <FaBars />}
+            {menuOpen ? <CloseIcon /> : <MenuIcon />}
           </button>
         </nav>
       </div>
@@ -177,7 +240,8 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
           <li><ScrollLink to="dimensions" smooth duration={500} onClick={closeMenu}>Your Dimensions</ScrollLink></li>
           <li><ScrollLink to="archetypes" smooth duration={500} onClick={closeMenu}>Career Profiles</ScrollLink></li>
           <li><ScrollLink to="science" smooth duration={500} onClick={closeMenu}>The Science</ScrollLink></li>
-          <li><a href="#!" onClick={(e) => { noop(e); closeMenu(); }}>Who we are</a></li>
+          <li><RouterLink to="/team" onClick={closeMenu}>Our Team</RouterLink></li>
+          <li><RouterLink to="/trust-security" onClick={closeMenu}>Trust &amp; Security</RouterLink></li>
           <li><ScrollLink to="start" smooth duration={500} onClick={closeMenu}>Start Your Journey</ScrollLink></li>
           {userMenu}
         </ul>
@@ -190,17 +254,14 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
         onTouchStart={onOverlayTouchStart}
         onTouchMove={onOverlayTouchMove}
       >
-        <div
-          className="nav-panel"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="nav-panel" onClick={(e) => e.stopPropagation()}>
           <button
             type="button"
             className="nav-close"
             aria-label="Close menu"
             onClick={closeMenu}
           >
-            <FaTimes />
+            <CloseIcon />
           </button>
 
           <ul className="nav-links">
@@ -209,7 +270,8 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
             <li><ScrollLink to="dimensions" smooth duration={500} onClick={closeMenu}>Your Dimensions</ScrollLink></li>
             <li><ScrollLink to="archetypes" smooth duration={500} onClick={closeMenu}>Career Profiles</ScrollLink></li>
             <li><ScrollLink to="science" smooth duration={500} onClick={closeMenu}>The Science</ScrollLink></li>
-            <li><a href="#!" onClick={(e) => { noop(e); closeMenu(); }}>Who we are</a></li>
+            <li><RouterLink to="/team" onClick={closeMenu}>Our Team</RouterLink></li>
+            <li><RouterLink to="/trust-security" onClick={closeMenu}>Trust &amp; Security</RouterLink></li>
             <li><ScrollLink to="start" smooth duration={500} onClick={closeMenu}>Start Your Journey</ScrollLink></li>
             {userMenu}
           </ul>

@@ -1,10 +1,10 @@
-
 .account-navbar-wrapper {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 30000;
-  background: #ffffff;
-  border-bottom: 1px solid #e7edf5;
+  background: #edf5ff;
+  border-bottom: 1px solid rgba(47, 111, 237, 0.08);
+  box-shadow: 0 8px 22px rgba(31, 42, 55, 0.05);
   transform: translateY(0);
   transition: transform .24s ease;
   will-change: transform;
@@ -16,8 +16,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px clamp(20px, 5vw, 40px);
-  height: 80px;
+  padding: 12px clamp(20px, 5vw, 40px);
+  height: 56px;
   box-sizing: border-box;
   position: relative;
   min-width: 320px;
@@ -29,12 +29,26 @@
   align-items: center;
 }
 .account-logo { flex-shrink: 0; }
+/* Logo sized to EXACTLY mirror the landing navbar: height-based, 30px phone →
+   38px tablet → clamp up to 44px laptop/desktop, consistent across every page. */
 .account-logo img {
-  max-height: 80px;
+  height: 30px;
   width: auto;
+  max-height: none;
   display: block;
   object-fit: contain;
   transform: translateZ(0);
+}
+
+@media (min-width: 700px) and (max-width: 1366px) and (max-aspect-ratio: 8/5) {
+  .account-logo img { height: 38px; }
+}
+@media (min-width: 700px) and (max-width: 1366px) and (max-aspect-ratio: 8/5) and (max-height: 820px) {
+  .account-logo img { height: 32px; }
+}
+@media (min-width: 1367px),
+       (min-width: 1181px) and (min-aspect-ratio: 8/5) {
+  .account-logo img { height: clamp(32px, 2.3vw, 44px); }
 }
 
 .sr-only {
@@ -48,30 +62,33 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px; height: 44px;
+  width: 40px; height: 40px;
   background: transparent;
   border: none;
-  color: #0f163d;
+  color: #1a2b4a;
   cursor: pointer;
   transition: opacity .15s ease, transform .15s ease;
   -webkit-tap-highlight-color: transparent;
 }
-.account-menu-icon svg { width: 28px; height: 28px; }
-.account-menu-icon:hover { opacity: .85; transform: translateY(-1px); }
-.account-menu-icon:active { transform: translateY(0); }
+.account-menu-icon svg { 
+  width: 26px; 
+  height: 26px; 
+}
+.account-menu-icon:hover { opacity: .7; }
+.account-menu-icon:active { transform: scale(0.95); }
 .account-menu-icon.hide-on-overlay { visibility: hidden; pointer-events: none; }
 
 .account-nav-dropdown.vertical {
   position: fixed;
-  top: 80px;
+  top: 56px;
   right: clamp(20px, 5vw, 40px);
   z-index: 30010;
-  width: min(340px, 92vw);
+  width: min(260px, 92vw);
   background: #ffffff;
-  border: 1px solid #d9e3f0;
-  border-radius: 14px;
-  box-shadow: 0 14px 44px rgba(15,22,61,0.16);
-  padding: 10px;
+  border: 1px solid rgba(47, 111, 237, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(15, 22, 61, 0.1), 0 4px 10px rgba(15, 22, 61, 0.05);
+  padding: 8px;
   transform: translateY(-8px);
   opacity: 0;
   pointer-events: none;
@@ -83,51 +100,92 @@
   pointer-events: auto;
 }
 
+.account-dropdown-header {
+  padding: 8px 10px 10px;
+  border-bottom: 1px solid #eef3f9;
+  margin-bottom: 4px;
+}
+.account-dropdown-header-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #7a8798;
+  margin-bottom: 3px;
+}
+.account-dropdown-header-email {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #1f2a37;
+  word-break: break-all;
+}
+
 .account-dropdown-list {
   list-style: none;
   margin: 0;
-  padding: 6px;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 .account-dropdown-list li a,
 .account-dropdown-btn {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   width: 100%;
   text-align: left;
-  padding: 10px 12px;
-  border-radius: 10px;
-  color: #0f163d;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: #1f2a37;
   text-decoration: none;
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 0.85rem;
   border: none;
   background: transparent;
   cursor: pointer;
-  transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
+  transition: background-color .15s ease, transform .1s ease;
 }
 .account-dropdown-list li a:hover,
 .account-dropdown-list li a:focus-visible,
 .account-dropdown-btn:hover,
 .account-dropdown-btn:focus-visible {
-  background: #f3f7fc;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(15,22,61,0.08);
+  background: #ffffff;
   outline: none;
 }
+.account-dropdown-list li a:active,
+.account-dropdown-btn:active {
+  transform: scale(0.98);
+}
+.account-dropdown-icon {
+  width: 16px;
+  height: 16px;
+  color: #2f6fed;
+  flex-shrink: 0;
+}
+.account-dropdown-divider {
+  height: 1px;
+  background: #eef3f9;
+  margin: 4px 0;
+}
+.account-dropdown-btn.signout {
+  color: #dc3545;
+}
+.account-dropdown-btn.signout:hover {
+  background: #fef2f2;
+}
+.account-dropdown-btn.signout .account-dropdown-icon {
+  color: #dc3545;
+}
 .account-nav-user-email {
-  padding: 2px 12px 10px;
-  color: #5e6b7d;
-  font-size: 0.95rem;
-  word-break: break-all;
+  display: none;
 }
 
 .account-nav-menu {
   position: fixed;
   inset: 0;
   z-index: 30020;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.3);
   transform: translateY(-100%);
   transition: transform 0.3s ease, opacity .2s ease;
   opacity: 0;
@@ -147,41 +205,62 @@
 
 .account-nav-panel {
   position: relative;
-  margin: 96px auto 40px;
+  margin: 72px auto 40px;
   background: #ffffff;
-  border: 1px solid #d9e3f0;
-  border-radius: 16px;
-  width: min(92vw, 420px);
+  border: 1px solid rgba(47, 111, 237, 0.1);
+  border-radius: 14px;
+  width: min(92vw, 300px);
   max-height: 70vh;
   overflow-y: auto;
-  padding: 24px 18px 28px;
-  box-shadow: 0 18px 50px rgba(15,22,61,0.18);
+  padding: 12px;
+  box-shadow: 0 16px 48px rgba(15,22,61,0.14);
   z-index: 30030;
 }
 @media (min-width: 700px) and (max-width: 900px) {
   .account-nav-panel {
-    margin: 96px calc(24px + env(safe-area-inset-right)) 40px auto;
-    width: 420px;
+    margin: 72px calc(24px + env(safe-area-inset-right)) 40px auto;
+    width: 300px;
   }
 }
 @media (max-width: 380px) {
-  .account-nav-panel { width: calc(100% - 24px); margin: 84px 12px 24px; }
+  .account-nav-panel { width: calc(100% - 24px); margin: 68px 12px 24px; padding: 10px; }
 }
 
 .account-nav-close {
   position: absolute;
-  top: 10px; right: 10px;
-  width: 44px; height: 44px;
+  top: 8px; right: 8px;
+  width: 32px; height: 32px;
   display: inline-flex; align-items: center; justify-content: center;
-  background: transparent; border: none; color: #0f163d; cursor: pointer;
-  transition: opacity .15s ease, transform .15s ease;
+  background: #f5f8fc; border: none; color: #6b7b8f; cursor: pointer;
+  border-radius: 8px;
+  transition: background .15s ease, color .15s ease;
 }
-.account-nav-close svg { width: 24px; height: 24px; }
-.account-nav-close:hover { opacity: .85; transform: translateY(-1px); }
+.account-nav-close svg { width: 16px; height: 16px; }
+.account-nav-close:hover { background: #eef3f9; color: #1a2b4a; }
+
+.account-mobile-header {
+  padding: 8px 10px 12px;
+  border-bottom: 1px solid #eef3f9;
+  margin-bottom: 6px;
+}
+.account-mobile-header-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #7a8798;
+  margin-bottom: 3px;
+}
+.account-mobile-header-email {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #1f2a37;
+  word-break: break-all;
+}
 
 .account-nav-links {
   list-style: none;
-  gap: 14px;
+  gap: 2px;
   margin: 0;
   padding: 0;
   display: flex;
@@ -191,29 +270,45 @@
 .account-nav-links li a,
 .account-mobile-btn {
   text-decoration: none;
-  color: #0f163d;
+  color: #1f2a37;
   font-weight: 500;
-  padding: 12px 18px;
-  border-radius: 12px;
-  font-size: 1.05rem;
-  line-height: 1.5;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.4;
   white-space: nowrap;
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   width: 100%;
   text-align: left;
   border: none;
   background: transparent;
-  transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
+  transition: background-color .15s ease;
   cursor: pointer;
 }
 .account-nav-links li a:hover,
 .account-nav-links li a:focus-visible,
 .account-mobile-btn:hover,
 .account-mobile-btn:focus-visible {
-  background-color: #f3f7fc;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(15,22,61,0.08);
+  background-color: #f0f5ff;
   outline: none;
+}
+
+.account-mobile-divider {
+  height: 1px;
+  background: #eef3f9;
+  margin: 6px 0;
+}
+
+.account-mobile-btn.signout {
+  color: #dc3545;
+}
+.account-mobile-btn.signout:hover {
+  background: #fef2f2;
+}
+.account-mobile-btn.signout .account-dropdown-icon {
+  color: #dc3545;
 }
 
 @media (max-width: 900px) {
@@ -224,3 +319,843 @@
 .account-nav-dropdown   { z-index: 30010 !important; }
 .account-nav-menu       { z-index: 30020 !important; }
 .account-nav-panel      { z-index: 30030 !important; }
+
+/* Account menu spacing refinement */
+.account-dropdown-list,
+.account-nav-links {
+  gap: 0;
+}
+
+.account-dropdown-divider,
+.account-mobile-divider {
+  display: none;
+}
+
+.account-dropdown-list li a,
+.account-dropdown-btn,
+.account-nav-links li a,
+.account-mobile-btn {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+
+/* =============================================
+   Refined logged-in navbar actions
+   ============================================= */
+.account-navbar-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.account-user-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 4px 0 0;
+  border: none;
+  background: transparent;
+  color: #1a2b4a;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.account-user-trigger:hover {
+  opacity: 0.82;
+}
+
+.account-user-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(47, 111, 237, 0.08);
+  color: #90a5c4;
+  border: 1px solid rgba(47, 111, 237, 0.09);
+}
+
+.account-user-avatar-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.account-user-name {
+  color: #1a2b4a;
+  font-size: 0.84rem;
+  font-weight: 650;
+  line-height: 1;
+}
+
+.account-user-chevron {
+  width: 14px;
+  height: 14px;
+  color: #1a2b4a;
+}
+
+.account-action-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(26, 43, 74, 0.15);
+}
+
+.account-public-menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  color: #1a2b4a;
+  cursor: pointer;
+  transition: opacity .15s ease, transform .15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.account-public-menu-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.account-public-menu-icon:hover {
+  opacity: .7;
+}
+
+.account-public-menu-icon:active {
+  transform: scale(0.95);
+}
+
+.account-nav-dropdown.vertical {
+  right: calc(clamp(20px, 5vw, 40px) + 58px);
+  width: min(210px, 92vw);
+}
+
+.account-public-dropdown.vertical {
+  position: fixed;
+  top: 56px;
+  right: clamp(20px, 5vw, 40px);
+  z-index: 30010;
+  width: min(220px, 92vw);
+  background: #ffffff;
+  border: 1px solid rgba(47, 111, 237, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(15, 22, 61, 0.1), 0 4px 10px rgba(15, 22, 61, 0.05);
+  padding: 8px;
+  transform: translateY(-8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.account-public-dropdown.vertical.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.account-public-dropdown .account-dropdown-list li a {
+  color: #1f2a37;
+}
+
+.account-public-dropdown .account-dropdown-list li a:hover,
+.account-public-dropdown .account-dropdown-list li a:focus-visible {
+  background: #f0f5ff;
+}
+
+@media (max-width: 520px) {
+  .account-navbar-actions {
+    gap: 8px;
+  }
+
+  .account-user-name {
+    max-width: 82px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .account-action-divider {
+    height: 24px;
+  }
+
+  .account-nav-dropdown.vertical {
+    right: 58px;
+  }
+}
+
+@media (max-width: 900px) {
+  .account-nav-dropdown.vertical { display: block !important; }
+}
+
+
+/* =============================================
+   FINAL account navbar dropdown polish - light CareerDNA style
+   Replaces the dark dropdown completely
+   ============================================= */
+.account-navbar-wrapper {
+  background: #eaf3ff !important;
+  border-bottom: 1px solid rgba(47, 111, 237, 0.10) !important;
+  box-shadow: 0 8px 22px rgba(31, 42, 55, 0.06) !important;
+}
+
+.account-user-trigger {
+  gap: 7px !important;
+  min-height: 32px !important;
+}
+
+.account-user-avatar {
+  width: 26px !important;
+  height: 26px !important;
+  background: rgba(47, 111, 237, 0.07) !important;
+  color: #8fa4c3 !important;
+}
+
+.account-user-avatar-icon {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.account-user-name {
+  font-size: 0.78rem !important;
+  font-weight: 650 !important;
+}
+
+.account-user-chevron {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.account-action-divider {
+  height: 28px !important;
+  background: rgba(26, 43, 74, 0.14) !important;
+}
+
+.account-nav-dropdown.vertical,
+.account-public-dropdown.vertical,
+#account-nav-dropdown.account-nav-dropdown.vertical,
+#account-public-dropdown.account-public-dropdown.vertical {
+  background: rgba(255, 255, 255, 0.96) !important;
+  color: #1f2a37 !important;
+  border: 1px solid rgba(47, 111, 237, 0.14) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 18px 48px rgba(31, 42, 55, 0.14), 0 4px 14px rgba(47, 111, 237, 0.06) !important;
+  padding: 10px !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+.account-nav-dropdown.vertical {
+  width: min(210px, 92vw) !important;
+}
+
+.account-public-dropdown.vertical {
+  width: min(250px, 92vw) !important;
+}
+
+.account-dropdown-list {
+  gap: 2px !important;
+  padding: 4px !important;
+}
+
+.account-nav-dropdown.vertical .account-dropdown-list li a,
+.account-nav-dropdown.vertical .account-dropdown-btn,
+.account-public-dropdown.vertical .account-dropdown-list li a,
+#account-nav-dropdown .account-dropdown-list li a,
+#account-nav-dropdown .account-dropdown-btn,
+#account-public-dropdown .account-dropdown-list li a {
+  min-height: 36px !important;
+  box-sizing: border-box !important;
+  padding: 8px 14px !important;
+  border-radius: 11px !important;
+  color: #1f2a37 !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: background-color .15s ease, color .15s ease !important;
+}
+
+.account-nav-dropdown.vertical .account-dropdown-list li a:hover,
+.account-nav-dropdown.vertical .account-dropdown-list li a:focus-visible,
+.account-nav-dropdown.vertical .account-dropdown-btn:hover,
+.account-nav-dropdown.vertical .account-dropdown-btn:focus-visible,
+.account-public-dropdown.vertical .account-dropdown-list li a:hover,
+.account-public-dropdown.vertical .account-dropdown-list li a:focus-visible,
+#account-nav-dropdown .account-dropdown-list li a:hover,
+#account-nav-dropdown .account-dropdown-btn:hover,
+#account-public-dropdown .account-dropdown-list li a:hover {
+  background: rgba(47, 111, 237, 0.08) !important;
+  color: #173b7a !important;
+  box-shadow: none !important;
+  transform: none !important;
+  outline: none !important;
+}
+
+.account-nav-dropdown.vertical .account-dropdown-icon,
+#account-nav-dropdown .account-dropdown-icon {
+  color: #2f6fed !important;
+}
+
+.account-nav-dropdown.vertical .account-dropdown-btn.signout,
+#account-nav-dropdown .account-dropdown-btn.signout {
+  color: #e11d48 !important;
+}
+
+.account-nav-dropdown.vertical .account-dropdown-btn.signout .account-dropdown-icon,
+#account-nav-dropdown .account-dropdown-btn.signout .account-dropdown-icon {
+  color: #e11d48 !important;
+}
+
+.account-nav-dropdown.vertical .account-dropdown-btn.signout:hover,
+#account-nav-dropdown .account-dropdown-btn.signout:hover {
+  background: rgba(225, 29, 72, 0.08) !important;
+  color: #be123c !important;
+}
+
+.account-dropdown-divider {
+  display: none !important;
+}
+
+/* =============================================
+   FINAL OVERRIDE - light dropdown colour system
+   Forces both account and public menus away from dark navy
+   ============================================= */
+#account-nav-dropdown.account-nav-dropdown.vertical,
+#account-public-dropdown.account-public-dropdown.vertical {
+  background: rgba(255, 255, 255, 0.98) !important;
+  color: #1f2a37 !important;
+  border: 1px solid rgba(47, 111, 237, 0.16) !important;
+  box-shadow: 0 18px 42px rgba(31, 42, 55, 0.12), 0 4px 14px rgba(47, 111, 237, 0.06) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+#account-nav-dropdown .account-dropdown-list li a,
+#account-nav-dropdown .account-dropdown-btn,
+#account-public-dropdown .account-dropdown-list li a {
+  color: #1f2a37 !important;
+  background: transparent !important;
+}
+
+#account-nav-dropdown .account-dropdown-list li a:hover,
+#account-nav-dropdown .account-dropdown-btn:hover,
+#account-public-dropdown .account-dropdown-list li a:hover {
+  background: rgba(47, 111, 237, 0.08) !important;
+  color: #173b7a !important;
+}
+
+#account-nav-dropdown .account-dropdown-icon {
+  color: #2f6fed !important;
+}
+
+#account-nav-dropdown .account-dropdown-btn.signout {
+  color: #e11d48 !important;
+}
+
+#account-nav-dropdown .account-dropdown-btn.signout .account-dropdown-icon {
+  color: #e11d48 !important;
+}
+
+#account-nav-dropdown .account-dropdown-btn.signout:hover {
+  background: rgba(225, 29, 72, 0.08) !important;
+  color: #be123c !important;
+}
+
+/* =============================================
+   POLISHED LIGHT ACCOUNT NAVBAR - final compact SaaS menu
+   Keeps the logged-in navbar structure but gives the dropdowns a lighter,
+   tighter, landing-page-style feel without the dark navy panel.
+   ============================================= */
+.account-navbar-wrapper {
+  background: rgba(232, 243, 255, 0.86) !important;
+  border-bottom: 1px solid rgba(47, 111, 237, 0.09) !important;
+  box-shadow: 0 6px 18px rgba(31, 42, 55, 0.045) !important;
+  backdrop-filter: blur(16px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(140%) !important;
+}
+
+.account-user-trigger {
+  gap: 6px !important;
+  min-height: 30px !important;
+  padding: 0 2px 0 0 !important;
+}
+
+.account-user-avatar {
+  width: 24px !important;
+  height: 24px !important;
+  background: rgba(47, 111, 237, 0.055) !important;
+  border: 1px solid rgba(47, 111, 237, 0.12) !important;
+  color: #8ba2c2 !important;
+}
+
+.account-user-avatar-icon {
+  width: 13px !important;
+  height: 13px !important;
+}
+
+.account-user-name {
+  font-size: 0.76rem !important;
+  font-weight: 620 !important;
+  color: #1d2d4f !important;
+}
+
+.account-user-chevron {
+  width: 11px !important;
+  height: 11px !important;
+  color: #263858 !important;
+}
+
+.account-action-divider {
+  height: 26px !important;
+  background: rgba(26, 43, 74, 0.13) !important;
+}
+
+.account-public-menu-icon,
+.account-menu-icon {
+  color: #1d2d4f !important;
+}
+
+.account-public-menu-icon svg,
+.account-menu-icon svg {
+  width: 23px !important;
+  height: 23px !important;
+  stroke-width: 1.8 !important;
+}
+
+#account-nav-dropdown.account-nav-dropdown.vertical,
+#account-public-dropdown.account-public-dropdown.vertical {
+  top: 56px !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  color: #223047 !important;
+  border: 1px solid rgba(47, 111, 237, 0.11) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 14px 34px rgba(31, 42, 55, 0.095), 0 3px 10px rgba(47, 111, 237, 0.045) !important;
+  padding: 6px !important;
+  backdrop-filter: blur(18px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
+}
+
+#account-nav-dropdown.account-nav-dropdown.vertical {
+  width: min(172px, 92vw) !important;
+  right: calc(clamp(20px, 5vw, 40px) + 54px) !important;
+}
+
+#account-public-dropdown.account-public-dropdown.vertical {
+  width: min(214px, 92vw) !important;
+  right: clamp(20px, 5vw, 40px) !important;
+}
+
+#account-nav-dropdown .account-dropdown-list,
+#account-public-dropdown .account-dropdown-list {
+  gap: 1px !important;
+  padding: 2px !important;
+}
+
+#account-nav-dropdown .account-dropdown-list li a,
+#account-nav-dropdown .account-dropdown-btn,
+#account-public-dropdown .account-dropdown-list li a {
+  min-height: 31px !important;
+  padding: 7px 11px !important;
+  border-radius: 9px !important;
+  color: #223047 !important;
+  font-size: 0.8rem !important;
+  font-weight: 540 !important;
+  line-height: 1.18 !important;
+  letter-spacing: -0.01em !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+#account-nav-dropdown .account-dropdown-list li a:hover,
+#account-nav-dropdown .account-dropdown-list li a:focus-visible,
+#account-nav-dropdown .account-dropdown-btn:hover,
+#account-nav-dropdown .account-dropdown-btn:focus-visible,
+#account-public-dropdown .account-dropdown-list li a:hover,
+#account-public-dropdown .account-dropdown-list li a:focus-visible {
+  background: rgba(47, 111, 237, 0.075) !important;
+  color: #1e56bd !important;
+  box-shadow: none !important;
+  transform: none !important;
+  outline: none !important;
+}
+
+#account-nav-dropdown .account-dropdown-icon {
+  width: 14px !important;
+  height: 14px !important;
+  color: #2f6fed !important;
+}
+
+#account-nav-dropdown .account-dropdown-btn.signout {
+  color: #e63b57 !important;
+}
+
+#account-nav-dropdown .account-dropdown-btn.signout .account-dropdown-icon {
+  color: #e63b57 !important;
+}
+
+#account-nav-dropdown .account-dropdown-btn.signout:hover,
+#account-nav-dropdown .account-dropdown-btn.signout:focus-visible {
+  background: rgba(230, 59, 87, 0.075) !important;
+  color: #c82643 !important;
+}
+
+@media (max-width: 520px) {
+  #account-nav-dropdown.account-nav-dropdown.vertical {
+    right: 54px !important;
+  }
+
+  #account-public-dropdown.account-public-dropdown.vertical {
+    right: 14px !important;
+  }
+}
+
+
+/* =============================================
+   FINAL LANDING-STYLE LIGHT ACCOUNT MENU
+   Keeps the new George/profile trigger and site menu,
+   but makes the dropdown resemble the landing navbar menu in a light theme.
+   ============================================= */
+.account-navbar-wrapper {
+  background: rgba(234, 243, 255, 0.92) !important;
+  border-bottom: 1px solid rgba(47, 111, 237, 0.10) !important;
+  box-shadow: 0 8px 22px rgba(31, 42, 55, 0.06) !important;
+  backdrop-filter: blur(14px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(140%) !important;
+}
+
+.account-navbar-actions {
+  gap: 11px !important;
+}
+
+.account-user-trigger {
+  gap: 6px !important;
+  min-height: 31px !important;
+  padding: 0 2px 0 0 !important;
+}
+
+.account-user-avatar {
+  width: 24px !important;
+  height: 24px !important;
+  background: rgba(47, 111, 237, 0.07) !important;
+  color: #849bbd !important;
+  border: 1px solid rgba(47, 111, 237, 0.12) !important;
+}
+
+.account-user-avatar-icon {
+  width: 13px !important;
+  height: 13px !important;
+}
+
+.account-user-name {
+  color: #1d2d4f !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+}
+
+.account-user-chevron {
+  width: 11px !important;
+  height: 11px !important;
+  color: #1d2d4f !important;
+}
+
+.account-action-divider {
+  width: 1px !important;
+  height: 26px !important;
+  background: rgba(26, 43, 74, 0.16) !important;
+}
+
+.account-public-menu-icon {
+  width: 34px !important;
+  height: 34px !important;
+  color: #1d2d4f !important;
+}
+
+.account-public-menu-icon svg {
+  width: 24px !important;
+  height: 24px !important;
+  stroke-width: 1.8 !important;
+}
+
+#account-nav-dropdown.account-nav-dropdown.vertical,
+#account-public-dropdown.account-public-dropdown.vertical {
+  top: 58px !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  border: 1px solid rgba(47, 111, 237, 0.13) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 14px 38px rgba(31, 42, 55, 0.12), 0 4px 12px rgba(47, 111, 237, 0.055) !important;
+  padding: 8px !important;
+  transform: translateY(-8px) !important;
+  backdrop-filter: blur(16px) saturate(145%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(145%) !important;
+}
+
+#account-nav-dropdown.account-nav-dropdown.vertical.open,
+#account-public-dropdown.account-public-dropdown.vertical.open {
+  transform: translateY(0) !important;
+}
+
+#account-nav-dropdown.account-nav-dropdown.vertical {
+  width: min(170px, 92vw) !important;
+  right: calc(clamp(20px, 5vw, 40px) + 54px) !important;
+}
+
+#account-public-dropdown.account-public-dropdown.vertical {
+  width: min(205px, 92vw) !important;
+  right: clamp(20px, 5vw, 40px) !important;
+}
+
+#account-nav-dropdown .account-dropdown-list,
+#account-public-dropdown .account-dropdown-list {
+  gap: 2px !important;
+  padding: 2px !important;
+}
+
+#account-nav-dropdown .account-dropdown-list li a,
+#account-nav-dropdown .account-dropdown-btn,
+#account-public-dropdown .account-dropdown-list li a {
+  min-height: 32px !important;
+  box-sizing: border-box !important;
+  padding: 7px 12px !important;
+  border-radius: 11px !important;
+  color: #223047 !important;
+  font-size: 0.82rem !important;
+  font-weight: 560 !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.01em !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: background-color .15s ease, color .15s ease !important;
+}
+
+#account-nav-dropdown .account-dropdown-list li a:hover,
+#account-nav-dropdown .account-dropdown-list li a:focus-visible,
+#account-nav-dropdown .account-dropdown-btn:hover,
+#account-nav-dropdown .account-dropdown-btn:focus-visible,
+#account-public-dropdown .account-dropdown-list li a:hover,
+#account-public-dropdown .account-dropdown-list li a:focus-visible {
+  background: rgba(47, 111, 237, 0.09) !important;
+  color: #1f55b8 !important;
+  box-shadow: none !important;
+  transform: none !important;
+  outline: none !important;
+}
+
+#account-nav-dropdown .account-dropdown-icon {
+  width: 14px !important;
+  height: 14px !important;
+  color: #2f6fed !important;
+}
+
+#account-nav-dropdown .account-dropdown-btn.signout {
+  color: #e63b57 !important;
+}
+
+#account-nav-dropdown .account-dropdown-btn.signout .account-dropdown-icon {
+  color: #e63b57 !important;
+}
+
+#account-nav-dropdown .account-dropdown-btn.signout:hover,
+#account-nav-dropdown .account-dropdown-btn.signout:focus-visible {
+  background: rgba(230, 59, 87, 0.08) !important;
+  color: #c82643 !important;
+}
+
+@media (max-width: 520px) {
+  #account-nav-dropdown.account-nav-dropdown.vertical {
+    right: 54px !important;
+  }
+
+  #account-public-dropdown.account-public-dropdown.vertical {
+    right: 14px !important;
+  }
+}
+
+/* =============================================
+   FINAL OVERRIDE - profile-only account navbar
+   Removes the separate public hamburger menu area and pushes the profile
+   trigger further right.
+   ============================================= */
+.account-navbar {
+  padding-left: clamp(20px, 5vw, 40px) !important;
+  padding-right: clamp(12px, 3vw, 24px) !important;
+}
+
+.account-navbar-actions {
+  margin-left: auto !important;
+  gap: 0 !important;
+  justify-content: flex-end !important;
+}
+
+.account-user-trigger {
+  min-width: 128px !important;
+  min-height: 36px !important;
+  padding: 0 10px 0 8px !important;
+  justify-content: center !important;
+  border-radius: 999px !important;
+}
+
+.account-user-trigger:hover {
+  background: transparent !important;
+  opacity: 1 !important;
+}
+
+.account-user-trigger:focus,
+.account-user-trigger:focus-visible,
+.account-user-trigger:active {
+  background: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.account-action-divider,
+.account-public-menu-icon,
+.account-public-dropdown {
+  display: none !important;
+}
+
+#account-nav-dropdown.account-nav-dropdown.vertical {
+  right: clamp(12px, 3vw, 24px) !important;
+  width: min(176px, 92vw) !important;
+}
+
+@media (max-width: 520px) {
+  .account-navbar {
+    padding-right: 12px !important;
+  }
+
+  .account-user-trigger {
+    min-width: 116px !important;
+  }
+
+  #account-nav-dropdown.account-nav-dropdown.vertical {
+    right: 12px !important;
+  }
+}
+
+
+/* =============================================
+   Sign out confirmation modal
+   ============================================= */
+.account-signout-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 97000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(15, 23, 42, 0.44);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.account-signout-confirm-card {
+  position: relative;
+  width: min(100%, 440px);
+  padding: 22px;
+  border-radius: 20px !important;
+  background: #ffffff;
+  color: #1f2a37;
+  border: 1px solid #dbe7f6;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+}
+
+.account-signout-confirm-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px !important;
+  background: #f3f6fb;
+  color: #64748b;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.account-signout-confirm-close:hover {
+  background: #e8edf4;
+}
+
+.account-signout-confirm-card h3 {
+  margin: 0 42px 10px 0;
+  color: #2f6fed;
+  font-size: 1.2rem;
+  line-height: 1.2;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.account-signout-confirm-card p {
+  margin: 0;
+  color: #53647a;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.account-signout-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.account-signout-confirm-secondary,
+.account-signout-confirm-primary {
+  min-height: 36px;
+  padding: 0 16px;
+  border-radius: 999px !important;
+  font-size: 0.84rem;
+  font-weight: 550;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.account-signout-confirm-secondary {
+  border: 1px solid #cfd8e6;
+  background: #ffffff;
+  color: #53647a;
+}
+
+.account-signout-confirm-primary {
+  border: 0;
+  background: #2f6fed;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(47, 111, 237, 0.18);
+}
+
+.account-signout-confirm-secondary:hover,
+.account-signout-confirm-primary:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 520px) {
+  .account-signout-confirm-actions {
+    flex-direction: column-reverse;
+  }
+
+  .account-signout-confirm-secondary,
+  .account-signout-confirm-primary {
+    width: 100%;
+  }
+}

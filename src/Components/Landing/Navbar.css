@@ -1,11 +1,8 @@
-/* =============================
-   NAVBAR (polished, same layout)
-   ============================= */
-
-/* Fixed bar that only appears at the very top */
 .navbar-wrapper {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 30000;
   background: transparent;
   transform: translateY(0);
@@ -14,10 +11,8 @@
   padding-top: env(safe-area-inset-top);
 }
 
-/* Hide the bar whenever NOT at top (JS toggles this) */
 .navbar-wrapper.hidden { transform: translateY(-100%); }
 
-/* Core navbar layout */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -29,63 +24,79 @@
   min-width: 320px;
 }
 
-/* LOGO */
 .logo { flex-shrink: 0; }
 .navbar .logo img {
-  max-height: 80px;
+  /* asset is now cropped to the visible mark (758x378, 2:1), so these numbers
+     describe the logo you actually see rather than a mostly-transparent canvas */
+  height: 30px;
   width: auto;
+  max-height: none;
   display: block;
   object-fit: contain;
   transform: translateZ(0);
 }
 
-/* ACCESSIBILITY */
 .sr-only {
   position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
-  white-space: nowrap; border: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
 }
 
-/* =============================
-   DESKTOP INLINE LINKS
-   ============================= */
 .nav-links.desktop-only {
   display: flex;
   flex-direction: row;
   gap: 16px;
   align-items: center;
 }
-.nav-links.desktop-only li a {
+
+.nav-links.desktop-only li a,
+.dropdown-list li a,
+.nav-links li a {
+  font-family: var(--cdna-font-sans);
   text-decoration: none;
   color: #ffffff;
-  font-weight: 500;
+  font-weight: var(--cdna-type-nav-weight);
+  letter-spacing: -0.01em;
   padding: 10px 16px;
   border-radius: 999px;
-  font-size: 0.98rem;
-  line-height: 1.5;
+  font-size: var(--cdna-type-nav-size);
+  line-height: var(--cdna-type-nav-line);
   white-space: nowrap;
   transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
   -webkit-tap-highlight-color: transparent;
   cursor: pointer;
 }
+
 .nav-links.desktop-only li a:hover,
-.nav-links.desktop-only li a:focus-visible {
+.nav-links.desktop-only li a:focus-visible,
+.dropdown-list li a:hover,
+.dropdown-list li a:focus-visible,
+.nav-links li a:hover,
+.nav-links li a:focus-visible {
   background-color: rgba(255, 255, 255, 0.15);
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(0,0,0,0.20);
   outline: none;
 }
-.nav-links.desktop-only li a:active { transform: translateY(0); }
 
-/* =============================
-   HAMBURGER
-   ============================= */
+.nav-links.desktop-only li a:active,
+.dropdown-list li a:active,
+.nav-links li a:active { transform: translateY(0); }
+
 .menu-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px; height: 44px;
+  /* SMALL size = phones, laptops, desktops. The LARGE size is applied only to
+     touch tablets, in the single block at the end of this file. Two sizes total. */
+  width: 44px;
+  height: 44px;
   background: transparent;
   border: none;
   color: #fff;
@@ -93,40 +104,26 @@
   transition: opacity .15s ease, transform .15s ease;
   -webkit-tap-highlight-color: transparent;
 }
-.menu-icon svg { width: 28px; height: 28px; }
+.menu-icon svg { width: 28px; height: 28px; stroke-width: 1.7; }
 .menu-icon:hover { opacity: .85; transform: translateY(-1px); }
 .menu-icon:active { transform: translateY(0); }
-
-/* Hide navbar icon while overlay is open on small screens */
 .menu-icon.hide-on-overlay { visibility: hidden; pointer-events: none; }
 
-/* =============================
-   RESPONSIVE BEHAVIOUR
-   ============================= */
-
-/* PHONE (≤900px): fullscreen overlay; hide desktop UI */
 @media (max-width: 900px) {
   .desktop-only { display: none !important; }
 }
 
-/* TABLET (901–1180px): compact dropdown; no overlay */
 @media (min-width: 901px) and (max-width: 1180px) {
   .nav-links.desktop-only { display: none !important; }
   .nav-dropdown.vertical.desktop-only { display: block !important; }
 }
 
-/* DESKTOP (≥1181px): inline links; no overlay */
-@media (min-width: 1181px) {}
-
-/* =============================
-   DESKTOP/TABLET DROPDOWN (vertical)
-   ============================= */
 .nav-dropdown.vertical {
   position: fixed;
   top: 80px;
   right: clamp(20px, 5vw, 40px);
   z-index: 30010;
-  width: min(320px, 92vw);
+  width: min(250px, 82vw);
   background: rgba(10,12,36,0.90);
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: 14px;
@@ -142,38 +139,21 @@
   transform: translateY(0);
   pointer-events: auto;
 }
-.dropdown-list {
-  list-style: none; margin: 0; padding: 6px;
-  display: flex; flex-direction: column; gap: 4px;
-}
-.dropdown-list li a {
-  display: block;
-  padding: 10px 12px;
-  border-radius: 10px;
-  color: #fff;
-  text-decoration: none;
-  font-weight: 500;
-  transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
-  cursor: pointer;
-}
-.dropdown-list li a:hover,
-.dropdown-list li a:focus-visible {
-  background: rgba(255,255,255,0.12);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.20);
-  outline: none;
-}
-.dropdown-list li a:active { transform: translateY(0); }
 
-/* =============================
-   OVERLAY (phone/iPad ≤900px) — no blur, lighter backdrop
-   ============================= */
+.dropdown-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .nav-menu {
   position: fixed;
   inset: 0;
   z-index: 30020;
-  background: rgba(0,0,0,0.35);               /* lighter, no blur */
-  /* removed backdrop-filter to avoid heavy blur of the hero */
+  background: rgba(0,0,0,0.35);
   transform: translateY(-100%);
   transition: transform 0.3s ease, opacity .2s ease;
   opacity: 0;
@@ -188,23 +168,17 @@
   pointer-events: auto;
 }
 
-/* Render overlay only on phones; visibility still controlled by .active */
 @media (max-width: 900px) {
   .nav-menu { display: block; }
 }
 
-/* =============================
-   PANEL INSIDE OVERLAY
-   ============================= */
-
-/* Default (phones): centered card */
 .nav-panel {
   position: relative;
   margin: 96px auto 40px;
-  background: rgba(10,12,36,0.95);            /* opaque so text is clear */
+  background: rgba(10,12,36,0.95);
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: 16px;
-  width: min(92vw, 520px);
+  width: min(82vw, 430px);
   max-height: 70vh;
   overflow-y: auto;
   padding: 24px 18px 28px;
@@ -212,70 +186,49 @@
   z-index: 30030;
 }
 
-/* iPad portrait (roughly 700–900px): left-docked narrow sheet */
 @media (min-width: 700px) and (max-width: 900px) {
   .nav-panel {
-    /* push panel to the right side */
     margin: 96px calc(24px + env(safe-area-inset-right)) 40px auto;
     width: 420px;
   }
 }
 
-/* Very small phones: keep margins neat */
 @media (max-width: 380px) {
   .nav-panel { width: calc(100% - 24px); margin: 84px 12px 24px; }
 }
 
-/* Mobile close button */
 .nav-close {
   position: absolute;
-  top: 10px; right: 10px;
-  width: 44px; height: 44px;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: transparent; border: none; color: #fff; cursor: pointer;
+  top: 10px;
+  right: 10px;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
   transition: opacity .15s ease, transform .15s ease;
 }
 .nav-close svg { width: 24px; height: 24px; }
 .nav-close:hover { opacity: .85; transform: translateY(-1px); }
 
-/* Links inside overlay */
 .nav-links {
   list-style: none;
-  gap: 14px;
+  gap: 16px;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
   align-items: stretch;
 }
-.nav-links li a {
-  text-decoration: none;
-  color: #ffffff;
-  font-weight: 500;
-  padding: 12px 18px;
-  border-radius: 12px;
-  font-size: 1.05rem;
-  line-height: 1.5;
-  white-space: nowrap;
-  display: block;
-  transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
-  cursor: pointer;
-}
-.nav-links li a:hover,
-.nav-links li a:focus-visible {
-  background-color: rgba(255, 255, 255, 0.12);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.20);
-  outline: none;
-}
-.nav-links li a:active { transform: translateY(0); }
 
-/* Keep the nav/menu over everything */
 .navbar-wrapper { z-index: 30000 !important; }
-.nav-dropdown   { z-index: 30010 !important; }
-.nav-menu       { z-index: 30020 !important; }
-.nav-panel      { z-index: 30030 !important; }
-
+.nav-dropdown { z-index: 30010 !important; }
+.nav-menu { z-index: 30020 !important; }
+.nav-panel { z-index: 30030 !important; }
 
 .nav-profile-item {
   display: flex;
@@ -284,10 +237,408 @@
 }
 
 .nav-user-email {
+  font-family: var(--cdna-font-sans);
   color: #ffffff;
   opacity: 0.82;
   padding: 2px 12px 8px;
-  font-size: 0.9rem;
+  font-size: var(--cdna-type-body-sm-size);
+  font-weight: var(--cdna-type-body-sm-weight);
+  line-height: 1.45;
   word-break: break-all;
+}
+
+/* Account-style signed-in section inside the landing menu */
+.nav-account-block {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 10px 0 0;
+  border-top: 1px solid rgba(255,255,255,0.10);
+}
+
+.nav-account-header {
+  padding: 8px 16px 10px;
+}
+
+.nav-account-label {
+  font-family: var(--cdna-font-sans);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.58);
+  margin-bottom: 3px;
+}
+
+.nav-account-email {
+  font-family: var(--cdna-font-sans);
+  font-size: 0.85rem;
+  font-weight: 500;
   line-height: 1.35;
+  color: rgba(255,255,255,0.84);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.nav-account-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dropdown-list .nav-account-list li a.nav-account-link,
+.nav-links .nav-account-list li a.nav-account-link,
+.dropdown-list .nav-account-list li button.nav-account-link,
+.nav-links .nav-account-list li button.nav-account-link {
+  font-family: var(--cdna-font-sans);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 38px;
+  box-sizing: border-box;
+  text-align: left;
+  padding: 9px 14px;
+  border-radius: 10px;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.25;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  box-shadow: none;
+  transform: none;
+  white-space: nowrap;
+  transition: background-color .15s ease, color .15s ease;
+}
+
+.dropdown-list .nav-account-list li a.nav-account-link:hover,
+.nav-links .nav-account-list li a.nav-account-link:hover,
+.dropdown-list .nav-account-list li button.nav-account-link:hover,
+.nav-links .nav-account-list li button.nav-account-link:hover,
+.dropdown-list .nav-account-list li a.nav-account-link:focus-visible,
+.nav-links .nav-account-list li a.nav-account-link:focus-visible,
+.dropdown-list .nav-account-list li button.nav-account-link:focus-visible,
+.nav-links .nav-account-list li button.nav-account-link:focus-visible {
+  background: rgba(255,255,255,0.10);
+  transform: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.nav-account-icon {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  max-width: 16px;
+  max-height: 16px;
+  color: #7da8ff;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.nav-account-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.10);
+  margin: 5px 14px;
+  padding: 0;
+}
+
+.dropdown-list .nav-account-list li button.nav-account-signout,
+.nav-links .nav-account-list li button.nav-account-signout {
+  color: #ff8a8a;
+}
+
+.nav-account-signout .nav-account-icon {
+  color: #ff8a8a;
+}
+
+
+/* Pre-launch menu polish: lighter close icon and cleaner auth links */
+/* .menu-icon deliberately NOT included here — it is sized once in the base rule
+   above (48px) so it stays identical on phone, tablet and desktop. This rule is
+   for the close (X) inside the open panel only. */
+.nav-close svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 1.7;
+}
+
+.nav-close {
+  color: rgba(255,255,255,0.94);
+}
+
+.nav-auth-separator {
+  height: 1px;
+  margin: 8px 14px 4px;
+  padding: 0;
+  background: rgba(255,255,255,0.10);
+}
+
+.dropdown-list li.nav-auth-item a.nav-auth-link,
+.nav-links li.nav-auth-item a.nav-auth-link {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 14px;
+  border-radius: 11px;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+  font-size: 0.96rem;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.dropdown-list li.nav-auth-item a.nav-auth-link:hover,
+.dropdown-list li.nav-auth-item a.nav-auth-link:focus-visible,
+.nav-links li.nav-auth-item a.nav-auth-link:hover,
+.nav-links li.nav-auth-item a.nav-auth-link:focus-visible {
+  background: rgba(255,255,255,0.10);
+  box-shadow: none;
+  transform: none;
+}
+
+.dropdown-list li.nav-auth-item a.nav-auth-link--primary,
+.nav-links li.nav-auth-item a.nav-auth-link--primary {
+  color: #ffffff;
+  background: rgba(47,128,237,0.20);
+}
+
+.dropdown-list li.nav-auth-item a.nav-auth-link--primary:hover,
+.dropdown-list li.nav-auth-item a.nav-auth-link--primary:focus-visible,
+.nav-links li.nav-auth-item a.nav-auth-link--primary:hover,
+.nav-links li.nav-auth-item a.nav-auth-link--primary:focus-visible {
+  background: rgba(47,128,237,0.28);
+}
+
+
+/* Follow-up polish: full-width menu highlights for overlay/dropdown navigation */
+.nav-dropdown .dropdown-list > li > a,
+.nav-menu .nav-links > li > a {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 14px;
+  border-radius: 11px;
+  background: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.nav-dropdown .dropdown-list > li > a:hover,
+.nav-dropdown .dropdown-list > li > a:focus-visible,
+.nav-menu .nav-links > li > a:hover,
+.nav-menu .nav-links > li > a:focus-visible {
+  background: rgba(255,255,255,0.10);
+  box-shadow: none;
+  transform: none;
+}
+
+.nav-dropdown .dropdown-list,
+.nav-menu .nav-links {
+  gap: 4px;
+}
+
+.nav-auth-separator {
+  margin: 12px 14px 6px;
+}
+
+/* Menu spacing refinement: tighten vertical rhythm without changing typography/colours */
+.nav-dropdown .dropdown-list,
+.nav-menu .nav-links {
+  gap: 2px;
+}
+
+.nav-dropdown .dropdown-list > li > a,
+.nav-menu .nav-links > li > a {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+.nav-account-block {
+  margin-top: 6px;
+  padding-top: 8px;
+}
+
+.nav-account-list {
+  gap: 0;
+}
+
+.nav-account-divider {
+  display: none;
+}
+
+.dropdown-list .nav-account-list li a.nav-account-link,
+.nav-links .nav-account-list li a.nav-account-link,
+.dropdown-list .nav-account-list li button.nav-account-link,
+.nav-links .nav-account-list li button.nav-account-link {
+  min-height: 34px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+
+/* TABLET / iPAD NAVBAR
+   Desktop rules above are untouched.
+   No transform scaling and no !important overrides.
+   The navbar uses the same horizontal padding rhythm as the Hero tablet layout. */
+@media (min-width: 700px) and (max-width: 1180px) and (orientation: portrait) {
+  .navbar {
+    height: 92px;
+    padding: 22px clamp(34px, 5.2vw, 58px) 22px clamp(24px, 2.8vw, 32px);
+  }
+
+  .navbar .logo {
+    flex-shrink: 0;
+    transform: none;
+  }
+
+  .navbar .logo img {
+    width: 115px;
+    max-width: 115px;
+    height: auto;
+    max-height: none;
+  }
+
+
+  .nav-close svg {
+    width: 36px;
+    height: 36px;
+    stroke-width: 2.1;
+  }
+
+  .nav-menu {
+    min-height: 100vh;
+  }
+
+  .nav-panel {
+    width: 340px;
+    max-width: calc(100vw - 68px);
+    margin: 102px clamp(34px, 5.2vw, 58px) 40px auto;
+    max-height: calc(100vh - 132px);
+    padding: 22px 16px 24px;
+  }
+
+  .nav-dropdown.vertical {
+    top: 92px;
+    right: clamp(34px, 5.2vw, 58px);
+    width: 340px;
+  }
+}
+
+/* iPad Pro portrait: same alignment, slightly larger logo only. */
+@media (min-width: 1000px) and (max-width: 1100px) and (orientation: portrait) {
+  .navbar {
+    height: 96px;
+    padding-left: 37px;
+    padding-right: 58px;
+  }
+
+  .navbar .logo img {
+    width: 138px;
+    max-width: 138px;
+  }
+
+
+  .nav-panel {
+    width: 350px;
+    max-width: 350px;
+    margin-top: 106px;
+    margin-right: 58px;
+  }
+
+  .nav-dropdown.vertical {
+    top: 96px;
+    right: 58px;
+    width: 350px;
+  }
+}
+
+/* Real touch tablets in landscape only. */
+@media (min-width: 901px) and (max-width: 1366px) and (orientation: landscape) and (hover: none) and (pointer: coarse) {
+  .navbar {
+    height: 92px;
+    padding-left: clamp(34px, 5.2vw, 58px);
+    padding-right: clamp(34px, 5.2vw, 58px);
+  }
+
+  .navbar .logo {
+    transform: none;
+  }
+
+  .navbar .logo img {
+    width: 126px;
+    max-width: 126px;
+    height: auto;
+    max-height: none;
+  }
+
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   NAVBAR CHROME — one scheme, two families, no dependence on touch reporting.
+
+   TABLETS vs LAPTOPS cannot be told apart by width alone (an iPad Pro 12.9
+   landscape and a laptop are both 1366 wide) nor by aspect alone (a MacBook
+   Pro 14 is 1.54, the same as an iPad Mini landscape). Together they separate
+   cleanly: tablets are <=1366 wide AND <=1.6 aspect; everything else is a
+   laptop/desktop. Deliberately NOT keyed on pointer:coarse, because DevTools
+   reports that for any entry set to "Mobile", which made this unpredictable.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* A. TABLETS — generous tap target. */
+@media (min-width: 700px) and (max-width: 1366px) and (max-aspect-ratio: 8/5) {
+  .navbar { height: 92px; }
+
+  /* HEIGHT-constrained: the logo asset is 1017x988 (square), so sizing by width
+     makes it almost as tall as it is wide and it overflows the bar. */
+  .navbar .logo img {
+    height: 38px;
+    width: auto;
+    max-width: none;
+    max-height: none;
+  }
+
+  .menu-icon { width: 62px; height: 62px; }
+  .menu-icon svg { width: 44px; height: 44px; stroke-width: 2.2; }
+}
+
+/* A2. Short tablet landscape — chrome was eating too much of a 744px viewport. */
+@media (min-width: 700px) and (max-width: 1366px)
+   and (max-aspect-ratio: 8/5) and (max-height: 820px) {
+  .navbar { height: 76px; }
+
+  .navbar .logo img { height: 32px; width: auto; max-width: none; }
+
+  .menu-icon { width: 56px; height: 56px; }
+  .menu-icon svg { width: 40px; height: 40px; stroke-width: 2.1; }
+}
+
+/* B. LAPTOPS & DESKTOPS — scale with width instead of stopping dead at 1366,
+      which is why the MacBook Pro 14 was falling back to the intrinsic size. */
+@media (min-width: 1367px),
+       (min-width: 1181px) and (min-aspect-ratio: 8/5) {
+  .navbar { height: clamp(80px, 5.6vw, 96px); }
+
+  .navbar .logo img {
+    height: clamp(32px, 2.3vw, 44px);
+    width: auto;
+    max-width: none;
+    max-height: none;
+  }
+
+  .menu-icon {
+    width: clamp(44px, 3.1vw, 52px);
+    height: clamp(44px, 3.1vw, 52px);
+  }
+
+  .menu-icon svg {
+    width: clamp(28px, 2.1vw, 34px);
+    height: clamp(28px, 2.1vw, 34px);
+  }
 }

@@ -7,9 +7,14 @@
   box-shadow: none;
   border-radius: 0;
   color: #333;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--cdna-font-sans);
   line-height: 1.6;
   overflow-x: hidden;
+}
+
+.survey-app,
+.survey-app * {
+  font-family: inherit;
 }
 
 .survey-content {
@@ -43,5 +48,21 @@
 @media (max-width: 600px) {
   .survey-app {
     padding: 20px 12px;
+  }
+}
+
+/* Drop the intro card down from the header. NOTE: .survey-app padding is
+   overridden by a duplicate .survey-app rule in SurveyComponent.css, so we push
+   the card itself using a higher-specificity selector (.survey-content
+   .intro-container) that wins the cascade. vh so it scales with viewport height. */
+@media (max-width: 600px) {
+  .survey-content .intro-container {
+    margin-top: clamp(24px, 7vh, 72px);
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1180px) {
+  .survey-content .intro-container {
+    margin-top: clamp(64px, 17vh, 210px);
   }
 }

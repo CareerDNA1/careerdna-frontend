@@ -1,53 +1,45 @@
-/* Design tokens (easy tweaking) */
 :root {
-  --btn-radius-rounded: 22px;   /* professional, not-too-pill */
+  --btn-radius-rounded: 22px;
   --btn-radius-soft: 10px;
   --btn-radius-pill: 999px;
-
-  --btn-gap: 10px;              /* a touch tighter than 12px */
-  --btn-font-weight: 540;       /* reads crisper on slimmer heights */
+  --btn-gap: 10px;
+  --btn-font-weight: 500;
 }
 
-/* Base */
 .btn {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--btn-gap);
-
   border: 0;
   border-radius: var(--btn-radius-rounded);
   text-decoration: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-
+  font-family: var(--cdna-font-sans, 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif);
   font-weight: var(--btn-font-weight);
   letter-spacing: -0.01em;
   line-height: 1;
-
   cursor: pointer;
   transition: transform .16s ease, box-shadow .16s ease, background .16s ease, opacity .12s ease;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-width: max-content; /* keeps short labels from collapsing */
+  min-width: max-content;
 }
 
-/* Shapes */
 .rounded { border-radius: var(--btn-radius-rounded); }
-.soft    { border-radius: var(--btn-radius-soft); }
-.pill    { border-radius: var(--btn-radius-pill); }
+.soft { border-radius: var(--btn-radius-soft); }
+.pill { border-radius: var(--btn-radius-pill); }
 
-/* Sizes: slimmer height, a bit more horizontal padding */
-.xl { min-height: 46px; padding: 0 34px; font-size: 17.5px; }
-.lg { min-height: 44px; padding: 0 30px; font-size: 16.5px; }
+.xl { min-height: 46px; padding: 0 34px; font-size: 17px; }
+.lg { min-height: 44px; padding: 0 30px; font-size: 16px; }
 .md { min-height: 38px; padding: 0 20px; font-size: 14.5px; }
 .sm { min-height: 32px; padding: 0 14px; font-size: 13px; }
 
 .block { width: 100%; }
 
-/* Variants */
 .primary {
   color: #fff;
   background: linear-gradient(180deg, #3B82F6 0%, #2563EB 100%);
@@ -88,14 +80,8 @@
   border: 1px solid rgba(28,58,99,0.16);
   box-shadow: 0 6px 16px rgba(28,58,99,.08);
 }
-.secondary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(28,58,99,.12);
-}
-.secondary:active {
-  transform: translateY(0);
-  box-shadow: 0 6px 16px rgba(28,58,99,.08) inset;
-}
+.secondary:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(28,58,99,.12); }
+.secondary:active { transform: translateY(0); box-shadow: 0 6px 16px rgba(28,58,99,.08) inset; }
 
 .ghost {
   color: #2f80ed;
@@ -105,7 +91,6 @@
 .ghost:hover { background: rgba(47,128,237,.06); }
 .ghost:active { background: rgba(47,128,237,.10); }
 
-/* Focus ring */
 .btn:focus-visible {
   outline: none;
   box-shadow:
@@ -114,20 +99,16 @@
     0 10px 24px rgba(17, 24, 39, 0.16);
 }
 
-/* Disabled */
 .btn[disabled],
-.btn[aria-disabled="true"] {
+.btn[aria-disabled='true'] {
   opacity: .6;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
-/* Content */
 .icon { display: inline-flex; align-items: center; justify-content: center; }
 .label { display: inline-block; }
-
-/* Loading */
 .loading { pointer-events: none; }
 .spinner {
   position: absolute;
@@ -140,7 +121,6 @@
 }
 @keyframes btn-spin { to { transform: rotate(360deg); } }
 
-/* NEW: subtle hover “sheen” sweep */
 .sheen::after {
   content: "";
   position: absolute;
@@ -163,7 +143,6 @@
   transform: translateX(80%) skewX(-18deg);
 }
 
-/* Optional legacy shine pulse (kept from your version) */
 .shine::after {
   content: "";
   position: absolute; inset: 0;
@@ -174,7 +153,6 @@
 }
 .shine:hover::after { transform: translateX(120%); }
 
-/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .btn, .spinner, .shine::after, .sheen::after { transition: none; animation: none; }
 }

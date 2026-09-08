@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState, useLayoutEffect } from 're
 import { useNavigate, useLocation } from 'react-router-dom';
 import SurveyWrapper from '../Components/Survey/SurveyWrapper';
 import SurveyComponent from '../Components/Survey/SurveyComponent';
-import QUESTIONS from '../utils/questions';
+import QUESTIONS from '../utils/questions_a';
 import { useSurveyEngine } from '../Hooks/useSurveyEngine';
 import { readProgress, writeProgress } from '../Hooks/useProgress';
 import { sendSurveyComplete } from '../utils/telemetry'; // <-- telemetry
@@ -40,15 +40,7 @@ const PERSONAL_PROFILE_ANSWERS = {
     "value": 5,
     "weight": 1
   },
-  "Q69": {
-    "value": 2,
-    "weight": 1
-  },
   "Q16": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q61": {
     "value": 5,
     "weight": 1
   },
@@ -81,10 +73,6 @@ const PERSONAL_PROFILE_ANSWERS = {
     "weight": 1
   },
   "Q42": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q66": {
     "value": 5,
     "weight": 1
   },
@@ -158,10 +146,6 @@ const PERSONAL_PROFILE_ANSWERS = {
   },
   "Q83": {
     "value": "A",
-    "weight": 1
-  },
-  "Q13": {
-    "value": 1,
     "weight": 1
   },
   "Q37": {
@@ -534,6 +518,17 @@ export default function SurveyQuestions() {
     }, stepMs);
   };
 
+  const onExitSurvey = () => {
+    try {
+      sessionStorage.removeItem('cdna_progress_v1');
+      sessionStorage.removeItem('cdna_jump_last');
+      sessionStorage.removeItem('cdna_subdims_v1');
+    } catch {}
+
+    setAnswers({});
+    navigate('/profile', { replace: true });
+  };
+
   // Progress % for bar fill (0..100). Use index+1 so Q96 hits 100%.
   const progressPercentage =
     total > 0
@@ -548,7 +543,7 @@ export default function SurveyQuestions() {
 
   // Dev helpers
   const isDev = process.env.NODE_ENV !== 'production';
-  const showDevButtons = isDev && index === 0;
+  const showDevButtons = false;
 
   const getSimulationIntro = () => {
     const p = readProgress();
@@ -626,61 +621,9 @@ export default function SurveyQuestions() {
           finishing={finishing}
           finishProgress={finishProgress}
           onShowResults={onShowResults}
+          onExitSurvey={onExitSurvey}
         />
 
-        {showDevButtons && (
-          <div
-            style={{
-              position: 'fixed',
-              left: '50%',
-              bottom: '18px',
-              transform: 'translateX(-50%)',
-              display: 'flex',
-              gap: '8px',
-              zIndex: 9999,
-              opacity: 0.92,
-            }}
-          >
-            <button
-              type="button"
-              onClick={simulateAndGo}
-              style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '999px',
-                border: '1px solid #e5e9f2',
-                background: '#f5f7fb',
-                fontFamily: 'Arial, sans-serif',
-                fontSize: 16,
-                cursor: 'pointer',
-              }}
-              aria-label="Dev: Auto-complete survey with random answers"
-              title="Random simulation"
-            >
-              -
-            </button>
-
-            <button
-              type="button"
-              onClick={simulatePersonalProfile}
-              style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '999px',
-                border: '1px solid #dbe4ff',
-                background: '#eef2ff',
-                fontFamily: 'Arial, sans-serif',
-                fontSize: 14,
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-              aria-label="Dev: Run personal profile simulation"
-              title="Personal profile simulation"
-            >
-              P
-            </button>
-          </div>
-        )}
       </SurveyWrapper>
 
       {showBanner && (
