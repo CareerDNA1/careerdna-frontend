@@ -5,6 +5,7 @@ import { BrainCircuit } from 'lucide-react';
 import ReportLimitModal from '../Common/ReportLimitModal';
 import { applyCouponCode } from '../../utils/applyCoupon';
 import { loadAdvisorConversation, sendAdvisorMessage } from '../../utils/careerAdvisor';
+import { friendlyError } from '../../utils/friendlyError';
 import './SectionAdvisor.css';
 
 function normalize(value = '') {
@@ -61,7 +62,7 @@ export default function SectionAdvisor({
         const all = Array.isArray(data?.messages) ? data.messages : [];
         setMessages(all);
       } catch (err) {
-        if (!cancelled) setErrorMsg(err.message || 'Could not load the advisor.');
+        if (!cancelled) setErrorMsg(friendlyError(err, 'load the advisor').message);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -111,7 +112,7 @@ export default function SectionAdvisor({
       setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
       if (err?.entitlement) setEntitlement(err.entitlement);
       if (isLimit) { setShowLimitModal(true); setInput(text); }
-      else { setErrorMsg(err.message || 'Could not send your question.'); setInput(text); }
+      else { setErrorMsg(friendlyError(err, 'send your question').message); setInput(text); }
     } finally {
       setSending(false);
     }
@@ -143,7 +144,7 @@ export default function SectionAdvisor({
         <span className="section-advisor__icon" aria-hidden="true"><Sparkle size={18} weight="fill" /></span>
         <span className="section-advisor__title">Ask about {title}</span>
       </div>
-      <p className="section-advisor__intro">Your adviser knows your full CareerDNA. Pick a question or ask your own.</p>
+      <p className="section-advisor__intro">Your advisor knows your full CareerDNA. Pick a question or ask your own.</p>
 
       {messages.length ? (
         <button
@@ -165,7 +166,7 @@ export default function SectionAdvisor({
                 <>
                   <span className="section-advisor__msg-label">
                     <span className="section-advisor__avatar" aria-hidden="true"><BrainCircuit /></span>
-                    CareerDNA AI Advisor
+                    AI Advisor
                   </span>
                   <div className="section-advisor__msg-body section-advisor__markdown" dangerouslySetInnerHTML={renderSafeMarkdown(m.content)} />
                 </>
@@ -178,7 +179,7 @@ export default function SectionAdvisor({
             <div className="section-advisor__msg section-advisor__msg--assistant">
               <span className="section-advisor__msg-label">
                 <span className="section-advisor__avatar" aria-hidden="true"><BrainCircuit /></span>
-                CareerDNA AI Advisor
+                AI Advisor
               </span>
               <div className="section-advisor__msg-body muted">Thinking…</div>
             </div>

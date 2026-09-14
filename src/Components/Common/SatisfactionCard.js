@@ -20,10 +20,11 @@ function FaceIcon({ tone }) {
   );
 }
 
+// Displayed left → right, best first: Loved it · It was OK · Not really.
 const FACES = [
-  { rating: 1, tone: 'sad', label: 'Not really' },
-  { rating: 2, tone: 'ok', label: 'It was OK' },
   { rating: 3, tone: 'good', label: 'Loved it' },
+  { rating: 2, tone: 'ok', label: 'It was OK' },
+  { rating: 1, tone: 'sad', label: 'Not really' },
 ];
 
 export default function SatisfactionCard({ userId, assessmentRunId }) {

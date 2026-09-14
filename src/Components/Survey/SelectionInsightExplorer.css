@@ -1417,6 +1417,11 @@
 .cdna-narrative-trait {
   font-weight: 700;
   color: #2f7d32;
+  /* Never hyphenate/break a green trait or profile name mid-word. */
+  -webkit-hyphens: none;
+  hyphens: none;
+  overflow-wrap: normal;
+  word-break: keep-all;
 }
 
 @media (max-width: 640px) {
@@ -1451,6 +1456,23 @@
   transition: opacity 120ms ease;
   font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
+
+/* Pinned (click-opened) state: clickable, with room for the close button. */
+.selection-floating-tooltip.is-pinned { pointer-events: auto; padding-top: 24px; }
+.selection-floating-tooltip__close {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  border: none;
+  background: none;
+  font-size: 20px;
+  line-height: 1;
+  color: #64748b;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.selection-floating-tooltip__close:hover { background: #f1f5f9; color: #1f2a37; }
 
 .selection-floating-tooltip__headline {
   display: block;
@@ -1501,3 +1523,89 @@
 
 /* Filter toolbar (top-right of the pathway list). */
 .selection-explorer__toolbar { display: flex; justify-content: flex-end; margin: 4px 0 10px; }
+
+/* Live graduate-jobs callout inside a role card (university flow). Styled to
+   match the app: soft blue panel, brand-blue actions, green "live" dot. */
+.role-jobs { display: flex; flex-direction: column; margin: 16px 0 4px; padding: 14px 16px; background: #f4f8ff; border: 1px solid #dbe6fb; border-radius: 14px; font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; }
+/* Two side-by-side jobs boxes on a role card: left = graduate jobs, right =
+   internships & graduate schemes. Stacks on narrow screens. */
+.role-jobs-cols { display: flex; gap: 14px; align-items: stretch; }
+.role-jobs-cols > .role-jobs { flex: 1 1 0; min-width: 0; margin: 16px 0 4px; }
+@media (max-width: 720px) { .role-jobs-cols { flex-direction: column; gap: 0; } }
+.cw-def-modal--jobs, .role-jobs-modal { font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; }
+.role-jobs__eyebrow { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; font-size: 0.82rem; font-weight: 700; letter-spacing: 0; color: #2f6fed; }
+.role-jobs__eyebrow svg { flex: 0 0 auto; }
+/* Match the surrounding role description text exactly (size / colour / rhythm). */
+.role-jobs__blurb { margin: 0 0 12px; font-size: 0.95rem; line-height: 1.55; color: #4b5c6b; }
+.role-jobs__intern-note { font-size: 0.95rem; color: #4b5c6b; }
+.role-jobs-modal__count { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; color: #14233c; margin-bottom: 6px; }
+.role-jobs-modal__count strong { font-weight: 700; }
+.role-jobs__line { margin: 0; font-size: 0.95rem; line-height: 1.55; color: #14233c; display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; }
+.role-jobs__line + .role-jobs__line { margin-top: 10px; padding-top: 10px; border-top: 1px solid #e3ecfb; }
+.role-jobs__line--muted { color: #6b7788; }
+.role-jobs__dot { width: 9px; height: 9px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15); display: inline-block; flex: 0 0 auto; margin-right: 4px; }
+.role-jobs__loading { color: #6b7788; }
+.role-jobs__spinner { width: 15px; height: 15px; border-radius: 50%; border: 2px solid #cdd9ec; border-top-color: #2f6fed; flex: 0 0 auto; display: inline-block; animation: role-jobs-spin 0.7s linear infinite; }
+@keyframes role-jobs-spin { to { transform: rotate(360deg); } }
+.role-jobs__count { font-weight: 700; }
+.role-jobs__count--muted { font-weight: 500; color: #6b7788; }
+
+/* Footer treatment shared with the degree "Explore programmes" and pathway
+   "Ways in" cards: a divider, the green live stat on the left, and a soft
+   blue pill button on the right. Pinned to the bottom so paired boxes align. */
+.role-jobs__foot { margin-top: auto; padding-top: 12px; border-top: 1px solid #dbe7fb; display: flex; flex-direction: column; gap: 10px; }
+.role-jobs__foot-row { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.role-jobs__foot-row + .role-jobs__foot-row { padding-top: 10px; border-top: 1px solid #e3ecfb; }
+.role-jobs__stat { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.85rem; color: #1f9e6b; }
+.role-jobs__stat--muted { color: #6b7788; font-weight: 500; }
+.role-jobs__go { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; color: #2f6fed; background: #eaf1fe; border: 1px solid #cddbf0; border-radius: 8px; padding: 7px 13px; font-weight: 600; font-size: 0.82rem; text-decoration: none; cursor: pointer; font-family: inherit; white-space: nowrap; }
+.role-jobs__go:hover, .role-jobs__go:focus { background: #dce8fd; border-color: #b9cbe6; }
+
+/* Graduate schemes as curated links (not scraped). */
+.role-jobs__schemes { margin-top: 14px; padding-top: 12px; border-top: 1px solid #dbe7fb; }
+.role-jobs__schemes-label { display: block; font-size: 0.82rem; font-weight: 700; color: #2f6fed; }
+.role-jobs__schemes-note { margin: 4px 0 9px; font-size: 0.82rem; line-height: 1.45; color: #6b7788; }
+.role-jobs__links { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.role-jobs__schemelink { color: #2f6fed; font-weight: 600; font-size: 0.85rem; text-decoration: none; white-space: nowrap; }
+.role-jobs__schemelink:hover, .role-jobs__schemelink:focus { text-decoration: underline; }
+/* Live-schemes count rendered as a compact green text link (a <button>), not a
+   chunky pill, so the schemes box stays uncluttered. */
+.role-jobs__schemelink--live { display: inline-flex; align-items: center; gap: 5px; background: none; border: none; padding: 0; margin: 2px 0 4px; font: inherit; color: #16a34a; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+.role-jobs__schemelink--live:hover, .role-jobs__schemelink--live:focus { text-decoration: underline; }
+
+/* Regulated / academic routes: a single full-width jobs box (no schemes /
+   internships column) with the route explained in the description. */
+.role-jobs-cols--single { display: block; }
+.role-jobs--advisory { background: #f6f8fb; border-color: #e2e8f2; }
+.role-jobs__sep { color: #b9c6de; }
+.role-jobs__link { color: #2f6fed; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.role-jobs__link:hover, .role-jobs__link:focus { text-decoration: underline; }
+.role-jobs__btn { border: none; background: none; padding: 0; margin: 0; font: inherit; color: #2f6fed; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.role-jobs__btn:hover, .role-jobs__btn:focus { text-decoration: underline; }
+
+/* Live graduate-jobs pop-up (list of real listings). */
+.cw-def-modal--jobs .cw-def-modal__box { max-width: 660px; }
+.role-jobs-modal__lead { margin: 0 0 14px; font-size: 0.9rem; color: #6b7788; line-height: 1.5; }
+.role-jobs-list { display: flex; flex-direction: column; gap: 12px; }
+.role-jobcard { display: block; padding: 14px 16px; border: 1px solid #e6ebf3; border-radius: 14px; background: #fff; text-decoration: none; color: inherit; }
+.role-jobcard--link { transition: border-color 0.12s ease, box-shadow 0.12s ease, transform 0.06s ease; }
+.role-jobcard--link:hover, .role-jobcard--link:focus { border-color: #2f6fed; box-shadow: 0 4px 16px rgba(47, 111, 237, 0.14); }
+.role-jobcard__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.role-jobcard__title { font-size: 1rem; font-weight: 700; color: #2f6fed; line-height: 1.3; }
+.role-jobcard--link:hover .role-jobcard__title { text-decoration: underline; }
+.role-jobcard__src { flex: 0 0 auto; font-size: 0.72rem; font-weight: 600; color: #6a7890; background: #eef2f7; border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
+.role-jobcard__meta { margin-top: 4px; font-size: 0.82rem; color: #6b7788; font-weight: 700; }
+.role-jobcard__facts { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.role-jobcard__fact { display: inline-flex; align-items: center; gap: 5px; font-size: 0.78rem; color: #33425a; background: #f3f6fb; border: 1px solid #e6ebf3; border-radius: 8px; padding: 4px 10px; }
+.role-jobcard__fact svg { color: #8a99ad; flex: 0 0 auto; }
+
+/* Live-jobs modal header, matching the apprenticeship detail modal: a rounded
+   tinted icon square, the field as the title, and the context as a subtitle. */
+.cw-wayin-head { display: flex; align-items: flex-start; gap: 12px; }
+.cw-wayin-head__icon { width: 40px; height: 40px; border-radius: 10px; background: #eaf1fd; color: #2f6fed; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.cw-wayin-head__titles { flex: 1; min-width: 0; }
+.cw-wayin-head .cw-def-modal__title { display: block; }
+.cw-wayin-head__sub { display: block; font-size: 0.82rem; color: #6b7788; margin-top: 2px; }
+.role-jobs-showall { margin-top: 12px; width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #cdd8ea; background: #f5f8ff; color: #2f6fed; font-size: 0.9rem; font-weight: 700; cursor: pointer; }
+.role-jobs-showall:hover { background: #eaf1ff; }
+.role-jobs-modal__foot { margin-top: 18px; padding-top: 14px; border-top: 1px solid #e6ebf2; display: flex; flex-wrap: wrap; gap: 8px 20px; }

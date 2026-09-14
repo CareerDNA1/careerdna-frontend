@@ -32,6 +32,16 @@
   margin: 0;
 }
 
+/* Header buttons stacked top-right: Manage Account with the admin dashboard
+   button tucked beneath it (admins only), instead of a full-width admin row. */
+.profile-header-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
 /* =============================================
    Compact Stats Bar (inline)
    ============================================= */
@@ -146,13 +156,13 @@
 
 .profile-admin-dashboard-btn {
   flex: 0 0 auto;
-  min-height: 34px;
-  padding: 0 18px;
+  min-height: 26px;
+  padding: 4px 12px;
   border: 0;
   border-radius: 999px !important;
   background: #2f6fed;
   color: #ffffff;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 650;
   cursor: pointer;
   box-shadow: 0 6px 14px rgba(47, 111, 237, 0.18);
@@ -166,10 +176,9 @@
 }
 
 @media (max-width: 640px) {
-  .profile-admin-panel {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 15px 16px;
+  .profile-header-actions {
+    align-items: stretch;
+    width: 100%;
   }
 
   .profile-admin-dashboard-btn {
@@ -568,55 +577,35 @@
   letter-spacing: -0.01em;
 }
 
-/* Skeleton placeholders for the saved-runs list while they load. */
-.profile-runs-skeleton {
+/* Clean, calm loading state for the saved-runs list (no grey shimmer bars). */
+.profile-runs-loading {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.profile-run-skeleton {
-  display: block;
-  height: 72px;
-  border-radius: 14px;
-  /* Higher-contrast highlight so the sweep is clearly visible (the old greys were
-     nearly identical, which made the skeleton look frozen). */
-  background: linear-gradient(90deg, #e4eaf4 25%, #ffffff 50%, #e4eaf4 75%);
-  background-size: 200% 100%;
-  animation: profile-skeleton-shimmer 1.25s linear infinite;
-}
-
-@keyframes profile-skeleton-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-/* "Loading your assessments" caption so the state reads as loading, not stuck. */
-.profile-runs-loading-note {
-  display: flex;
   align-items: center;
-  gap: 9px;
-  margin: 0 0 12px;
-  font-size: 0.88rem;
+  justify-content: center;
+  gap: 14px;
+  padding: 44px 0 40px;
+}
+.profile-spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid #dbe6fb;
+  border-top-color: #2f6fed;
+  animation: profile-runs-spin 0.75s linear infinite;
+  flex: 0 0 auto;
+}
+.profile-runs-loading-note {
+  margin: 0;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #5b6b8c;
-}
-.profile-runs-loading-note::before {
-  content: '';
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  border: 2px solid #cddbf0;
-  border-top-color: #2f6fed;
-  animation: profile-runs-spin 0.7s linear infinite;
-  flex: 0 0 auto;
 }
 @keyframes profile-runs-spin {
   to { transform: rotate(360deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .profile-run-skeleton { animation: none; }
-  .profile-runs-loading-note::before { animation: none; }
+  .profile-spinner { animation: none; }
 }
 
 .profile-loading {

@@ -12,6 +12,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import LegalPage, { PrivacyPage, TermsPage, LegalModal } from './pages/LegalPage';
 import ReportProblemModal from './Components/Common/ReportProblemModal';
+import ServiceBanner from './Components/Common/ServiceBanner';
 import RankingsModal from './Components/Rankings/RankingsModal';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProfilePage from './pages/ProfilePage';
@@ -135,6 +136,7 @@ function GlobalRankingsModal() {
 export default function App() {
   return (
     <Router>
+      <ServiceBanner />
       <GlobalLegalModal />
       <GlobalReportProblemModal />
       <GlobalRankingsModal />

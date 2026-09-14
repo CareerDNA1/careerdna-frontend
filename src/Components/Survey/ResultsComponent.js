@@ -1765,7 +1765,7 @@ export default function ResultsComponent({
     if (canShowDiscoverMore && isSchoolViewer) tabs.push({ key: 'furtherstudy', label: 'University', markdown: '' });
     if (canShowDiscoverMore && isSchoolViewer) tabs.push({ key: 'nonuni', label: 'Training & Work', markdown: '' });
     if (canShowDiscoverMore && !isSchoolViewer) tabs.push({ key: 'roleexplorer', label: 'Role Explorer', markdown: '' });
-    if (canShowAdvisor) tabs.push({ key: 'advisor', label: 'My Adviser', markdown: '' });
+    if (canShowAdvisor) tabs.push({ key: 'advisor', label: 'AI Advisor', markdown: '' });
     return tabs;
   }, [analysisTabs, effectiveAssessmentRunId, computedSummary, loadingSummary, viewerStatus]);
   const activeTab = useMemo(

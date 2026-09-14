@@ -60,7 +60,32 @@ export function RequireAuth() {
   }, [userId, loading]);
 
   if (loading || (userId && profileState === 'checking')) {
-    return <div style={{ padding: '40px', textAlign: 'center' }}>Loading...</div>;
+    return (
+      <div
+        style={{
+          minHeight: '60vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '14px',
+        }}
+        aria-label="Loading"
+        aria-busy="true"
+      >
+        <span
+          style={{
+            width: '38px',
+            height: '38px',
+            borderRadius: '50%',
+            border: '3px solid #dbe6fb',
+            borderTopColor: '#2f6fed',
+            animation: 'cdna-route-spin 0.75s linear infinite',
+          }}
+        />
+        <style>{'@keyframes cdna-route-spin{to{transform:rotate(360deg)}}'}</style>
+      </div>
+    );
   }
 
   if (!userId) {

@@ -1,17 +1,11 @@
 import { buildApiCandidates } from './config';
-import { supabase } from './supabaseClient';
+import { getAccessToken as getSharedAccessToken } from './authToken';
 
 async function getAccessToken() {
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  if (sessionError) {
-    throw new Error(sessionError.message || 'Could not verify your login session.');
-  }
-
-  const accessToken = sessionData?.session?.access_token;
+  const accessToken = await getSharedAccessToken();
   if (!accessToken) {
     throw new Error('Please sign in again before using the CareerDNA advisor.');
   }
-
   return accessToken;
 }
 

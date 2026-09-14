@@ -1073,12 +1073,15 @@ body:has(#results-root),
     margin-right: -8px !important;
   }
 
-  /* Justify the item body text so a short line doesn't leave a big gap; hyphenate
-     to keep the word-spacing even on the narrow column. */
+  /* Left-align the item body text. Do NOT hyphenate: on a narrow column that
+     splits single words (incl. green trait/profile names and titles) mid-word,
+     which reads badly. Words wrap whole to the next line instead. */
   .analysis-box .markdown-content .cdna-card-list > li.cdna-card-item {
     text-align: left !important;
-    -webkit-hyphens: auto !important;
-    hyphens: auto !important;
+    -webkit-hyphens: none !important;
+    hyphens: none !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
   }
 }
 
@@ -2452,8 +2455,10 @@ body:has(#results-root),
   #results-root p,
   #results-root li {
     text-align: left;
-    -webkit-hyphens: auto;
-    hyphens: auto;
+    -webkit-hyphens: none;
+    hyphens: none;
+    overflow-wrap: normal;
+    word-break: normal;
   }
 }
 
@@ -2682,4 +2687,10 @@ body:has(#results-root),
 .analysis-box .markdown-content .cdna-strength-trait-text {
   font-weight: 700;
   color: #2f7d32;
+  /* Never hyphenate/break a green trait or profile name mid-word — it wraps
+     whole to the next line instead (matters on narrow phone columns). */
+  -webkit-hyphens: none;
+  hyphens: none;
+  overflow-wrap: normal;
+  word-break: keep-all;
 }

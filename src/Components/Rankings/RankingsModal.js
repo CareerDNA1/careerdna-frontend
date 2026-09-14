@@ -4,18 +4,22 @@ import { showSelectionTooltip, hideSelectionTooltip } from '../Survey/SelectionI
 import './RankingsModal.css';
 
 const SORTS = [
-  { key: 'score', label: 'CareerDNA score', field: 'score' },
+  { key: 'score', label: 'CareerDNA Rank', field: 'score' },
   { key: 'salary', label: 'Graduate salary', field: 'medianSalary' },
   { key: 'employment', label: 'Employment', field: 'employment' },
+  { key: 'meaningful', label: 'Meaningful work', field: 'meaningfulWork' },
   { key: 'satisfaction', label: 'Student satisfaction', field: 'satisfaction' },
+  { key: 'continuation', label: 'Continuation', field: 'continuation' },
   { key: 'entry', label: 'Entry requirements', field: 'tariffPoints' },
 ];
 
 const COLS = [
-  { lines: ['CareerDNA', 'score'], title: 'CareerDNA score', tip: 'Our overall ranking. It blends graduate outcomes (50%), student satisfaction (25%), entry standards (15%) and continuation (10%).' },
+  { lines: ['CareerDNA', 'Rank'], title: 'CareerDNA Rank', tip: 'Our overall university score (0–100). It blends graduate outcomes (50%: salary, employment, meaningful work), student satisfaction (25%), entry standards (15%) and continuation (10%).' },
   { lines: ['Median', 'salary'], title: 'Median salary', tip: 'Median graduate salary, 15 months after finishing the course.' },
   { lines: ['Employed'], title: 'Employed', tip: 'Percentage of graduates in work or further study 15 months after finishing.' },
+  { lines: ['Meaningful', 'work'], title: 'Meaningful work', tip: 'Percentage of graduates who say their work is meaningful and fits their future plans (Graduate Outcomes survey).' },
   { lines: ['Satisfaction'], title: 'Student satisfaction', tip: 'Average student satisfaction, from the National Student Survey (NSS).' },
+  { lines: ['Continued'], title: 'Continuation', tip: 'Percentage of students who continue their studies past the first year.' },
   { lines: ['Entry'], title: 'Entry requirements', tip: 'Typical entry grades, based on the UCAS tariff of accepted students.' },
   { lines: ['TEF'], title: 'Teaching Excellence Framework', tip: 'The official Gold, Silver or Bronze rating for teaching quality.' },
 ];
@@ -26,10 +30,6 @@ const TEF_STYLE = {
   Bronze: { bg: '#c67f3a', fg: '#3d2410', label: 'Bronze' },
   'Requires Improvement': { bg: '#e6d3cd', fg: '#7a3322', label: 'Requires improvement', small: true },
 };
-
-function articleFor(word) {
-  return /^[aeiou]/i.test(String(word || '').trim()) ? 'an' : 'a';
-}
 
 function titleCase(s) {
   const small = new Set(['and', 'of', 'the', 'for', 'with', 'in', 'at', 'to', 'a', 'an', 'or']);
@@ -118,11 +118,6 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
           <div className="rk-state rk-state--error">{error}</div>
         ) : (
           <>
-            {data && data.titleFiltered ? (
-              <p className="rk-filternote">
-                Showing universities that offer {articleFor(data.subject)} {data.subject} degree. Tap a university to see its relevant courses.
-              </p>
-            ) : null}
             <div className="rk-controls">
               <label htmlFor="rk-sort">Sort by</label>
               <select id="rk-sort" value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
@@ -130,7 +125,9 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
               </select>
             </div>
 
-            <div className="rk-table-wrap">
+            <div className="rk-table-outer">
+              <span className="rk-scrollarrow" aria-hidden="true">›</span>
+              <div className="rk-table-wrap">
               <div className="rk-table">
                 <div className="rk-row rk-row--head">
                   <div>#</div>
@@ -148,6 +145,7 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                       onMouseLeave={hideSelectionTooltip}
                       onFocus={(e) => showSelectionTooltip(e.currentTarget)}
                       onBlur={hideSelectionTooltip}
+                      onClick={(e) => showSelectionTooltip(e.currentTarget, { pinned: true })}
                     >
                       {c.lines.map((l, li) => <span key={li} className="rk-th-line">{l}</span>)}
                     </div>
@@ -166,7 +164,7 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                             <button type="button" className="rk-uni-btn" onClick={() => toggleCourses(key)}
                               aria-expanded={isOpen} title="Show matching degrees">
                               <span className="rk-uni-name">{u.institution}</span>
-                              <span className="rk-uni-count">{isOpen ? '▾' : '▸'} {courses.length}</span>
+                              <span className="rk-uni-count">{isOpen ? '▾' : '▸'} {courses.length}<span className="rk-uni-count-word"> {courses.length === 1 ? 'course' : 'courses'}</span></span>
                             </button>
                           ) : (
                             <span className="rk-uni-name">{u.institution}</span>
@@ -175,7 +173,9 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                         <div className="rk-num rk-score">{Math.round(u.score)}</div>
                         <div className="rk-num">{u.medianSalary ? `£${Math.round(u.medianSalary / 1000)}k` : '–'}</div>
                         <div className="rk-num">{u.employment != null ? `${u.employment}%` : '–'}</div>
+                        <div className="rk-num">{u.meaningfulWork != null ? `${u.meaningfulWork}%` : '–'}</div>
                         <div className="rk-num">{u.satisfaction != null ? `${u.satisfaction}%` : '–'}</div>
+                        <div className="rk-num">{u.continuation != null ? `${u.continuation}%` : '–'}</div>
                         <div className="rk-mid rk-entry">{u.typicalGrades || '–'}</div>
                         <div className="rk-mid">{tefPill(u.tef)}</div>
                       </div>
@@ -195,6 +195,7 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                     </div>
                   );
                 })}
+              </div>
               </div>
             </div>
 

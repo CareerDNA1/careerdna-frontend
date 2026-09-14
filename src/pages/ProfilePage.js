@@ -1222,10 +1222,21 @@ export default function ProfilePage() {
         {/* Compact Header */}
         <header className="profile-header">
           <h1 className="profile-welcome">Welcome, {profile?.first_name || 'there'}</h1>
-          <button type="button" className="profile-btn-hover-primary" style={btnPrimarySm} onClick={openProfileEditor}>
-            <SettingsIcon />
-            Manage Account
-          </button>
+          <div className="profile-header-actions">
+            <button type="button" className="profile-btn-hover-primary" style={btnPrimarySm} onClick={openProfileEditor}>
+              <SettingsIcon />
+              Manage Account
+            </button>
+            {isAdminProfile ? (
+              <button
+                type="button"
+                className="profile-admin-dashboard-btn"
+                onClick={() => navigate('/admin')}
+              >
+                Open Admin Dashboard
+              </button>
+            ) : null}
+          </div>
         </header>
 
         {errorMsg ? <p className="profile-error">{errorMsg}</p> : null}
@@ -1295,23 +1306,6 @@ export default function ProfilePage() {
           <SatisfactionCard userId={user.id} assessmentRunId={latestRun.id} />
         ) : null}
 
-        {isAdminProfile ? (
-          <section className="profile-admin-panel" aria-label="Admin dashboard access">
-            <div>
-              <span className="profile-admin-eyebrow">Admin access</span>
-              <strong>Private CareerDNA control panel</strong>
-              <p>Monitor users, saved reports, activity events, and model-validation data.</p>
-            </div>
-            <button
-              type="button"
-              className="profile-admin-dashboard-btn"
-              onClick={() => navigate('/admin')}
-            >
-              Open Admin Dashboard
-            </button>
-          </section>
-        ) : null}
-
         {/* Assessment History */}
         <section className="profile-card">
           <div className="profile-card-header">
@@ -1328,11 +1322,9 @@ export default function ProfilePage() {
           </div>
 
           {loadingRuns ? (
-            <div className="profile-runs-skeleton" aria-label="Loading saved runs" aria-busy="true">
+            <div className="profile-runs-loading" aria-label="Loading saved runs" aria-busy="true">
+              <span className="profile-spinner" aria-hidden="true" />
               <p className="profile-runs-loading-note">Loading your assessments&hellip;</p>
-              <span className="profile-run-skeleton" />
-              <span className="profile-run-skeleton" />
-              <span className="profile-run-skeleton" />
             </div>
           ) : runs.length === 0 ? (
             <div className="profile-empty">

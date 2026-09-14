@@ -270,7 +270,76 @@ a.nu-standard__link:hover { text-decoration: underline; }
 .nu-standard__toggle--row .nu-standard__ext { color: #2f6fed; font-weight: 700; }
 
 /* Way-in pop-up: roomier, polished spacing (scoped so it doesn't touch other modals) */
-.nu-wayin-modal { display: flex; flex-direction: column; gap: 18px; }
+.nu-wayin-modal { display: flex; flex-direction: column; gap: 16px; }
+/* Header: pathway icon in a tinted square + title + one-line subtitle. */
+.cw-wayin-head { display: flex; align-items: flex-start; gap: 12px; }
+.cw-wayin-head__icon { width: 40px; height: 40px; border-radius: 10px; background: #eaf1fd; color: #2f6fed; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.cw-wayin-head__icon svg { width: 22px; height: 22px; }
+.cw-wayin-head__titles { flex: 1; min-width: 0; }
+.cw-wayin-head .cw-def-modal__title { display: block; }
+.cw-wayin-head__sub { display: block; font-size: 0.82rem; color: #6b7788; margin-top: 2px; }
+/* Part 1: the standard's own info (overview, facts, official-standard link). */
+.nu-wayin-info { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+/* Facts grouped into one soft panel, each row icon-led, sentence-case labels. */
+.nu-factbox { width: 100%; background: #f6f8fc; border-radius: 12px; padding: 13px 15px; display: flex; flex-direction: column; gap: 13px; }
+.nu-factrow { display: flex; gap: 11px; align-items: flex-start; }
+.nu-factrow__icon { color: #2f6fed; flex: 0 0 auto; margin-top: 1px; }
+.nu-factrow__label { font-size: 0.78rem; color: #6b7788; }
+.nu-factrow__value { font-size: 0.92rem; color: #14233c; line-height: 1.5; margin-top: 1px; }
+.nu-factbox .nu-wayin-officiallink { margin-top: 2px; }
+/* Part 2: live openings, clearly separated by a divider, expandable. */
+.nu-openings-section { border-top: 1px solid #e3ebf5; padding-top: 15px; }
+.nu-openings-toggle {
+  width: 100%;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: #f4f8ff; border: 1px solid #dbe6fb; border-radius: 12px;
+  padding: 12px 15px; cursor: pointer; font: inherit; text-align: left;
+}
+.nu-openings-toggle:hover { background: #eaf1ff; }
+.nu-openings-toggle__count { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; color: #14233c; }
+.nu-openings-toggle__chev { color: #2f6fed; font-size: 1.1rem; line-height: 1; transition: transform 160ms ease; flex: 0 0 auto; }
+.nu-openings-toggle__chev.is-open { transform: rotate(180deg); }
+.nu-wayin-openings-list { margin-top: 12px; }
+
+/* "Ways in" list rows — icon + title/subtitle + live status + chevron. */
+.nu-standards { display: flex; flex-direction: column; gap: 8px; }
+.nu-wayrow {
+  display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+  border: 1px solid #e3ebf5; border-radius: 12px; padding: 11px 13px;
+  background: #fff; cursor: pointer; font: inherit;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+.nu-wayrow:hover, .nu-wayrow:focus-visible { border-color: #b9d0f5; background: #f7faff; outline: none; }
+.nu-wayrow__icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.nu-wayrow__icon--appr { background: #e4f6ec; color: #12a150; }
+.nu-wayrow__icon--college { background: #efeafc; color: #7c3aed; }
+.nu-wayrow__icon--work { background: #fdefe0; color: #ea7317; }
+.nu-wayrow__main { flex: 1; min-width: 0; }
+.nu-wayrow__title { display: block; font-size: 0.92rem; font-weight: 600; color: #14233c; line-height: 1.3; }
+.nu-wayrow__sub { display: block; font-size: 0.75rem; color: #8a97ac; margin-top: 1px; }
+.nu-wayrow__live { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; color: #0f6e56; white-space: nowrap; flex: 0 0 auto; }
+.nu-wayrow__note { font-size: 0.75rem; color: #8a97ac; white-space: nowrap; flex: 0 0 auto; }
+.nu-wayrow__chev { color: #b0bccd; flex: 0 0 auto; }
+
+/* Expanded live-openings list — one calm advert card per opening. */
+.nu-adverts { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+.nu-advert {
+  position: relative; display: block; text-decoration: none;
+  border: 1px solid #e3ebf5; border-radius: 12px; padding: 13px 14px;
+  background: #fff; transition: border-color 120ms ease, background 120ms ease;
+}
+.nu-advert:hover, .nu-advert:focus-visible { border-color: #b9d0f5; background: #f7faff; outline: none; }
+.nu-advert__ext { position: absolute; top: 13px; right: 13px; color: #9aa7bd; }
+.nu-advert__title { font-size: 0.95rem; font-weight: 600; color: #2f6fed; line-height: 1.35; padding-right: 22px; }
+.nu-advert__employer { font-size: 0.82rem; color: #6b7788; margin: 3px 0 9px; }
+.nu-advert__pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.nu-advert__pill { display: inline-flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #53637a; background: #f1f4f9; border-radius: 999px; padding: 3px 10px; }
+.nu-advert__pill svg { flex: 0 0 auto; color: #8a97ac; }
+.nu-adverts__foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 2px 2px; }
+.nu-adverts__showall { font-size: 0.82rem; color: #14233c; background: transparent; border: 1px solid #cdd9ec; border-radius: 8px; padding: 6px 13px; cursor: pointer; }
+.nu-adverts__showall:hover { background: #f4f7fc; border-color: #b9c6de; }
+.nu-adverts__link { font-size: 0.82rem; color: #2f6fed; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.nu-adverts__link:hover { text-decoration: underline; }
 .nu-wayin-overview { font-size: 1rem; line-height: 1.6; color: #2b2f38; margin: 0; }
 .nu-wayin-modal .nu-chips { margin: 0; gap: 8px; }
 .nu-wayin-modal .nu-facts { margin: 0; display: flex; flex-direction: column; gap: 14px; }
@@ -353,6 +422,10 @@ a.nu-standard__link:hover { text-decoration: underline; }
   .nu-grid2 { grid-template-columns: 1fr; gap: 14px; }
 }
 .nu-grid2 .fs-degree-section { margin-bottom: 0; }
+.nu-grid2 .nu-span2 { grid-column: 1 / -1; }
+/* Sentence-case section labels on pathway cards (matches the apprenticeship cards). */
+.nu-pathway-card .fs-degree-section__label,
+.nu-pathway-card .nu-wayin-box__label { text-transform: none; letter-spacing: 0; }
 
 /* ---- "Ways in & live openings" info box (bottom-right grid cell) ---- */
 .nu-wayin-cell { display: flex; }
@@ -372,9 +445,7 @@ a.nu-standard__link:hover { text-decoration: underline; }
   transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .nu-wayin-box:hover {
-  background: #eaf1fe;
   border-color: #b9cbe6;
-  box-shadow: 0 3px 10px rgba(47, 111, 237, 0.14);
 }
 .nu-wayin-box__help {
   margin: 0;
@@ -382,24 +453,37 @@ a.nu-standard__link:hover { text-decoration: underline; }
   line-height: 1.5;
   color: #6b7686;
 }
+.nu-wayin-box__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+  border-top: 1px solid #d6e3f7;
+  padding-top: 11px;
+  margin-top: 4px;
+}
 .nu-wayin-box__go {
-  margin-top: 2px;
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.82rem;
+  font-weight: 600;
   color: #2f6fed;
+  background: #eaf1fe;
+  border: 1px solid #cddbf0;
+  border-radius: 8px;
+  padding: 7px 13px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  flex: 0 0 auto;
 }
-.nu-wayin-box:hover .nu-wayin-box__go { text-decoration: underline; }
+.nu-wayin-box:hover .nu-wayin-box__go { background: #dce8fd; border-color: #b9cbe6; }
 .nu-wayin-box__label {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
   color: #2f6fed;
 }
 .nu-wayin-box__intro {
@@ -430,9 +514,10 @@ a.nu-standard__link:hover { text-decoration: underline; }
 }
 .nu-wayin-box__stats {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  margin-top: 2px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 18px;
 }
 .nu-wayin-box__stat {
   display: inline-flex;

@@ -443,17 +443,12 @@ export default function CareerWorldsAccordion({
       if (t instanceof HTMLElement) showSelectionTooltip(t);
     };
     const onOut = (event) => { const t = getTarget(event); if (t instanceof HTMLElement) hideSelectionTooltip(); };
-    // On tap/click, briefly show the (freshly updated) tooltip as confirmation,
-    // then auto-close it — so it never sticks open on touch.
+    // On tap/click, PIN the tooltip open until the user closes it (×, outside
+    // click, or Escape) — consistent with the click-to-open definition boxes.
     const onClick = (event) => {
       const t = getTarget(event);
       if (!(t instanceof HTMLElement)) return;
-      suppressUntil = Date.now() + 1600;
-      window.requestAnimationFrame(() => {
-        showSelectionTooltip(t);
-        if (autoHideTimer) clearTimeout(autoHideTimer);
-        autoHideTimer = setTimeout(() => { hideSelectionTooltip(); if (typeof t.blur === 'function') t.blur(); }, 1100);
-      });
+      showSelectionTooltip(t, { pinned: true });
     };
     root.addEventListener('pointerover', onOver);
     root.addEventListener('pointerout', onOut);

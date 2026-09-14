@@ -19,7 +19,7 @@
 .satisfaction-faces {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .satisfaction-face {
@@ -138,5 +138,16 @@
 }
 
 @media (max-width: 600px) {
-  .satisfaction-face { padding: 6px 11px 6px 8px; }
+  /* Keep all three ratings on one row: let each shrink to share the width,
+     tighten the gap/padding, and centre the icon + label inside each pill. */
+  .satisfaction-faces { gap: 6px; }
+  .satisfaction-face {
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: center;
+    padding: 7px 6px;
+    gap: 5px;
+  }
+  .satisfaction-face svg { width: 20px; height: 20px; }
+  .satisfaction-face-label { font-size: 0.78rem; white-space: nowrap; }
 }

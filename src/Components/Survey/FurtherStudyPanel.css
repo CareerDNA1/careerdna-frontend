@@ -48,14 +48,14 @@
 .fs-degree-grid .fs-degree-section__label {
   margin-top: 0;
 }
+.fs-degree-grid .fs-span2 { grid-column: 1 / -1; }
 .fs-degree-section__label {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  text-transform: none;
   color: #2f6fed;
   margin-bottom: 4px;
 }
@@ -182,9 +182,7 @@
   transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .fs-rank-cell:hover {
-  background: #eaf1fe;
   border-color: #b9cbe6;
-  box-shadow: 0 3px 10px rgba(47, 111, 237, 0.14);
 }
 .fs-rank-cell:active { transform: scale(0.995); }
 .fs-rank-cell__label { display: flex; align-items: center; gap: 6px; }
@@ -206,13 +204,31 @@
   background: #22c55e;
   box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
 }
-.fs-rank-cell__go {
-  display: inline-block;
-  margin-top: 6px;
-  color: #2f6fed;
-  font-weight: 700;
-  font-size: 0.84rem;
+.fs-rank-cell__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
+  border-top: 1px solid #d6e3f7;
+  padding-top: 11px;
+  margin-top: 4px;
 }
+.fs-rank-cell__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #2f6fed;
+  background: #eaf1fe;
+  border: 1px solid #cddbf0;
+  border-radius: 8px;
+  padding: 7px 13px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  flex: 0 0 auto;
+}
+.fs-rank-cell:hover .fs-rank-cell__go { background: #dce8fd; border-color: #b9cbe6; }
 
 /* Full-width call-to-action bar shown at the top of an expanded degree. */
 .fs-rankings-cta {

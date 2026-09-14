@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './FurtherStudyPanel.css';
 import './NonUniversityPanel.css';
-import { Info, Compass, Briefcase, BookmarkSimple, GraduationCap, BookOpen, UsersThree } from 'phosphor-react';
+import { Info, Compass, Briefcase, BookmarkSimple, GraduationCap, BookOpen, UsersThree, CaretDown, CaretRight, Signpost, MapPin, CalendarBlank, CurrencyGbp, ArrowUpRight } from 'phosphor-react';
 import { fetchNonUniRoutes, peekNonUniRoutes, fetchRouteVacancies } from '../../utils/fetchNonUniRoutes';
 import { PATHWAY_DEFINITIONS } from '../../utils/selectionDefinitions';
 import { OptionDropdown, showSelectionTooltip, hideSelectionTooltip, PathwayReactionRow, SignalBadge, SelectionTitle } from './SelectionInsightExplorer';
@@ -17,6 +17,102 @@ function cleanVacancyKeyword(name) {
     .replace(/\bapprenticeship\b/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+// Format an ISO closing date as "5 Aug 2026" (JobCard prefixes it with "Closes ").
+const VAC_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function formatClosingDate(iso) {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return `${d.getDate()} ${VAC_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+// Title-case an ALL-CAPS employer name (e.g. "TRINITY MULTI ACADEMY TRUST" ->
+// "Trinity Multi Academy Trust"); leave already-mixed-case names untouched.
+function tidyEmployer(name) {
+  if (!name) return null;
+  const s = String(name).trim();
+  const letters = s.replace(/[^A-Za-z]/g, '');
+  const allCaps = letters.length > 0 && letters === letters.toUpperCase();
+  if (!allCaps) return s;
+  return s.toLowerCase().replace(/\b([a-z])/g, (c) => c.toUpperCase());
+}
+
+// Tidy a vacancy title: drop a leading reference tag ("(App840) …"), then drop
+// trailing dash-separated segments that are salary / hours / postcode noise some
+// employers append (e.g. "… – London, WC1H 9BT - £27,586p/a – 37.5 hrs/w").
+function cleanVacTitle(t) {
+  let s = String(t || '').replace(/^\(\s*(app|vac)[^)]*\)\s*/i, '').trim();
+  const parts = s.split(/\s+[–—-]\s+/);
+  if (parts.length > 1) {
+    const junk = (p) => /£|\bp\s*\/?\s*a\b|per annum|per year|\bhrs?\b|hours|\/\s*w\b|\b[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b/i.test(p);
+    const keep = [parts[0]];
+    for (let i = 1; i < parts.length; i += 1) { if (junk(parts[i])) break; keep.push(parts[i]); }
+    s = keep.join(' – ');
+  }
+  return s.replace(/\s+/g, ' ').trim();
+}
+
+// Tidy a vacancy location down to the town/city: strip the UK postcode, keep the
+// first segment, and drop country words ("England", "United Kingdom", …).
+function cleanVacLocation(loc) {
+  if (!loc) return null;
+  if (/multiple/i.test(loc)) return 'Multiple locations';
+  let s = String(loc).replace(/\b[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b/gi, ' ');
+  s = s.split(',')[0]
+    .replace(/\b(england|scotland|wales|northern ireland|united kingdom|uk)\b/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return s || null;
+}
+
+// Drop a leading "Employer –" prefix from a title when it just repeats the
+// employer shown on the line below (e.g. "The Royal Navy – Warfare Specialist…"
+// with employer "Royal Navy" -> "Warfare Specialist…").
+function stripEmployerPrefix(title, employer) {
+  if (!title || !employer) return title;
+  const norm = (s) => String(s).toLowerCase()
+    .replace(/^the\s+/, '')
+    .replace(/\b(ltd|limited|plc|llp)\b/g, '')
+    .replace(/[^a-z0-9]+/g, ' ').trim();
+  const parts = title.split(/\s+[–—-]\s+/);
+  if (parts.length > 1 && norm(parts[0]) && norm(parts[0]) === norm(employer)) {
+    return parts.slice(1).join(' – ').trim();
+  }
+  return title;
+}
+
+// Normalise a live apprenticeship vacancy into a tidy advert object.
+function apprenticeshipToJob(v) {
+  const employer = tidyEmployer(v.employer);
+  const wage = v.wage ? (v.wage.wageAdditionalInformation || v.wage.wageType || null) : null;
+  return {
+    title: stripEmployerPrefix(cleanVacTitle(v.title), employer) || null,
+    employer,
+    location: cleanVacLocation(v.location),
+    salary: wage,
+    deadline: formatClosingDate(v.closingDate),
+    url: v.url || null,
+  };
+}
+
+// A single live apprenticeship advert card (opens the advert on Find an
+// Apprenticeship). Calm blue title, employer, and icon-led location/closes/salary
+// pills, with a corner arrow to signal it opens externally.
+function ApprenticeshipCard({ job }) {
+  return (
+    <a className="nu-advert" href={job.url || undefined} target="_blank" rel="noopener noreferrer">
+      <ArrowUpRight size={15} weight="bold" className="nu-advert__ext" aria-hidden="true" />
+      <div className="nu-advert__title">{job.title}</div>
+      {job.employer ? <div className="nu-advert__employer">{job.employer}</div> : null}
+      <div className="nu-advert__pills">
+        {job.location ? <span className="nu-advert__pill"><MapPin size={13} weight="bold" aria-hidden="true" />{job.location}</span> : null}
+        {job.deadline ? <span className="nu-advert__pill"><CalendarBlank size={13} weight="bold" aria-hidden="true" />Closes {job.deadline}</span> : null}
+        {job.salary ? <span className="nu-advert__pill"><CurrencyGbp size={13} weight="bold" aria-hidden="true" />{job.salary}</span> : null}
+      </div>
+    </a>
+  );
 }
 
 // College / T Level / course routes rarely map to a single provider link, so we
@@ -166,8 +262,8 @@ const ROUTE_TYPE_LABEL = {
 // plus a plain-English tooltip that anchors the level to school qualifications a
 // 14–17-year-old already knows. Levels are the regulated qualification levels.
 const LEVEL_NAME = {
-  L2: 'GCSE level',
-  L3: 'A-level level',
+  L2: 'GCSE standard',
+  L3: 'A-level standard',
   L4: 'Higher',
   L5: 'Higher',
   L6: 'Degree level',
@@ -202,12 +298,12 @@ function qualificationLine(level, deliversDegree) {
     return 'A full university degree, plus the professional skills for the job.';
   }
   switch (k) {
-    case 'L2': return 'A Level 2 qualification, about GCSE standard.';
-    case 'L3': return 'A Level 3 qualification, about A-level standard.';
-    case 'L4': return 'A Level 4 qualification, like the first year of university (e.g. a Higher National Certificate).';
-    case 'L5': return 'A Level 5 qualification, like the first two years of university (e.g. a Foundation Degree or HND).';
-    case 'L6': return 'A Level 6 qualification, degree standard, though not a university degree itself.';
-    case 'L7': return "A Level 7 qualification, master's standard.";
+    case 'L2': return 'A qualification at the same level as GCSEs (Level 2).';
+    case 'L3': return 'A qualification at the same level as A-levels (Level 3).';
+    case 'L4': return 'A qualification a step above A-levels, like the first year of university (Level 4).';
+    case 'L5': return 'A qualification like the first two years of university, e.g. a foundation degree or HND (Level 5).';
+    case 'L6': return "A qualification at bachelor's-degree level (Level 6).";
+    case 'L7': return "A qualification at master's-degree level (Level 7).";
     default: return '';
   }
 }
@@ -226,6 +322,8 @@ function StandardRow({ route, liveVacancies, showTitle }) {
   // — e.g. Armed Forces direct entry, or building your own venture. Render those
   // honestly as their route type rather than as an empty apprenticeship.
   const [modalOpen, setModalOpen] = useState(false);
+  const [showAllVac, setShowAllVac] = useState(false);
+  const [openingsOpen, setOpeningsOpen] = useState(false);
   // T Levels and college diplomas are courses you apply to, not apprenticeship
   // adverts, so they never show "live openings" and link to a provider finder.
   const isCourse = !!route.isCourseRoute;
@@ -267,10 +365,6 @@ function StandardRow({ route, liveVacancies, showTitle }) {
   const dur = durationLabel(route.standardDurationMonths);
   const levelChip = route.standardLevel || '';
   const levelTip = levelTooltip(levelChip);
-  // Chips carry only the two "at a glance" facts: level and length. The
-  // qualification, entry requirements and professional body get their own
-  // labelled lines below, so nothing is left to guess.
-  const otherChips = [dur].filter(Boolean);
   const overview = (route.standardOverview || '').trim();
   const recognisedBy = cleanBody(route.qualifyingBody);
   // One tidy title per way in — the standard name; level/duration/body are shown
@@ -284,26 +378,37 @@ function StandardRow({ route, liveVacancies, showTitle }) {
   // master's), pre-computed in the data (title + government register combined,
   // since the register's own field mislabels several school-leaver routes).
   const deliversDegree = !!route.deliversDegree;
-  const levelLabel = levelName(levelChip) || levelChip;
   const comesOut = qualificationLine(levelChip, deliversDegree);
   const entryNeed = entryLine(levelChip);
   const levelNum = levelChip ? levelChip.replace(/^L/i, '') : '';
+  // Header uses the pathway's own icon, and a one-line "Apprenticeship · Level 3
+  // · 2 years" subtitle instead of floating pills.
+  const HeaderIcon = getPathwayIcon(route.linkedPathway || route.pathway || route.standardName);
+  // Route category for the row icon/colour (matches the Apprenticeship/College
+  // legend dots): apprenticeship, college (T Level / college), or work.
+  const rtRaw = String(route.routeType || '');
+  const rowCat = (rtRaw === 'College' || rtRaw === 'TLevel') ? 'College'
+    : (['Professional', 'BuildYourOwn', 'Direct', 'DirectEntry', 'Cadetship'].includes(rtRaw)) ? 'Work'
+    : 'Apprenticeship';
+  const RowIcon = rowCat === 'College' ? GraduationCap : rowCat === 'Work' ? Compass : Briefcase;
+  const rowCatClass = rowCat === 'College' ? 'nu-wayrow__icon--college' : rowCat === 'Work' ? 'nu-wayrow__icon--work' : 'nu-wayrow__icon--appr';
+  const headKind = isCourse ? (ROUTE_TYPE_LABEL[route.routeType] || 'Course') : 'Apprenticeship';
+  const headSub = [headKind, levelChip ? `Level ${levelNum}` : null, dur, deliversDegree ? 'Degree included' : null]
+    .filter(Boolean).join(' · ');
   return (
     <>
-      <button type="button" className="nu-standard__toggle nu-standard__toggle--row" onClick={() => setModalOpen(true)}>
-        <span className="nu-standard__toggle-title">{title}</span>
-        <span className="nu-wayin__cell nu-wayin__cell--level">
-          {levelChip ? <span className="nu-chip nu-chip--level nu-chip--static">{`Level ${levelNum}`}</span> : null}
+      <button type="button" className="nu-wayrow" onClick={() => { setShowAllVac(false); setOpeningsOpen(false); setModalOpen(true); }}>
+        <span className={`nu-wayrow__icon ${rowCatClass}`} aria-hidden="true"><RowIcon size={18} weight="bold" /></span>
+        <span className="nu-wayrow__main">
+          <span className="nu-wayrow__title">{title}</span>
+          <span className="nu-wayrow__sub">{headKind}{levelChip ? ` · Level ${levelNum}` : ''}{deliversDegree ? ' · Degree' : ''}</span>
         </span>
-        <span className="nu-wayin__cell nu-wayin__cell--degree">
-          {deliversDegree ? <span className="nu-chip nu-chip--degree nu-chip--static">Degree</span> : null}
-        </span>
-        <span className="nu-wayin__cell nu-wayin__cell--openings">
-          {vCount != null && vCount > 0 ? (
-            <span className="nu-standard__openings"><span className="nu-vac-dot" aria-hidden="true" />{vCount}{vCapped ? '+' : ''} live</span>
-          ) : null}
-        </span>
-        <span className="nu-standard__ext" aria-hidden="true">↗</span>
+        {vCount != null && vCount > 0 ? (
+          <span className="nu-wayrow__live"><span className="nu-vac-dot" aria-hidden="true" />{vCount}{vCapped ? '+' : ''} live</span>
+        ) : isCourse ? (
+          <span className="nu-wayrow__note">College course</span>
+        ) : null}
+        <CaretRight size={16} weight="bold" className="nu-wayrow__chev" aria-hidden="true" />
       </button>
       {modalOpen ? (
         <div
@@ -314,69 +419,111 @@ function StandardRow({ route, liveVacancies, showTitle }) {
           onClick={(e) => { if (e.target === e.currentTarget) setModalOpen(false); }}
         >
           <div className="cw-def-modal__box">
-            <div className="cw-def-modal__head cw-def-modal__head--wayin">
-              <span className="cw-def-modal__title">{title}</span>
-              {(levelChip || otherChips.length || deliversDegree) ? (
-                <div className="nu-chips nu-chips--head">
-                  {levelChip ? (
-                    <span className="nu-chip nu-chip--level">{`Level ${levelChip.replace(/^L/i, '')}`}{levelLabel ? ` · ${levelLabel}` : ''}</span>
-                  ) : null}
-                  {deliversDegree ? <span className="nu-chip nu-chip--degree">Degree included</span> : null}
-                  {otherChips.map((c, i) => <span className="nu-chip" key={i}>{c}</span>)}
-                </div>
-              ) : null}
+            <div className="cw-def-modal__head cw-wayin-head">
+              {HeaderIcon ? <span className="cw-wayin-head__icon" aria-hidden="true">{HeaderIcon}</span> : null}
+              <div className="cw-wayin-head__titles">
+                <span className="cw-def-modal__title">{title}</span>
+                {headSub ? <span className="cw-wayin-head__sub">{headSub}</span> : null}
+              </div>
               <button type="button" className="cw-def-modal__close" aria-label="Close" onClick={() => setModalOpen(false)}>×</button>
             </div>
             <div className="cw-def-modal__body nu-wayin-modal">
-              {overview ? <p className="nu-wayin-overview">{overview}</p> : null}
-              {(comesOut || entryNeed || recognisedBy) ? (
-                <dl className="nu-facts">
-                  {comesOut ? (
-                    <div className="nu-fact">
-                      <dt className="nu-fact__label">You&rsquo;ll come out with</dt>
-                      <dd className="nu-fact__value">{comesOut}</dd>
-                    </div>
-                  ) : null}
-                  {entryNeed ? (
-                    <div className="nu-fact">
-                      <dt className="nu-fact__label">To start, you&rsquo;ll usually need</dt>
-                      <dd className="nu-fact__value">{entryNeed}</dd>
-                    </div>
-                  ) : null}
-                  {recognisedBy ? (
-                    <div className="nu-fact">
-                      <dt className="nu-fact__label">Recognised by</dt>
-                      <dd className="nu-fact__value">{recognisedBy} <span className="nu-fact__optional">(optional)</span></dd>
-                    </div>
-                  ) : null}
-                </dl>
-              ) : null}
-              <div className="nu-wayin-footer">
-                {isCourse ? (
-                  <span className="nu-vac-count-inline nu-vac-count-inline--muted">{route.applyVia || 'Apply through a college or sixth form.'}</span>
-                ) : paused ? (
-                  <span className="nu-vac-count-inline nu-vac-count-inline--muted">Approved, but not taking new starts right now.</span>
-                ) : vCount != null && vCount > 0 ? (
-                  <span className="nu-wayin-openings">
-                    <span className="nu-vac-dot" aria-hidden="true" />
-                    <span className="nu-vac-count-inline">{vCount}{vCapped ? '+' : ''} live apprenticeship {vCount === 1 ? 'opening' : 'openings'}</span>
-                    {route.standardName ? (
-                      <> &middot; <a className="nu-vac-link" href={(vac.data && vac.data.searchUrl) || `https://www.findapprenticeship.service.gov.uk/apprenticeships?searchTerm=${encodeURIComponent(cleanVacancyKeyword(route.standardName))}`} target="_blank" rel="noopener noreferrer">See openings <span aria-hidden="true">→</span></a></>
+              {/* PART 1 — about this apprenticeship standard. */}
+              <div className="nu-wayin-info">
+                {overview ? <p className="nu-wayin-overview">{overview}</p> : null}
+                {(comesOut || entryNeed || recognisedBy || isCourse) ? (
+                  <div className="nu-factbox">
+                    {comesOut ? (
+                      <div className="nu-factrow">
+                        <GraduationCap size={18} weight="bold" className="nu-factrow__icon" aria-hidden="true" />
+                        <div>
+                          <div className="nu-factrow__label">You&rsquo;ll come out with</div>
+                          <div className="nu-factrow__value">{comesOut}</div>
+                        </div>
+                      </div>
                     ) : null}
-                  </span>
-                ) : (
-                  <span className="nu-vac-count-inline nu-vac-count-inline--muted">No live apprenticeship openings.</span>
-                )}
-                {link ? (
-                  <a className="nu-wayin-officiallink" href={link} target="_blank" rel="noopener noreferrer">
-                    {isCourse ? 'Find a provider' : 'View the official standard'} <span className="nu-standard__ext" aria-hidden="true">↗</span>
-                  </a>
-                ) : isCourse ? (
-                  <a className="nu-wayin-officiallink" href={findACourseUrl(route)} target="_blank" rel="noopener noreferrer">
-                    Find a course <span className="nu-standard__ext" aria-hidden="true">↗</span>
-                  </a>
+                    {entryNeed ? (
+                      <div className="nu-factrow">
+                        <Signpost size={18} weight="bold" className="nu-factrow__icon" aria-hidden="true" />
+                        <div>
+                          <div className="nu-factrow__label">To start, you&rsquo;ll usually need</div>
+                          <div className="nu-factrow__value">{entryNeed}</div>
+                        </div>
+                      </div>
+                    ) : null}
+                    {recognisedBy ? (
+                      <div className="nu-factrow">
+                        <BookmarkSimple size={18} weight="bold" className="nu-factrow__icon" aria-hidden="true" />
+                        <div>
+                          <div className="nu-factrow__label">Recognised by</div>
+                          <div className="nu-factrow__value">{recognisedBy} <span className="nu-fact__optional">(optional)</span></div>
+                        </div>
+                      </div>
+                    ) : null}
+                    {isCourse ? (
+                      <div className="nu-factrow">
+                        <Info size={18} weight="bold" className="nu-factrow__icon" aria-hidden="true" />
+                        <div>
+                          <div className="nu-factrow__value">{route.applyVia || 'Apply through a college or sixth form.'}</div>
+                        </div>
+                      </div>
+                    ) : null}
+                    {link ? (
+                      <a className="nu-wayin-officiallink" href={link} target="_blank" rel="noopener noreferrer">
+                        {isCourse ? 'Find a provider' : 'View the official standard'} <span className="nu-standard__ext" aria-hidden="true">↗</span>
+                      </a>
+                    ) : isCourse ? (
+                      <a className="nu-wayin-officiallink" href={findACourseUrl(route)} target="_blank" rel="noopener noreferrer">
+                        Find a course <span className="nu-standard__ext" aria-hidden="true">↗</span>
+                      </a>
+                    ) : null}
+                  </div>
                 ) : null}
               </div>
+
+              {/* PART 2 — live openings (apprenticeship standards only), a clearly
+                  separated, expandable section listing the real adverts. */}
+              {!isCourse ? (
+                <div className="nu-openings-section">
+                  {paused ? (
+                    <p className="nu-vac-count-inline nu-vac-count-inline--muted">Approved, but not taking new starts right now.</p>
+                  ) : vCount != null && vCount > 0 && vac.data && Array.isArray(vac.data.vacancies) && vac.data.vacancies.length ? (
+                    <>
+                      <button
+                        type="button"
+                        className="nu-openings-toggle"
+                        onClick={() => setOpeningsOpen((o) => !o)}
+                        aria-expanded={openingsOpen}
+                      >
+                        <span className="nu-openings-toggle__count">
+                          <span className="nu-vac-dot" aria-hidden="true" />
+                          {vCount}{vCapped ? '+' : ''} live apprenticeship {vCount === 1 ? 'opening' : 'openings'}
+                        </span>
+                        <CaretDown size={16} weight="bold" className={`nu-openings-toggle__chev ${openingsOpen ? 'is-open' : ''}`} aria-hidden="true" />
+                      </button>
+                      {openingsOpen ? (
+                        <div className="nu-adverts">
+                          {(showAllVac ? vac.data.vacancies : vac.data.vacancies.slice(0, 15)).map((v, i) => (
+                            <ApprenticeshipCard key={`${v.reference || v.title}-${i}`} job={apprenticeshipToJob(v)} />
+                          ))}
+                          <div className="nu-adverts__foot">
+                            {!showAllVac && vac.data.vacancies.length > 15 ? (
+                              <button type="button" className="nu-adverts__showall" onClick={() => setShowAllVac(true)}>
+                                Show all {vac.data.vacancies.length}
+                              </button>
+                            ) : <span />}
+                            {(vac.data.searchUrl || route.standardName) ? (
+                              <a className="nu-adverts__link" href={vac.data.searchUrl || `https://www.findapprenticeship.service.gov.uk/apprenticeships?searchTerm=${encodeURIComponent(cleanVacancyKeyword(route.standardName))}`} target="_blank" rel="noopener noreferrer">Find an Apprenticeship <span aria-hidden="true">↗</span></a>
+                            ) : null}
+                          </div>
+                        </div>
+                      ) : null}
+                    </>
+                  ) : (
+                    <p className="nu-vac-count-inline nu-vac-count-inline--muted">No live apprenticeship openings right now.</p>
+                  )}
+                </div>
+              ) : null}
             </div>
             <button type="button" className="cw-def-modal__done" onClick={() => setModalOpen(false)}>Close</button>
           </div>
@@ -514,7 +661,7 @@ function PathwayCard({ pathway, routes, open, onToggle, reaction, onReact, liveV
               <span className="fs-degree-section__label"><UsersThree size={14} weight="bold" aria-hidden="true" /> Who it suits</span>
               <p className="pathway-role-item__summary">{whoItSuits || 'People who prefer learning by doing and want to earn while they train.'}</p>
             </div>
-            <div className="fs-degree-section">
+            <div className="fs-degree-section nu-span2">
               <span className="fs-degree-section__label"><Compass size={14} weight="bold" aria-hidden="true" /> Where it leads</span>
               <p className="nu-roles-intro">The jobs this pathway typically leads to. These are the titles you would see in real job postings once you are qualified.</p>
               {roles.length ? (
@@ -530,7 +677,7 @@ function PathwayCard({ pathway, routes, open, onToggle, reaction, onReact, liveV
                 <p className="pathway-role-item__summary">A range of skilled roles across this field.</p>
               )}
             </div>
-            <div className="fs-degree-section nu-wayin-cell">
+            <div className="fs-degree-section nu-wayin-cell nu-span2">
               <button type="button" className="nu-wayin-box" onClick={() => setWaysOpen(true)}>
                 <span className="nu-wayin-box__label"><Briefcase size={14} weight="bold" aria-hidden="true" /> Ways in &amp; live openings</span>
                 {(() => {
@@ -546,24 +693,26 @@ function PathwayCard({ pathway, routes, open, onToggle, reaction, onReact, liveV
                     </div>
                   ) : null;
                 })()}
-                <p className="nu-wayin-box__intro">{entrySummary} You can further explore ways in and live openings for this pathway here.</p>
-                <div className="nu-wayin-box__stats">
-                  <span className="nu-wayin-box__stat">
-                    <GraduationCap size={14} weight="bold" aria-hidden="true" /> {waysCount} {waysCount === 1 ? 'way in' : 'ways in'}
-                  </span>
-                  {liveVacancies ? (
-                    liveTotal.loading ? (
-                      <span className="nu-wayin-box__stat nu-wayin-box__stat--muted">Checking for live openings&hellip;</span>
-                    ) : liveTotal.count > 0 ? (
-                      <span className="nu-wayin-box__stat nu-wayin-box__stat--live">
-                        <span className="nu-vac-dot" aria-hidden="true" /> {liveTotal.count}{liveTotal.capped ? '+' : ''} live apprenticeship {liveTotal.count === 1 ? 'opening' : 'openings'}
-                      </span>
-                    ) : (
-                      <span className="nu-wayin-box__stat nu-wayin-box__stat--muted">No live apprenticeship openings</span>
-                    )
-                  ) : null}
+                <p className="nu-wayin-box__intro">{entrySummary}</p>
+                <div className="nu-wayin-box__foot">
+                  <div className="nu-wayin-box__stats">
+                    <span className="nu-wayin-box__stat">
+                      <GraduationCap size={14} weight="bold" aria-hidden="true" /> {waysCount} {waysCount === 1 ? 'way in' : 'ways in'}
+                    </span>
+                    {liveVacancies ? (
+                      liveTotal.loading ? (
+                        <span className="nu-wayin-box__stat nu-wayin-box__stat--muted">Checking for live openings&hellip;</span>
+                      ) : liveTotal.count > 0 ? (
+                        <span className="nu-wayin-box__stat nu-wayin-box__stat--live">
+                          <span className="nu-vac-dot" aria-hidden="true" /> {liveTotal.count}{liveTotal.capped ? '+' : ''} live apprenticeship {liveTotal.count === 1 ? 'opening' : 'openings'}
+                        </span>
+                      ) : (
+                        <span className="nu-wayin-box__stat nu-wayin-box__stat--muted">No live apprenticeship openings</span>
+                      )
+                    ) : null}
+                  </div>
+                  <span className="nu-wayin-box__go">See the ways in <span aria-hidden="true">→</span></span>
                 </div>
-                <span className="nu-wayin-box__go">See the ways in <span aria-hidden="true">→</span></span>
               </button>
             </div>
           </div>
@@ -578,11 +727,11 @@ function PathwayCard({ pathway, routes, open, onToggle, reaction, onReact, liveV
             >
               <div className="cw-def-modal__box">
                 <div className="cw-def-modal__head">
-                  <span className="cw-def-modal__title">Ways in: {pathway}</span>
+                  <span className="cw-def-modal__title">Ways in</span>
                   <button type="button" className="cw-def-modal__close" aria-label="Close" onClick={() => setWaysOpen(false)}>×</button>
                 </div>
                 <div className="cw-def-modal__body nu-wayin-list-modal">
-                  <p className="nu-wayin-list-intro">Each way in is a route you can apply to now. Select one to see the level, what you come out with and how to apply.{liveVacancies ? ' Live openings are drawn from the government\u2019s Find an Apprenticeship service and refreshed regularly.' : ''}</p>
+                  <p className="nu-wayin-list-intro">Select one to see the level, what you come out with and how to apply.{liveVacancies ? ' Live apprenticeship openings come from the government\u2019s Find an Apprenticeship service and refresh regularly.' : ''}</p>
                   <div className="nu-standards">
                     {sortedRoutes.map((r, i) => (
                       <StandardRow key={r.standardCode || r.occupation || i} route={r} liveVacancies={liveVacancies} showTitle={true} />
@@ -656,9 +805,7 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
     const onOver = (e) => { if (Date.now() < suppressUntil) return; const t = getTarget(e); if (t instanceof HTMLElement) showSelectionTooltip(t); };
     const onOut = (e) => { const t = getTarget(e); if (t instanceof HTMLElement) hideSelectionTooltip(); };
     const onClick = (e) => {
-      const t = getTarget(e); if (!(t instanceof HTMLElement)) return;
-      suppressUntil = Date.now() + 1600;
-      window.requestAnimationFrame(() => { showSelectionTooltip(t); if (autoHide) clearTimeout(autoHide); autoHide = setTimeout(() => { hideSelectionTooltip(); if (t.blur) t.blur(); }, 1100); });
+      const t = getTarget(e); if (t instanceof HTMLElement) showSelectionTooltip(t, { pinned: true });
     };
     root.addEventListener('pointerover', onOver); root.addEventListener('pointerout', onOut);
     root.addEventListener('focusin', onOver); root.addEventListener('focusout', onOut); root.addEventListener('click', onClick);

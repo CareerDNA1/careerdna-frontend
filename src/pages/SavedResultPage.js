@@ -136,14 +136,9 @@ export default function SavedResultPage() {
       <AccountNavbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
 
       {loading ? (
-        <div style={{ maxWidth: 760, margin: '0 auto', padding: '32px 20px' }} aria-label="Loading your results" aria-busy="true">
-          <div style={{ height: 34, width: '55%', margin: '0 auto 22px', borderRadius: 10, background: '#e7edf5' }} />
-          <div style={{ height: 14, width: '90%', margin: '0 auto 10px', borderRadius: 7, background: '#eef2f8' }} />
-          <div style={{ height: 14, width: '96%', margin: '0 auto 10px', borderRadius: 7, background: '#eef2f8' }} />
-          <div style={{ height: 14, width: '80%', margin: '0 auto 28px', borderRadius: 7, background: '#eef2f8' }} />
-          <div style={{ height: 74, width: '100%', margin: '0 0 14px', borderRadius: 16, background: '#eef2f8' }} />
-          <div style={{ height: 74, width: '100%', margin: '0 0 14px', borderRadius: 16, background: '#eef2f8' }} />
-          <div style={{ height: 74, width: '100%', margin: 0, borderRadius: 16, background: '#eef2f8' }} />
+        <div className="profile-runs-loading" style={{ minHeight: '50vh' }} aria-label="Loading your results" aria-busy="true">
+          <span className="profile-spinner" aria-hidden="true" />
+          <p className="profile-runs-loading-note">Loading your results&hellip;</p>
         </div>
       ) : errorMsg ? (
         <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 20px', color: '#c0392b' }}>

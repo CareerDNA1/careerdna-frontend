@@ -10,6 +10,8 @@ export default function RoleExplorerPanel({ pathways = [], savedReactions = {}, 
   const mainRef = useRef(null);
   const hasSelectedRef = useRef(false);
   const [activeKey, setActiveKey] = useState('');
+  // Single-open accordion: only one role card is open at a time.
+  const [openRoleKey, setOpenRoleKey] = useState('');
 
   const withRoles = useMemo(
     () => (pathways || []).filter((p) => Array.isArray(p?.roles) && p.roles.length),
@@ -29,6 +31,8 @@ export default function RoleExplorerPanel({ pathways = [], savedReactions = {}, 
       mainRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
     hasSelectedRef.current = true;
+    // Collapse any open role when switching pathway.
+    setOpenRoleKey('');
   }, [activeKey]);
 
   // Delegated white floating tooltips (same behaviour as the other tabs).
@@ -48,13 +52,7 @@ export default function RoleExplorerPanel({ pathways = [], savedReactions = {}, 
     const onOut = (event) => { const t = getTarget(event); if (t instanceof HTMLElement) hideSelectionTooltip(); };
     const onClick = (event) => {
       const t = getTarget(event);
-      if (!(t instanceof HTMLElement)) return;
-      suppressUntil = Date.now() + 1600;
-      window.requestAnimationFrame(() => {
-        showSelectionTooltip(t);
-        if (autoHideTimer) clearTimeout(autoHideTimer);
-        autoHideTimer = setTimeout(() => { hideSelectionTooltip(); if (typeof t.blur === 'function') t.blur(); }, 1100);
-      });
+      if (t instanceof HTMLElement) showSelectionTooltip(t, { pinned: true });
     };
     root.addEventListener('pointerover', onOver);
     root.addEventListener('pointerout', onOut);
@@ -134,14 +132,21 @@ export default function RoleExplorerPanel({ pathways = [], savedReactions = {}, 
             <div className="fs-detail-heading">Roles within this pathway</div>
             {Array.isArray(active.roles) && active.roles.length ? (
               <div className="pathway-role-list">
-                {active.roles.map((role) => (
-                  <RoleAccordionItem
-                    key={role.id || role.title}
-                    item={role}
-                    onItemReaction={onItemReaction}
-                    savedReactions={savedReactions}
-                  />
-                ))}
+                {active.roles.map((role) => {
+                  const roleKey = role.id || role.title;
+                  return (
+                    <RoleAccordionItem
+                      key={roleKey}
+                      item={role}
+                      onItemReaction={onItemReaction}
+                      savedReactions={savedReactions}
+                      showGradJobs
+                      pathwayTitle={active.title}
+                      isOpen={openRoleKey === roleKey}
+                      onToggle={() => setOpenRoleKey((prev) => (prev === roleKey ? '' : roleKey))}
+                    />
+                  );
+                })}
               </div>
             ) : (
               <p className="fs-none">No roles mapped for this pathway yet.</p>

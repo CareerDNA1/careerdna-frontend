@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../utils/supabaseClient';
+import { friendlyError } from '../utils/friendlyError';
 import { useAuth } from '../context/AuthContext';
 import { getMyProfile, isCompleteProfile, syncProfileFromAuthUser } from '../utils/profile';
 import logo from '../Assets/images/logo-career-dna.png';
@@ -308,7 +309,7 @@ export default function LoginPage() {
             : 'Incorrect email or password.'
         );
       } else {
-        setErrorMsg(error.message || 'Could not log you in. Please try again.');
+        setErrorMsg(friendlyError(error, 'log you in').message);
       }
 
       return;

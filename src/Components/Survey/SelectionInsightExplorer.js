@@ -7,7 +7,9 @@ import SUBDIMENSION_DEFINITIONS from '../../utils/subdimensionDefinitions';
 import DIMENSIONS from '../../utils/Dimensions';
 import { getCareerWorldIcon, getPathwayIcon } from '../../utils/iconMap';
 import { fetchNonUniRoutes, peekNonUniRoutes } from '../../utils/fetchNonUniRoutes';
-import { ThumbsUp, ThumbsDown, Smiley, SmileyMeh, BookmarkSimple, Info, Briefcase, Signpost, UsersThree, TrendUp, MapPin } from 'phosphor-react';
+import { fetchGradJobs } from '../../utils/fetchGradJobs';
+import { entryRouteForCard } from '../../utils/entryRouteModes';
+import { ThumbsUp, ThumbsDown, Smiley, SmileyMeh, BookmarkSimple, Info, Briefcase, Signpost, UsersThree, TrendUp, MapPin, GraduationCap, CalendarBlank, CurrencyGbp, Rocket } from 'phosphor-react';
 import {
   FaBrain,
   FaBullseye,
@@ -445,19 +447,43 @@ function getOrCreateSelectionTooltip() {
   return el;
 }
 
-export function hideSelectionTooltip() {
-  const el = document.querySelector('.selection-floating-tooltip');
-  if (el) el.style.opacity = '0';
+// Pin state: when a tooltip is opened by CLICK it becomes "pinned" — it stays
+// open (ignoring hover-out / scroll) until the user presses ×, clicks outside,
+// or hits Escape, matching the click-to-open definition boxes elsewhere.
+let _tipPinned = false;
+let _tipCleanup = null;
+function _teardownPin() {
+  if (_tipCleanup) { _tipCleanup(); _tipCleanup = null; }
+  _tipPinned = false;
 }
 
-export function showSelectionTooltip(target) {
+export function hideSelectionTooltip(opts) {
+  const force = !!(opts && opts.force === true);
+  if (_tipPinned && !force) return; // a pinned tooltip ignores hover-out / scroll
+  const el = document.querySelector('.selection-floating-tooltip');
+  if (el) { el.style.opacity = '0'; el.classList.remove('is-pinned'); }
+  _teardownPin();
+}
+
+export function showSelectionTooltip(target, opts) {
   if (!(target instanceof HTMLElement)) return;
+  const pin = !!(opts && opts.pinned === true);
+  // While a tooltip is pinned open, ignore hover-driven shows so it stays put.
+  if (_tipPinned && !pin) return;
+
   const title = target.getAttribute('data-tooltip-title') || '';
   const body = target.getAttribute('data-tooltip-body') || target.getAttribute('data-tooltip') || '';
   if (!title && !body) return;
 
+  // Any previous pin is replaced by this show.
+  _teardownPin();
+
   const el = getOrCreateSelectionTooltip();
-  el.innerHTML = `${title ? `<span class="selection-floating-tooltip__headline">${escapeTooltipHtml(title)}</span>` : ''}${body ? `<span class="selection-floating-tooltip__body">${escapeTooltipHtml(body)}</span>` : ''}`;
+  el.classList.remove('is-pinned');
+  el.innerHTML =
+    `${pin ? '<button type="button" class="selection-floating-tooltip__close" aria-label="Close">×</button>' : ''}` +
+    `${title ? `<span class="selection-floating-tooltip__headline">${escapeTooltipHtml(title)}</span>` : ''}` +
+    `${body ? `<span class="selection-floating-tooltip__body">${escapeTooltipHtml(body)}</span>` : ''}`;
 
   const rect = target.getBoundingClientRect();
   const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
@@ -484,6 +510,30 @@ export function showSelectionTooltip(target) {
   el.style.left = `${left}px`;
   el.style.top = `${top}px`;
   el.style.opacity = '1';
+
+  if (pin) {
+    _tipPinned = true;
+    el.classList.add('is-pinned');
+    const onDocDown = (e) => {
+      if (el.contains(e.target)) return; // clicks inside the tooltip
+      // another trigger's own click handler will re-pin it, so don't fight it
+      if (e.target instanceof Element && e.target.closest('[data-selection-tooltip="true"]')) return;
+      hideSelectionTooltip({ force: true });
+    };
+    const onKey = (e) => { if (e.key === 'Escape') hideSelectionTooltip({ force: true }); };
+    const closeBtn = el.querySelector('.selection-floating-tooltip__close');
+    const onClose = (e) => { e.preventDefault(); e.stopPropagation(); hideSelectionTooltip({ force: true }); };
+    if (closeBtn) closeBtn.addEventListener('click', onClose);
+    // Defer the outside-click listener so the opening click doesn't close it.
+    const arm = setTimeout(() => document.addEventListener('mousedown', onDocDown, true), 0);
+    document.addEventListener('keydown', onKey);
+    _tipCleanup = () => {
+      clearTimeout(arm);
+      document.removeEventListener('mousedown', onDocDown, true);
+      document.removeEventListener('keydown', onKey);
+      if (closeBtn) closeBtn.removeEventListener('click', onClose);
+    };
+  }
 }
 
 // Fixed band steps: Standout = full, Strong = three quarters, Good = half,
@@ -903,13 +953,414 @@ export function PathwayReactionRow({ reaction = '', onReact, label = 'Feedback' 
   );
 }
 
-export function RoleAccordionItem({ item, onItemReaction, savedReactions = {} }) {
-  const [open, setOpen] = useState(false);
+// A single live job listing card inside the pop-up.
+// Strip the recruiter marketing tail from a job title. Postings routinely append
+// a sales pitch after a spaced dash, pipe or colon
+// ("Veterinary Surgeon — Grow Clinically In A Supportive Team",
+//  "Locum General Surgeon - Lead, Teach & 24/7 Cover"). We keep the role, drop
+// the tail. Only spaced separators are cut, so "Part-Time", "24/7" and
+// "In-house" survive.
+function cleanJobTitle(raw) {
+  let t = String(raw || '').trim();
+  // Drop a trailing bracketed aside e.g. "(Remote)" or "(Band 6)", and a trailing
+  // ", <Location>" that boards append.
+  t = t.replace(/\s*[([][^)\]]*[)\]]\s*$/, '').trim();
+  t = t.replace(/,\s+[A-Z][A-Za-z .'&-]*$/, '').trim();
+  const cut = t.search(/\s+[—–|:]\s+|\s+-\s+/);
+  if (cut > 2) {
+    const head = t.slice(0, cut).trim();
+    // If the head is only a generic label ("Summer Intern", "Graduate", "2027
+    // Trainee"...), the real role sits AFTER the dash, so keep the fuller title.
+    // Otherwise the head IS the role and the tail is recruiter marketing — drop it.
+    const genericHead = /^(20\d{2}\s+)?((summer|winter|spring|autumn|fall)\s+)?(graduate|grad|trainee|intern(ship)?|placement|apprentice|entry[- ]level|student)s?\b/i.test(head);
+    if (!genericHead) t = head;
+  }
+  return t || String(raw || '').trim();
+}
+
+export function JobCard({ job }) {
+  const meta = job.employer || '';
+  // Pills with icons, matching the apprenticeship advert cards: location ·
+  // closing date · experience (only when stated) · salary.
+  const pills = [
+    job.location ? { Icon: MapPin, text: job.location } : null,
+    job.deadline ? { Icon: CalendarBlank, text: `Closes ${job.deadline}` } : null,
+    job.noExperience ? null : { Icon: Briefcase, text: job.experience || 'Experience not stated' },
+    job.salary ? { Icon: CurrencyGbp, text: job.salary } : null,
+  ].filter(Boolean);
+  const Wrapper = job.url ? 'a' : 'div';
+  const wrapperProps = job.url
+    ? { href: job.url, target: '_blank', rel: 'noopener noreferrer', className: 'role-jobcard role-jobcard--link' }
+    : { className: 'role-jobcard' };
+  return (
+    <Wrapper {...wrapperProps}>
+      <div className="role-jobcard__top">
+        <span className="role-jobcard__title">{cleanJobTitle(job.title)}</span>
+        {job.source ? <span className="role-jobcard__src">via {job.source}</span> : null}
+      </div>
+      {meta ? <div className="role-jobcard__meta">{meta}</div> : null}
+      {pills.length ? (
+        <div className="role-jobcard__facts">
+          {pills.map(({ Icon, text }, i) => (
+            <span className="role-jobcard__fact" key={i}><Icon size={13} weight="bold" aria-hidden="true" />{text}</span>
+          ))}
+        </div>
+      ) : null}
+    </Wrapper>
+  );
+}
+
+// A reusable pop-up listing live jobs/internships/schemes/apprenticeships.
+export function JobsModal({ open, onClose, title, heading, lead, data, kindNoun, fieldMode = false }) {
+  const [showAll, setShowAll] = useState(false);
+  const INITIAL_SHOWN = 15;
+  useEffect(() => { if (open) setShowAll(false); }, [open]);
+  useEffect(() => {
+    if (!open) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
+  if (!open) return null;
+
+  const count = data && typeof data.count === 'number' ? data.count : null;
+  const countText = count != null ? count.toLocaleString('en-GB') : '';
+  const jobs = (data && Array.isArray(data.jobs)) ? data.jobs : [];
+  const provider = data && data.provider;
+  const nounPlural = fieldMode ? 'roles' : kindNoun === 'internship' ? 'internships' : kindNoun === 'scheme' ? 'graduate schemes' : kindNoun === 'apprenticeship' ? 'apprenticeships' : 'graduate jobs';
+  const nounSingular = fieldMode ? 'role' : kindNoun === 'internship' ? 'internship' : kindNoun === 'scheme' ? 'graduate scheme' : kindNoun === 'apprenticeship' ? 'apprenticeship' : 'graduate job';
+  const countSuffix = fieldMode ? 'in this field' : 'in the UK';
+
+  return (
+    <div
+      className="cw-def-modal cw-def-modal--jobs"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${heading}: ${title}`}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="cw-def-modal__box">
+        <div className="cw-def-modal__head cw-wayin-head">
+          <span className="cw-wayin-head__icon" aria-hidden="true"><Briefcase size={22} weight="bold" /></span>
+          <div className="cw-wayin-head__titles">
+            <span className="cw-def-modal__title">{title}</span>
+            <span className="cw-wayin-head__sub">{heading}</span>
+          </div>
+          <button type="button" className="cw-def-modal__close" aria-label="Close" onClick={onClose}>×</button>
+        </div>
+        <div className="cw-def-modal__body role-jobs-modal">
+          {count ? (
+            <div className="role-jobs-modal__count">
+              <span className="role-jobs__dot" aria-hidden="true" />
+              <strong>{countText} live {count === 1 ? nounSingular : nounPlural}</strong> {countSuffix}
+            </div>
+          ) : null}
+          <p className="role-jobs-modal__lead">{lead}</p>
+          {jobs.length ? (
+            <>
+              <div className="role-jobs-list">
+                {(showAll ? jobs : jobs.slice(0, INITIAL_SHOWN)).map((job, i) => (
+                  <JobCard key={`${job.title}-${i}`} job={job} />
+                ))}
+              </div>
+              {!showAll && jobs.length > INITIAL_SHOWN ? (
+                <button type="button" className="role-jobs-showall" onClick={() => setShowAll(true)}>
+                  Show all {jobs.length} {nounPlural}
+                </button>
+              ) : null}
+            </>
+          ) : (
+            <p className="role-jobs-modal__lead">No live {nounPlural} found right now. Try the links below.</p>
+          )}
+          {/* Optional single provider link (e.g. apprenticeships → Find an
+              Apprenticeship), shown only when the caller supplies one. Jobs,
+              schemes and internships show the live roles directly, no link. */}
+          {provider && provider.url ? (
+            <div className="role-jobs-modal__foot">
+              <a className="role-jobs__link" href={provider.url} target="_blank" rel="noopener noreferrer">See all on {provider.name} <span aria-hidden="true">→</span></a>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Live graduate-JOBS block for a ROLE (university flow). Individual live
+// vacancies for this exact role, searched by the role title. Internships and
+// graduate schemes are handled at the PATHWAY level (see PathwayJobsLine).
+// Hides entirely if the feature is off (no API key) or the lookup fails.
+function GradJobsLine({ title, advisory = null }) {
+  const [state, setState] = useState({ loading: true, data: null });
+  const [modalOpen, setModalOpen] = useState(false);
+
+  // Some routes are not entered by applying to advertised jobs, so we don't run a
+  // live search at all — just show the guidance:
+  //   • venture  → you start it (founders)
+  //   • postgrad → further study (postdoc, lecturer, research scientist)
+  const noSearchAdvisory = !!advisory && (advisory.mode === 'venture' || advisory.mode === 'postgrad');
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!title || noSearchAdvisory) { setState({ loading: false, data: null }); return undefined; }
+    (async () => {
+      const gradData = await fetchGradJobs(title, 'grad');
+      if (!cancelled) setState({ loading: false, data: gradData });
+    })();
+    return () => { cancelled = true; };
+  }, [title, noSearchAdvisory]);
+
+  const { loading, data } = state;
+  // Only hide when the whole feature is switched off (no API keys on the server).
+  // For an empty result, a failed lookup or a missing keyword we still render the
+  // box with a graceful "no live roles" state + a search link, so a role card
+  // never silently loses its jobs box.
+  if (!loading && data && data.error === 'NO_API_KEY') return null;
+
+  const count = data && typeof data.count === 'number' ? data.count : null;
+  const countText = count != null ? count.toLocaleString('en-GB') : '';
+  const jobs = (data && Array.isArray(data.jobs)) ? data.jobs : [];
+  const gradUrl = data && data.gradSearchUrl;
+  const hasList = jobs.length > 0;
+
+  // Advisory mode (regulated / academic routes): same live jobs, but framed as
+  // "roles in the field" with the route explained, since these are not entered
+  // as graduate jobs.
+  const isAdvisory = !!advisory && advisory.mode !== 'jobs';
+  const isPostgrad = isAdvisory && advisory.mode === 'postgrad';
+  const EyebrowIcon = isPostgrad ? GraduationCap : isAdvisory ? Signpost : Briefcase;
+  const eyebrowText = isPostgrad ? 'Further study' : isAdvisory ? 'How you get in' : 'Live graduate jobs';
+  const blurb = isAdvisory
+    ? `${advisory.route} The live roles below are there so you can see what the field looks like, but you get in through the route above rather than by applying as a graduate.`
+    : 'Real graduate roles being advertised right now for this job. We gather the most relevant openings from LinkedIn, Indeed, Reed, Adzuna, Glassdoor and other UK job boards, and refresh them daily.';
+  const noun = isAdvisory ? 'in this field' : 'in the UK';
+  const gradWord = isAdvisory ? '' : 'graduate ';
+  // Always have a working search link, even when the backend returned no URL
+  // (empty result / failed lookup), so the empty state is never a dead end.
+  const searchUrl = gradUrl || (title
+    ? `https://www.reed.co.uk/jobs?keywords=${encodeURIComponent(title)}${isAdvisory ? '' : '&graduate=true'}`
+    : null);
+
+  // No-search routes: no live-jobs box at all — just the guidance note.
+  //   venture  → "How founders start"; postgrad → "Further study".
+  if (noSearchAdvisory) {
+    const isVenture = advisory.mode === 'venture';
+    const NoteIcon = isVenture ? Rocket : GraduationCap;
+    return (
+      <div className="role-jobs role-jobs--advisory role-jobs--venture">
+        <div className="role-jobs__eyebrow">
+          <NoteIcon size={15} weight="bold" aria-hidden="true" /> {isVenture ? 'How founders start' : 'Further study'}
+        </div>
+        <p className="role-jobs__blurb">{advisory.route}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`role-jobs${isAdvisory ? ' role-jobs--advisory' : ''}`}>
+      {loading ? (
+        <p className="role-jobs__line role-jobs__line--muted role-jobs__loading">
+          <span className="role-jobs__spinner" aria-hidden="true" />
+          <span>{isAdvisory ? 'Checking live roles…' : 'Checking live graduate jobs…'}</span>
+        </p>
+      ) : (
+        <>
+          <div className="role-jobs__eyebrow">
+            <EyebrowIcon size={15} weight="bold" aria-hidden="true" /> {eyebrowText}
+          </div>
+          <p className="role-jobs__blurb">{blurb}</p>
+          <div className="role-jobs__foot">
+            {count && count > 0 ? (
+              <div className="role-jobs__foot-row">
+                <span className="role-jobs__stat">
+                  <span className="role-jobs__dot" aria-hidden="true" />
+                  {countText} live {gradWord}{count === 1 ? 'job' : 'jobs'} {noun}
+                </span>
+                {hasList ? (
+                  <button type="button" className="role-jobs__go" onClick={() => setModalOpen(true)}>See live roles <span aria-hidden="true">→</span></button>
+                ) : searchUrl ? (
+                  <a className="role-jobs__go" href={searchUrl} target="_blank" rel="noopener noreferrer">See jobs <span aria-hidden="true">→</span></a>
+                ) : null}
+              </div>
+            ) : (
+              <div className="role-jobs__foot-row">
+                <span className="role-jobs__stat role-jobs__stat--muted">{isAdvisory ? 'No live roles advertised right now.' : 'No graduate jobs advertised right now.'}</span>
+                {searchUrl ? (
+                  <a className="role-jobs__go" href={searchUrl} target="_blank" rel="noopener noreferrer">Check jobs <span aria-hidden="true">→</span></a>
+                ) : null}
+              </div>
+            )}
+          </div>
+
+          <JobsModal
+            open={modalOpen}
+            onClose={() => setModalOpen(false)}
+            title={title}
+            heading={isAdvisory ? 'Live roles in this field' : 'Live graduate jobs'}
+            kindNoun="grad"
+            fieldMode={isAdvisory}
+            data={data}
+            lead={
+              isAdvisory
+                ? 'Live roles currently advertised in this field, gathered from LinkedIn, Indeed, Reed, Adzuna, ' +
+                  'Glassdoor and other UK job boards, so you can see the market. Remember you get in through the route above, ' +
+                  'not by applying to these as a graduate.'
+                : 'The most relevant roles currently advertised for this job, gathered from LinkedIn, Indeed, ' +
+                  'Reed, Adzuna, Glassdoor and other UK job boards, sorted newest first. Tap any role to open it on the job board and apply.'
+            }
+          />
+        </>
+      )}
+    </div>
+  );
+}
+
+// Right-hand box on a role card: role-anchored INTERNSHIPS (live) plus GRADUATE
+// SCHEMES as curated links. Schemes are no longer scraped from job boards — those
+// results are dominated by recruitment-agency spam; the real UK graduate schemes
+// live on dedicated sites, so we link out to them instead.
+const SCHEME_SITES = (title) => {
+  const kw = encodeURIComponent(String(title || '').trim());
+  return [
+    { name: 'Prospects', url: `https://www.prospects.ac.uk/graduate-jobs?keywords=${kw}` },
+    { name: 'Bright Network', url: 'https://www.brightnetwork.co.uk/graduate-jobs/' },
+    { name: 'TargetJobs', url: 'https://targetjobs.co.uk/' },
+  ];
+};
+
+export function PathwayJobsLine({ title, pathwayTitle = '' }) {
+  const [loading, setLoading] = useState(true);
+  const [internData, setInternData] = useState(null);
+  const [schemeData, setSchemeData] = useState(null);
+  const [internOpen, setInternOpen] = useState(false);
+  const [schemeOpen, setSchemeOpen] = useState(false);
+  // Internships are role-specific; graduate SCHEMES are recruited by discipline,
+  // so they search the PATHWAY (e.g. "Animation & Motion Design"), not the role.
+  const schemeKey = (pathwayTitle && pathwayTitle.trim()) || title;
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!title) { setLoading(false); return undefined; }
+    setLoading(true);
+    (async () => {
+      const [intern, scheme] = await Promise.all([
+        fetchGradJobs(title, 'internship'),
+        fetchGradJobs(schemeKey, 'scheme'),
+      ]);
+      if (!cancelled) { setInternData(intern); setSchemeData(scheme); setLoading(false); }
+    })();
+    return () => { cancelled = true; };
+  }, [title, schemeKey]);
+
+  const iCount = internData && typeof internData.count === 'number' ? internData.count : null;
+  const iCountText = iCount != null ? iCount.toLocaleString('en-GB') : '';
+  const iJobs = (internData && Array.isArray(internData.jobs)) ? internData.jobs : [];
+  // Live graduate schemes/programmes actually advertised right now (titles that
+  // say "graduate scheme / programme / program"), shown above the curated links.
+  const sCount = schemeData && typeof schemeData.count === 'number' ? schemeData.count : null;
+  const sJobs = (schemeData && Array.isArray(schemeData.jobs)) ? schemeData.jobs : [];
+  const hasLiveSchemes = sCount != null && sCount > 0;
+  const schemeSites = SCHEME_SITES(title);
+
+  return (
+    <div className="role-jobs">
+      <div className="role-jobs__eyebrow">
+        <Briefcase size={15} weight="bold" aria-hidden="true" /> Internships &amp; graduate schemes
+      </div>
+      <p className="role-jobs__blurb">
+        Live internships for this role, plus the main UK sites where graduate schemes and programmes are advertised.
+      </p>
+
+      <div className="role-jobs__foot">
+        {loading ? (
+          <div className="role-jobs__foot-row">
+            <span className="role-jobs__stat role-jobs__stat--muted">
+              <span className="role-jobs__spinner" aria-hidden="true" /> Checking live internships&hellip;
+            </span>
+          </div>
+        ) : iCount && iCount > 0 ? (
+          <div className="role-jobs__foot-row">
+            <span className="role-jobs__stat">
+              <span className="role-jobs__dot" aria-hidden="true" />
+              {iCountText} live {iCount === 1 ? 'internship' : 'internships'} in the UK
+            </span>
+            {iJobs.length ? (
+              <button type="button" className="role-jobs__go" onClick={() => setInternOpen(true)}>See internships <span aria-hidden="true">→</span></button>
+            ) : null}
+          </div>
+        ) : (
+          <div className="role-jobs__foot-row">
+            <span className="role-jobs__stat role-jobs__stat--muted">No internships advertised right now.</span>
+          </div>
+        )}
+      </div>
+
+      <div className="role-jobs__schemes">
+        <span className="role-jobs__schemes-label">Graduate schemes &amp; programmes</span>
+        {hasLiveSchemes && sJobs.length ? (
+          <div className="role-jobs__foot-row">
+            <span className="role-jobs__stat">
+              <span className="role-jobs__dot" aria-hidden="true" />
+              {sCount.toLocaleString('en-GB')} live now
+            </span>
+            <button type="button" className="role-jobs__go" onClick={() => setSchemeOpen(true)}>See schemes <span aria-hidden="true">→</span></button>
+          </div>
+        ) : null}
+        <p className="role-jobs__schemes-note">
+          {hasLiveSchemes ? 'Or browse the main UK scheme sites:' : 'The big UK graduate schemes recruit on their own sites:'}
+        </p>
+        <div className="role-jobs__links">
+          {schemeSites.map((l) => (
+            <a key={l.name} className="role-jobs__schemelink" href={l.url} target="_blank" rel="noopener noreferrer">{l.name} <span aria-hidden="true">→</span></a>
+          ))}
+        </div>
+      </div>
+
+      <JobsModal
+        open={internOpen}
+        onClose={() => setInternOpen(false)}
+        title={title}
+        heading="Live internships & placements"
+        kindNoun="internship"
+        data={internData}
+        lead={
+          'Internships and placements currently advertised for this role, gathered from LinkedIn, Indeed, Reed, ' +
+          'Adzuna and other UK job boards. Tap any to open it and apply.'
+        }
+      />
+
+      <JobsModal
+        open={schemeOpen}
+        onClose={() => setSchemeOpen(false)}
+        title={schemeKey}
+        heading="Live graduate schemes & programmes"
+        kindNoun="scheme"
+        data={schemeData}
+        lead={
+          'Graduate schemes and programmes currently advertised in this field, gathered from LinkedIn, Indeed, Reed, ' +
+          'Adzuna and other UK job boards. Tap any to open it and apply.'
+        }
+      />
+    </div>
+  );
+}
+
+export function RoleAccordionItem({ item, onItemReaction, savedReactions = {}, showGradJobs = false, pathwayTitle = '', isOpen, onToggle }) {
+  // Controlled mode: when the parent passes isOpen/onToggle, it owns the open
+  // state so only one role can be open at a time. Otherwise fall back to
+  // self-managed state (multiple can be open).
+  const controlled = typeof isOpen === 'boolean' && typeof onToggle === 'function';
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlled ? isOpen : internalOpen;
+  const toggle = () => { if (controlled) onToggle(); else setInternalOpen((prev) => !prev); };
   const rowRef = useRef(null);
   const savedReaction = (item?.id && savedReactions[item.id]) || '';
   const [reaction, setReaction] = useState(savedReaction);
   const summary = item?.fullSummary || item?.summary || item?.fallbackSummary || '';
   const band = item?.signalLabel || '';
+  // Whether live graduate jobs even make sense for this role/pathway, or whether
+  // the honest guidance is a postgrad or regulated qualifying route instead.
+  const entryRoute = entryRouteForCard(item?.title, pathwayTitle);
   // Six-field role definition (What it is / What you'd do / How you get in /
   // Who it suits / How it's changing / The practical side). Split on blank lines;
   // render the labelled grid only when exactly six paragraphs are present.
@@ -945,7 +1396,7 @@ export function RoleAccordionItem({ item, onItemReaction, savedReactions = {} })
       <button
         type="button"
         className="pathway-role-item__toggle"
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={toggle}
         aria-expanded={open}
       >
         <div className="pathway-role-item__topline pathway-role-item__topline--split">
@@ -987,6 +1438,21 @@ export function RoleAccordionItem({ item, onItemReaction, savedReactions = {} })
             ))
           ) : summary ? (
             <p className="pathway-role-item__summary">{summary}</p>
+          ) : null}
+          {showGradJobs ? (
+            entryRoute.mode !== 'jobs' ? (
+              // Regulated / academic routes: keep live jobs open so students can
+              // see the field, but drop the graduate schemes & internships box
+              // (they do not apply) and make the description explain the route.
+              <div className="role-jobs-cols role-jobs-cols--single">
+                <GradJobsLine title={item?.title} advisory={entryRoute} />
+              </div>
+            ) : (
+              <div className="role-jobs-cols">
+                <GradJobsLine title={item?.title} />
+                <PathwayJobsLine title={item?.title} pathwayTitle={pathwayTitle} />
+              </div>
+            )
           ) : null}
           <PathwayReactionRow
             reaction={reaction}
@@ -1273,6 +1739,8 @@ function DetailPanel({ item, onItemReaction, savedReactions = {}, nonUniByTitle 
   const isCareerWorld = Boolean(item?.isCareerWorld || item?.type === 'career_world');
   // One pathway open at a time within this world.
   const [openPathwayKey, setOpenPathwayKey] = useState('');
+  // One role open at a time within a pathway's role list.
+  const [openRoleKey, setOpenRoleKey] = useState('');
   // Filter the pathway list by route chips, match band, and favourites.
   const [pathwayFilter, setPathwayFilter] = useState(emptyFilter());
   const [showOtherPw, setShowOtherPw] = useState(false);
@@ -1421,9 +1889,19 @@ function DetailPanel({ item, onItemReaction, savedReactions = {}, nonUniByTitle 
       {isPathway && Array.isArray(item?.roles) && item.roles.length > 0 && (
         <SectionAccordion title="Matching career roles within this pathway" defaultOpen={true} dividerTop={true}>
           <div className="pathway-role-list">
-            {item.roles.map((role) => (
-              <RoleAccordionItem key={`${item?.id}-${role?.id || role?.title}`} item={role} onItemReaction={onItemReaction} savedReactions={savedReactions} />
-            ))}
+            {item.roles.map((role) => {
+              const roleKey = `${item?.id}-${role?.id || role?.title}`;
+              return (
+                <RoleAccordionItem
+                  key={roleKey}
+                  item={role}
+                  onItemReaction={onItemReaction}
+                  savedReactions={savedReactions}
+                  isOpen={openRoleKey === roleKey}
+                  onToggle={() => setOpenRoleKey((prev) => (prev === roleKey ? '' : roleKey))}
+                />
+              );
+            })}
           </div>
         </SectionAccordion>
       )}
@@ -1474,10 +1952,7 @@ export default function SelectionInsightExplorer({ insights, loading, error, onI
         : null
     );
 
-    let suppressUntil = 0;
-    let autoHideTimer = null;
     const handlePointerOver = (event) => {
-      if (Date.now() < suppressUntil) return;
       const target = getTarget(event);
       if (target instanceof HTMLElement) showSelectionTooltip(target);
     };
@@ -1488,7 +1963,6 @@ export default function SelectionInsightExplorer({ insights, loading, error, onI
     };
 
     const handleFocusIn = (event) => {
-      if (Date.now() < suppressUntil) return;
       const target = getTarget(event);
       if (target instanceof HTMLElement) showSelectionTooltip(target);
     };
@@ -1498,15 +1972,11 @@ export default function SelectionInsightExplorer({ insights, loading, error, onI
       if (target instanceof HTMLElement) hideSelectionTooltip();
     };
 
+    // Click PINS the tooltip open (stays until ×, outside click, or Escape).
     const handleClick = (event) => {
       const target = getTarget(event);
       if (!(target instanceof HTMLElement)) return;
-      suppressUntil = Date.now() + 1600;
-      window.requestAnimationFrame(() => {
-        showSelectionTooltip(target);
-        if (autoHideTimer) clearTimeout(autoHideTimer);
-        autoHideTimer = setTimeout(() => { hideSelectionTooltip(); if (typeof target.blur === 'function') target.blur(); }, 1100);
-      });
+      showSelectionTooltip(target, { pinned: true });
     };
 
     root.addEventListener('pointerover', handlePointerOver);

@@ -23,16 +23,24 @@ export async function fetchSelectionInsights({
 
   for (const url of candidates) {
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(accessToken
-            ? { Authorization: `Bearer ${accessToken}` }
-            : {}),
-        },
-        body: JSON.stringify(payload),
-      });
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 20000);
+      let response;
+      try {
+        response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(accessToken
+              ? { Authorization: `Bearer ${accessToken}` }
+              : {}),
+          },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timer);
+      }
 
       if (response.status === 404) {
         lastError = new Error('Request failed: 404');

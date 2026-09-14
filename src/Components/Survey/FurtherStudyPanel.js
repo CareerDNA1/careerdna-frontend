@@ -71,7 +71,7 @@ function RouteItem({ route, open = false, onToggle, reaction = '', onReact, hasR
             const rankingsCell = !hasRankings ? null : (
               <button
                 type="button"
-                className="fs-degree-section fs-rank-cell"
+                className="fs-degree-section fs-rank-cell fs-span2"
                 data-rankings-subject={route.id || ''}
                 data-rankings-title={route.title || ''}
                 key="fs-rank-cell"
@@ -84,13 +84,15 @@ function RouteItem({ route, open = false, onToggle, reaction = '', onReact, hasR
                   Our 2026 CareerDNA composite ranking of UK universities for {route.title}, built from official
                   Office for Students data. Browse the subject-specific ranking and open links to each university&rsquo;s programmes.
                 </p>
-                {rankCount > 0 ? (
-                  <span className="fs-rank-cell__live">
-                    <span className="fs-rank-cell__dot" aria-hidden="true" />
-                    {rankCount} live {rankCount === 1 ? 'programme' : 'programmes'} ranked
-                  </span>
-                ) : null}
-                <span className="fs-rank-cell__go">Explore programmes and rankings <span aria-hidden="true">→</span></span>
+                <div className="fs-rank-cell__foot">
+                  {rankCount > 0 ? (
+                    <span className="fs-rank-cell__live">
+                      <span className="fs-rank-cell__dot" aria-hidden="true" />
+                      {rankCount} live {rankCount === 1 ? 'programme' : 'programmes'} ranked
+                    </span>
+                  ) : <span />}
+                  <span className="fs-rank-cell__go">Explore programmes and rankings <span aria-hidden="true">→</span></span>
+                </div>
               </button>
             );
             if (paras.length === 4 || paras.length === 5) {
@@ -99,7 +101,7 @@ function RouteItem({ route, open = false, onToggle, reaction = '', onReact, hasR
                   {paras.map((p, i) => {
                     const SectionIcon = icons[i];
                     return (
-                      <div className="fs-degree-section" key={`fs-sec-${i}`}>
+                      <div className={`fs-degree-section${i === 4 ? ' fs-span2' : ''}`} key={`fs-sec-${i}`}>
                         <span className="fs-degree-section__label">
                           <SectionIcon size={14} weight="bold" aria-hidden="true" />
                           {labels[i]}
@@ -192,13 +194,7 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
     const onOut = (event) => { const t = getTarget(event); if (t instanceof HTMLElement) hideSelectionTooltip(); };
     const onClick = (event) => {
       const t = getTarget(event);
-      if (!(t instanceof HTMLElement)) return;
-      suppressUntil = Date.now() + 1600;
-      window.requestAnimationFrame(() => {
-        showSelectionTooltip(t);
-        if (autoHideTimer) clearTimeout(autoHideTimer);
-        autoHideTimer = setTimeout(() => { hideSelectionTooltip(); if (typeof t.blur === 'function') t.blur(); }, 1100);
-      });
+      if (t instanceof HTMLElement) showSelectionTooltip(t, { pinned: true });
     };
     root.addEventListener('pointerover', onOver);
     root.addEventListener('pointerout', onOut);
