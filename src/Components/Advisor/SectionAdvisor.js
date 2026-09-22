@@ -61,8 +61,10 @@ export default function SectionAdvisor({
         // drives the heading and the suggested questions, not what's displayed).
         const all = Array.isArray(data?.messages) ? data.messages : [];
         setMessages(all);
-      } catch (err) {
-        if (!cancelled) setErrorMsg(friendlyError(err, 'load the advisor').message);
+      } catch {
+        // A failed background history load must not show an error just for
+        // opening the section. Stay silent and let the user ask; a real error
+        // only surfaces if a question they actually send fails.
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -189,7 +191,10 @@ export default function SectionAdvisor({
       ) : null}
 
       {loading ? (
-        <div className="section-advisor__loading">Loading…</div>
+        <div className="section-advisor__loading" role="status" aria-label="Loading">
+          <span className="cdna-load-spinner" aria-hidden="true" />
+          <span>Loading&hellip;</span>
+        </div>
       ) : (
         <>
           {visibleSuggestions.length ? (

@@ -65,6 +65,15 @@
   line-height: 1.35;
 }
 
+.intro-required-hint {
+  margin: 10px 0 0;
+  text-align: center;
+  color: #dc2626;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
 /* Required asterisk */
 .required::after {
   content: " *";

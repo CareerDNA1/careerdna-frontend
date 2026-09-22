@@ -80,7 +80,11 @@ export async function getLatestAssessmentRun() {
   return data;
 }
 
-export async function listAssessmentRuns(limit = 20) {
+// `columns` lets callers fetch only the fields they need. The profile page, for
+// example, only lists run dates/status, so it skips the heavy jsonb/markdown
+// columns (results_json, summary_markdown, survey_answers_json) which otherwise
+// balloon the payload to megabytes across 20 runs and make the page crawl.
+export async function listAssessmentRuns(limit = 20, columns = '*') {
   const {
     data: { user },
     error: userError,
@@ -91,7 +95,7 @@ export async function listAssessmentRuns(limit = 20) {
 
   const { data, error } = await supabase
     .from('assessment_runs')
-    .select('*')
+    .select(columns)
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
     .limit(limit);
@@ -181,12 +185,22 @@ export async function updateAssessmentRun(runId, patch) {
 export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswers = {}) {
   if (!run) throw new Error('Saved run is required.');
 
-  const savedResults = run.results_json || {};
+  // The profile lists runs with a slim payload (no results_json) for speed, so a
+  // run object passed in from the list may not carry its archetypes. Fetch the
+  // full row by id when they're missing.
+  let fullRun = run;
+  if ((!run.results_json || !run.results_json.archetypes || !Object.keys(run.results_json.archetypes).length) && run.id) {
+    const fetched = await getAssessmentRunById(run.id);
+    if (fetched) fullRun = fetched;
+  }
+
+  const savedResults = fullRun.results_json || {};
   const archetypes = savedResults.archetypes || {};
 
   if (!archetypes || !Object.keys(archetypes).length) {
     throw new Error('This saved run does not contain archetype data.');
   }
+  run = fullRun;
 
   const intro = {
     ...(run.intro_answers_json || {}),

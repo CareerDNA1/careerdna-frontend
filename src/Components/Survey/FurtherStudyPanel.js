@@ -1,17 +1,106 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './FurtherStudyPanel.css';
-import { Info, BookOpen, Compass, UsersThree, GraduationCap, BookmarkSimple } from 'phosphor-react';
+import { Info, BookOpen, Compass, UsersThree, GraduationCap, BookmarkSimple, TrendUp, TrendDown } from 'phosphor-react';
 import { fetchFurtherStudy, peekFurtherStudyCache } from '../../utils/fetchFurtherStudy';
 import { OptionDropdown, showSelectionTooltip, hideSelectionTooltip, SignalBadge, PathwayReactionRow, SelectionTitle } from './SelectionInsightExplorer';
 import { getSubjectIcon } from '../../utils/iconMap';
 import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank } from './ResultsFilter';
 import { loadRankingSubjectIndex } from '../../utils/rankings';
 
+// Format the structured GCSE minimums object into a short readable string,
+// e.g. { maths: 7, english: 5, science: 6 } -> "Maths 7, English 5, Science 6".
+const GCSE_LABEL = { maths: 'Maths', english: 'English', science: 'Science' };
+const GCSE_ORDER = ['maths', 'english', 'science'];
+function formatGcse(g, gmin) {
+  if (!g || typeof g !== 'object') return '';
+  const keys = [
+    ...GCSE_ORDER.filter((k) => g[k] != null),
+    ...Object.keys(g).filter((k) => !GCSE_ORDER.includes(k) && g[k] != null),
+  ];
+  return keys
+    .map((k) => {
+      const label = GCSE_LABEL[k] || (k.charAt(0).toUpperCase() + k.slice(1));
+      const min = gmin && gmin[k];
+      return (min != null && min !== g[k]) ? `${label} ${g[k]} (min ${min})` : `${label} ${g[k]}`;
+    })
+    .join(', ');
+}
+
+// Structured "Typical A-levels & GCSEs" block, driven by subject_requirements
+// (attached to each route by the backend). Replaces the old prose paragraph.
+// Turn the broad-area demand trend into a compact chip (short) plus a full
+// sentence (long, used as the hover title).
+function demandLine(demand) {
+  if (!demand || typeof demand.pct !== 'number') return null;
+  const years = Math.max(1, (Number(demand.toYear) || 0) - (Number(demand.fromYear) || 0));
+  const pct = demand.pct;
+  const area = demand.area ? ` in ${demand.area}` : '';
+  const dir = pct >= 3 ? 'up' : pct <= -3 ? 'down' : 'flat';
+  const short = dir === 'up' ? `+${pct}%` : dir === 'down' ? `${pct}%` : 'steady';
+  const phrase = dir === 'up'
+    ? `up ${pct}%`
+    : dir === 'down'
+      ? `down ${Math.abs(pct)}%`
+      : 'broadly steady';
+  const long = `Applications${area} are ${phrase} over the last ${years} years (UCAS).`;
+  return { dir, short, long };
+}
+
+function RequirementsSection({ reqs }) {
+  if (!reqs) return null;
+  const req = Array.isArray(reqs.required_alevels) ? reqs.required_alevels : [];
+  const pref = Array.isArray(reqs.preferred_alevels) ? reqs.preferred_alevels : [];
+  const gcse = formatGcse(reqs.gcse, reqs.gcse_min);
+  const tests = Array.isArray(reqs.admissions_test) ? reqs.admissions_test : [];
+  return (
+    <div className="fs-degree-section fs-reqs" key="fs-reqs">
+      <span className="fs-degree-section__label">
+        <GraduationCap size={14} weight="bold" aria-hidden="true" />
+        Typical entry
+      </span>
+      <div className="fs-reqs-rows">
+        {req.length ? (
+          <div className="fs-req-row">
+            <span className="fs-req-key">Required</span>
+            <span className="fs-req-chips">
+              {req.map((a, i) => <span className="fs-req-chip fs-req-chip--req" key={`r${i}`}>{a}</span>)}
+            </span>
+          </div>
+        ) : null}
+        {pref.length ? (
+          <div className="fs-req-row">
+            <span className="fs-req-key">Preferred</span>
+            <span className="fs-req-chips">
+              {pref.map((a, i) => <span className="fs-req-chip" key={`p${i}`}>{a}</span>)}
+            </span>
+          </div>
+        ) : null}
+        {gcse ? (
+          <div className="fs-req-row"><span className="fs-req-key">GCSEs</span><span className="fs-req-val">{gcse}</span></div>
+        ) : null}
+        {tests.length ? (
+          <div className="fs-req-row"><span className="fs-req-key">Admissions test</span><span className="fs-req-val">{tests.join(', ')}</span></div>
+        ) : null}
+        {reqs.portfolio_or_audition ? (
+          <div className="fs-req-row"><span className="fs-req-key">Also</span><span className="fs-req-val">{reqs.portfolio_or_audition}</span></div>
+        ) : null}
+        {reqs.typical_offer_range ? (
+          <div className="fs-req-row"><span className="fs-req-key">Typical offer</span><span className="fs-req-val">{reqs.typical_offer_range}</span></div>
+        ) : null}
+      </div>
+      <p className="fs-req-note">
+        {reqs.notes ? `${reqs.notes} ` : ''}Requirements vary by university, so check each course.
+      </p>
+    </div>
+  );
+}
+
 // A single study route rendered as an accordion item, mirroring the Pathway
 // Explorer item layout: leading icon, title, and (when open) the like/dislike
 // buttons on the same header line, next to the chevron.
-function RouteItem({ route, open = false, onToggle, reaction = '', onReact, hasRankings = false, rankCount = 0 }) {
+export function RouteItem({ route, open = false, onToggle, reaction = '', onReact, hasRankings = false, rankCount = 0 }) {
   const Icon = getSubjectIcon(route.title || '');
+  const demand = demandLine(route?.requirements?.demand);
   return (
     <div className={`pathway-role-item ${open ? 'is-open' : ''}`}>
       <button
@@ -24,7 +113,31 @@ function RouteItem({ route, open = false, onToggle, reaction = '', onReact, hasR
           <div className="pathway-role-item__title-wrap">
             {Icon ? <span className="pathway-role-item__icon" aria-hidden="true">{Icon}</span> : null}
             <span className="fs-title-col">
-              <span className="pathway-role-item__title">{route.title}</span>
+              <span className="fs-title-line">
+                <span className="pathway-role-item__title">{route.title}</span>
+                {open && demand ? (
+                  <span
+                    className={`fs-demand-chip fs-demand-chip--${demand.dir}`}
+                    role="button"
+                    tabIndex={0}
+                    data-selection-tooltip="true"
+                    data-tooltip-title="Demand"
+                    data-tooltip-body={demand.long}
+                    onMouseEnter={(e) => showSelectionTooltip(e.currentTarget)}
+                    onMouseLeave={hideSelectionTooltip}
+                    onFocus={(e) => showSelectionTooltip(e.currentTarget)}
+                    onBlur={hideSelectionTooltip}
+                    onClick={(e) => { e.stopPropagation(); showSelectionTooltip(e.currentTarget, { pinned: true }); }}
+                  >
+                    {demand.dir === 'down'
+                      ? <TrendDown size={12} weight="bold" aria-hidden="true" />
+                      : demand.dir === 'up'
+                        ? <TrendUp size={12} weight="bold" aria-hidden="true" />
+                        : null}
+                    Demand {demand.short}
+                  </span>
+                ) : null}
+              </span>
               {Array.isArray(route.leadsTo) && route.leadsTo.length ? (
                 <span className="fs-leadsto">Leads to: {route.leadsTo.join(' \u00b7 ')}</span>
               ) : null}
@@ -57,48 +170,52 @@ function RouteItem({ route, open = false, onToggle, reaction = '', onReact, hasR
       {open ? (
         <div className="pathway-role-item__body">
           {(() => {
+            const reqs = route.requirements || null;
             const paras = String(route.description || '')
               .split(/\n\s*\n/)
               .map((p) => p.trim())
               .filter(Boolean);
-            // Degree definitions follow a four-paragraph structure, plus an
-            // optional fifth paragraph with typical UK entry subjects. Label them;
-            // fall back to plain paragraphs if a description has some other shape.
+            // Degree definitions follow a four-paragraph structure. When a
+            // structured requirements record is present we render only those four
+            // paragraphs and show requirements as a structured block; otherwise we
+            // fall back to labelling an optional fifth prose paragraph.
             const labels = ['What it is', "What you'll study", 'Where it leads', 'Who it suits', 'Typical A-levels & GCSEs'];
             const icons = [Info, BookOpen, Compass, UsersThree, GraduationCap];
+            const proseCount = reqs ? Math.min(paras.length, 4) : paras.length;
             // The rankings entry is the final grid cell — a live, clickable button
             // that sits alongside the description sections (left/right/left/right...).
             const rankingsCell = !hasRankings ? null : (
               <button
                 type="button"
-                className="fs-degree-section fs-rank-cell fs-span2"
+                className="fs-degree-section fs-rank-cell"
                 data-rankings-subject={route.id || ''}
                 data-rankings-title={route.title || ''}
                 key="fs-rank-cell"
               >
                 <span className="fs-degree-section__label fs-rank-cell__label">
                   <GraduationCap size={14} weight="bold" aria-hidden="true" />
-                  Explore programmes &amp; rankings
+                  Explore courses &amp; rankings
+                  <span className="fs-premium-badge">Premium</span>
                 </span>
                 <p className="pathway-role-item__summary">
                   Our 2026 CareerDNA composite ranking of UK universities for {route.title}, built from official
-                  Office for Students data. Browse the subject-specific ranking and open links to each university&rsquo;s programmes.
+                  Office for Students data. Browse the subject-specific ranking and open links to each university&rsquo;s courses.
                 </p>
                 <div className="fs-rank-cell__foot">
                   {rankCount > 0 ? (
                     <span className="fs-rank-cell__live">
                       <span className="fs-rank-cell__dot" aria-hidden="true" />
-                      {rankCount} live {rankCount === 1 ? 'programme' : 'programmes'} ranked
+                      {rankCount} live {rankCount === 1 ? 'course' : 'courses'} ranked
                     </span>
                   ) : <span />}
-                  <span className="fs-rank-cell__go">Explore programmes and rankings <span aria-hidden="true">→</span></span>
+                  <span className="fs-rank-cell__go">Explore courses and rankings&nbsp;<span aria-hidden="true">→</span></span>
                 </div>
               </button>
             );
-            if (paras.length === 4 || paras.length === 5) {
+            if (proseCount === 4 || proseCount === 5) {
               return (
                 <div className="fs-degree-grid">
-                  {paras.map((p, i) => {
+                  {paras.slice(0, proseCount).map((p, i) => {
                     const SectionIcon = icons[i];
                     return (
                       <div className={`fs-degree-section${i === 4 ? ' fs-span2' : ''}`} key={`fs-sec-${i}`}>
@@ -110,6 +227,7 @@ function RouteItem({ route, open = false, onToggle, reaction = '', onReact, hasR
                       </div>
                     );
                   })}
+                  {reqs ? <RequirementsSection reqs={reqs} /> : null}
                   {rankingsCell}
                 </div>
               );
@@ -119,7 +237,12 @@ function RouteItem({ route, open = false, onToggle, reaction = '', onReact, hasR
                 {paras.map((p, i) => (
                   <p className="pathway-role-item__summary" key={`fs-desc-${i}`}>{p}</p>
                 ))}
-                {rankingsCell ? <div className="fs-degree-grid">{rankingsCell}</div> : null}
+                {(reqs || rankingsCell) ? (
+                  <div className="fs-degree-grid">
+                    {reqs ? <RequirementsSection reqs={reqs} /> : null}
+                    {rankingsCell}
+                  </div>
+                ) : null}
               </>
             );
           })()}
@@ -233,10 +356,9 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
   // Bring the detail into view when the selected world changes (tab/dropdown),
   // and close any open degree so each world starts collapsed.
   useEffect(() => {
+    // Collapse open degrees on switch, but do NOT auto-scroll the page (the
+    // selection can change as data settles, which was scrolling on arrival).
     setOpenRouteKey('');
-    if (hasSelectedRef.current && mainRef.current) {
-      mainRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
     hasSelectedRef.current = true;
   }, [activeKey]);
 
@@ -291,7 +413,7 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
     return (
       <section className="selection-explorer selection-explorer--empty">
         <div className="selection-explorer__intro selection-explorer__intro--empty">
-          <h2>University</h2>
+          <h2>Your university routes</h2>
           <p className="selection-explorer__empty-message">
             Like the career worlds you&rsquo;re drawn to in the Career Worlds tab, then come back here to
             see the university degrees that lead into them.
@@ -309,7 +431,7 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
   return (
     <section className="selection-explorer" ref={rootRef}>
       <div className="selection-explorer__intro selection-explorer__intro--active">
-        <h2>University</h2>
+        <h2>Your university routes</h2>
         <p className="selection-explorer__intro-text">
           The university degrees that lead into the career worlds you liked. Pick a career world to see
           its range of degrees and how well each one fits you. Prefer to earn while you learn? The

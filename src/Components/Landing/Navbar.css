@@ -89,6 +89,38 @@
 .dropdown-list li a:active,
 .nav-links li a:active { transform: translateY(0); }
 
+/* "Pricing" nav item is a <button> that opens the pricing modal — match the link look. */
+.dropdown-list li button.nav-linklike,
+.nav-links li button.nav-linklike {
+  font-family: var(--cdna-font-sans);
+  background: none;
+  border: none;
+  text-align: left;
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: var(--cdna-type-nav-weight);
+  letter-spacing: -0.01em;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: var(--cdna-type-nav-size);
+  line-height: var(--cdna-type-nav-line);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .2s ease, transform .15s ease, box-shadow .2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.dropdown-list li button.nav-linklike:hover,
+.dropdown-list li button.nav-linklike:focus-visible,
+.nav-links li button.nav-linklike:hover,
+.nav-links li button.nav-linklike:focus-visible {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.20);
+  outline: none;
+}
+.dropdown-list li button.nav-linklike:active,
+.nav-links li button.nav-linklike:active { transform: translateY(0); }
+
 .menu-icon {
   display: inline-flex;
   align-items: center;

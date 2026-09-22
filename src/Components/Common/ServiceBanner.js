@@ -28,12 +28,24 @@ export default function ServiceBanner() {
   useEffect(() => {
     let cancelled = false;
     let timer = null;
+    let fails = 0;
     const tick = async () => {
       const h = await checkHealth();
       if (cancelled) return;
-      // "down" if the backend is unreachable or Supabase (auth/db) is down.
-      setDown(!h.reachable || !h.supabase);
-      timer = setTimeout(tick, down ? 20000 : 60000);
+      const bad = !h.reachable || !h.supabase;
+      // Only show the banner after two consecutive failed checks, so a single
+      // transient blip or a cold-start delay doesn't flash it. Any success
+      // clears it immediately.
+      if (bad) {
+        fails += 1;
+        if (fails >= 2) setDown(true);
+      } else {
+        fails = 0;
+        setDown(false);
+      }
+      // Re-check sooner while we suspect a problem, so it clears quickly once
+      // the backend recovers.
+      timer = setTimeout(tick, bad ? 15000 : 60000);
     };
     tick();
     return () => { cancelled = true; if (timer) clearTimeout(timer); };

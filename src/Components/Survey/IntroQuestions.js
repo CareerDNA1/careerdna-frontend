@@ -493,6 +493,13 @@ const schoolScopeOptions = [
   { value: 'not_sure',         label: 'Not sure yet' },
 ];
 
+const schoolYearOptions = [
+  { value: 'year10', label: 'Year 10' },
+  { value: 'year11', label: 'Year 11' },
+  { value: 'year12', label: 'Year 12' },
+  { value: 'year13', label: 'Year 13' },
+];
+
 const legacySchoolScopeMap = {
   gcse: 'choose_gcse',
   alevels: 'choose_alevels',
@@ -598,6 +605,7 @@ const IntroQuestions = ({
     }
 
     if (v.status === 'school') {
+      if (!v.schoolYear) out.schoolYear = 'Please select your year group.';
       if (!v.planUniversity) out.planUniversity = 'Please tell us if you plan to study at university.';
       if (!v.schoolScope) out.schoolScope = 'Please select your next step.';
       if (v.schoolSubjects !== undefined && !Array.isArray(v.schoolSubjects)) {
@@ -857,7 +865,11 @@ const IntroQuestions = ({
 
   const uniOptions = isUni ? getUniOptions(status) : [];
 
-  const hasErr = (key) => !!errors[key] && !!touched[key];
+  // In the embedded / edit flow (the profile "re-run with new parameters"
+  // modal) we surface validation errors immediately instead of waiting for the
+  // field to be touched, so a missing required field is obvious rather than the
+  // Re-run button being silently disabled.
+  const hasErr = (key) => !!errors[key] && (isEditMode || !!touched[key]);
   const errMsg = (key) => hasErr(key) ? errors[key] : '';
 
   const hasEarlyGcseSubjectSelection = () => (
@@ -1023,6 +1035,24 @@ const IntroQuestions = ({
 
       {(isSchool || isOther) && (
         <>
+          {isSchool && (
+            <div className={`field ${hasErr('schoolYear') ? 'has-error' : ''}`} id="schoolYearSelect">
+              <label className="required">What year group are you in?</label>
+              <Select
+                classNamePrefix="introSelect"
+                menuPlacement="bottom"
+                menuShouldScrollIntoView={false}
+                options={schoolYearOptions}
+                value={schoolYearOptions.find(opt => opt.value === introResponses.schoolYear) || null}
+                onChange={selected => handleChange('schoolYear', selected.value)}
+                onBlur={() => setFieldTouched('schoolYear')}
+                placeholder="Select your year group"
+                aria-invalid={hasErr('schoolYear') ? 'true' : 'false'}
+              />
+              {hasErr('schoolYear') && <div className="error-text">{errMsg('schoolYear')}</div>}
+            </div>
+          )}
+
           <div className={`field ${hasErr('planUniversity') ? 'has-error' : ''}`}>
             <label className="required">Do you plan to go to university?</label>
             <Select
@@ -1186,6 +1216,11 @@ const IntroQuestions = ({
           {finalSubmitLabel}
         </Button>
       </div>
+      {isEditMode && !isComplete && !isLoading && (
+        <p className="intro-required-hint" role="alert">
+          Please complete the highlighted fields above to continue.
+        </p>
+      )}
     </div>
   );
 };

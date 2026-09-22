@@ -9,6 +9,7 @@ import Button from '../Common/Button';
 import dnaWhiteLogo from '../../Assets/images/logo-dna-white.png';
 
 import DimensionsCarousel from './DimensionsCarousel';
+import SwipeDeck from './SwipeDeck';
 import DIMENSIONS from '../../utils/Dimensions';
 import ClarityChart from './ClarityChart';
 import SelectionInsightExplorer from './SelectionInsightExplorer';
@@ -1074,14 +1075,6 @@ function decorateAnalysisSignals(root, analysisMeta, itemReactions = {}, subdimS
 }
 
 
-function ChevronIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <polyline points="6 9 12 15 18 9" />
-    </svg>
-  );
-}
-
 function stripSubdimensionSection(md = '') {
   if (!md) return md;
   const marker = '## Subdimension Scores';
@@ -1099,12 +1092,27 @@ function stripSubdimensionSection(md = '') {
 }
 
 const ANALYSIS_TAB_BASE_DEFS = [
-  { key: 'summary', label: 'Summary' },
+  { key: 'summary', label: 'Overview' },
   { key: 'strengths', label: 'Strengths' },
   { key: 'environments', label: 'Work Styles' },
   { key: 'careerworlds', label: 'Career Worlds' },
   { key: 'pathways', label: 'University Subjects' },
 ];
+
+// One line describing what each analysis tab unlocks. Used on the locked tabs so
+// someone who hasn't generated their report yet can see what they're missing.
+const ANALYSIS_TAB_TEASERS = {
+  summary: 'A clear written summary of your CareerDNA that brings your scores together into one story about what drives you.',
+  strengths: 'Your standout strengths explained, with where each one shows up in real work.',
+  environments: 'The work environments and ways of working where you are most likely to thrive.',
+  careerworlds: 'Your best matched career worlds, each with a personalised fit narrative.',
+  pathways: 'The university subjects and pathways that fit you, with entry requirements and your chances.',
+  discovermore: 'Career pathways matched to you, with the routes into each one.',
+  furtherstudy: 'Degrees and universities matched to you, with live rankings and course search.',
+  nonuni: 'Apprenticeships, training and work routes matched to you, with live openings.',
+  roleexplorer: 'Specific job roles matched to you, with live openings in each one.',
+  advisor: 'A personal AI careers advisor that answers your questions using your results.',
+};
 
 function normalizeViewerStatus(raw = '') {
   const value = String(raw || '').trim().toLowerCase();
@@ -1115,12 +1123,19 @@ function normalizeViewerStatus(raw = '') {
 
 function normaliseAnalysisSectionHeading(markdown = '', title = '') {
   const key = normalizeHeading(title);
-  if (key !== 'idealenvironments' && key !== 'environments') return markdown;
-
-  return String(markdown || '')
-    .replace(/^##\s+Ideal Environments\s*$/m, '## Work Styles')
-    .replace(/^##\s+Environments\s*$/m, '## Work Styles')
-    .replace(/^##\s+Work Environments\s*$/m, '## Work Styles');
+  let out = String(markdown || '');
+  if (key === 'idealenvironments' || key === 'environments') {
+    out = out
+      .replace(/^##\s+Ideal Environments\s*$/m, '## Work Styles')
+      .replace(/^##\s+Environments\s*$/m, '## Work Styles')
+      .replace(/^##\s+Work Environments\s*$/m, '## Work Styles');
+  }
+  if (key === 'summary') {
+    // The Summary section is presented under the "Overview" tab, so give it a
+    // heading that matches: replace its first heading line whatever it says.
+    out = out.replace(/^##\s+.*$/m, '## Overview of your results');
+  }
+  return out;
 }
 
 function sectionBelongsToTab(title = '') {
@@ -1236,7 +1251,7 @@ function personaliseSummaryMarkdown(markdown = '', firstName = '') {
   return lines.join('\n');
 }
 
-function cwCompactKey(v) {
+export function cwCompactKey(v) {
   return String(v || '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '');
 }
 
@@ -1312,7 +1327,7 @@ Object.entries(PATHWAY_UNI_LONG_DEFINITIONS).forEach(([title, text]) => {
 
 // Parse the "## Career Worlds" markdown into { compactTitle -> narrative }.
 // Prose format is: "N) **World Title**: \n narrative ...".
-function parseCareerWorldNarratives(md = '') {
+export function parseCareerWorldNarratives(md = '') {
   const out = new Map();
   const src = String(md || '');
   const re = /(?:^|\n)\s*\d+\)\s*\*\*(.+?)\*\*\s*:?\s*\n?([\s\S]*?)(?=(?:\n\s*\d+\)\s*\*\*)|(?:\n\s*#{1,6}\s)|$)/g;
@@ -1446,6 +1461,7 @@ export default function ResultsComponent({
   profileQualityGate,
   initialSection,
   initialTab,
+  initialFocus,
 }) {
   // The vocational ("Explore other career worlds") section is only relevant to
   // students who are unsure about university or not planning to go. The intro asks
@@ -1458,7 +1474,6 @@ export default function ResultsComponent({
   const initialSectionAppliedRef = useRef(false);
   const initialTabAppliedRef = useRef(false);
   const topSectionRefs = useRef({});
-  const analysisTabsContentRef = useRef(null);
   const analysisTabsListRef = useRef(null);
   const profileTabsListRef = useRef(null);
   const markdownContentRef = useRef(null);
@@ -1489,6 +1504,18 @@ export default function ResultsComponent({
   const [profileFirstName, setProfileFirstName] = useState('');
   const [upgradePrompt, setUpgradePrompt] = useState(null);
   const [profileUserId, setProfileUserId] = useState('');
+  // Report entitlement for the current viewer, used to differentiate what the
+  // pre-analysis (locked) state offers: a free viewer sees an upsell, a
+  // subscriber with reports left sees a plain generate button plus a
+  // reports-left line, and a subscriber who's used them all sees a "check your
+  // plans" prompt. Loaded from the profile alongside the first name.
+  const [reportPlan, setReportPlan] = useState('');
+  const [reportUnlimited, setReportUnlimited] = useState(false);
+  const [reportsRemaining, setReportsRemaining] = useState(null);
+  const [reportInfoLoaded, setReportInfoLoaded] = useState(false);
+  // Which locked analysis tab the viewer last tapped (drives the teaser copy in
+  // the locked placeholder). Empty means show the generic teaser.
+  const [lockedPreviewTab, setLockedPreviewTab] = useState('');
   const [overallFeedback, setOverallFeedback] = useState({ rating: 0, comment: '' });
   const [overallFeedbackDraftComment, setOverallFeedbackDraftComment] = useState('');
   const [overallFeedbackSaveState, setOverallFeedbackSaveState] = useState('idle');
@@ -1726,19 +1753,15 @@ export default function ResultsComponent({
   const likedWorldItems = useMemo(
     () => [...(careerWorldAccordionItems || []), ...(careerWorldLowerAccordionItems || [])]
       .filter((w) => itemReactions[w.id] === 'like')
-      .map((w) => ({ id: w.id, title: w.title, careerWorldId: w.careerWorldId || '', type: 'career_world' })),
+      .map((w) => ({ id: w.id, title: w.title, careerWorldId: w.careerWorldId || '', type: 'career_world', signalLabel: w.signalLabel || '' })),
     [careerWorldAccordionItems, careerWorldLowerAccordionItems, itemReactions]
   );
 
   // Non-University Routes also covers the 7 vocational worlds, which aren't in the
   // academic Career Worlds accordion. Include the liked ones here (but not in
   // Further Study, which is degree-based and doesn't apply to vocational worlds).
-  const likedWorldItemsWithVocational = useMemo(() => {
-    const voc = VOCATIONAL_WORLD_ITEMS
-      .filter((w) => itemReactions[w.id] === 'like')
-      .map((w) => ({ id: w.id, title: w.title, careerWorldId: w.careerWorldId || w.id, type: 'career_world' }));
-    return [...likedWorldItems, ...voc];
-  }, [likedWorldItems, itemReactions]);
+  // (defined after vocationalWorldItems so it can carry the scored world band —
+  // see likedWorldItemsWithVocational below.)
 
   // Titles of the pathways the student liked (kept in the reaction meta). Used to
   // highlight the most relevant degrees within each world in Further Study.
@@ -1773,6 +1796,32 @@ export default function ResultsComponent({
     [analysisTabsWithDiscoverMore, activeAnalysisTab]
   );
 
+  // Before the report is generated the analysis tabs above are empty (they're
+  // built from the report text). To keep the menu looking normal, we render a
+  // locked mirror of the full tab list the viewer will get once they generate.
+  const lockedAnalysisTabs = useMemo(() => {
+    const isSchoolViewer = normalizeViewerStatus(viewerStatus) === 'school';
+    const base = (isSchoolViewer
+      ? ANALYSIS_TAB_BASE_DEFS.filter((tab) => tab.key !== 'pathways')
+      : ANALYSIS_TAB_BASE_DEFS
+    ).map((tab) => ({ key: tab.key, label: tab.label }));
+    const extra = isSchoolViewer
+      ? [
+          { key: 'discovermore', label: 'Career Pathways' },
+          { key: 'furtherstudy', label: 'University' },
+          { key: 'nonuni', label: 'Training & Work' },
+        ]
+      : [{ key: 'roleexplorer', label: 'Role Explorer' }];
+    return [...base, ...extra, { key: 'advisor', label: 'AI Advisor' }];
+  }, [viewerStatus]);
+
+  // Report entitlement, derived from the loaded profile. `canRunReport` decides
+  // whether the plain generate button shows; `isFreeViewer` decides whether an
+  // out-of-reports viewer sees the subscribe upsell or the "you've used your
+  // reports" prompt.
+  const canRunReport = reportUnlimited || !reportInfoLoaded || (reportsRemaining == null ? true : reportsRemaining > 0);
+  const isFreeViewer = reportInfoLoaded && ['', 'free'].includes(reportPlan);
+
   // Phone tab strip: hide the right-edge fade/chevron once there's nothing more
   // to scroll to (reached the end, or the tabs fit without scrolling).
   useEffect(() => {
@@ -1797,7 +1846,7 @@ export default function ResultsComponent({
   }, [activeTab]);
 
   const profileTabs = [
-    { key: 'profile', label: 'Profile' },
+    { key: 'profile', label: 'Your Type' },
     { key: 'traits', label: 'Traits' },
     { key: 'selfawareness', label: 'Self-Awareness' },
   ];
@@ -1824,6 +1873,17 @@ export default function ResultsComponent({
     };
   }, [activeProfileTab, openTopSection]);
 
+  // Keep the active tab centred in the horizontal strip on phone, so the current
+  // section is always visible along with what sits on either side of it.
+  useEffect(() => {
+    const list = profileTabsListRef.current;
+    if (!list) return;
+    const active = list.querySelector('.analysis-tab-button.is-active');
+    if (!active) return;
+    const target = active.offsetLeft - (list.clientWidth - active.clientWidth) / 2;
+    list.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+  }, [activeProfileTab, activeAnalysisTab, openTopSection]);
+
   const analysisQualityGate = useMemo(() => (
     profileQualityGate && typeof profileQualityGate === 'object'
       ? profileQualityGate
@@ -1839,7 +1899,6 @@ export default function ResultsComponent({
     if (typeof fetchAiSummary !== 'function') return;
     setOpenTopSection('analysis');
     scrollAnalysisSectionIntoView({ offset: 18 });
-    window.setTimeout(() => scrollAnalysisSectionIntoView({ offset: 18 }), 260);
 
     if (analysisQualityGate.shouldBlockAnalysis) {
       setAnalysisQualityMessage(getProfileQualityGateMessage(analysisQualityGate));
@@ -1900,11 +1959,23 @@ export default function ResultsComponent({
         if (!cancelled) {
           setProfileFirstName(profile?.first_name || '');
           setProfileUserId(profile?.id || '');
+          const plan = String(profile?.plan || '').toLowerCase();
+          const unlimited = ['premium_school', 'premium_university'].includes(plan);
+          const limit = Number(profile?.report_limit) || 0;
+          const used = Number(profile?.reports_used) || 0;
+          setReportPlan(plan);
+          setReportUnlimited(unlimited);
+          setReportsRemaining(unlimited ? null : Math.max(0, limit - used));
+          setReportInfoLoaded(true);
         }
       } catch {
         if (!cancelled) {
           setProfileFirstName('');
           setProfileUserId('');
+          setReportPlan('');
+          setReportUnlimited(false);
+          setReportsRemaining(null);
+          setReportInfoLoaded(true);
         }
       }
     }
@@ -2308,16 +2379,37 @@ export default function ResultsComponent({
     setActiveAnalysisTab(initialTab);
   }, [initialSection, initialTab, analysisTabsWithDiscoverMore]);
 
+  // Deep-link to an exact card: when the profile favourites open a report item,
+  // find that card (tagged with data-fav-key) once its tab has rendered, open it
+  // (if it isn't already) and scroll it into view. Best-effort: polls briefly
+  // while the tab mounts, then gives up quietly if the item isn't on this tab.
+  const initialFocusAppliedRef = useRef(false);
   useEffect(() => {
-    if (openTopSection !== 'analysis') return undefined;
-    if (!analysisTabsWithDiscoverMore.length) return undefined;
+    if (initialFocusAppliedRef.current) return undefined;
+    if (initialSection !== 'analysis' || !initialFocus) return undefined;
+    initialFocusAppliedRef.current = true;
+    const key = String(initialFocus).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    if (!key) return undefined;
+    const sel = `[data-fav-key="${key.replace(/"/g, '\\"')}"]`;
+    let tries = 0;
+    let timer = null;
+    const tick = () => {
+      tries += 1;
+      const el = document.querySelector(sel);
+      if (el) {
+        if (!el.classList.contains('is-open')) {
+          const toggle = el.querySelector('button, [role="button"], .cw-accordion-item__head, .pathway-role-item__toggle');
+          if (toggle) toggle.click();
+        }
+        window.setTimeout(() => { try { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (_) {} }, 250);
+        return;
+      }
+      if (tries < 25) timer = window.setTimeout(tick, 200);
+    };
+    timer = window.setTimeout(tick, 400);
+    return () => { if (timer) window.clearTimeout(timer); };
+  }, [initialSection, initialFocus, initialTab]);
 
-    const t = window.setTimeout(() => {
-      scrollAnalysisSectionIntoView({ offset: 18 });
-    }, 220);
-
-    return () => window.clearTimeout(t);
-  }, [openTopSection, activeAnalysisTab, analysisTabsWithDiscoverMore.length]);
 
   useEffect(() => {
     let cancelled = false;
@@ -2506,6 +2598,18 @@ export default function ResultsComponent({
     [extraWorldInsights, precomputedSelectionInsightMap, careerWorldNarrativeByTitle]
   );
 
+  // Non-University Routes also covers the 7 vocational worlds, which aren't in the
+  // academic Career Worlds accordion. Include the liked ones here (but not in
+  // Further Study, which is degree-based and doesn't apply to vocational worlds).
+  // Carry each world's scored band so Training & Work shows the match pill in the
+  // world header, exactly like University and Career Pathways.
+  const likedWorldItemsWithVocational = useMemo(() => {
+    const voc = vocationalWorldItems
+      .filter((w) => itemReactions[w.id] === 'like')
+      .map((w) => ({ id: w.id, title: w.title, careerWorldId: w.careerWorldId || w.id, type: 'career_world', signalLabel: w.signalLabel || '' }));
+    return [...likedWorldItems, ...voc];
+  }, [likedWorldItems, vocationalWorldItems, itemReactions]);
+
   const registerTopSectionRef = (key) => (node) => {
     if (node) topSectionRefs.current[key] = node;
   };
@@ -2523,8 +2627,17 @@ export default function ResultsComponent({
     });
   };
 
+  // Every results tab (profile or analysis, locked or not) re-centres the same
+  // way: smooth-scroll the top of the single unified card just under the top of
+  // the viewport, then settle once more after content has swapped in.
+  const scrollResultsTabIntoView = (offset = 18) => {
+    // A single scroll to the TOP of the results card — never a re-scroll or a
+    // centring pass, which caused the panel to jump up and down.
+    scrollTopSectionIntoView('profile', offset);
+  };
+
   const scrollAnalysisSectionIntoView = ({ offset = 18 } = {}) => {
-    scrollTopSectionIntoView('analysis', offset);
+    scrollTopSectionIntoView('profile', offset);
   };
 
   const handleAnalysisTabClick = (tabKey) => {
@@ -2536,22 +2649,7 @@ export default function ResultsComponent({
     if (tabKey === 'strengths') persistSectionVisit('strength');
     else if (tabKey === 'environments') persistSectionVisit('environment');
 
-    scrollAnalysisSectionIntoView({ offset: 18 });
-    window.setTimeout(
-      () => scrollAnalysisSectionIntoView({ offset: 18 }),
-      220
-    );
-  };
-
-  const toggleTopSection = (key) => {
-    setOpenTopSection((prev) => {
-      const next = prev === key ? '' : key;
-      if (next === key) {
-        scrollTopSectionIntoView(key, 18);
-        window.setTimeout(() => scrollTopSectionIntoView(key, 18), 260);
-      }
-      return next;
-    });
+    scrollResultsTabIntoView(18);
   };
 
   // ---- Guided journey: simple next-step footer ----
@@ -2609,10 +2707,252 @@ export default function ResultsComponent({
     );
   };
 
+  // ---- Per-section renderers, used by the swipe deck so any section can be
+  // rendered by key (current slide plus its neighbours). ----
+  const renderProfileSection = (key) => (
+    <>
+      {key === 'profile' && (
+        <>
+          <h2 className="analysis-section-title">Your CareerDNA type</h2>
+          <p>
+            Your unique CareerDNA is based on seven profiles that represent different ways people think, act and find motivation.
+            Your results show how closely you relate to each one. Most people show stronger links with two or three profiles, but it is the combination of all seven that creates your own unique CareerDNA mix.
+            Hover over each result to see a brief description of that profile.
+          </p>
+          <div className="card-chart">
+            <BarChart archetypes={computedResults} />
+          </div>
+        </>
+      )}
+      {key === 'traits' && (
+        <>
+          <h2 className="analysis-section-title">Your traits</h2>
+          <p>
+            Your CareerDNA is built around four core areas: <strong>Who You Are</strong>, <strong>What You Love</strong>, <strong>What Matters</strong>, and <strong>How You Work Best</strong>.
+            Together, they capture your key psychological drivers, including your behaviour, interests, values and working preferences.
+            Each area is broken down into subdimensions, which show where your natural tendencies are strongest. The chart below visualises these patterns.
+            There are no “good” or “bad” scores. Lower scores simply reflect different preferences, not weaknesses. What matters is the overall pattern and what it suggests about where you are most likely to thrive.
+          </p>
+          <div className="section-divider" />
+          <div className="card-chart">
+            <div style={{ width: '820px', maxWidth: '100%', margin: '0 auto' }}>
+              <DimensionsCarousel
+                dimensions={DIMENSIONS}
+                scores={scoresForChart}
+                maxPerDimension={7}
+              />
+            </div>
+          </div>
+        </>
+      )}
+      {key === 'selfawareness' && (
+        <>
+          <h2 className="analysis-section-title">How well you know yourself</h2>
+          <p>
+            This estimates how clearly and consistently your answers describe you across the four CareerDNA areas. It looks at how decisive your answers are and how consistently related answers point in the same direction.
+            Higher % suggests a clearer and more consistent self-view at this moment in time. It’s not a measure of ability, intelligence or worth.
+            Just a signal of how strongly your preferences and tendencies came through in your answers today.
+          </p>
+          <div className="card-chart">
+            <div style={{ width: '820px', maxWidth: '100%', margin: '0 auto' }}>
+              <ClarityChart minItems={1} claritySummary={claritySummary} />
+            </div>
+          </div>
+        </>
+      )}
+      {renderNextStep(key)}
+    </>
+  );
+
+  const renderAnalysisSection = (tab, isActive = true) => {
+    if (!tab) return null;
+    return (
+      <div className="analysis-tab-body">
+        <div className="analysis-tabs-panel analysis-tabs-panel--full">
+          {tab.key === 'discovermore' ? (
+            <>
+              <SelectionInsightExplorer
+                insights={selectionInsights}
+                loading={selectionInsightsLoading}
+                error={selectionInsightsError}
+                onItemReaction={handleNestedItemReaction}
+                savedReactions={itemReactions}
+              />
+              {renderNextStep('discovermore')}
+            </>
+          ) : tab.key === 'furtherstudy' ? (
+            <>
+              <FurtherStudyPanel
+                likedWorlds={likedWorldItems}
+                likedPathwayTitles={likedPathwayTitles}
+                archetypes={computedResults}
+                subdimensions={Array.isArray(subdimensionRows) ? subdimensionRows : []}
+                savedReactions={itemReactions}
+                onItemReaction={handleNestedItemReaction}
+              />
+              {renderNextStep('furtherstudy')}
+            </>
+          ) : tab.key === 'nonuni' ? (
+            <>
+              <NonUniversityPanel
+                likedWorlds={likedWorldItemsWithVocational}
+                likedPathwayTitles={likedPathwayTitles}
+                savedReactions={itemReactions}
+                onItemReaction={handleNestedItemReaction}
+                pathwayBands={(selectionInsights || []).reduce((m, i) => {
+                  if (i && i.title && i.signalLabel && !m[i.title]) m[i.title] = i.signalLabel;
+                  return m;
+                }, {})}
+              />
+              {renderNextStep('nonuni')}
+            </>
+          ) : tab.key === 'roleexplorer' ? (
+            <>
+              <RoleExplorerPanel
+                pathways={(selectionInsights || []).filter(
+                  (i) => (i?.type === 'pathway' || i?.type === 'role' || i?.isPathway)
+                    && Array.isArray(i?.roles) && i.roles.length
+                )}
+                savedReactions={itemReactions}
+                onItemReaction={handleNestedItemReaction}
+              />
+              {renderNextStep('roleexplorer')}
+            </>
+          ) : tab.key === 'careerworlds' && careerWorldAccordionItems.length ? (() => {
+            const allCw = [...careerWorldAccordionItems, ...careerWorldLowerAccordionItems];
+            return (
+              <>
+                <h2 className="cw-accordion-group__heading">Your career worlds</h2>
+                <CareerWorldsAccordion
+                  worlds={allCw}
+                  savedReactions={itemReactions}
+                  onItemReaction={handleNestedItemReaction}
+                  introText={[
+                    'Career worlds are broad areas of work that may suit how you naturally think, learn and engage. Open each one to see what it is, why it fits you, and how your traits line up, then like the ones you are drawn to.',
+                    'Every world here is shown the same way, whether you are planning on university or not. Some are entered through a degree, some through work, training or an apprenticeship, and many can be entered either way. When you open Career Pathways you will see exactly how you get into each one.',
+                  ].join('\n')}
+                />
+                {renderNextStep('careerworlds')}
+              </>
+            );
+          })() : tab.key === 'pathways' && careerPathwayAccordionGroups.length ? (
+            <>
+              {careerPathwayAccordionGroups.map((group, gi) => (
+                <div key={group.key} className="cw-accordion-group">
+                  <h2 className="cw-accordion-group__heading">{group.heading}</h2>
+                  {gi === 0 ? (
+                    <>
+                      <div className="cw-accordion__intro">
+                        <p className="cw-accordion__intro-p">These career pathways are matched to your subject and profile. Open each one to see what it is, why it fits you, and how your traits line up.</p>
+                      </div>
+                      <div className="cw-accordion__toolbar">
+                        <ResultsFilterBar
+                          filter={pathwayTabFilter}
+                          onChange={setPathwayTabFilter}
+                          groups={['band', 'favourites']}
+                        />
+                      </div>
+                    </>
+                  ) : null}
+                  <CareerWorldsAccordion
+                    worlds={group.items}
+                    savedReactions={itemReactions}
+                    onItemReaction={handleNestedItemReaction}
+                    itemType="pathway"
+                    iconFor={getPathwayIcon}
+                    filter={pathwayTabFilter}
+                    onFilterChange={setPathwayTabFilter}
+                    hideFilterBar
+                    introText=""
+                  />
+                </div>
+              ))}
+              {renderNextStep('pathways')}
+            </>
+          ) : tab.key === 'advisor' ? (
+            isActive ? (
+              <CareerAdvisorChat assessmentRunId={effectiveAssessmentRunId} embedded />
+            ) : (
+              <div className="analysis-box__body"><p>Your CareerDNA advisor.</p></div>
+            )
+          ) : (
+            <>
+              <div
+                ref={markdownContentRef}
+                className="markdown-content"
+                dangerouslySetInnerHTML={renderSafeMarkdown(tab.markdown)}
+              />
+              {renderNextStep(tab.key)}
+            </>
+          )}
+          {SECTION_ADVISOR_CONFIG[tab.key] && effectiveAssessmentRunId ? (
+            <SectionAdvisor
+              key={tab.key}
+              assessmentRunId={effectiveAssessmentRunId}
+              section={SECTION_ADVISOR_CONFIG[tab.key].section}
+              title={SECTION_ADVISOR_CONFIG[tab.key].title}
+              suggestedQuestions={SECTION_ADVISOR_CONFIG[tab.key].questions}
+            />
+          ) : null}
+        </div>
+      </div>
+    );
+  };
+
+  const analysisReady = computedSummary && !computedSummary.startsWith('⚠️');
+  // Show the locked / generate / loading / error state when the user is on the
+  // analysis section but the analysis has not been generated yet.
+  const showAnalysisPlaceholder = openTopSection === 'analysis' && !analysisReady;
+
+  // ---- Swipe slider wiring ----
+  // One ordered list of sections the finger-slider moves through: the profile
+  // tabs always, plus the analysis tabs once the analysis is generated. The
+  // slider's content is derived from this + the active tab (single source of
+  // truth) so it can never drift out of sync with the menu.
+  const swipeSections = [
+    ...profileTabs.map((t) => ({ section: 'profile', key: t.key })),
+    ...(analysisReady ? analysisTabsWithDiscoverMore.map((t) => ({ section: 'analysis', key: t.key })) : []),
+  ];
+  const activeDesc = openTopSection === 'analysis' && activeTab
+    ? { section: 'analysis', key: activeTab.key }
+    : { section: 'profile', key: activeProfileTab };
+  const activeDescIndex = swipeSections.findIndex(
+    (s) => s.section === activeDesc.section && s.key === activeDesc.key
+  );
+  const renderDesc = (desc, isActive) => {
+    if (!desc) return null;
+    if (desc.section === 'profile') return renderProfileSection(desc.key);
+    return renderAnalysisSection(analysisTabsWithDiscoverMore.find((t) => t.key === desc.key), isActive);
+  };
+  // Move to a neighbouring section via the same state the tabs use (no page
+  // scroll on swipe — you're already looking at the panel).
+  const goToSectionDesc = (desc) => {
+    if (!desc) return;
+    if (desc.section === 'profile') {
+      setActiveProfileTab(desc.key);
+      setOpenTopSection('profile');
+    } else {
+      setActiveAnalysisTab(desc.key);
+      setOpenTopSection('analysis');
+      if (desc.key === 'strengths') persistSectionVisit('strength');
+      else if (desc.key === 'environments') persistSectionVisit('environment');
+    }
+    // Land at the top of the new section on every swipe, so you don't arrive
+    // half-way down because of where you were on the previous one.
+    scrollResultsTabIntoView(18);
+  };
+  const prevDesc = activeDescIndex > 0 ? swipeSections[activeDescIndex - 1] : null;
+  const nextDesc = activeDescIndex >= 0 && activeDescIndex < swipeSections.length - 1
+    ? swipeSections[activeDescIndex + 1]
+    : null;
+
   return (
     <div id="results-root">
       {upgradePrompt && (
         <ReportLimitModal
+          mode={upgradePrompt.mode || (isFreeViewer ? 'starter' : 'exhausted')}
+          currentPlan={reportPlan || 'free'}
+          entitlement={{ plan: reportPlan || 'free' }}
           onClose={() => setUpgradePrompt(null)}
           onReturnToProfile={() => { window.location.href = '/profile'; }}
           onApplyCoupon={handleApplyCoupon}
@@ -2640,22 +2980,8 @@ export default function ResultsComponent({
       <div ref={pdfRef} id="pdf-content">
         <div ref={chartsWrapperRef} className="results-accordion-wrap">
           <section className="section accordion-section">
-            <div ref={registerTopSectionRef('profile')} className={`section-card section-card--full accordion-card ${openTopSection === 'profile' ? 'is-open' : ''}`}>
-              <button
-                type="button"
-                className="accordion-toggle"
-                onClick={() => toggleTopSection('profile')}
-                aria-expanded={openTopSection === 'profile'}
-              >
-                <span className="accordion-toggle__title">Your CareerDNA profile</span>
-                <span className="accordion-toggle__icon" aria-hidden="true">
-                  <ChevronIcon />
-                </span>
-              </button>
-
-              <div className={`accordion-panel ${openTopSection === 'profile' ? 'is-open' : ''}`}>
-                <div className="accordion-panel__inner">
-                  {hasResults ? (
+            <div ref={registerTopSectionRef('profile')} className="section-card section-card--full">
+              {hasResults ? (
                     <div className="analysis-box analysis-box--tabbed is-ready">
                       <div className="analysis-tabs-layout">
                         <aside className="analysis-tabs-sidebar">
@@ -2664,126 +2990,106 @@ export default function ResultsComponent({
                               <button
                                 key={tab.key}
                                 type="button"
-                                className={`analysis-tab-button ${tab.key === activeProfileTab ? 'is-active' : ''}`}
-                                onClick={() => setActiveProfileTab(tab.key)}
+                                className={`analysis-tab-button ${openTopSection === 'profile' && tab.key === activeProfileTab ? 'is-active' : ''}`}
+                                onClick={() => { setActiveProfileTab(tab.key); setOpenTopSection('profile'); scrollResultsTabIntoView(18); }}
                               >
                                 <span className="analysis-tab-button__label">{tab.label}</span>
                               </button>
                             ))}
+                            {(() => {
+                              const analysisLocked = !computedSummary || computedSummary.startsWith('⚠️');
+                              const sidebarTabs = analysisLocked ? lockedAnalysisTabs : analysisTabsWithDiscoverMore;
+                              return sidebarTabs.map((tab) => {
+                                const isActive = analysisLocked
+                                  ? openTopSection === 'analysis' && lockedPreviewTab === tab.key
+                                  : openTopSection === 'analysis' && activeTab && tab.key === activeTab.key;
+                                return (
+                                  <button
+                                    key={tab.key}
+                                    type="button"
+                                    className={`analysis-tab-button ${isActive ? 'is-active' : ''} ${analysisLocked ? 'analysis-tab-button--locked' : ''}`}
+                                    onClick={() => { if (analysisLocked) { setLockedPreviewTab(tab.key); setOpenTopSection('analysis'); scrollResultsTabIntoView(18); } else { handleAnalysisTabClick(tab.key); } }}
+                                  >
+                                    <span className="analysis-tab-button__label">{tab.label}</span>
+                                    {analysisLocked ? (
+                                      <svg className="analysis-tab-button__lock" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                                    ) : null}
+                                  </button>
+                                );
+                              });
+                            })()}
                           </div>
                         </aside>
 
                         <div className="analysis-tabs-panel">
-                          {activeProfileTab === 'profile' && (
-                            <>
-                              <p>
-                                Your unique CareerDNA is based on seven profiles that represent different ways people think, act and find motivation.
-                                Your results show how closely you relate to each one. Most people show stronger links with two or three profiles, but it is the combination of all seven that creates your own unique CareerDNA mix.
-                                Hover over each result to see a brief description of that profile.
+                          {showAnalysisPlaceholder ? (
+                          <div ref={analysisRef} className="analysis-tab-inner">
+                    {hasResults && !computedSummary && !loadingSummary && !upgradePrompt && (
+                      <section className="results-cta results-cta--inside results-locked">
+                        {lockedPreviewTab && ANALYSIS_TAB_TEASERS[lockedPreviewTab] ? (
+                          <>
+                            <h2>{(lockedAnalysisTabs.find((t) => t.key === lockedPreviewTab) || {}).label || 'Your full analysis'}</h2>
+                            <p className="results-locked__teaser">{ANALYSIS_TAB_TEASERS[lockedPreviewTab]}</p>
+                            <p className="results-locked__note">
+                              This is part of your full CareerDNA analysis. Generate it to unlock this and every other section in the menu.
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <h2>What do these results mean?</h2>
+                            <p>
+                              The next step is a deeper analysis powered by our CareerDNA algorithm and AI engine that brings your scores together into a clear narrative, diving into
+                              your strengths, ideal work environments, career paths and next-step options to help you make better choices with confidence.
+                            </p>
+                          </>
+                        )}
+
+                        {canRunReport && canGenerate ? (
+                          <div className="results-actions">
+                            <Button type="primary" onClick={handleRunAnalysis} disabled={!!loadingSummary}>
+                              <img
+                                src={dnaWhiteLogo}
+                                alt=""
+                                aria-hidden="true"
+                                style={{
+                                  width: 16,
+                                  height: 16,
+                                  objectFit: 'contain',
+                                  marginRight: 8,
+                                  display: 'inline-block',
+                                  verticalAlign: 'middle',
+                                  flexShrink: 0,
+                                  opacity: 0.6,
+                                  transform: 'translateY(-1px)',
+                                }}
+                              />
+                              Run CareerDNA Analysis
+                            </Button>
+                            {!reportUnlimited && reportsRemaining != null && reportsRemaining > 0 ? (
+                              <p className="results-locked__reports-left">
+                                Generating uses one report. You have {reportsRemaining} report{reportsRemaining === 1 ? '' : 's'} left.
                               </p>
-                              <div className="card-chart">
-                                <BarChart archetypes={computedResults} />
-                              </div>
-                            </>
-                          )}
-
-                          {activeProfileTab === 'traits' && (
-                            <>
-                              <p>
-                                Your CareerDNA is built around four core dimensions: <strong>Who You Are</strong>, <strong>What You Love</strong>, <strong>What Matters</strong>, and <strong>How You Work Best</strong>.
-                                Together, they capture your key psychological drivers, including your behaviour, interests, values and working preferences.
-                                Each dimension is broken down into subdimensions, which show where your natural tendencies are strongest. The chart below visualises these patterns.
-                                There are no “good” or “bad” scores. Lower scores simply reflect different preferences, not weaknesses. What matters is the overall pattern and what it suggests about where you are most likely to thrive.
-                              </p>
-                              <div className="section-divider" />
-                              <div className="card-chart">
-                                <div style={{ width: '820px', maxWidth: '100%', margin: '0 auto' }}>
-                                  <DimensionsCarousel
-                                    dimensions={DIMENSIONS}
-                                    scores={scoresForChart}
-                                    maxPerDimension={7}
-                                  />
-                                </div>
-                              </div>
-                            </>
-                          )}
-
-                          {activeProfileTab === 'selfawareness' && (
-                            <>
-                              <p>
-                                This estimates how clearly and consistently your answers describe you across the four CareerDNA dimensions. It looks at how decisive your answers are and how consistently related answers point in the same direction.
-                                Higher % suggests a clearer and more consistent self-view at this moment in time. It’s not a measure of ability, intelligence or worth.
-                                Just a signal of how strongly your preferences and tendencies came through in your answers today.
-                              </p>
-                              <div className="card-chart">
-                                <div style={{ width: '820px', maxWidth: '100%', margin: '0 auto' }}>
-                                  <ClarityChart minItems={1} claritySummary={claritySummary} />
-                                </div>
-                              </div>
-                            </>
-                          )}
-
-                          {renderNextStep(activeProfileTab)}
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="analysis-box">
-                      <p>No results found. Please complete the survey first.</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {(computedSummary || loadingSummary || (hasResults && canGenerate)) && (
-            <section className="section accordion-section">
-              <div ref={registerTopSectionRef('analysis')} className={`section-card section-card--full accordion-card ${openTopSection === 'analysis' ? 'is-open' : ''}`}>
-                <button
-                  type="button"
-                  className="accordion-toggle"
-                  onClick={() => toggleTopSection('analysis')}
-                  aria-expanded={openTopSection === 'analysis'}
-                  ref={analysisRef}
-                >
-                  <span className="accordion-toggle__title">Your CareerDNA analysis</span>
-                  <span className="accordion-toggle__icon" aria-hidden="true">
-                    <ChevronIcon />
-                  </span>
-                </button>
-
-                <div className={`accordion-panel ${openTopSection === 'analysis' ? 'is-open' : ''}`}>
-                  <div className="accordion-panel__inner">
-                    {hasResults && canGenerate && !computedSummary && !loadingSummary && !upgradePrompt && (
-                      <section className="results-cta results-cta--inside">
-                        <h2>What do these results mean?</h2>
-                        <p>
-                          The next step is a deeper analysis powered by our CareerDNA algorithm and AI engine that brings your scores together into a clear narrative, diving into
-                          your strengths, ideal work environments, career paths and next-step options to help you make better choices with confidence.
-                        </p>
-
-                        <div className="results-actions">
-                          <Button type="primary" onClick={handleRunAnalysis} disabled={!!loadingSummary}>
-                            <img
-                              src={dnaWhiteLogo}
-                              alt=""
-                              aria-hidden="true"
-                              style={{
-                                width: 16,
-                                height: 16,
-                                objectFit: 'contain',
-                                marginRight: 8,
-                                display: 'inline-block',
-                                verticalAlign: 'middle',
-                                flexShrink: 0,
-                                opacity: 0.6,
-                                transform: 'translateY(-1px)',
-                              }}
-                            />
-                            Run CareerDNA Analysis
-                          </Button>
-                        </div>
+                            ) : null}
+                          </div>
+                        ) : isFreeViewer ? (
+                          <div className="results-actions">
+                            <Button type="primary" onClick={() => setUpgradePrompt({ mode: 'starter' })}>
+                              Unlock your full analysis
+                            </Button>
+                            <p className="results-locked__reports-left">
+                              Your free profile is a starting point. Unlock the full analysis to open every section above.
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="results-actions">
+                            <Button type="primary" onClick={() => setUpgradePrompt({ mode: 'exhausted' })}>
+                              Check your plans
+                            </Button>
+                            <p className="results-locked__reports-left">
+                              You have used all of your reports this month. Buy another report or explore your plan to continue.
+                            </p>
+                          </div>
+                        )}
 
                         {analysisQualityMessage && (
                           <div
@@ -2845,6 +3151,12 @@ export default function ResultsComponent({
                       </section>
                     )}
 
+                    {!computedSummary && !loadingSummary && !(hasResults && canGenerate) && !upgradePrompt && (
+                      <div className="analysis-box__body">
+                        <p>Your deeper CareerDNA analysis will appear here once it has been generated.</p>
+                      </div>
+                    )}
+
                     {loadingSummary && !computedSummary && (
                       <div className="analysis-box__body">
                         <LoadingSpinnerWithProgress />
@@ -2857,157 +3169,27 @@ export default function ResultsComponent({
                       </div>
                     )}
 
-                    {computedSummary && !computedSummary.startsWith('⚠️') && (
-                      <div className={`analysis-box analysis-box--tabbed ${activeTab ? 'is-ready' : ''}`}>
-                        {activeTab ? (
-                          <div ref={analysisTabsContentRef} className="analysis-tabs-layout">
-                            <aside className="analysis-tabs-sidebar">
-                              <div className="analysis-tabs-sidebar__list" ref={analysisTabsListRef}>
-                                {analysisTabsWithDiscoverMore.map((tab) => (
-                                  <button
-                                    key={tab.key}
-                                    type="button"
-                                    className={`analysis-tab-button ${tab.key === activeTab.key ? 'is-active' : ''}`}
-                                    onClick={() => handleAnalysisTabClick(tab.key)}
-                                  >
-                                    <span className="analysis-tab-button__label">{tab.label}</span>
-                                  </button>
-                                ))}
-                              </div>
-                            </aside>
-
-                            <div className="analysis-tabs-panel">
-                              {activeTab.key === 'discovermore' ? (
-                                <>
-                                  <SelectionInsightExplorer
-                                    insights={selectionInsights}
-                                    loading={selectionInsightsLoading}
-                                    error={selectionInsightsError}
-                                    onItemReaction={handleNestedItemReaction}
-                                    savedReactions={itemReactions}
-                                  />
-                                  {renderNextStep('discovermore')}
-                                </>
-                              ) : activeTab.key === 'furtherstudy' ? (
-                                <>
-                                  <FurtherStudyPanel
-                                    likedWorlds={likedWorldItems}
-                                    likedPathwayTitles={likedPathwayTitles}
-                                    archetypes={computedResults}
-                                    subdimensions={Array.isArray(subdimensionRows) ? subdimensionRows : []}
-                                    savedReactions={itemReactions}
-                                    onItemReaction={handleNestedItemReaction}
-                                  />
-                                  {renderNextStep('furtherstudy')}
-                                </>
-                              ) : activeTab.key === 'nonuni' ? (
-                                <>
-                                  <NonUniversityPanel
-                                    likedWorlds={likedWorldItemsWithVocational}
-                                    likedPathwayTitles={likedPathwayTitles}
-                                    savedReactions={itemReactions}
-                                    onItemReaction={handleNestedItemReaction}
-                                    pathwayBands={(selectionInsights || []).reduce((m, i) => {
-                                      if (i && i.title && i.signalLabel && !m[i.title]) m[i.title] = i.signalLabel;
-                                      return m;
-                                    }, {})}
-                                  />
-                                  {renderNextStep('nonuni')}
-                                </>
-                              ) : activeTab.key === 'roleexplorer' ? (
-                                <>
-                                  <RoleExplorerPanel
-                                    pathways={(selectionInsights || []).filter(
-                                      (i) => (i?.type === 'pathway' || i?.type === 'role' || i?.isPathway)
-                                        && Array.isArray(i?.roles) && i.roles.length
-                                    )}
-                                    savedReactions={itemReactions}
-                                    onItemReaction={handleNestedItemReaction}
-                                  />
-                                  {renderNextStep('roleexplorer')}
-                                </>
-                              ) : activeTab.key === 'careerworlds' && careerWorldAccordionItems.length ? (() => {
-                                const allCw = [...careerWorldAccordionItems, ...careerWorldLowerAccordionItems];
-                                return (
-                                <>
-                                  <h2 className="cw-accordion-group__heading">Your career worlds</h2>
-                                  <CareerWorldsAccordion
-                                    worlds={allCw}
-                                    savedReactions={itemReactions}
-                                    onItemReaction={handleNestedItemReaction}
-                                    introText={[
-                                      'Career worlds are broad areas of work that may suit how you naturally think, learn and engage. Open each one to see what it is, why it fits you, and how your traits line up, then like the ones you are drawn to.',
-                                      'Every world here is shown the same way, whether you are planning on university or not. Some are entered through a degree, some through work, training or an apprenticeship, and many can be entered either way. When you open Career Pathways you will see exactly how you get into each one.',
-                                    ].join('\n')}
-                                  />
-                                  {renderNextStep('careerworlds')}
-                                </>
-                                );
-                              })() : activeTab.key === 'pathways' && careerPathwayAccordionGroups.length ? (
-                                <>
-                                  {careerPathwayAccordionGroups.map((group, gi) => (
-                                    <div key={group.key} className="cw-accordion-group">
-                                      <h2 className="cw-accordion-group__heading">{group.heading}</h2>
-                                      {gi === 0 ? (
-                                        <>
-                                          <div className="cw-accordion__intro">
-                                            <p className="cw-accordion__intro-p">These career pathways are matched to your subject and profile. Open each one to see what it is, why it fits you, and how your traits line up.</p>
-                                          </div>
-                                          <div className="cw-accordion__toolbar">
-                                            <ResultsFilterBar
-                                              filter={pathwayTabFilter}
-                                              onChange={setPathwayTabFilter}
-                                              groups={['band', 'favourites']}
-                                            />
-                                          </div>
-                                        </>
-                                      ) : null}
-                                      <CareerWorldsAccordion
-                                        worlds={group.items}
-                                        savedReactions={itemReactions}
-                                        onItemReaction={handleNestedItemReaction}
-                                        itemType="pathway"
-                                        iconFor={getPathwayIcon}
-                                        filter={pathwayTabFilter}
-                                        onFilterChange={setPathwayTabFilter}
-                                        hideFilterBar
-                                        introText=""
-                                      />
-                                    </div>
-                                  ))}
-                                  {renderNextStep('pathways')}
-                                </>
-                              ) : activeTab.key === 'advisor' ? (
-                                <CareerAdvisorChat assessmentRunId={effectiveAssessmentRunId} embedded />
-                              ) : (
-                                <>
-                                  <div
-                                    ref={markdownContentRef}
-                                    className="markdown-content"
-                                    dangerouslySetInnerHTML={renderSafeMarkdown(activeTab.markdown)}
-                                  />
-                                  {renderNextStep(activeTab.key)}
-                                </>
-                              )}
-                              {SECTION_ADVISOR_CONFIG[activeTab.key] && effectiveAssessmentRunId ? (
-                                <SectionAdvisor
-                                  key={activeTab.key}
-                                  assessmentRunId={effectiveAssessmentRunId}
-                                  section={SECTION_ADVISOR_CONFIG[activeTab.key].section}
-                                  title={SECTION_ADVISOR_CONFIG[activeTab.key].title}
-                                  suggestedQuestions={SECTION_ADVISOR_CONFIG[activeTab.key].questions}
-                                />
-                              ) : null}
-                            </div>
                           </div>
-                        ) : null}
+                          ) : (
+                            <SwipeDeck
+                              activeKey={`${activeDesc.section}:${activeDesc.key}`}
+                              current={renderDesc(activeDesc, true)}
+                              prev={renderDesc(prevDesc, false)}
+                              next={renderDesc(nextDesc, false)}
+                              onPrev={() => goToSectionDesc(prevDesc)}
+                              onNext={() => goToSectionDesc(nextDesc)}
+                            />
+                          )}
+                        </div>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  ) : (
+                    <div className="analysis-box">
+                      <p>No results found. Please complete the survey first.</p>
+                    </div>
+                  )}
                 </div>
-              </div>
-            </section>
-          )}
+              </section>
         </div>
       </div>
 

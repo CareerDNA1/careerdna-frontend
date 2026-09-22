@@ -5,6 +5,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import logo from '../../Assets/images/logo-career-dna.png';
 import { useAuth } from '../../context/AuthContext';
 import { clearLocalUserState } from '../../utils/clearLocalUserState';
+import PricingModal from '../Common/PricingModal';
 
 
 const CloseIcon = () => (
@@ -65,8 +66,11 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
   const navigate = useNavigate();
   const displayFirstName = getDisplayFirstName(user);
 
+  const [pricingOpen, setPricingOpen] = useState(false);
+
   const toggleMenu = useCallback(() => setMenuOpen((prev) => !prev), [setMenuOpen]);
   const closeMenu = useCallback(() => setMenuOpen(false), [setMenuOpen]);
+  const openPricing = useCallback(() => { setPricingOpen(true); closeMenu(); }, [closeMenu]);
   const noop = (e) => e.preventDefault();
 
   const handleSignOut = async () => {
@@ -213,6 +217,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
             <li><ScrollLink to="dimensions" smooth duration={500}>Your Dimensions</ScrollLink></li>
             <li><ScrollLink to="archetypes" smooth duration={500}>Career Profiles</ScrollLink></li>
             <li><ScrollLink to="science" smooth duration={500}>The Science</ScrollLink></li>
+            <li><button type="button" className="nav-linklike" onClick={openPricing}>Our plans</button></li>
           </ul>
 
           <button
@@ -242,6 +247,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
           <li><ScrollLink to="science" smooth duration={500} onClick={closeMenu}>The Science</ScrollLink></li>
           <li><RouterLink to="/team" onClick={closeMenu}>Our Team</RouterLink></li>
           <li><RouterLink to="/trust-security" onClick={closeMenu}>Trust &amp; Security</RouterLink></li>
+          <li><button type="button" className="nav-linklike" onClick={openPricing}>Our plans</button></li>
           <li><ScrollLink to="start" smooth duration={500} onClick={closeMenu}>Start Your Journey</ScrollLink></li>
           {userMenu}
         </ul>
@@ -272,11 +278,20 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
             <li><ScrollLink to="science" smooth duration={500} onClick={closeMenu}>The Science</ScrollLink></li>
             <li><RouterLink to="/team" onClick={closeMenu}>Our Team</RouterLink></li>
             <li><RouterLink to="/trust-security" onClick={closeMenu}>Trust &amp; Security</RouterLink></li>
+            <li><button type="button" className="nav-linklike" onClick={openPricing}>Our plans</button></li>
             <li><ScrollLink to="start" smooth duration={500} onClick={closeMenu}>Start Your Journey</ScrollLink></li>
             {userMenu}
           </ul>
         </div>
       </div>
+
+      <PricingModal
+        isOpen={pricingOpen}
+        onClose={() => setPricingOpen(false)}
+        currentPlan="free"
+        entitlement={{ plan: 'free', status: '' }}
+        onManageSubscription={() => {}}
+      />
     </>
   );
 }

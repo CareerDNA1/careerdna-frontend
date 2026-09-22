@@ -150,9 +150,8 @@
 }
 
 .pricing-popular-badge {
-  background: linear-gradient(180deg, #ffd24d 0%, #f2a71b 100%);
+  background: #f2b21b;
   color: #4a3300;
-  box-shadow: 0 6px 16px rgba(216, 150, 20, 0.38);
 }
 
 .pricing-current-badge {
@@ -267,6 +266,65 @@
 
 .pricing-plan-card--premium .pricing-feature-list li::before {
   color: #b8d8ff;
+}
+
+/* Lead line: the headline payoff at the top of a plan (no tick). */
+.pricing-feature-list li.pricing-feature--lead {
+  padding-left: 0;
+  font-weight: 800;
+  font-size: 0.72rem;
+  line-height: 1.2;
+  color: #0f2447;
+  margin-bottom: 4px;
+}
+.pricing-feature-list li.pricing-feature--lead::before { content: none; }
+
+/* Section sub-headers (Your profile / Premium tools / Guidance). */
+.pricing-feature-list li.pricing-feature-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 0;
+  margin-top: 8px;
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #6b7788;
+}
+.pricing-feature-list li.pricing-feature-header::before { content: none; }
+
+/* Small footnote (e.g. top-up packs). */
+.pricing-feature-list li.pricing-feature-note {
+  padding-left: 0;
+  margin-top: 6px;
+  font-size: 0.56rem;
+  font-style: italic;
+  color: #8a94a3;
+}
+.pricing-feature-list li.pricing-feature-note::before { content: none; }
+
+/* Premium-only feature: keep the tick, add a "Premium" tag pushed right. */
+.pricing-feature-list li.pricing-feature--premium {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  justify-content: space-between;
+}
+.pricing-feature-tag {
+  flex: 0 0 auto;
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(47, 111, 237, 0.12);
+  color: #2f6fed;
+}
+.pricing-plan-card--premium .pricing-feature-tag {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
 }
 
 .pricing-plan-button {
@@ -1017,15 +1075,18 @@
   color: #ffffff;
 }
 
-/* Struck-through launch anchor price (shown above the live price) */
+/* Struck-through anchor price, sits just above the live price without pushing it down */
 .pricing-plan-anchor {
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
   line-height: 1;
-  margin-bottom: 3px;
-  opacity: 0.65;
+  color: #93a1b0;
+  margin: -14px 0 3px;
 }
 .pricing-plan-anchor s {
   color: inherit;
   text-decoration-thickness: 1.5px;
+}
+.pricing-plan-card--premium .pricing-plan-anchor {
+  color: rgba(255, 255, 255, 0.72);
 }

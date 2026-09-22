@@ -394,9 +394,14 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
     [slides.length]
   );
 
-  const onTouchStart = (e) => (touch.current = { x: e.touches[0].clientX, dragging: true });
+  const onTouchStart = (e) => {
+    // Keep this inner swiper's gestures from bubbling to any outer swipe deck.
+    e.stopPropagation();
+    touch.current = { x: e.touches[0].clientX, dragging: true };
+  };
   const onTouchMove = (e) => {
     if (!touch.current.dragging) return;
+    e.stopPropagation();
     const dx = e.touches[0].clientX - touch.current.x;
     if (trackRef.current) {
       trackRef.current.style.transition = "none";
@@ -405,6 +410,7 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
   };
   const onTouchEnd = (e) => {
     if (!touch.current.dragging) return;
+    e.stopPropagation();
     touch.current.dragging = false;
     const dx = e.changedTouches[0].clientX - touch.current.x;
     const th = 50;

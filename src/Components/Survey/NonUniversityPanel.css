@@ -289,6 +289,17 @@ a.nu-standard__link:hover { text-decoration: underline; }
 .nu-factbox .nu-wayin-officiallink { margin-top: 2px; }
 /* Part 2: live openings, clearly separated by a divider, expandable. */
 .nu-openings-section { border-top: 1px solid #e3ebf5; padding-top: 15px; }
+.nu-openings-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.nu-openings-eyebrow__label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #2f6fed;
+}
 .nu-openings-toggle {
   width: 100%;
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -316,8 +327,12 @@ a.nu-standard__link:hover { text-decoration: underline; }
 .nu-wayrow__icon--work { background: #fdefe0; color: #ea7317; }
 .nu-wayrow__main { flex: 1; min-width: 0; }
 .nu-wayrow__title { display: block; font-size: 0.92rem; font-weight: 600; color: #14233c; line-height: 1.3; }
-.nu-wayrow__sub { display: block; font-size: 0.75rem; color: #8a97ac; margin-top: 1px; }
-.nu-wayrow__live { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; color: #0f6e56; white-space: nowrap; flex: 0 0 auto; }
+/* Sub + live sit together UNDER the title so the title gets the full row width
+   and doesn't get squeezed into a thin, word-per-line column. */
+.nu-wayrow__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: 2px; }
+.nu-wayrow__sub { font-size: 0.75rem; color: #8a97ac; }
+.nu-wayrow__saved { display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; font-weight: 700; color: #2f6fed; white-space: nowrap; }
+.nu-wayrow__live { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; color: #0f6e56; white-space: nowrap; }
 .nu-wayrow__note { font-size: 0.75rem; color: #8a97ac; white-space: nowrap; flex: 0 0 auto; }
 .nu-wayrow__chev { color: #b0bccd; flex: 0 0 auto; }
 
@@ -409,6 +424,10 @@ a.nu-standard__link:hover { text-decoration: underline; }
 /* Way-in pop-up: cleaner footer with a divider; official link demoted and subtle */
 .cw-def-modal--wayin .cw-def-modal__box { max-width: 560px; }
 .nu-wayin-footer { border-top: 1px solid #e9edf6; padding-top: 14px; margin-top: 2px; display: flex; flex-direction: column; gap: 8px; }
+/* Save-to-favourites footer that replaces the plain Close button on the
+   apprenticeship pop-up: like/dislike so a student can keep a way in. */
+.cw-def-modal__reactfoot { border-top: 1px solid #e9edf6; padding-top: 14px; margin-top: 6px; }
+.cw-def-modal__reactfoot .cdna-react-row { justify-content: center; }
 .nu-wayin-openings { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 5px; font-size: 0.9rem; }
 
 /* ---- University-style 2x2 grid for the Training pathway card ---- */
@@ -607,7 +626,7 @@ a.nu-standard__link:hover { text-decoration: underline; }
   /* Way-in pop-up fills the viewport width with comfortable side padding. */
   .cw-def-modal--wayin .cw-def-modal__box {
     max-width: 100%;
-    width: calc(100vw - 28px);
+    width: calc(100vw - 20px);
   }
   .cw-def-modal--wayin .cw-def-modal__head--wayin { padding-right: 30px; }
   .nu-wayin-openings { font-size: 0.85rem; }

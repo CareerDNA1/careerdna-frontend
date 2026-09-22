@@ -56,6 +56,26 @@
   font-size: 0.92rem;
   padding: 12px 2px 4px;
 }
+.career-advisor-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+/* Shared rounded loading spinner (matches the profile and jobs spinners). */
+.cdna-load-spinner {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2.5px solid #d3e0f4;
+  border-top-color: #2f6fed;
+  flex: 0 0 auto;
+  display: inline-block;
+  animation: cdna-load-spin 0.7s linear infinite;
+}
+@keyframes cdna-load-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .cdna-load-spinner { animation: none; }
+}
 
 .career-advisor-prompts {
   display: grid;

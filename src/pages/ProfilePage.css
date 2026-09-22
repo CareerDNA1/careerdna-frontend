@@ -25,6 +25,363 @@
   margin-bottom: 16px;
 }
 
+/* Compact identity header (replaces the old welcome heading + stats bar). */
+.profile-idcard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  background: #ffffff;
+  border: 1px solid rgba(47, 111, 237, 0.08);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 18px;
+}
+.profile-idcard-main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.profile-idcard-avatar {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #e7f0ff;
+  color: #2f6fed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+}
+.profile-idcard-text { min-width: 0; }
+.profile-idcard .profile-welcome { margin: 0; }
+.profile-idcard-meta {
+  margin-top: 2px;
+  font-size: 0.85rem;
+  color: #56657a;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.profile-idcard-email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 220px;
+}
+.profile-idcard-runs { color: #2f6fed; font-weight: 700; }
+.profile-idcard-sep { color: #c4cede; }
+@media (max-width: 600px) {
+  .profile-idcard { padding: 14px; }
+  .profile-idcard-meta { font-size: 0.8rem; }
+  .profile-idcard-email { max-width: 170px; }
+  .profile-idcard .profile-header-actions { flex-direction: row; width: 100%; flex-wrap: wrap; }
+}
+
+/* ============================================================
+   Redesigned profile: accent hero + journey progress + 2-col
+   ============================================================ */
+.profile-hero {
+  background: #eef4ff;
+  border: 1px solid #dbe7fb;
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin-bottom: 12px;
+}
+.profile-hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.profile-hero-id { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.profile-hero-avatar {
+  flex: 0 0 auto;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: #2f6fed;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 1rem;
+}
+.profile-hero-idtext { min-width: 0; }
+.profile-hero-welcome { margin: 0; font-size: 1.2rem; font-weight: 700; color: #12233c; }
+.profile-hero-meta {
+  margin-top: 2px; font-size: 0.85rem; color: #5b6b8c;
+  display: flex; align-items: center; gap: 7px; min-width: 0;
+}
+.profile-hero-email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px; }
+.profile-hero-runs { color: #2f6fed; font-weight: 700; }
+.profile-hero-sep { color: #b7c8e4; }
+.profile-hero-actions { display: flex; gap: 8px; flex: 0 0 auto; }
+.profile-hero-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.8rem; font-weight: 600;
+  padding: 5px 12px; border-radius: 999px;
+  background: #fff; border: 1px solid #cddbf0; color: #2f6fed;
+  cursor: pointer; font-family: inherit;
+}
+.profile-hero-btn:hover { background: #f4f8ff; border-color: #b9cbe6; }
+.profile-hero-btn--muted { color: #5b6b8c; }
+/* Primary: starting a new report is the main returning-user action. */
+.profile-hero-btn--primary { background: #2f6fed; border-color: #2f6fed; color: #fff; }
+.profile-hero-btn--primary:hover { background: #245fd6; border-color: #245fd6; }
+
+.profile-hero-journey {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid #dbe7fb;
+}
+.profile-hero-journey-main { flex: 1 1 260px; min-width: 220px; }
+.profile-hero-journey-head {
+  display: flex; justify-content: space-between;
+  font-size: 0.75rem; color: #5b6b8c; margin-bottom: 6px;
+}
+.profile-hero-bar { height: 8px; border-radius: 999px; background: #d7e3f7; overflow: hidden; }
+.profile-hero-bar-fill { height: 100%; background: #2f6fed; border-radius: 999px; transition: width 0.3s ease; }
+.profile-hero-next { font-size: 0.85rem; color: #33475b; margin-top: 8px; }
+.profile-hero-next strong { font-weight: 700; color: #12233c; }
+.profile-hero-continue {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.85rem; font-weight: 600;
+  padding: 9px 18px; border-radius: 999px;
+  background: #2f6fed; color: #fff; border: 0; cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(47, 111, 237, 0.2);
+}
+.profile-hero-continue:hover { background: #245fd6; }
+
+/* Roadmap node states to match the hero (done solid, current ringed, todo muted). */
+.profile-journey-step.is-done .profile-journey-node { background: #2f6fed; border-color: #2f6fed; color: #fff; }
+.profile-journey-step.is-current .profile-journey-node { background: #2f6fed; border-color: #2f6fed; color: #fff; box-shadow: 0 0 0 4px #dbe7fb; }
+.profile-journey-step.is-todo .profile-journey-node { background: #f3f6fb; border-color: #e6ebf3; color: #a7b2c2; }
+
+/* Segmented tab bar for the profile sections (roadmap / favourites / grades /
+   assessments). Scrolls sideways on narrow screens so it works on mobile. */
+.profile-tabs-wrap { margin-bottom: 18px; }
+.profile-tabbar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 5px;
+  margin-bottom: 14px;
+  background: #eef2f8;
+  border-radius: 999px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.profile-tabbar::-webkit-scrollbar { display: none; }
+.profile-tab {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  color: #5b6b8c;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.profile-tab:hover { color: #2f6fed; }
+.profile-tab.is-active {
+  background: #fff;
+  color: #2f6fed;
+  box-shadow: 0 1px 3px rgba(20, 35, 60, 0.1);
+}
+
+/* Single calm loading state for the whole overview (shown until every piece of
+   its data is in, so no card ever flashes a wrong partial value). */
+.profile-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 54px 20px;
+  margin-bottom: 18px;
+  background: #fff;
+  border: 1px solid #e6ebf3;
+  border-radius: 16px;
+}
+
+/* Overview stats strip (Journey / Favourites / Assessments). */
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.profile-stat {
+  border: none;
+  border-radius: 16px;
+  padding: 15px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.profile-stat-ic {
+  width: 38px; height: 38px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; flex: 0 0 auto;
+}
+.profile-stat-body { display: flex; flex-direction: column; gap: 1px; }
+.profile-stat-label { font-size: 0.78rem; }
+.profile-stat-num { font-size: 1.45rem; font-weight: 700; line-height: 1; }
+/* Colour per stat — friendlier for a teen audience, still flat and calm. */
+.profile-stat--journey { background: #e6f1fb; }
+.profile-stat--journey .profile-stat-ic { background: #378add; }
+.profile-stat--journey .profile-stat-num { color: #0c447c; }
+.profile-stat--journey .profile-stat-label { color: #185fa5; }
+.profile-stat--fav { background: #fbeaf0; }
+.profile-stat--fav .profile-stat-ic { background: #d4537e; }
+.profile-stat--fav .profile-stat-num { color: #72243e; }
+.profile-stat--fav .profile-stat-label { color: #993556; }
+.profile-stat--runs { background: #e1f5ee; }
+.profile-stat--runs .profile-stat-ic { background: #1d9e75; }
+.profile-stat--runs .profile-stat-num { color: #04342c; }
+.profile-stat--runs .profile-stat-label { color: #0f6e56; }
+@media (max-width: 560px) {
+  /* Keep the three stats as a compact row (icon over number) instead of three
+     tall stacked blocks. */
+  .profile-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .profile-stat { flex-direction: column; align-items: flex-start; gap: 6px; padding: 11px 12px; min-width: 0; }
+  .profile-stat-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+  .profile-stat-ic { width: 30px; height: 30px; border-radius: 9px; }
+  .profile-stat-num { font-size: 1.15rem; }
+  .profile-stat-label { font-size: 0.72rem; }
+}
+
+/* Compact journey card: progress ring + single next step + Continue. */
+.profile-jcard {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "ring eyebrow go"
+    "ring next    go";
+  align-items: center;
+  column-gap: 22px;
+  row-gap: 4px;
+  background: #fff;
+  border: 1px solid #e6ebf3;
+  border-radius: 16px;
+  padding: 18px 22px;
+  margin-bottom: 18px;
+}
+.profile-jring { grid-area: ring; position: relative; width: 88px; height: 88px; flex: 0 0 auto; align-self: center; }
+.profile-jcard-eyebrow { grid-area: eyebrow; align-self: end; }
+.profile-jcard-next { grid-area: next; align-self: start; }
+.profile-jcard-go { grid-area: go; align-self: center; }
+.profile-jring-lbl { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.profile-jring-n { font-size: 1.25rem; font-weight: 700; color: #14233c; line-height: 1; }
+.profile-jring-s { font-size: 0.7rem; color: #8a97ac; margin-top: 2px; }
+.profile-jcard-main { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
+.profile-jcard-eyebrow { font-size: 0.82rem; font-weight: 700; color: #8a97ac; letter-spacing: 0.01em; }
+.profile-jcard-next { display: flex; align-items: center; gap: 12px; }
+.profile-jcard-ic {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: #eaf1fe; color: #2f6fed;
+  display: flex; align-items: center; justify-content: center;
+  flex: 0 0 auto;
+}
+.profile-jcard-ic svg { width: 20px; height: 20px; }
+.profile-jcard-ic--done { background: #e7f6ee; color: #0f8a53; }
+.profile-jcard-nexttext { display: flex; flex-direction: column; flex: 1; min-width: 130px; }
+.profile-jcard-nextlabel { font-size: 0.78rem; color: #8a97ac; }
+.profile-jcard-nextname { font-size: 0.98rem; font-weight: 700; color: #14233c; }
+/* The whole journey card is clickable when there is a next step: a discreet
+   hover lift plus an arrow on the right that brightens and nudges, no loud
+   button. */
+.profile-jcard--clickable { cursor: pointer; transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease; }
+.profile-jcard--clickable:hover { border-color: #cddbf0; background: #fbfdff; box-shadow: 0 3px 14px rgba(15, 23, 42, 0.06); }
+.profile-jcard--clickable:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
+.profile-jcard-go {
+  flex: 0 0 auto;
+  width: 38px; height: 38px; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #eaf1fe; color: #2f6fed;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+.profile-jcard--clickable:hover .profile-jcard-go { background: #2f6fed; color: #fff; transform: translateX(3px); }
+@media (max-width: 600px) {
+  /* Ring + title + arrow on the top row; the next step gets its own full-width
+     row below so it never squashes into two cramped lines. */
+  .profile-jcard {
+    grid-template-areas:
+      "ring eyebrow go"
+      "next next    next";
+    column-gap: 14px;
+    row-gap: 14px;
+    padding: 16px;
+  }
+  .profile-jring, .profile-jring svg { width: 58px; height: 58px; }
+  .profile-jring-n { font-size: 0.92rem; }
+  .profile-jcard-eyebrow { align-self: center; }
+  .profile-jcard-next { background: #f7f9fc; border-radius: 12px; padding: 10px 12px; }
+  .profile-jcard-nextname { font-size: 0.95rem; }
+}
+
+/* Favourites (left) + grades (right) row. */
+.profile-favrow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+  margin-bottom: 18px;
+}
+/* Both middle cards fill the row so Favourites and Grades are always equal height. */
+.profile-favrow > * { height: 100%; min-width: 0; }
+.profile-favrow--single { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 820px) {
+  .profile-favrow { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Continue CTA sitting on the current step of the roadmap. */
+/* Discreet "you are here" marker: a small downward arrow that hovers just above
+   the current step's node (the node itself is clickable). Gently bobs so the
+   eye is drawn to it without shouting. */
+.profile-journey-here {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  width: 15px;
+  height: 10px;
+  transform: translateX(-50%);
+  background: #2f6fed;
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+  filter: drop-shadow(0 2px 2px rgba(47, 111, 237, 0.3));
+  animation: journeyHereBob 1.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes journeyHereBob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-4px); }
+}
+
+.profile-showall {
+  border: 0; background: none; color: #2f6fed;
+  font-size: 0.82rem; font-weight: 600; cursor: pointer;
+  font-family: inherit; padding: 4px 0; width: 100%; text-align: center;
+}
+.profile-showall:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .profile-hero { padding: 16px; }
+  .profile-hero-welcome { font-size: 1.05rem; }
+  .profile-hero-email { max-width: 180px; }
+  .profile-hero-continue { flex: 1 1 auto; justify-content: center; }
+}
+
 .profile-welcome {
   font-size: 1.25rem;
   font-weight: 700;
@@ -193,8 +550,8 @@
 .profile-card {
   background: #ffffff;
   border: 1px solid rgba(47, 111, 237, 0.08);
-  border-radius: 20px !important;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  border-radius: 16px !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
   /* visible so the run "..." action menu can overflow the card edge */
   overflow: visible;
 }
@@ -2756,16 +3113,16 @@
 
 /* ---- Journey timeline (profile page) ---- */
 .profile-journey {
-  background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
-  border: 1px solid #e7edf5;
+  background: #ffffff;
+  border: 1px solid rgba(47, 111, 237, 0.08);
   border-radius: 16px;
-  padding: 20px 22px 18px;
+  padding: 14px 18px;
   margin-bottom: 18px;
   overflow: hidden;
 }
 
 .profile-journey-head {
-  margin-bottom: 22px;
+  margin-bottom: 14px;
 }
 
 .profile-journey-title {
@@ -2909,10 +3266,10 @@
 /* Current step is not done yet, so it stays greyed like upcoming steps —
    just lightly marked as "next" with a soft ring and a touch larger. */
 .profile-journey-step.is-current .profile-journey-node {
-  background: #f3f6fa;
-  border-color: #c6d0de;
-  color: #97a4b4;
-  box-shadow: 0 0 0 4px rgba(150, 165, 185, 0.12);
+  background: #eaf1fe;
+  border-color: #2f6fed;
+  color: #2f6fed;
+  box-shadow: 0 0 0 4px rgba(47, 111, 237, 0.14);
   transform: scale(1.1);
 }
 
@@ -2946,8 +3303,8 @@
 }
 
 .profile-journey-step.is-current .profile-journey-label {
-  color: #8a97a8;
-  font-weight: 600;
+  color: #2f6fed;
+  font-weight: 700;
 }
 
 /* Phones: node vertically centred, labels alternate above/below so the long
@@ -2973,6 +3330,10 @@
   }
 
   .profile-journey-node { width: 30px; height: 30px; }
+
+  /* Vertical timeline on phones: the blue ring + blue label already mark the
+     current step, so the floating arrow (tuned for the horizontal rail) is hidden. */
+  .profile-journey-here { display: none; }
 
   /* Vertical connector: fills only the gap between the node above and this one,
      so it links the beads instead of slicing through them (node is 30px). */
@@ -3017,4 +3378,33 @@
 
 @keyframes journeyLineInV {
   to { transform: scaleY(1); }
+}
+
+/* Loading skeletons: shown in place of the name and run counts on the profile
+   header while the profile bundle loads, so stale placeholders like a blank
+   name or "0 runs" never flash before the real data arrives. */
+.profile-skel {
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e6ebf2 25%, #eef2f7 37%, #e6ebf2 63%);
+  background-size: 400% 100%;
+  animation: profileSkelShimmer 1.3s ease-in-out infinite;
+}
+.profile-skel--title {
+  width: 210px;
+  max-width: 60vw;
+  height: 1.5rem;
+  border-radius: 8px;
+}
+.profile-skel--pill {
+  width: 54px;
+  height: 0.85rem;
+}
+@keyframes profileSkelShimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .profile-skel { animation: none; }
 }

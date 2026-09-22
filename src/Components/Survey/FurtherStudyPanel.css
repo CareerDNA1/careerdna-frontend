@@ -172,6 +172,9 @@
 .fs-rank-cell {
   display: block;
   width: 100%;
+  /* Sit at the top of the grid row instead of stretching to match the taller
+     requirements column, so the title stays high rather than floating. */
+  align-self: start;
   text-align: left;
   font-family: inherit;
   cursor: pointer;
@@ -181,11 +184,33 @@
   background: #f4f8ff;
   transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
+/* Give the title room to breathe above the description. */
+.fs-rank-cell__label { margin-bottom: 12px; }
+.fs-rank-cell .pathway-role-item__summary { margin-top: 0; }
 .fs-rank-cell:hover {
   border-color: #b9cbe6;
 }
 .fs-rank-cell:active { transform: scale(0.995); }
 .fs-rank-cell__label { display: flex; align-items: center; gap: 6px; }
+/* Premium tag on paid-package features (rankings, live jobs, live openings).
+   A restrained dark chip with soft gold text reads more premium than a bright
+   gold gradient. */
+.fs-premium-badge {
+  margin-left: auto;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #fbf3df;
+  border: 1px solid #ecd9a6;
+  color: #8a6d1f;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.fs-premium-badge__star { flex: 0 0 auto; margin-top: -1px; }
 .fs-rank-live {
   display: inline-flex;
   align-items: center;
@@ -216,9 +241,7 @@
   margin-top: 4px;
 }
 .fs-rank-cell__go {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  display: inline-block;
   color: #2f6fed;
   background: #eaf1fe;
   border: 1px solid #cddbf0;
@@ -226,9 +249,16 @@
   padding: 7px 13px;
   font-weight: 600;
   font-size: 0.82rem;
-  flex: 0 0 auto;
+  line-height: 1.3;
+  flex: 0 1 auto;
+  max-width: 100%;
+  text-align: center;
 }
 .fs-rank-cell:hover .fs-rank-cell__go { background: #dce8fd; border-color: #b9cbe6; }
+@media (max-width: 560px) {
+  .fs-rank-cell__foot { flex-direction: column; align-items: stretch; }
+  .fs-rank-cell__go { width: 100%; }
+}
 
 /* Full-width call-to-action bar shown at the top of an expanded degree. */
 .fs-rankings-cta {
@@ -280,6 +310,81 @@
   color: #5b6b8c;
   font-weight: 600;
   line-height: 1.3;
+}
+
+/* Structured "Typical A-levels & GCSEs" block (replaces the old prose). */
+.fs-reqs__rows, .fs-reqs-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 10px;
+}
+.fs-req-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #eef2f8;
+}
+.fs-req-row:last-child { padding-bottom: 0; border-bottom: none; }
+.fs-req-key {
+  flex: 0 0 108px;
+  color: #5b6b8c;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding-top: 2px;
+}
+.fs-req-val { color: #33475b; flex: 1; min-width: 0; }
+
+/* Title line with an optional compact demand chip next to the subject name. */
+.fs-title-line { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.fs-demand-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.fs-demand-chip--up { background: #e6f6ec; color: #1f8a4c; }
+.fs-demand-chip--down { background: #fdeceb; color: #c0392b; }
+.fs-demand-chip--flat { background: #eef1f5; color: #5b6b8c; }
+.fs-req-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.fs-req-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #eef2f8;
+  border: 1px solid #dfe7f2;
+  color: #33475b;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.fs-req-chip--req {
+  background: #eaf1fe;
+  border-color: #cddbf0;
+  color: #2f6fed;
+}
+.fs-req-note {
+  margin: 9px 0 0;
+  color: #5b6b8c;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+.fs-req-caveat {
+  margin: 6px 0 0;
+  color: #8a97a8;
+  font-size: 0.78rem;
+  font-style: italic;
+}
+@media (max-width: 560px) {
+  .fs-req-row { flex-direction: column; gap: 3px; }
+  .fs-req-key { flex: 0 0 auto; padding-top: 0; }
 }
 
 /* Live "programmes ranked" indicator on the Explore programmes & rankings cell */

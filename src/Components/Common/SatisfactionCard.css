@@ -1,3 +1,56 @@
+/* Popup (modal) mode. */
+.satisfaction-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 96000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(15, 23, 42, 0.55);
+}
+.satisfaction-modal {
+  position: relative;
+  width: min(100%, 460px);
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #dbe7f6;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+  padding: 20px 22px;
+}
+.satisfaction-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 999px;
+  background: #f3f6fb;
+  color: #64748b;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 1;
+}
+.satisfaction-modal .satisfaction-card {
+  margin: 0;
+  border: 0;
+  padding: 0;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+}
+.satisfaction-modal .satisfaction-title { font-size: 1.05rem; }
+.satisfaction-modal .satisfaction-faces { justify-content: center; flex-wrap: wrap; }
+.satisfaction-modal .satisfaction-comment-wrap {
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  gap: 10px;
+}
+.satisfaction-modal .satisfaction-done-btn { align-self: center; min-width: 130px; }
+
 /* Discreet, inline satisfaction prompt that matches the app's card styling. */
 .satisfaction-card {
   margin: 14px 0 0;
@@ -13,7 +66,7 @@
 .satisfaction-title {
   font-size: 0.92rem;
   font-weight: 650;
-  color: #14233c;
+  color: #2f6fed;
 }
 
 .satisfaction-faces {

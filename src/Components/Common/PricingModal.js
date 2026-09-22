@@ -37,70 +37,74 @@ const plans = [
     },
   },
   {
-    title: 'CareerDNA Explore',
-    subtitle: 'One-time report',
-    price: '£17.99',
+    title: 'CareerDNA Explorer',
+    subtitle: 'Essentials, all year',
+    price: '£29.99',
+    suffix: '/ year',
+    note: 'Annual subscription, renews yearly',
     variant: 'single',
     checkoutPlan: 'explore',
-    anchorPrice: '£24.99',
-    note: 'Launch price',
     features: {
       school: [
-        '1 CareerDNA© report',
+        { type: 'lead', text: 'Your full CareerDNA© profile' },
+        { type: 'header', text: 'Your profile' },
         'Personal strengths insights',
         'Ideal work environment insights',
         'Personalised career pathway recommendations',
         'A-level & university subject recommendations',
-        'Non-university pathway recommendations',
-        '5 CareerDNA advisor questions (top-ups available)',
+        '1 CareerDNA report a year',
+        { type: 'header', text: 'Guidance' },
+        '5 CareerDNA advisor questions',
+        'Track your development over time',
+        'New tools and expert advice all year',
+        { type: 'note', text: 'Extra advisor question packs available' },
       ],
       university: [
-        '1 CareerDNA© report',
+        { type: 'lead', text: 'Your full CareerDNA© profile' },
+        { type: 'header', text: 'Your profile' },
         'Personal strengths insights',
         'Ideal work environment insights',
         'Personalised career pathway recommendations',
         'Personalised role recommendations',
         'Further study & postgraduate recommendations',
-        '5 CareerDNA advisor questions (top-ups available)',
+        '1 CareerDNA report a year',
+        { type: 'header', text: 'Guidance' },
+        '5 CareerDNA advisor questions',
+        'Track your development over time',
+        'New tools and expert advice all year',
+        { type: 'note', text: 'Extra advisor question packs available' },
       ],
     },
   },
   {
     title: 'CareerDNA Premium',
-    subtitle: 'A full year of guidance',
+    subtitle: 'Everything, all year',
     price: '£39.99',
     suffix: '/ year',
     anchorPrice: '£59.99',
-    note: 'Launch price · renews yearly',
+    note: 'Annual subscription, renews yearly',
     badge: 'Most popular',
     variant: 'premium',
     checkoutPlan: 'premium',
     features: {
       school: [
-        '2 CareerDNA© reports a year',
-        'Personal strengths insights',
-        'Ideal work environment insights',
-        'Personalised career pathway recommendations',
-        'A-level & university subject recommendations',
-        'Non-university pathway recommendations',
-        '20 CareerDNA advisor questions (top-ups available)',
-        'Track your development over time',
-        'Live university & course search',
+        { type: 'lead', text: 'Everything in CareerDNA Explorer, plus:' },
+        '1 more CareerDNA report a year',
+        '15 more CareerDNA advisor questions',
+        { type: 'header', text: 'Premium tools' },
+        'Live apprenticeships and other non-university routes',
         'CareerDNA Subject & University Rankings©',
-        'New tools and expert advice all year',
+        'Live university & course search',
+        { type: 'note', text: 'Extra advisor question packs available' },
       ],
       university: [
-        '2 CareerDNA© reports a year',
-        'Personal strengths insights',
-        'Ideal work environment insights',
-        'Personalised career pathway recommendations',
-        'Personalised role recommendations',
-        'Further study & postgraduate recommendations',
-        '20 CareerDNA advisor questions (top-ups available)',
-        'Track your development over time',
-        'Live job & internship search',
-        'CareerDNA Course & University Rankings©',
-        'New tools and expert advice all year',
+        { type: 'lead', text: 'Everything in CareerDNA Explorer, plus:' },
+        '1 more CareerDNA report a year',
+        '15 more CareerDNA advisor questions',
+        { type: 'header', text: 'Premium tools' },
+        'Live graduate jobs from LinkedIn, Indeed, Glassdoor and more',
+        'Live internship & graduate programme search',
+        { type: 'note', text: 'Extra advisor question packs available' },
       ],
     },
   },
@@ -111,22 +115,20 @@ const plans = [
     variant: 'institution',
     features: {
       school: [
-        'Bulk student access',
+        'Access for all your students',
         'Complements your careers advisers, so students arrive ready for richer sessions',
-        'Institution management dashboard',
+        'Institution and cohort management dashboard',
         'Cohort analytics and reporting',
-        'Customised AI advisor (if required)',
         'Career Strategy development toolkit',
-        'Track employability from first report to employment',
+        'Track progress from first report to their next step',
         'Dedicated account manager and 7-days-a-week support',
         'Free pilots available',
       ],
       university: [
-        'Bulk student access',
+        'Access for all your students',
         'Complements your careers advisers, so students arrive ready for richer sessions',
-        'Institution management dashboard',
+        'Institution and cohort management dashboard',
         'Cohort analytics and reporting',
-        'Customised AI advisor (if required)',
         'Career Strategy development toolkit',
         'Track employability from first report to employment',
         'Dedicated account manager and 7-days-a-week support',
@@ -706,9 +708,7 @@ function PricingModal({
 
                   <div className="pricing-price-block">
                     {plan.anchorPrice ? (
-                      <div className="pricing-plan-anchor">
-                        <s>{plan.anchorPrice}</s>
-                      </div>
+                      <div className="pricing-plan-anchor"><s>{plan.anchorPrice}</s></div>
                     ) : null}
                     <div className="pricing-plan-price">
                       {plan.price}
@@ -721,9 +721,31 @@ function PricingModal({
                   </div>
 
                   <ul className="pricing-feature-list">
-                    {getPlanFeatures(plan, audience).map((feature) => (
-                      <li key={feature}>{feature}</li>
-                    ))}
+                    {getPlanFeatures(plan, audience).map((feature, fi) => {
+                      const item = typeof feature === 'string' ? { text: feature } : (feature || {});
+                      if (item.type === 'header') {
+                        return (
+                          <li key={fi} className="pricing-feature-header">
+                            {item.tag ? <span className="pricing-feature-tag">{item.tag}</span> : null}
+                            {item.text}
+                          </li>
+                        );
+                      }
+                      if (item.type === 'note') {
+                        return <li key={fi} className="pricing-feature-note">{item.text}</li>;
+                      }
+                      const cls = item.type === 'lead'
+                        ? 'pricing-feature pricing-feature--lead'
+                        : item.type === 'premium'
+                          ? 'pricing-feature pricing-feature--premium'
+                          : 'pricing-feature';
+                      return (
+                        <li key={fi} className={cls}>
+                          <span>{item.text}</span>
+                          {item.type === 'premium' ? <span className="pricing-feature-tag">Premium</span> : null}
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
 

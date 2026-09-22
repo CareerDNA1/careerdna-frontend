@@ -92,8 +92,15 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
         setLimitReached(false);
         setStarterPrompts(loadedStarterPrompts);
         setUsedStarterPrompts(deriveUsedStarterPrompts(loadedMessages, loadedStarterPrompts));
-      } catch (err) {
-        if (!cancelled) setErrorMsg(err.message || 'Could not load the advisor chat.');
+      } catch {
+        // A failed background history load must NOT show a scary error just for
+        // opening the tab. Fall back to the starter questions so the advisor is
+        // still usable; a real error only surfaces if a question the user
+        // actually sends fails.
+        if (!cancelled) {
+          setStarterPrompts(FALLBACK_STARTER_PROMPTS);
+          setUsedStarterPrompts(deriveUsedStarterPrompts([], FALLBACK_STARTER_PROMPTS));
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -253,7 +260,10 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
 
       <div className="career-advisor-panel">
         {loading ? (
-          <div className="career-advisor-loading">Loading advisor chat...</div>
+          <div className="career-advisor-loading" role="status" aria-label="Loading advisor chat">
+            <span className="cdna-load-spinner" aria-hidden="true" />
+            <span>Loading advisor chat&hellip;</span>
+          </div>
         ) : (
           <>
             <div ref={messagesRef} className={`career-advisor-messages ${!hasMessages ? 'is-empty' : ''}`}>

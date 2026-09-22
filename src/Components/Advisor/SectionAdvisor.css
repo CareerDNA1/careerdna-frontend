@@ -50,6 +50,24 @@
   font-size: 0.85rem;
   color: #7a8798;
   padding: 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+/* Shared rounded loading spinner (matches the profile, jobs and advisor spinners). */
+.section-advisor__loading .cdna-load-spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2.5px solid #d3e0f4;
+  border-top-color: #2f6fed;
+  flex: 0 0 auto;
+  display: inline-block;
+  animation: cdna-load-spin 0.7s linear infinite;
+}
+@keyframes cdna-load-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .section-advisor__loading .cdna-load-spinner { animation: none; }
 }
 
 /* Chips */

@@ -9,7 +9,8 @@ import { getCareerWorldIcon, getPathwayIcon } from '../../utils/iconMap';
 import { fetchNonUniRoutes, peekNonUniRoutes } from '../../utils/fetchNonUniRoutes';
 import { fetchGradJobs } from '../../utils/fetchGradJobs';
 import { entryRouteForCard } from '../../utils/entryRouteModes';
-import { ThumbsUp, ThumbsDown, Smiley, SmileyMeh, BookmarkSimple, Info, Briefcase, Signpost, UsersThree, TrendUp, MapPin, GraduationCap, CalendarBlank, CurrencyGbp, Rocket } from 'phosphor-react';
+import { ThumbsUp, ThumbsDown, Smiley, SmileyMeh, BookmarkSimple, Heart, Info, Briefcase, Signpost, UsersThree, TrendUp, MapPin, GraduationCap, CalendarBlank, CurrencyGbp, Rocket } from 'phosphor-react';
+import { getSavedIds, setItemReaction } from '../../utils/savedItems';
 import {
   FaBrain,
   FaBullseye,
@@ -53,6 +54,11 @@ import {
   FaClock,
   FaFeatherAlt,
 } from 'react-icons/fa';
+
+// Stable id for a saved job advert (prefer the apply URL; fall back to title+employer).
+function jobKey(job) {
+  return `job:${job.url || `${job.title || ''}|${job.employer || ''}`}`;
+}
 
 // Normalise a pathway title for joining across the scored pathways (from the
 // report) and the non-university route list (from the register).
@@ -978,7 +984,7 @@ function cleanJobTitle(raw) {
   return t || String(raw || '').trim();
 }
 
-export function JobCard({ job }) {
+export function JobCard({ job, saved = false, onToggleSave, onOpen }) {
   const meta = job.employer || '';
   // Pills with icons, matching the apprenticeship advert cards: location ·
   // closing date · experience (only when stated) · salary.
@@ -988,12 +994,8 @@ export function JobCard({ job }) {
     job.noExperience ? null : { Icon: Briefcase, text: job.experience || 'Experience not stated' },
     job.salary ? { Icon: CurrencyGbp, text: job.salary } : null,
   ].filter(Boolean);
-  const Wrapper = job.url ? 'a' : 'div';
-  const wrapperProps = job.url
-    ? { href: job.url, target: '_blank', rel: 'noopener noreferrer', className: 'role-jobcard role-jobcard--link' }
-    : { className: 'role-jobcard' };
-  return (
-    <Wrapper {...wrapperProps}>
+  const content = (
+    <>
       <div className="role-jobcard__top">
         <span className="role-jobcard__title">{cleanJobTitle(job.title)}</span>
         {job.source ? <span className="role-jobcard__src">via {job.source}</span> : null}
@@ -1006,15 +1008,145 @@ export function JobCard({ job }) {
           ))}
         </div>
       ) : null}
-    </Wrapper>
+    </>
+  );
+  // Card is a container so the save heart can sit as a sibling of the apply link
+  // (a button can't be nested inside an anchor).
+  return (
+    <div className={`role-jobcard${onToggleSave ? ' role-jobcard--saveable' : ''}`}>
+      {onToggleSave ? (
+        <button
+          type="button"
+          className={`role-jobcard__save${saved ? ' is-saved' : ''}`}
+          aria-pressed={saved}
+          aria-label={saved ? 'Saved to favourites' : 'Save to favourites'}
+          title={saved ? 'Saved' : 'Save to favourites'}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleSave(job); }}
+        >
+          <Heart size={16} weight={saved ? 'fill' : 'bold'} aria-hidden="true" />
+        </button>
+      ) : null}
+      {onOpen ? (
+        <button
+          type="button"
+          className="role-jobcard__link-area role-jobcard__link-area--btn"
+          onClick={() => onOpen(job)}
+        >
+          {content}
+        </button>
+      ) : job.url ? (
+        <a className="role-jobcard__link-area" href={job.url} target="_blank" rel="noopener noreferrer">
+          {content}
+        </a>
+      ) : (
+        <div className="role-jobcard__link-area">{content}</div>
+      )}
+    </div>
+  );
+}
+
+// In-app detail card for a single live job: opens when a job row is tapped, so
+// the student sees the full advert summary (and whether it has closed) with
+// like/dislike and the apply link, instead of being sent straight out.
+export function JobDetailModal({ job, reaction = '', onReact, onClose }) {
+  useEffect(() => {
+    if (!job) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [job, onClose]);
+  if (!job) return null;
+  let closed = false;
+  if (job.closingDate) { const d = new Date(job.closingDate); const t = new Date(); t.setHours(0, 0, 0, 0); if (!Number.isNaN(d.getTime()) && d < t) closed = true; }
+  const pills = [
+    job.location ? { Icon: MapPin, text: job.location } : null,
+    job.deadline ? { Icon: CalendarBlank, text: `Closes ${job.deadline}` } : null,
+    job.noExperience ? null : { Icon: Briefcase, text: job.experience || 'Graduate / entry-level' },
+    job.salary ? { Icon: CurrencyGbp, text: job.salary } : null,
+  ].filter(Boolean);
+  return (
+    <div className="cw-def-modal cw-def-modal--jobs" role="dialog" aria-modal="true" aria-label={cleanJobTitle(job.title)}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="cw-def-modal__box job-detail-box">
+        <div className="cw-def-modal__head cw-wayin-head">
+          <span className="cw-wayin-head__icon" aria-hidden="true"><Briefcase size={22} weight="bold" /></span>
+          <div className="cw-wayin-head__titles">
+            <span className="cw-def-modal__title">{cleanJobTitle(job.title)}</span>
+            <span className="cw-wayin-head__sub">{job.employer || 'Live job'}{job.source ? ` · via ${job.source}` : ''}</span>
+          </div>
+          <button type="button" className="cw-def-modal__close" aria-label="Close" onClick={onClose}>×</button>
+        </div>
+        <div className="cw-def-modal__body">
+          {closed ? <div className="job-detail-closed">This advert has closed, so it may no longer be accepting applications.</div> : null}
+          {pills.length ? (
+            <div className="role-jobcard__facts job-detail-facts">
+              {pills.map(({ Icon, text }, i) => (
+                <span className="role-jobcard__fact" key={i}><Icon size={13} weight="bold" aria-hidden="true" />{text}</span>
+              ))}
+            </div>
+          ) : null}
+          <PathwayReactionRow reaction={reaction} onReact={onReact} label="Save this job" />
+          {job.url ? (
+            <div className="job-detail-actions">
+              <a className="cw-readmore job-detail-apply" href={job.url} target="_blank" rel="noopener noreferrer">
+                Apply on {job.source || 'the job board'} <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
   );
 }
 
 // A reusable pop-up listing live jobs/internships/schemes/apprenticeships.
 export function JobsModal({ open, onClose, title, heading, lead, data, kindNoun, fieldMode = false }) {
   const [showAll, setShowAll] = useState(false);
+  const [savedJobs, setSavedJobs] = useState(() => new Set());
+  const [dislikedJobs, setDislikedJobs] = useState(() => new Set());
+  const [detailJob, setDetailJob] = useState(null);
   const INITIAL_SHOWN = 15;
-  useEffect(() => { if (open) setShowAll(false); }, [open]);
+  useEffect(() => { if (open) { setShowAll(false); setDetailJob(null); } }, [open]);
+  useEffect(() => {
+    if (!open) return undefined;
+    let cancelled = false;
+    getSavedIds('job').then((s) => { if (!cancelled) setSavedJobs(s); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [open]);
+  const reactionFor = (id) => (savedJobs.has(id) ? 'like' : dislikedJobs.has(id) ? 'dislike' : '');
+  const persistJobReaction = async (job, reaction, remove) => {
+    await setItemReaction({
+      itemType: 'job',
+      itemId: jobKey(job),
+      itemTitle: job.title || 'Job',
+      itemMeta: {
+        employer: job.employer || '',
+        location: job.location || '',
+        url: job.url || '',
+        deadline: job.deadline || '',
+        closingDate: job.closingDate || null,
+        source: job.source || '',
+      },
+      reaction,
+      remove,
+    });
+  };
+  const handleToggleSave = async (job) => {
+    const id = jobKey(job);
+    const isSaved = savedJobs.has(id);
+    setSavedJobs((prev) => { const n = new Set(prev); if (isSaved) n.delete(id); else n.add(id); return n; });
+    if (!isSaved) setDislikedJobs((prev) => { const n = new Set(prev); n.delete(id); return n; });
+    await persistJobReaction(job, 'like', isSaved);
+  };
+  // Like/dislike from the job detail card. Like also drives the heart (favourite).
+  const handleJobReact = async (job, next) => {
+    const id = jobKey(job);
+    const current = reactionFor(id);
+    const remove = current === next;
+    setSavedJobs((prev) => { const n = new Set(prev); if (!remove && next === 'like') n.add(id); else n.delete(id); return n; });
+    setDislikedJobs((prev) => { const n = new Set(prev); if (!remove && next === 'dislike') n.add(id); else n.delete(id); return n; });
+    await persistJobReaction(job, next, remove);
+  };
   useEffect(() => {
     if (!open) return undefined;
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -1060,7 +1192,13 @@ export function JobsModal({ open, onClose, title, heading, lead, data, kindNoun,
             <>
               <div className="role-jobs-list">
                 {(showAll ? jobs : jobs.slice(0, INITIAL_SHOWN)).map((job, i) => (
-                  <JobCard key={`${job.title}-${i}`} job={job} />
+                  <JobCard
+                    key={`${job.title}-${i}`}
+                    job={job}
+                    saved={savedJobs.has(jobKey(job))}
+                    onToggleSave={handleToggleSave}
+                    onOpen={setDetailJob}
+                  />
                 ))}
               </div>
               {!showAll && jobs.length > INITIAL_SHOWN ? (
@@ -1082,6 +1220,14 @@ export function JobsModal({ open, onClose, title, heading, lead, data, kindNoun,
           ) : null}
         </div>
       </div>
+      {detailJob ? (
+        <JobDetailModal
+          job={detailJob}
+          reaction={reactionFor(jobKey(detailJob))}
+          onReact={(next) => handleJobReact(detailJob, next)}
+          onClose={() => setDetailJob(null)}
+        />
+      ) : null}
     </div>
   );
 }
@@ -1167,6 +1313,7 @@ function GradJobsLine({ title, advisory = null }) {
         <>
           <div className="role-jobs__eyebrow">
             <EyebrowIcon size={15} weight="bold" aria-hidden="true" /> {eyebrowText}
+            {isAdvisory ? null : <span className="fs-premium-badge">Premium</span>}
           </div>
           <p className="role-jobs__blurb">{blurb}</p>
           <div className="role-jobs__foot">
@@ -1266,6 +1413,7 @@ export function PathwayJobsLine({ title, pathwayTitle = '' }) {
     <div className="role-jobs">
       <div className="role-jobs__eyebrow">
         <Briefcase size={15} weight="bold" aria-hidden="true" /> Internships &amp; graduate schemes
+        <span className="fs-premium-badge">Premium</span>
       </div>
       <p className="role-jobs__blurb">
         Live internships for this role, plus the main UK sites where graduate schemes and programmes are advertised.
@@ -1392,7 +1540,7 @@ export function RoleAccordionItem({ item, onItemReaction, savedReactions = {}, s
   };
 
   return (
-    <div ref={rowRef} className={`pathway-role-item ${open ? 'is-open' : ''}`}>
+    <div ref={rowRef} data-fav-key={String(item?.title || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()} className={`pathway-role-item ${open ? 'is-open' : ''}`}>
       <button
         type="button"
         className="pathway-role-item__toggle"
@@ -1543,7 +1691,7 @@ function PathwayDefinitionItem({ item, open = false, onToggle, onItemReaction, s
   };
 
   return (
-    <div ref={rowRef} className={`pathway-role-item ${open ? 'is-open' : ''}`}>
+    <div ref={rowRef} data-fav-key={String(item?.title || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()} className={`pathway-role-item ${open ? 'is-open' : ''}`}>
       <button
         type="button"
         className="pathway-role-item__toggle"
@@ -2009,22 +2157,15 @@ export default function SelectionInsightExplorer({ insights, loading, error, onI
     if (!stillExists) setActiveId(nextDefault);
   }, [validInsights, activeId]);
 
-  // When the selected option changes (tab or dropdown click), bring the detail
-  // panel into view so the newly chosen item is centred.
+  // No auto-scroll on selection change — the active item can change on its own
+  // as data settles, which was scrolling the page on arrival.
   const mainRef = useRef(null);
-  const hasSelectedRef = useRef(false);
-  useEffect(() => {
-    if (hasSelectedRef.current && mainRef.current) {
-      mainRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    hasSelectedRef.current = true;
-  }, [activeId]);
 
   if (loading) {
     return (
       <section className="selection-explorer selection-explorer--loading">
         <div className="selection-explorer__intro">
-          <h2>Career Pathways</h2>
+          <h2>Your career pathways</h2>
           <p>Loading the deeper signature fit for the options you liked...</p>
         </div>
       </section>
@@ -2035,7 +2176,7 @@ export default function SelectionInsightExplorer({ insights, loading, error, onI
     return (
       <section className="selection-explorer">
         <div className="selection-explorer__intro">
-          <h2>Career Pathways</h2>
+          <h2>Your career pathways</h2>
           <p className="selection-explorer__error">{error}</p>
         </div>
       </section>
@@ -2046,7 +2187,7 @@ export default function SelectionInsightExplorer({ insights, loading, error, onI
     return (
       <section className="selection-explorer selection-explorer--empty">
         <div className="selection-explorer__intro selection-explorer__intro--empty">
-          <h2>Career Pathways</h2>
+          <h2>Your career pathways</h2>
           <p className="selection-explorer__empty-message">
             Like the career worlds you&rsquo;re drawn to in the Career Worlds tab, then come back here to explore the career pathways inside each one.
           </p>
@@ -2062,12 +2203,21 @@ export default function SelectionInsightExplorer({ insights, loading, error, onI
   return (
     <section ref={explorerRef} className="selection-explorer">
       <div className="selection-explorer__intro selection-explorer__intro--active">
-        <h2>Career Pathways</h2>
-        <p className="selection-explorer__intro-text">
-          {isPathwayMode
-            ? 'The career pathways and graduate roles most aligned with the options you liked. Pick a tab to see each pathway, how well it fits your CareerDNA, and the ways you can get in.'
-            : 'A career pathway is a more specific direction within a career world, a family of related jobs that share similar skills and training. Pick one of the career worlds you liked to see its pathways, then open any pathway to read what the work involves, how strongly it matches your profile, and the ways you can get in. Every pathway shows both kinds of route where they exist, the university degrees that lead to it and the apprenticeships and other ways in that do not need a degree, so you can explore it whether or not you have decided on university.'}
-        </p>
+        <h2>Explore career pathways</h2>
+        {isPathwayMode ? (
+          <p className="selection-explorer__intro-text">
+            The career pathways and graduate roles most aligned with the options you liked. Pick a tab to see each pathway, how well it fits your CareerDNA, and the ways you can get in.
+          </p>
+        ) : (
+          <>
+            <p className="selection-explorer__intro-text">
+              A career pathway is a more specific direction within a career world, a family of related jobs that share similar skills and training. Pick one of the career worlds you liked to see its pathways, then open any pathway to read what the work involves, how strongly it matches your profile, and the ways you can get in.
+            </p>
+            <p className="selection-explorer__intro-text">
+              Every pathway shows both kinds of route where they exist: the university degrees that lead to it, and the apprenticeships and other ways in that do not need a degree, so you can explore it whether or not you have decided on university.
+            </p>
+          </>
+        )}
       </div>
 
       {(() => {

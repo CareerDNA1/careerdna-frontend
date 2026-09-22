@@ -1,0 +1,297 @@
+/* Favourites card (left of the grades card on the profile page) + its popup. */
+.fav-card {
+  background: #fff;
+  border: 1px solid rgba(47, 111, 237, 0.08);
+  border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+.fav-preview { flex: 0 0 auto; }
+.fav-cardfoot { margin-top: auto; display: flex; justify-content: flex-end; padding-top: 14px; }
+.fav-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.fav-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #12233c;
+}
+.fav-title svg { color: #2f6fed; }
+.fav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  font-family: inherit;
+}
+.fav-btn--primary { background: #2f6fed; color: #fff; }
+.fav-btn--primary:hover { background: #245fd6; }
+.fav-foot { margin: 10px 0 0; color: #56657a; font-size: 0.86rem; line-height: 1.5; }
+.fav-empty { margin: 10px 0 0; color: #56657a; font-size: 0.86rem; line-height: 1.5; }
+
+/* Popup */
+.fav-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 96000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(15, 23, 42, 0.55);
+}
+.fav-modal {
+  position: relative;
+  width: min(100%, 560px);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid #dbe7f6;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+  padding: 22px 22px 18px;
+}
+/* When a favourite opens as its full report card (degree, role, world...), give
+   it the room the real card gets so its two-column layout isn't squeezed. */
+.fav-modal.fav-modal--wide {
+  width: min(100%, 900px);
+}
+/* Saved course/job card: match the rankings course-save box exactly (380px). */
+.fav-modal.fav-modal--course {
+  width: min(100%, 380px);
+}
+.fav-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: #f3f6fb;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.fav-modal-title { font-size: 1.14rem; font-weight: 700; color: #12233c; letter-spacing: -0.01em; }
+.fav-modal-sub { font-size: 0.82rem; color: #6b7788; margin: 3px 0 14px; }
+.fav-error { color: #c0392b; font-size: 0.84rem; margin: 0 0 10px; }
+
+.fav-groups { display: flex; flex-direction: column; gap: 18px; }
+.fav-group-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+.fav-group-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #7385a3;
+}
+.fav-group-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #eef2f8;
+  color: #5b6b8c;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+.fav-group-explore {
+  margin-left: auto;
+  border: 0;
+  background: none;
+  color: #2f6fed;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 2px 0;
+  white-space: nowrap;
+}
+.fav-group-explore:hover { text-decoration: underline; }
+.fav-items { display: flex; flex-direction: column; gap: 7px; }
+/* Inline preview rows shown on the profile card (before opening the modal). */
+.fav-preview { margin-top: 12px; display: flex; flex-direction: column; }
+.fav-prev { display: flex; align-items: center; gap: 11px; padding: 9px 0; border-bottom: 1px solid #eef2f8; }
+.fav-prev:last-of-type { border-bottom: 0; }
+.fav-prev-ic {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: #eaf1fe; color: #2f6fed;
+  display: flex; align-items: center; justify-content: center; flex: 0 0 auto;
+}
+.fav-prev-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.fav-prev-title { min-width: 0; font-size: 0.92rem; color: #243447; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fav-prev-sub { min-width: 0; font-size: 0.75rem; color: #7385a3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fav-prev-type { flex: 0 0 auto; font-size: 0.76rem; color: #8a97ac; }
+.fav-prev-closed { flex: 0 0 auto; font-size: 0.68rem; font-weight: 800; color: #b42318; background: #fdecea; border: 1px solid #f6cfca; border-radius: 999px; padding: 2px 8px; }
+.fav-prev-more {
+  align-self: flex-start;
+  margin-top: 10px;
+  border: 0; background: none; color: #2f6fed;
+  font-family: inherit; font-size: 0.86rem; font-weight: 600; cursor: pointer; padding: 2px 0;
+}
+.fav-prev-more:hover { text-decoration: underline; }
+
+.fav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border: 1px solid #eaeef4;
+  border-radius: 12px;
+  background: #fff;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.fav-item--tappable { cursor: pointer; }
+.fav-item--tappable:hover { border-color: #cddbf0; background: #fbfdff; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05); }
+.fav-item--tappable:focus-visible { outline: 2px solid #2f6fed; outline-offset: 1px; }
+.fav-item.is-removing { opacity: 0.5; }
+.fav-item-ic {
+  flex: 0 0 auto;
+  width: 34px; height: 34px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  background: #eaf1fe; color: #2f6fed;
+}
+.fav-item-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.fav-item-title { font-size: 0.92rem; font-weight: 600; color: #243447; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fav-item-sub { font-size: 0.78rem; color: #8a97ac; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fav-item-chev { flex: 0 0 auto; color: #c2cdde; transition: color 0.15s ease, transform 0.15s ease; }
+.fav-item--tappable:hover .fav-item-chev { color: #2f6fed; transform: translateX(2px); }
+.fav-item.is-expired .fav-item-title { color: #8a97a8; }
+.fav-item-expired {
+  flex: 0 0 auto;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #b42318;
+  background: #fdecea;
+  border: 1px solid #f6cfca;
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+.fav-item-menuwrap { position: relative; flex: 0 0 auto; }
+.fav-item-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: #97a3b4;
+  cursor: pointer;
+}
+.fav-item-more:hover { background: #f1f4f9; color: #4a5a72; }
+.fav-item-more:disabled { opacity: 0.5; cursor: default; }
+.fav-item-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 5;
+  min-width: 130px;
+  background: #fff;
+  border: 1px solid #e5e9f0;
+  border-radius: 10px;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.16);
+  padding: 5px;
+}
+.fav-item-menu-del {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  color: #c0392b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.fav-item-menu-del:hover { background: #fbeaea; }
+
+/* ---- Detail view (tapping a favourite) ---- */
+.fav-btn--ghost { background: #fff; color: #54657b; border: 1px solid #e5e7eb; }
+.fav-btn--ghost:hover { background: #f7f9fc; }
+.fav-btn--ghost:disabled { opacity: 0.6; cursor: default; }
+.fav-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 0; background: none; color: #2f6fed;
+  font-family: inherit; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; padding: 0; margin: 2px 0 16px;
+}
+.fav-back:hover { text-decoration: underline; }
+.fav-cardview { padding-top: 2px; }
+
+/* Saved course / job as a compact card with a link out. */
+.fav-linkcard { border: 1px solid #e6ebf3; border-radius: 14px; padding: 18px 18px 16px; margin-top: 4px; }
+.fav-linkcard__eyebrow { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #7385a3; }
+.fav-linkcard__title { font-size: 1.14rem; font-weight: 700; color: #12233c; letter-spacing: -0.01em; line-height: 1.25; margin-top: 4px; }
+.fav-linkcard__sub { font-size: 0.9rem; color: #5b6b8c; margin-top: 3px; }
+.fav-linkcard__link { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; color: #2f6fed; font-weight: 700; font-size: 0.9rem; text-decoration: none; }
+.fav-linkcard__link:hover { text-decoration: underline; }
+.fav-linkcard__nolink { margin-top: 12px; font-size: 0.84rem; color: #6b7788; line-height: 1.5; }
+.fav-linkcard__react { margin-top: 16px; }
+.fav-linkcard__stats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.fav-stat {
+  display: inline-flex; align-items: baseline; gap: 4px;
+  padding: 4px 10px; border-radius: 999px;
+  background: #f1f5fb; border: 1px solid #e2e9f4;
+  font-size: 0.76rem; color: #4b5c6b;
+}
+.fav-stat b { color: #1f2a37; font-weight: 700; }
+.fav-linkcard__statsnote { flex-basis: 100%; margin-top: 2px; font-size: 0.72rem; color: #8593a6; line-height: 1.4; }
+/* The report card renders open by default inside the popup. */
+.fav-cardview .cw-accordion-item { border: 1px solid #e6ebf3; border-radius: 14px; }
+.fav-detail-head { display: flex; align-items: flex-start; gap: 13px; }
+.fav-detail-ic {
+  flex: 0 0 auto;
+  width: 44px; height: 44px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  background: #eaf1fe; color: #2f6fed;
+}
+.fav-detail-headtext { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.fav-detail-eyebrow { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #7385a3; }
+.fav-detail-title { font-size: 1.2rem; font-weight: 700; color: #12233c; letter-spacing: -0.01em; line-height: 1.2; }
+.fav-detail-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 2px; }
+.fav-detail-chip { font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: #eef2fb; color: #3f5a86; border: 1px solid #dbe6f7; }
+.fav-detail-chip--band { background: #e7f6ee; color: #0f7a4b; border-color: #bfe6cf; }
+.fav-detail-loading { display: flex; align-items: center; gap: 9px; margin-top: 16px; color: #6b7788; font-size: 0.86rem; }
+.fav-detail-spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #d7e0ee; border-top-color: #2f6fed; animation: fav-spin 0.7s linear infinite; }
+@keyframes fav-spin { to { transform: rotate(360deg); } }
+.fav-detail-body { margin-top: 14px; }
+.fav-detail-lead { font-size: 0.92rem; line-height: 1.55; color: #2c3a4d; margin: 0 0 12px; }
+.fav-detail-para { font-size: 0.88rem; line-height: 1.6; color: #43526a; margin: 0 0 10px; }
+.fav-detail-light { background: #f7f9fc; border: 1px solid #eaeef4; border-radius: 12px; padding: 14px 16px; margin-top: 16px; }
+.fav-detail-light p { margin: 0; font-size: 0.88rem; color: #43526a; line-height: 1.55; }
+.fav-detail-actions { display: flex; gap: 10px; margin-top: 20px; padding-top: 14px; border-top: 1px solid #eef2f8; flex-wrap: wrap; }
+.fav-detail-actions .fav-btn { padding: 7px 15px; font-size: 0.82rem; }

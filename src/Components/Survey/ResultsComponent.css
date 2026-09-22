@@ -318,6 +318,17 @@ body:has(#results-root),
   letter-spacing: -0.01em;
 }
 
+/* Profile / Traits / Self-Awareness tab titles, matched to the analysis h2 look
+   so every tab in the unified menu opens with a consistent heading. */
+.analysis-section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 0.65rem;
+  color: #2f6fed;
+  letter-spacing: -0.01em;
+}
+
 .analysis-box .markdown-content h3 {
   font-size: 1.05rem;
   margin-top: 1rem;
@@ -370,6 +381,13 @@ body:has(#results-root),
   max-width: 900px;
   padding: 0;
   overflow: hidden;
+  /* This is never its own visible card: it always sits inside .section-card.
+     Flatten it at every width so it doesn't render as a box within a box. */
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  margin: 8px 0 4px;
 }
 
 .analysis-tabs-layout {
@@ -431,6 +449,75 @@ body:has(#results-root),
 .analysis-tabs-panel {
   padding: 18px 24px 24px;
   min-width: 0;
+}
+
+/* Locked analysis tabs in the unified sidebar (shown before analysis is generated) */
+.analysis-tab-button--locked {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8a97a4;
+}
+.analysis-tab-button--locked .analysis-tab-button__label {
+  color: inherit;
+}
+.analysis-tab-button__lock {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: #a6b2be;
+}
+.analysis-tab-button--locked.is-active {
+  background: #fff;
+  border-color: #2f6fed;
+  color: #2f6fed;
+}
+.analysis-tab-button--locked.is-active .analysis-tab-button__lock {
+  color: #2f6fed;
+}
+
+/* Unified single-panel: the analysis branch sits directly in the shared panel,
+   so the inner panel must not add a second layer of padding. */
+.analysis-tab-inner {
+  min-width: 0;
+}
+.analysis-tab-body {
+  min-width: 0;
+}
+.analysis-tabs-panel--full {
+  padding: 0;
+}
+
+/* Keep the content area tall enough that even a short section (e.g. the AI
+   Advisor) can still be scrolled so its top sits at the top of the card, rather
+   than the page running out of height and leaving the intro on screen. */
+.swipe-deck {
+  min-height: calc(100vh - 120px);
+}
+
+/* Direction-aware slide when the active section changes (swipe or tab tap), so
+   the movement between sections is visible. */
+.analysis-tab-slide {
+  min-width: 0;
+}
+.analysis-tab-slide--right {
+  animation: cdnaSlideInRight 0.28s ease;
+}
+.analysis-tab-slide--left {
+  animation: cdnaSlideInLeft 0.28s ease;
+}
+@keyframes cdnaSlideInRight {
+  from { transform: translateX(28px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes cdnaSlideInLeft {
+  from { transform: translateX(-28px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .analysis-tab-slide--right,
+  .analysis-tab-slide--left {
+    animation: none;
+  }
 }
 
 
@@ -779,6 +866,30 @@ body:has(#results-root),
 
 .results-cta--inside .results-actions {
   justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Pre-report locked / teaser state. A short teaser line for the tapped tab,
+   then a plan-aware action (generate, unlock, or check plans). */
+.results-locked__teaser {
+  font-size: 1.02rem;
+  color: #2f3e4d;
+  font-weight: 600;
+  margin: 4px 0 6px;
+}
+
+.results-locked__note {
+  color: #5b6b7a;
+}
+
+#results-root .results-cta--inside .results-locked__reports-left {
+  flex-basis: 100%;
+  width: 100%;
+  text-align: center;
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: #64748b;
 }
 
 /* ========================================
@@ -897,6 +1008,24 @@ body:has(#results-root),
      broke the grid-collapse and left empty space under the title. */
   .accordion-panel.is-open .accordion-panel__inner {
     padding-bottom: 20px;
+  }
+
+  /* One card, not two: the outer .section-card is the only frame on phone, so
+     keep its padding tight and let the inner panel/sidebar sit flush against it
+     rather than adding a second inset (which was losing width on the left). */
+  .section-card,
+  .section-card--full {
+    padding: 16px 10px;
+  }
+
+  .analysis-tabs-panel {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+
+  .analysis-tabs-sidebar {
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
@@ -1073,14 +1202,20 @@ body:has(#results-root),
     margin-right: -8px !important;
   }
 
-  /* Left-align the item body text. Do NOT hyphenate: on a narrow column that
-     splits single words (incl. green trait/profile names and titles) mid-word,
-     which reads badly. Words wrap whole to the next line instead. */
+  /* Justify the item body text and allow ordinary words to hyphenate, so the
+     narrow phone column fills evenly instead of reading ragged. Green trait /
+     profile names and titles are individually protected (hyphens:none) below,
+     so only plain body words break. */
   .analysis-box .markdown-content .cdna-card-list > li.cdna-card-item {
     text-align: left !important;
-    -webkit-hyphens: none !important;
-    hyphens: none !important;
-    overflow-wrap: normal !important;
+    -webkit-hyphens: auto !important;
+    hyphens: auto !important;
+    /* Only hyphenate words of 7+ chars, keeping >=4 before and >=3 after the
+       break, so no tiny fragments dangle. text-wrap: pretty balances line
+       lengths and avoids short last lines (progressive enhancement). */
+    hyphenate-limit-chars: 7 4 3;
+    text-wrap: pretty;
+    overflow-wrap: break-word !important;
     word-break: normal !important;
   }
 }
@@ -2455,9 +2590,11 @@ body:has(#results-root),
   #results-root p,
   #results-root li {
     text-align: left;
-    -webkit-hyphens: none;
-    hyphens: none;
-    overflow-wrap: normal;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    hyphenate-limit-chars: 7 4 3;
+    text-wrap: pretty;
+    overflow-wrap: break-word;
     word-break: normal;
   }
 }
@@ -2689,8 +2826,24 @@ body:has(#results-root),
   color: #2f7d32;
   /* Never hyphenate/break a green trait or profile name mid-word — it wraps
      whole to the next line instead (matters on narrow phone columns). */
-  -webkit-hyphens: none;
-  hyphens: none;
+  -webkit-hyphens: none !important;
+  hyphens: none !important;
   overflow-wrap: normal;
   word-break: keep-all;
+}
+
+/* Titles and card headings never hyphenate or break mid-word, even though the
+   body text around them is justified and hyphenated on phone. */
+.analysis-section-title,
+.analysis-box .markdown-content h1,
+.analysis-box .markdown-content h2,
+.analysis-box .markdown-content h3,
+.analysis-box .markdown-content .cdna-strength-header,
+.analysis-box .markdown-content .cdna-strength-header > strong,
+.analysis-box .markdown-content .cdna-card-list > li.cdna-card-item > .cdna-item-content > strong:first-child {
+  text-align: left !important;
+  -webkit-hyphens: none !important;
+  hyphens: none !important;
+  overflow-wrap: normal !important;
+  word-break: keep-all !important;
 }

@@ -317,7 +317,7 @@ function entryLine(level) {
   return '';
 }
 
-function StandardRow({ route, liveVacancies, showTitle }) {
+function StandardRow({ route, liveVacancies, showTitle, reaction = '', onReact }) {
   // Some "ways in" aren't a formal apprenticeship standard (no LARS/standard code)
   // — e.g. Armed Forces direct entry, or building your own venture. Render those
   // honestly as their route type rather than as an empty apprenticeship.
@@ -401,13 +401,18 @@ function StandardRow({ route, liveVacancies, showTitle }) {
         <span className={`nu-wayrow__icon ${rowCatClass}`} aria-hidden="true"><RowIcon size={18} weight="bold" /></span>
         <span className="nu-wayrow__main">
           <span className="nu-wayrow__title">{title}</span>
-          <span className="nu-wayrow__sub">{headKind}{levelChip ? ` · Level ${levelNum}` : ''}{deliversDegree ? ' · Degree' : ''}</span>
+          <span className="nu-wayrow__meta">
+            <span className="nu-wayrow__sub">{headKind}{levelChip ? ` · Level ${levelNum}` : ''}{deliversDegree ? ' · Degree' : ''}</span>
+            {reaction === 'like' ? (
+              <span className="nu-wayrow__saved" aria-label="Saved to favourites" title="Saved to favourites"><BookmarkSimple size={13} weight="fill" aria-hidden="true" /> Saved</span>
+            ) : null}
+            {vCount != null && vCount > 0 ? (
+              <span className="nu-wayrow__live"><span className="nu-vac-dot" aria-hidden="true" />{vCount}{vCapped ? '+' : ''} live</span>
+            ) : isCourse ? (
+              <span className="nu-wayrow__note">College course</span>
+            ) : null}
+          </span>
         </span>
-        {vCount != null && vCount > 0 ? (
-          <span className="nu-wayrow__live"><span className="nu-vac-dot" aria-hidden="true" />{vCount}{vCapped ? '+' : ''} live</span>
-        ) : isCourse ? (
-          <span className="nu-wayrow__note">College course</span>
-        ) : null}
         <CaretRight size={16} weight="bold" className="nu-wayrow__chev" aria-hidden="true" />
       </button>
       {modalOpen ? (
@@ -485,6 +490,10 @@ function StandardRow({ route, liveVacancies, showTitle }) {
                   separated, expandable section listing the real adverts. */}
               {!isCourse ? (
                 <div className="nu-openings-section">
+                  <div className="nu-openings-eyebrow">
+                    <span className="nu-openings-eyebrow__label">Live openings</span>
+                    <span className="fs-premium-badge">Premium</span>
+                  </div>
                   {paused ? (
                     <p className="nu-vac-count-inline nu-vac-count-inline--muted">Approved, but not taking new starts right now.</p>
                   ) : vCount != null && vCount > 0 && vac.data && Array.isArray(vac.data.vacancies) && vac.data.vacancies.length ? (
@@ -525,7 +534,17 @@ function StandardRow({ route, liveVacancies, showTitle }) {
                 </div>
               ) : null}
             </div>
-            <button type="button" className="cw-def-modal__done" onClick={() => setModalOpen(false)}>Close</button>
+            {(!isCourse && onReact) ? (
+              <div className="cw-def-modal__reactfoot">
+                <PathwayReactionRow
+                  reaction={reaction}
+                  onReact={(next) => onReact(next)}
+                  label="Save this apprenticeship"
+                />
+              </div>
+            ) : (
+              <button type="button" className="cw-def-modal__done" onClick={() => setModalOpen(false)}>Close</button>
+            )}
           </div>
         </div>
       ) : null}
@@ -535,7 +554,7 @@ function StandardRow({ route, liveVacancies, showTitle }) {
 
 // One card = one PATHWAY (a way into a career without a degree). Inside: what it
 // is, the apprenticeship standard(s) that get you in, and where it leads.
-function PathwayCard({ pathway, routes, open, onToggle, reaction, onReact, liveVacancies, band }) {
+export function PathwayCard({ pathway, routes, open, onToggle, reaction, onReact, liveVacancies, band, savedReactions = {}, onStandardReact }) {
   const Icon = getPathwayIcon(pathway || '') || getSubjectIcon(pathway || '');
   const about = PATHWAY_SHORT_BY_TITLE[pathway] || '';
   // De-duplicated roles across every standard in this pathway.
@@ -733,9 +752,19 @@ function PathwayCard({ pathway, routes, open, onToggle, reaction, onReact, liveV
                 <div className="cw-def-modal__body nu-wayin-list-modal">
                   <p className="nu-wayin-list-intro">Select one to see the level, what you come out with and how to apply.{liveVacancies ? ' Live apprenticeship openings come from the government\u2019s Find an Apprenticeship service and refresh regularly.' : ''}</p>
                   <div className="nu-standards">
-                    {sortedRoutes.map((r, i) => (
-                      <StandardRow key={r.standardCode || r.occupation || i} route={r} liveVacancies={liveVacancies} showTitle={true} />
-                    ))}
+                    {sortedRoutes.map((r, i) => {
+                      const sid = `apprenticeship:${r.standardLarsCode || r.standardName || r.occupation || ''}`;
+                      return (
+                        <StandardRow
+                          key={r.standardCode || r.occupation || i}
+                          route={r}
+                          liveVacancies={liveVacancies}
+                          showTitle={true}
+                          reaction={savedReactions[sid] || ''}
+                          onReact={onStandardReact ? (next) => onStandardReact(r, next) : undefined}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
                 <button type="button" className="cw-def-modal__done" onClick={() => setWaysOpen(false)}>Close</button>
@@ -859,11 +888,11 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
   );
 
   useEffect(() => {
+    // Collapse open items when switching, but do NOT auto-scroll the page — the
+    // selected item can change on its own as data settles, which was yanking the
+    // page down on arrival.
     setOpenKey('');
     setShowOther(false);
-    if (hasSelectedRef.current && mainRef.current) {
-      mainRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
     hasSelectedRef.current = true;
   }, [activeKey]);
 
@@ -876,6 +905,19 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
     if (!pathway || typeof onItemReaction !== 'function') return;
     const current = savedReactions[id] || '';
     onItemReaction({ itemType: 'nonuni_pathway', itemId: id, itemTitle: pathway, reaction: next, remove: current === next });
+  };
+
+  // Save/unsave a single apprenticeship standard (one "way in") to favourites.
+  // Stored under item_type 'apprenticeship' so it shows in its own favourites
+  // group and can be counted in stats separately from the pathway-level likes.
+  const handleStandardReact = (route, next) => {
+    if (typeof onItemReaction !== 'function') return;
+    const key = route.standardLarsCode || route.standardName || route.occupation || '';
+    if (!key) return;
+    const id = `apprenticeship:${key}`;
+    const title = route.standardName || route.occupation || route.route || route.pathway || 'Apprenticeship';
+    const current = savedReactions[id] || '';
+    onItemReaction({ itemType: 'apprenticeship', itemId: id, itemTitle: title, reaction: next, remove: current === next });
   };
 
   const activeWorld = allWorlds.includes(activeKey) ? activeKey : allWorlds[0] || '';
@@ -913,6 +955,8 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
         onReact={(next) => handleReact(group.pathway, next)}
         liveVacancies={liveVacancies}
         band={pathwayBands[group.pathway] || ''}
+        savedReactions={savedReactions}
+        onStandardReact={handleStandardReact}
       />
     );
   };
@@ -920,7 +964,7 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
   return (
     <section className="selection-explorer" ref={rootRef}>
       <div className="selection-explorer__intro selection-explorer__intro--active">
-        <h2>Training &amp; Work</h2>
+        <h2>Your training &amp; work routes</h2>
         <p className="selection-explorer__intro-text">
           Ways into a career that do not need a university degree. With an apprenticeship you have a real job, get paid,
           and train at the same time, so you earn while you learn instead of paying tuition fees. Some even include a

@@ -20,15 +20,17 @@ const CDNA_BAR_THICKNESS_MOBILE = 28;
 const CDNA_BAR_RADIUS = 8;
 const CDNA_BAR_BORDER_WIDTH = 1.5;
 
+// Must use the SAME thresholds as getClarityBandValue below, so the tooltip label
+// always agrees with the bar's band (High 72+, Developing 66+, else Low).
 function getClarityLevel(score = 0) {
-  if (score >= 75) return "High clarity";
-  if (score >= 65) return "Developing clarity";
+  if (score >= 72) return "High clarity";
+  if (score >= 66) return "Developing clarity";
   return "Low clarity";
 }
 
 function getClarityBandValue(score = 0) {
-  if (score >= 70) return 100;
-  if (score >= 60) return 66;
+  if (score >= 72) return 100;
+  if (score >= 66) return 66;
   return 33;
 }
 
@@ -36,8 +38,8 @@ function getClarityBandValue(score = 0) {
 // hover the bar fills with the solid tier colour. high = Standout green,
 // medium = Strong amber, low = Lower grey.
 function getClarityBandColors(score = 0) {
-  if (score >= 70) return { background: "#9fe1cb", border: "#8ad9c1", hover: "#78d2b6" };
-  if (score >= 60) return { background: "#fac775", border: "#f4bd60", hover: "#f2b74f" };
+  if (score >= 72) return { background: "#9fe1cb", border: "#8ad9c1", hover: "#78d2b6" };
+  if (score >= 66) return { background: "#fac775", border: "#f4bd60", hover: "#f2b74f" };
   return { background: "#d3d1c7", border: "#c6c3b7", hover: "#bfbcae" };
 }
 
@@ -119,9 +121,9 @@ function externalTooltipRightOfBar(ctx) {
   const bandValue = Number(dp.raw || getClarityBandValue(rawScore));
   const levelLabel = getClarityLevel(rawScore);
   let levelDesc = "";
-  if (rawScore >= 75) {
+  if (rawScore >= 72) {
     levelDesc = "Your answers show a clear and consistent pattern across this dimension, suggesting your preferences and tendencies came through strongly throughout the questionnaire.";
-  } else if (rawScore >= 65) {
+  } else if (rawScore >= 66) {
     levelDesc = "Your answers show some clear patterns while also reflecting flexibility across different areas. This is common when interests and preferences are still developing or span multiple areas. If you feel your answers did not fully reflect you, you may wish to revisit the questionnaire in the future.";
   } else {
     levelDesc = "Your answers suggest a broader or more mixed pattern in this area. This may indicate that your preferences vary across different situations, or that this is an area where your interests and tendencies are still developing. If you feel your answers did not fully reflect you, you may wish to revisit the questionnaire in the future.";

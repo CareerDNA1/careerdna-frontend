@@ -6,6 +6,7 @@ import { supabase } from '../utils/supabaseClient';
 import {
   deleteAssessmentRun,
   getAssessmentRunCount,
+  getLatestAssessmentRun,
   listAssessmentRuns,
   rerunAssessmentWithOutputParameters,
 } from '../utils/assessmentRuns';
@@ -14,9 +15,14 @@ import { buildApiCandidates } from '../utils/config';
 import IntroQuestions from '../Components/Survey/IntroQuestions';
 import PricingModal from '../Components/Common/PricingModal';
 import SatisfactionCard from '../Components/Common/SatisfactionCard';
+import { getSatisfactionPrompt } from '../utils/satisfaction';
+import { getFavouritesByCategory } from '../utils/favourites';
+import AcademicProfileCard from '../Components/Common/AcademicProfileCard';
+import FavouritesCard from '../Components/Common/FavouritesCard';
+import { getMyAcademicProfile, hasAcademicData } from '../utils/academicProfile';
 import { cancelScheduledDowngrade } from '../utils/stripeCheckout';
 import './ProfilePage.css';
-import { ageFromDOB } from '../utils/educationProgression';
+import { ageFromDOB, ukSchoolYearGroup } from '../utils/educationProgression';
 
 const defaultIntroResponses = {
   name: '',
@@ -34,11 +40,27 @@ const defaultIntroResponses = {
 
 function buildInitialIntro(run) {
   const intro = run?.intro_answers_json || {};
-  return {
+  const merged = {
     ...defaultIntroResponses,
     ...intro,
     schoolSubjects: Array.isArray(intro.schoolSubjects) ? intro.schoolSubjects : [],
   };
+
+  // Older reports were saved before the "What year group are you in?" question
+  // existed, so they have no schoolYear. That leaves the re-run form's required
+  // field empty and disables the button. Derive a sensible year group from the
+  // saved date of birth so legacy runs can be re-run without the user having to
+  // guess. Any value here is still editable in the form.
+  const isSchool = merged.status === 'school' || !merged.status;
+  if (isSchool && !merged.schoolYear && intro.dateOfBirth) {
+    const yr = ukSchoolYearGroup(intro.dateOfBirth);
+    if (yr != null) {
+      const clamped = Math.min(13, Math.max(10, yr));
+      merged.schoolYear = `year${clamped}`;
+    }
+  }
+
+  return merged;
 }
 
 function statusLabel(value) {
@@ -412,6 +434,14 @@ export default function ProfilePage() {
   // Drives the journey timeline: a step counts as done only once the user has
   // actually interacted with that section.
   const [engagedTypes, setEngagedTypes] = useState(() => new Set());
+  // "Loaded" flags for the overview: we only render the stats/journey/cards once
+  // ALL their data is in, so the numbers never flash a wrong partial value.
+  // Which run each dataset reflects, so the overview only shows once the CURRENT
+  // run's data is in (not an empty result from before the user/run was ready).
+  const [engagedForRun, setEngagedForRun] = useState(null);
+  const [favForRun, setFavForRun] = useState(null);
+  const [academicLoaded, setAcademicLoaded] = useState(false);
+  const [academicProfileData, setAcademicProfileData] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
   // Phone flag — used to shorten the run action label so the buttons fit on one
   // line beside the run number.
@@ -424,8 +454,11 @@ export default function ProfilePage() {
   useEffect(() => {
     const runId = runs?.[0]?.id;
     const uid = user?.id;
-    if (!runId || !uid) {
+    if (!uid) return undefined; // wait for the user before deciding
+    if (!runId) {
+      // User is known and has no runs: nothing engaged, ready.
       setEngagedTypes(new Set());
+      setEngagedForRun('none');
       return undefined;
     }
     let cancelled = false;
@@ -447,11 +480,50 @@ export default function ProfilePage() {
         setEngagedTypes(set);
       } catch (_) {
         if (!cancelled) setEngagedTypes(new Set());
+      } finally {
+        if (!cancelled) setEngagedForRun(runId);
       }
     })();
     return () => {
       cancelled = true;
     };
+  }, [runs, user?.id]);
+
+  // Recurring "How useful is CareerDNA?" prompt: record this visit and work out
+  // whether a satisfaction pulse is due for this visit number (schedule lives in
+  // utils/satisfaction). Runs once per profile mount, when a run + user exist.
+  const [satWave, setSatWave] = useState(null);
+  // Full favourites data, loaded once at the profile level and passed into the
+  // favourites card so it renders together with everything else (no late pop-in).
+  const [favGroups, setFavGroups] = useState(null);
+  const satPromptRef = useRef(false);
+
+  useEffect(() => {
+    const runId = runs?.[0]?.id;
+    if (!user?.id) return undefined; // wait for the user
+    if (!runId) { setFavGroups([]); setFavForRun('none'); return undefined; }
+    let cancelled = false;
+    getFavouritesByCategory(runId)
+      .then((groups) => { if (!cancelled) { setFavGroups(groups || []); setFavForRun(runId); } })
+      .catch(() => { if (!cancelled) { setFavGroups([]); setFavForRun(runId); } });
+    return () => { cancelled = true; };
+  }, [runs, user?.id]);
+  const favCount = favGroups ? favGroups.reduce((a, g) => a + g.items.length, 0) : null;
+  useEffect(() => {
+    const runId = runs?.[0]?.id;
+    const uid = user?.id;
+    if (!runId || !uid || satPromptRef.current) return undefined;
+    satPromptRef.current = true;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { dueVisit } = await getSatisfactionPrompt(uid, runId);
+        if (!cancelled) setSatWave(dueVisit);
+      } catch (_) {
+        if (!cancelled) setSatWave(null);
+      }
+    })();
+    return () => { cancelled = true; };
   }, [runs, user?.id]);
 
   const [editingRun, setEditingRun] = useState(null);
@@ -473,6 +545,22 @@ export default function ProfilePage() {
   const [cancelDowngradeOpen, setCancelDowngradeOpen] = useState(false);
   const [cancellingDowngrade, setCancellingDowngrade] = useState(false);
   const [retakeConfirmOpen, setRetakeConfirmOpen] = useState(false);
+  const [showAllRuns, setShowAllRuns] = useState(false);
+  const [satDismissed, setSatDismissed] = useState(false);
+  const [academicHasData, setAcademicHasData] = useState(false);
+  const [gradesOpenSignal, setGradesOpenSignal] = useState(0);
+
+  // Load whether the student has entered grades (drives the "Enter your grades"
+  // roadmap step). Updated directly from the grades popup's onSaved callback.
+  useEffect(() => {
+    if (!user?.id) return undefined; // wait for the user
+    let cancelled = false;
+    getMyAcademicProfile()
+      .then((ap) => { if (!cancelled) { setAcademicHasData(hasAcademicData(ap)); setAcademicProfileData(ap || null); } })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setAcademicLoaded(true); });
+    return () => { cancelled = true; };
+  }, [user?.id]);
 
   // Click-to-toggle info popover for locked account fields (date of birth, email).
   const [openLockedField, setOpenLockedField] = useState('');
@@ -544,16 +632,41 @@ export default function ProfilePage() {
     return (
       msg.includes('another request stole it') ||
       msg.includes('was released because') ||
+      msg.includes('lock broken') ||          // Web Locks: "Lock broken by another request with the 'steal' option."
+      msg.includes("'steal'") ||
+      msg.includes('steal option') ||
+      msg.includes('navigatorlockacquiretimeout') ||
       (msg.includes('lock') && msg.includes('auth-token'))
     );
   }
 
+  // Transient database hiccups (e.g. a query hitting Postgres statement_timeout
+  // under load). Worth one retry, and never shown to the user as raw SQL text.
+  function isTransientDbError(err) {
+    const msg = String(err?.message || err || '').toLowerCase();
+    return (
+      msg.includes('statement timeout') ||
+      msg.includes('canceling statement') ||
+      msg.includes('57014') ||
+      msg.includes('timeout') ||
+      msg.includes('fetch failed') ||
+      msg.includes('failed to fetch')
+    );
+  }
+
   async function fetchProfileBundle() {
-    const [profileData, runData, runCount] = await Promise.all([
+    // The run list only needs light fields (date + status). We fetch the heavy
+    // results_json for the LATEST run alone (one row), then attach it, so the
+    // page no longer downloads megabytes of report JSON/markdown for 20 runs.
+    const [profileData, runData, runCount, latestFull] = await Promise.all([
       getMyProfile(),
-      listAssessmentRuns(20),
+      listAssessmentRuns(20, 'id, created_at, intro_answers_json, output_version'),
       getAssessmentRunCount(),
+      getLatestAssessmentRun(),
     ]);
+    if (runData && runData[0] && latestFull && runData[0].id === latestFull.id) {
+      runData[0] = { ...runData[0], results_json: latestFull.results_json, summary_markdown: latestFull.summary_markdown };
+    }
     return { profileData, runData, runCount };
   }
 
@@ -566,8 +679,9 @@ export default function ProfilePage() {
       try {
         bundle = await fetchProfileBundle();
       } catch (err) {
-        if (!isAuthLockNoise(err)) throw err;
-        await new Promise((resolve) => setTimeout(resolve, 350));
+        // Retry once on a transient auth-lock or database timeout.
+        if (!isAuthLockNoise(err) && !isTransientDbError(err)) throw err;
+        await new Promise((resolve) => setTimeout(resolve, 600));
         bundle = await fetchProfileBundle();
       }
 
@@ -577,7 +691,11 @@ export default function ProfilePage() {
     } catch (err) {
       if (await handleInvalidSession(err)) return;
       if (isAuthLockNoise(err)) return; // transient — a concurrent request handled it
-      setErrorMsg(err.message || 'Failed to load profile.');
+      setErrorMsg(
+        isTransientDbError(err)
+          ? 'We had trouble loading your profile just then. Please refresh in a moment.'
+          : (err.message || 'Failed to load profile.')
+      );
     } finally {
       setLoadingRuns(false);
     }
@@ -677,8 +795,11 @@ export default function ProfilePage() {
         try {
           bundle = await fetchProfileBundle();
         } catch (err) {
-          if (!isAuthLockNoise(err)) throw err;
-          await new Promise((resolve) => setTimeout(resolve, 350));
+          // Retry once on an auth-lock race OR a transient network/DB blip
+          // (e.g. "Failed to fetch"), exactly like loadPageData, so a momentary
+          // hiccup on load doesn't dump a raw error banner on the page.
+          if (!isAuthLockNoise(err) && !isTransientDbError(err)) throw err;
+          await new Promise((resolve) => setTimeout(resolve, 600));
           bundle = await fetchProfileBundle();
         }
 
@@ -691,7 +812,11 @@ export default function ProfilePage() {
         if (!cancelled) {
           if (await handleInvalidSession(err)) return;
           if (isAuthLockNoise(err)) return; // transient — a concurrent request handled it
-          setErrorMsg(err.message || 'Failed to load profile.');
+          setErrorMsg(
+            isTransientDbError(err)
+              ? 'We had trouble loading your profile just then. Please refresh in a moment.'
+              : (err.message || 'Failed to load profile.')
+          );
         }
       } finally {
         if (!cancelled) setLoadingRuns(false);
@@ -713,6 +838,15 @@ export default function ProfilePage() {
     if (!profile?.created_at) return '—';
     return compactDate(profile.created_at);
   }, [profile]);
+
+  const initials = useMemo(() => {
+    const a = (profile?.first_name || '').trim();
+    const b = (profile?.last_name || '').trim();
+    const two = ((a[0] || '') + (b[0] || '')).toUpperCase();
+    if (two) return two;
+    const e = (profile?.email || user?.email || '?').trim();
+    return (e[0] || '?').toUpperCase();
+  }, [profile, user?.email]);
 
   const planName = useMemo(() => formatPlanName(profile), [profile]);
   const reportUsage = useMemo(() => getReportUsage(profile), [profile]);
@@ -1156,8 +1290,13 @@ export default function ProfilePage() {
     environments: engagedTypes.has('environment'),
     careerworlds: isUniversity ? engagedTypes.has('pathway') : engagedTypes.has('career_world'),
     discovermore: isUniversity ? engagedTypes.has('role') : engagedTypes.has('pathway'),
+    exploreuni: engagedTypes.has('subject') || engagedTypes.has('nonuni_pathway'),
+    grades: academicHasData,
     advisor: engagedTypes.has('advisor'),
+    apply: false, // terminal, real-world step — never auto-completed
   };
+  // Students (school) get extra steps: explore university/training, enter grades,
+  // and finally apply. University leavers keep the shorter roadmap.
   const journeySteps = [
     { key: 'survey', label: 'Take your survey' },
     { key: 'profile', label: 'Meet your CareerDNA' },
@@ -1165,14 +1304,37 @@ export default function ProfilePage() {
     { key: 'environments', label: 'Explore your ideal environments' },
     { key: 'careerworlds', label: isUniversity ? 'Explore your pathways' : 'Explore your career worlds' },
     { key: 'discovermore', label: isUniversity ? 'Explore your roles' : 'Explore your pathways' },
-    { key: 'advisor', label: 'Get advice' },
+    ...(!isUniversity ? [
+      { key: 'exploreuni', label: 'Explore university or training/work' },
+      { key: 'grades', label: 'Enter your grades' },
+    ] : []),
+    ...(!isUniversity ? [
+      { key: 'apply', label: 'Apply for university or training/work' },
+    ] : []),
   ].map((step) => ({ ...step, done: Boolean(journeyDone[step.key]) }));
   const journeyCurrentIdx = journeySteps.findIndex((s) => !s.done);
-  // The satisfaction prompt appears only once the user has been through every
-  // exploration step of the journey (the AI Advisor is optional, so it's not
-  // required). We ask on the profile page when they return, not mid-journey.
+  // Overview journey summary: progress ring + the single next step.
+  const journeyTotal = journeySteps.length;
+  const journeyDoneCount = journeySteps.filter((s) => s.done).length;
+  const journeyPct = journeyTotal ? Math.round((journeyDoneCount / journeyTotal) * 100) : 0;
+  const journeyNextStep = journeyCurrentIdx >= 0 ? journeySteps[journeyCurrentIdx] : null;
+  const journeyRingOffset = 238.8 * (1 - journeyPct / 100);
+  // Only render the overview once EVERY piece of its data is in for the CURRENT
+  // run, so the stats, ring and step count never flash a wrong partial value
+  // (e.g. 2/9 then 8/9, or a "—" favourites count) while loading. We require the
+  // user to be resolved, the academic profile loaded, and both the engaged-types
+  // and favourites effects to have finished for this exact run id.
+  const overviewReady = !loadingRuns
+    && !!user?.id
+    && academicLoaded
+    && (latestRun
+      ? (engagedForRun === latestRun.id && favForRun === latestRun.id)
+      : (engagedForRun === 'none' && favForRun === 'none'));
+  // The satisfaction prompt appears once the exploration steps are done. Advisor,
+  // grades and apply are optional/terminal, so they don't gate the prompt.
+  const JOURNEY_OPTIONAL = new Set(['advisor', 'grades', 'apply']);
   const journeyCompleteExceptAdvisor = journeySteps
-    .filter((s) => s.key !== 'advisor')
+    .filter((s) => !JOURNEY_OPTIONAL.has(s.key))
     .every((s) => s.done);
 
   // Each roadmap step deep-links to the matching results tab. Only done + current
@@ -1189,13 +1351,42 @@ export default function ProfilePage() {
     environments: { section: 'analysis', tab: 'environments' },
     careerworlds: { section: 'analysis', tab: isUniversity ? 'pathways' : 'careerworlds' },
     discovermore: { section: 'analysis', tab: 'discovermore' },
+    exploreuni: { section: 'analysis', tab: 'furtherstudy' },
     advisor: { section: 'analysis', tab: 'advisor' },
+    apply: { section: 'analysis', tab: 'furtherstudy' },
   };
   const openRunAt = (target) => {
     if (!latestRun) return;
     navigate(`/results/run/${latestRun.id}`, {
       state: { section: target?.section || 'analysis', tab: target?.tab || '' },
     });
+  };
+
+  // Central click handler for a roadmap step: survey starts the assessment, grades
+  // opens the grades popup, everything else deep-links to its report tab.
+  const goToStep = (step) => {
+    if (!step) return;
+    if (step.key === 'survey') { navigate('/start'); return; }
+    if (step.key === 'grades') { setGradesOpenSignal((n) => n + 1); return; }
+    openRunAt(journeyStepTarget[step.key]);
+  };
+
+  // Deep-link a favourite to its tab in the report, and (when we know it) to the
+  // exact card via focusTitle so the report opens and scrolls to that item.
+  const exploreFavourite = (type, focusTitle) => {
+    if (!latestRun) return;
+    const map = {
+      career_world: 'careerworlds',
+      pathway: isUniversity ? 'pathways' : 'discovermore',
+      subject: 'furtherstudy',
+      course: 'furtherstudy',
+      role: isUniversity ? 'roleexplorer' : 'discovermore',
+      nonuni_pathway: 'nonuni',
+      apprenticeship: 'nonuni',
+      strength: 'strengths',
+      environment: 'environments',
+    };
+    navigate(`/results/run/${latestRun.id}`, { state: { section: 'analysis', tab: map[type] || 'careerworlds', focusTitle: focusTitle || '' } });
   };
 
   // Per-step icons give the roadmap character instead of identical dots.
@@ -1206,7 +1397,10 @@ export default function ProfilePage() {
     environments: (<><rect x="6" y="4" width="12" height="17" rx="1.5" /><path d="M9.5 8h1M13 8h1M9.5 12h1M13 12h1M9.5 16h1M13 16h1" /></>),
     careerworlds: (<><path d="M12 3v18" /><path d="M12 5.5h6.2l2.1 2.1-2.1 2.1H12" /><path d="M12 12H5.8l-2.1 2.1 2.1 2.1H12" /></>),
     discovermore: (<><rect x="4" y="8" width="16" height="11" rx="2" /><path d="M9 8V6.5A2 2 0 0 1 11 4.5h2a2 2 0 0 1 2 2V8" /><path d="M4 13h16" /></>),
+    exploreuni: (<><path d="M12 4 2.5 9 12 14l9.5-5L12 4z" /><path d="M6 11v4c0 1.2 2.7 2.5 6 2.5s6-1.3 6-2.5v-4" /></>),
+    grades: (<><rect x="5" y="4" width="14" height="17" rx="2" /><path d="M9 9h6M9 13h6M9 17h3" /></>),
     advisor: (<path d="M12 4l1.5 4.3L18 10l-4.5 1.7L12 16l-1.5-4.3L6 10l4.5-1.7z" />),
+    apply: (<><path d="M22 3 11 14" /><path d="M22 3 15 21l-4-7-7-4 18-7z" /></>),
   };
   const renderJourneyIcon = (key) => (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -1219,106 +1413,171 @@ export default function ProfilePage() {
       <AccountNavbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
 
       <div className="profile-shell">
-        {/* Compact Header */}
-        <header className="profile-header">
-          <h1 className="profile-welcome">Welcome, {profile?.first_name || 'there'}</h1>
-          <div className="profile-header-actions">
-            <button type="button" className="profile-btn-hover-primary" style={btnPrimarySm} onClick={openProfileEditor}>
-              <SettingsIcon />
-              Manage Account
-            </button>
-            {isAdminProfile ? (
-              <button
-                type="button"
-                className="profile-admin-dashboard-btn"
-                onClick={() => navigate('/admin')}
-              >
-                Open Admin Dashboard
+        {/* Accent hero: identity + live journey progress + continue action */}
+        <header className="profile-hero">
+          <div className="profile-hero-top">
+            <div className="profile-hero-id">
+              <div className="profile-hero-avatar" aria-hidden="true">{initials}</div>
+              <div className="profile-hero-idtext">
+                <h1 className="profile-hero-welcome" aria-busy={loadingRuns}>
+                  {loadingRuns
+                    ? <span className="profile-skel profile-skel--title" aria-label="Loading" />
+                    : `Welcome back${profile?.first_name ? `, ${profile.first_name}` : ''}`}
+                </h1>
+                <div className="profile-hero-meta">
+                  <span className="profile-hero-email">{profile?.email || user?.email || '—'}</span>
+                  <span className="profile-hero-sep">·</span>
+                  <span className="profile-hero-runs">
+                    {loadingRuns
+                      ? <span className="profile-skel profile-skel--pill" aria-label="Loading" />
+                      : `${totalRuns} ${totalRuns === 1 ? 'run' : 'runs'}`}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="profile-hero-actions">
+              <button type="button" className="profile-hero-btn profile-hero-btn--primary" onClick={handleRetake}>
+                <PlayIcon />
+                New report
               </button>
-            ) : null}
+              <button type="button" className="profile-hero-btn" onClick={openProfileEditor}>
+                <SettingsIcon />
+                Manage account
+              </button>
+              {isAdminProfile ? (
+                <button type="button" className="profile-hero-btn profile-hero-btn--muted" onClick={() => navigate('/admin')}>
+                  Admin
+                </button>
+              ) : null}
+            </div>
           </div>
+
         </header>
 
         {errorMsg ? <p className="profile-error">{errorMsg}</p> : null}
         {profileNotice ? <p className="profile-notice">{profileNotice}</p> : null}
 
-        {/* Compact Stats Bar */}
-        <div className="profile-stats-bar">
-          <div className="profile-stat-item">
-            <span className="profile-stat-icon">&#128100;</span>
-            <span className="profile-stat-text">{fullName}</span>
-          </div>
-          <span className="profile-stat-divider">|</span>
-          <div className="profile-stat-item">
-            <span className="profile-stat-icon">&#9993;</span>
-            <span className="profile-stat-text profile-stat-text--muted profile-stat-text--truncate">{profile?.email || user?.email || '—'}</span>
-          </div>
-          <div className="profile-stat-item profile-stat-item--highlight">
-            <span className="profile-stat-icon">#</span>
-            <span className="profile-stat-text profile-stat-text--bold">{totalRuns} runs</span>
-          </div>
-        </div>
-
-        {!loadingRuns ? (
-          <section className="profile-journey" aria-label="Your CareerDNA journey">
-            <div className="profile-journey-head">
-              <span className="profile-journey-title">Your roadmap</span>
-            </div>
-            <ol className="profile-journey-track">
-              {journeySteps.map((step, i) => {
-                const isCurrent = i === journeyCurrentIdx;
-                const state = step.done ? 'is-done' : isCurrent ? 'is-current' : 'is-todo';
-                // Before any assessment exists, the survey step is the starting
-                // point and links to the survey. Once a run exists, the survey
-                // step is a plain milestone (re-entering the survey is complex).
-                const isStart = step.key === 'survey' && !latestRun;
-                const clickable = isStart || ((step.done || isCurrent) && step.key !== 'survey');
-                const inner = (
-                  <>
-                    <span className="profile-journey-node">
-                      {renderJourneyIcon(step.key)}
-                    </span>
-                    <span className="profile-journey-label">{step.label}</span>
-                  </>
-                );
-                return (
-                  <li key={step.key} className={`profile-journey-step ${state}${clickable ? ' is-clickable' : ''}`}>
-                    {clickable ? (
-                      <button
-                        type="button"
-                        className="profile-journey-hit"
-                        onClick={() => (isStart ? navigate('/start') : openRunAt(journeyStepTarget[step.key]))}
-                        aria-label={isStart ? 'Start your assessment' : `Open ${step.label}`}
-                      >
-                        {inner}
-                      </button>
-                    ) : (
-                      inner
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
+        {!overviewReady ? (
+          <section className="profile-loading" aria-busy="true" aria-label="Loading your profile">
+            <span className="profile-spinner" aria-hidden="true" />
+            <p className="profile-runs-loading-note">Loading your profile&hellip;</p>
           </section>
         ) : null}
 
-        {journeyCompleteExceptAdvisor && latestRun?.id && user?.id ? (
-          <SatisfactionCard userId={user.id} assessmentRunId={latestRun.id} />
+        {overviewReady ? (
+          <>
+            <div className="profile-stats">
+              <div className="profile-stat profile-stat--journey">
+                <span className="profile-stat-ic" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
+                </span>
+                <div className="profile-stat-body">
+                  <span className="profile-stat-num">{journeyPct}%</span>
+                  <span className="profile-stat-label">Journey</span>
+                </div>
+              </div>
+              <div className="profile-stat profile-stat--fav">
+                <span className="profile-stat-ic" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 21s-7-4.5-9.5-8.5C.5 8.5 3 5 6.5 5 8.5 5 10 6 12 8c2-2 3.5-3 5.5-3C21 5 23.5 8.5 21.5 12.5 19 16.5 12 21 12 21z" /></svg>
+                </span>
+                <div className="profile-stat-body">
+                  <span className="profile-stat-num">{favCount == null ? '—' : favCount}</span>
+                  <span className="profile-stat-label">Favourites</span>
+                </div>
+              </div>
+              <div className="profile-stat profile-stat--runs">
+                <span className="profile-stat-ic" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 4v4h4" /><path d="M12 8v4l3 2" /></svg>
+                </span>
+                <div className="profile-stat-body">
+                  <span className="profile-stat-num">{totalRuns}</span>
+                  <span className="profile-stat-label">Assessments</span>
+                </div>
+              </div>
+            </div>
+
+            <section
+              className={`profile-jcard${journeyNextStep ? ' profile-jcard--clickable' : ''}`}
+              aria-label={journeyNextStep ? `Your journey. Next step: ${journeyNextStep.label}` : 'Your journey'}
+              {...(journeyNextStep ? {
+                role: 'button',
+                tabIndex: 0,
+                onClick: () => goToStep(journeyNextStep),
+                onKeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToStep(journeyNextStep); } },
+              } : {})}
+            >
+              <div className="profile-jring" aria-hidden="true">
+                <svg viewBox="0 0 88 88" width="88" height="88">
+                  <circle cx="44" cy="44" r="38" fill="none" stroke="#eef2f8" strokeWidth="8" />
+                  <circle cx="44" cy="44" r="38" fill="none" stroke="#2f6fed" strokeWidth="8" strokeLinecap="round" strokeDasharray="238.8" strokeDashoffset={journeyRingOffset} transform="rotate(-90 44 44)" />
+                </svg>
+                <span className="profile-jring-lbl">
+                  <span className="profile-jring-n">{journeyDoneCount}/{journeyTotal}</span>
+                  <span className="profile-jring-s">steps</span>
+                </span>
+              </div>
+              <span className="profile-jcard-eyebrow">
+                {journeyNextStep
+                  ? ((journeyTotal - journeyDoneCount) <= 2 ? 'Your journey, almost there' : 'Your journey')
+                  : 'Your journey, all done'}
+              </span>
+              <div className="profile-jcard-next">
+                <span className={`profile-jcard-ic${journeyNextStep ? '' : ' profile-jcard-ic--done'}`}>
+                  {journeyNextStep ? renderJourneyIcon(journeyNextStep.key) : (
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg>
+                  )}
+                </span>
+                <span className="profile-jcard-nexttext">
+                  {journeyNextStep ? <span className="profile-jcard-nextlabel">Next step</span> : null}
+                  <span className="profile-jcard-nextname">{journeyNextStep ? journeyNextStep.label : 'You have completed every step. Nice work.'}</span>
+                </span>
+              </div>
+              {journeyNextStep ? (
+                <span className="profile-jcard-go" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M13 6l6 6-6 6" /></svg>
+                </span>
+              ) : null}
+            </section>
+          </>
         ) : null}
 
-        {/* Assessment History */}
+        {journeyCompleteExceptAdvisor && latestRun?.id && user?.id && !satDismissed && satWave != null ? (
+          <SatisfactionCard
+            userId={user.id}
+            assessmentRunId={latestRun.id}
+            asModal
+            wave={satWave}
+            onClose={() => setSatDismissed(true)}
+            onSubmitted={() => setSatDismissed(true)}
+          />
+        ) : null}
+
+        {/* Favourites (left) + grades (right, school only) from the latest run. */}
+        {overviewReady && latestRun ? (
+          <div className={`profile-favrow${latestStatus === 'school' ? '' : ' profile-favrow--single'}`}>
+            <FavouritesCard runId={latestRun.id} onExplore={exploreFavourite} initialGroups={favGroups} insightCtx={{
+              archetypes: latestRun?.results_json?.archetypes || null,
+              subdimensions: latestRun?.results_json?.subdimensionRows || [],
+              summaryMarkdown: latestRun?.summary_markdown || '',
+              likedPathways: (favGroups || []).filter((g) => g.type === 'pathway').flatMap((g) => g.items.map((it) => ({ id: it.id, title: it.title }))),
+              likedWorlds: (favGroups || []).filter((g) => g.type === 'career_world').flatMap((g) => g.items.map((it) => ({ id: it.id, title: it.title }))),
+            }} />
+            {latestStatus === 'school' ? <AcademicProfileCard openSignal={gradesOpenSignal} initialProfile={academicProfileData} onSaved={(ap) => { setAcademicHasData(hasAcademicData(ap)); setAcademicProfileData(ap || null); }} /> : null}
+          </div>
+        ) : null}
+
+        {/* Recent assessments */}
+        {overviewReady ? (
         <section className="profile-card">
           <div className="profile-card-header">
             <div className="profile-card-header-left">
-              <h2 className="profile-card-title">Assessment History</h2>
-              <span className="profile-card-count">{Math.min(20, totalRuns)} of {totalRuns}</span>
+              <h2 className="profile-card-title">Recent reports</h2>
+              <span className="profile-card-count">
+                {loadingRuns
+                  ? <span className="profile-skel profile-skel--pill" aria-label="Loading" />
+                  : `${totalRuns} total`}
+              </span>
             </div>
-            {totalRuns > 0 ? (
-              <button type="button" className="profile-btn-hover-accent" style={btnAccent} onClick={handleRetake}>
-                <PlayIcon />
-                New Assessment
-              </button>
-            ) : null}
           </div>
 
           {loadingRuns ? (
@@ -1335,7 +1594,7 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="profile-runs">
-              {runs.map((run, idx) => (
+              {(showAllRuns ? runs : runs.slice(0, 3)).map((run, idx) => (
                 <div
                   key={run.id}
                   className="profile-run-row"
@@ -1369,7 +1628,7 @@ export default function ProfilePage() {
                   {/* Actions */}
                   <div className="profile-run-actions">
                     <button type="button" className="profile-btn-hover-primary" style={btnPrimarySm} onClick={() => openRun(run.id)}>
-                      Open Result
+                      Open Report
                     </button>
                     <button type="button" className="profile-btn-hover-outline" style={btnOutlineSm} onClick={() => openOutputParametersModal(run)}>
                       Re-run
@@ -1409,12 +1668,15 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {runs.length > 0 && showingLatestOnly && (
+          {runs.length > 3 ? (
             <div className="profile-card-footer">
-              <span className="profile-card-footer-text">Showing latest {runs.length} of {totalRuns} runs</span>
+              <button type="button" className="profile-showall" onClick={() => setShowAllRuns((v) => !v)}>
+                {showAllRuns ? 'Show less' : `View all ${totalRuns}`}
+              </button>
             </div>
-          )}
+          ) : null}
         </section>
+        ) : null}
       </div>
 
 
@@ -1438,7 +1700,7 @@ export default function ProfilePage() {
 
             <h3 id="retakeConfirmTitle">Start a new assessment?</h3>
             <p>
-              A brand new run will be saved based on your new answers and may produce different results.
+              You will answer the questions again. Your new answers create a brand new report, saved to your account alongside your existing ones, so none of your current reports change. This uses one assessment credit.
             </p>
 
             <div className="profile-retake-confirm-actions">

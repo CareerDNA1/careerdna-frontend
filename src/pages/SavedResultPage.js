@@ -23,6 +23,7 @@ export default function SavedResultPage() {
   const location = useLocation();
   const initialSection = location.state?.section || '';
   const initialTab = location.state?.tab || '';
+  const initialFocus = location.state?.focusTitle || '';
   const [menuOpen, setMenuOpen] = useState(false);
   const [run, setRun] = useState(() => savedRunCache.get(runId) || null);
   const [loading, setLoading] = useState(() => !savedRunCache.has(runId));
@@ -194,6 +195,7 @@ export default function SavedResultPage() {
             profileQualityGate={savedProfileQualityGate}
             initialSection={initialSection}
             initialTab={initialTab}
+            initialFocus={initialFocus}
           />
         </>
       )}

@@ -25,13 +25,10 @@ export default function RoleExplorerPanel({ pathways = [], savedReactions = {}, 
     });
   }, [withRoles]);
 
-  // Bring the detail into view when the selected pathway changes.
+  // Collapse any open role when switching pathway. No auto-scroll — the
+  // selection can change as data settles, which was yanking the page around.
   useEffect(() => {
-    if (hasSelectedRef.current && mainRef.current) {
-      mainRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
     hasSelectedRef.current = true;
-    // Collapse any open role when switching pathway.
     setOpenRoleKey('');
   }, [activeKey]);
 

@@ -100,7 +100,10 @@ function RouteChips({ chips }) {
   );
 }
 
-function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = getCareerWorldIcon, pilotDefinition = false, itemType = 'career_world' }) {
+// Normalised key so a favourite on the profile can deep-link to this exact card.
+const favKey = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = getCareerWorldIcon, pilotDefinition = false, itemType = 'career_world' }) {
   const readMoreNoun = itemType === 'pathway' ? 'pathway' : itemType === 'role' ? 'role' : 'world';
   const cardRef = useRef(null);
   const hasMounted = useRef(false);
@@ -181,7 +184,7 @@ function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = getCare
   }
 
   return (
-    <div ref={cardRef} className={`cw-accordion-item ${open ? 'is-open' : ''}${pilotDefinition ? ' cw-accordion-item--pilot' : ''}`}>
+    <div ref={cardRef} data-fav-key={favKey(world.title)} className={`cw-accordion-item ${open ? 'is-open' : ''}${pilotDefinition ? ' cw-accordion-item--pilot' : ''}`}>
       <div
         className="cw-accordion-item__head"
         onClick={(e) => {
