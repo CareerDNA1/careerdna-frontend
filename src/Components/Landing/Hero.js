@@ -76,9 +76,10 @@ export default function Hero() {
         <div className="hero-title-line" aria-hidden="true" />
 
         <p className="hero-combined">
-          CareerDNA is a breakthrough career discovery platform for students and early-career explorers.
-          By combining psychology, behavioural science and AI, it helps you understand what drives you and
-          make smarter choices about your future.
+          CareerDNA is a breakthrough career discovery and planning platform for students and early-career explorers.
+          Using psychology, behavioural science and AI, it maps your interests, how you think, what motivates you
+          and how you work. Combining your profile with real career data, it identifies the study routes and careers
+          that suit you best and builds your path to get there.
         </p>
 
         <div className="cta-button-wrapper">

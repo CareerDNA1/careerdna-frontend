@@ -23,12 +23,12 @@ const profiles = [
     color: '#2f80ed',
   },
   {
-    name: 'Organizer',
+    name: 'Organiser',
     icon: <ClipboardList aria-hidden="true" />,
-    title: 'The Organizer',
+    title: 'The Organiser',
     short: 'Reliable and methodical.',
     description:
-      'Reliable and methodical. Organizers enjoy bringing order to complexity, creating systems, and keeping projects on track.',
+      'Reliable and methodical. Organisers enjoy bringing order to complexity, creating systems, and keeping projects on track.',
     color: '#7c5cff',
   },
   {

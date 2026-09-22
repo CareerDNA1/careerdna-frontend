@@ -64,7 +64,7 @@ export default function CtaSection() {
         <h2>Ready to gain clarity about your future?</h2>
 
         <p>
-          Take the CareerDNA assessment and discover the patterns that shape your strengths, interests, motivations and future opportunities. Your next step starts with understanding yourself.
+          Take the CareerDNA assessment and discover the patterns that shape your strengths, interests and motivations, then see the study routes, careers and openings that fit them. Your next big decision starts here.
         </p>
 
         <div className="cta-button-wrap">
@@ -100,7 +100,7 @@ export default function CtaSection() {
 
         <footer className="cta-footer" aria-label="CareerDNA footer">
           <p className="cta-footer-tagline">
-            Science-backed career discovery for students and early career explorers.
+            Science-backed career discovery and planning for students and early-career explorers.
           </p>
 
           <nav className="cta-footer-links" aria-label="Footer links">

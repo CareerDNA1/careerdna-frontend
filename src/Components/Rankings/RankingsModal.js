@@ -191,7 +191,11 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
   const rkCols = rkColumnDefs
     .filter((c) => c.when !== false)
     .map((c) => { const groupStart = c.group !== rkPrevGroup; rkPrevGroup = c.group; return { ...c, groupStart }; });
-  const rkGridCols = ['30px', 'minmax(0, 1fr)', ...rkCols.map((c) => `${c.width}px`)].join(' ');
+  // The University track is a CSS variable so the mobile breakpoint can swap it
+  // from a flexible 1fr to a fixed width. A flexible 1fr track breaks the sticky
+  // column freeze on mobile Safari (columns bleed under the frozen column); a
+  // fixed track keeps the freeze solid. Desktop keeps the 1fr fallback.
+  const rkGridCols = ['30px', 'var(--rk-uni-col, minmax(0, 1fr))', ...rkCols.map((c) => `${c.width}px`)].join(' ');
   const rkTableMinWidth = 30 + 200 + rkCols.reduce((s, c) => s + c.width, 0);
 
   return (

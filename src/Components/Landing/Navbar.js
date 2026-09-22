@@ -213,7 +213,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
 
           <ul className="nav-links desktop-only">
             <li><ScrollLink to="why" smooth duration={500}>Why It Matters</ScrollLink></li>
-            <li><ScrollLink to="how" smooth duration={500}>How it Works</ScrollLink></li>
+            <li><ScrollLink to="how" smooth duration={500}>How It Works</ScrollLink></li>
             <li><ScrollLink to="dimensions" smooth duration={500}>Your Dimensions</ScrollLink></li>
             <li><ScrollLink to="archetypes" smooth duration={500}>Career Profiles</ScrollLink></li>
             <li><ScrollLink to="science" smooth duration={500}>The Science</ScrollLink></li>
@@ -241,7 +241,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
       >
         <ul className="dropdown-list">
           <li><ScrollLink to="why" smooth duration={500} onClick={closeMenu}>Why It Matters</ScrollLink></li>
-          <li><ScrollLink to="how" smooth duration={500} onClick={closeMenu}>How it Works</ScrollLink></li>
+          <li><ScrollLink to="how" smooth duration={500} onClick={closeMenu}>How It Works</ScrollLink></li>
           <li><ScrollLink to="dimensions" smooth duration={500} onClick={closeMenu}>Your Dimensions</ScrollLink></li>
           <li><ScrollLink to="archetypes" smooth duration={500} onClick={closeMenu}>Career Profiles</ScrollLink></li>
           <li><ScrollLink to="science" smooth duration={500} onClick={closeMenu}>The Science</ScrollLink></li>
@@ -272,7 +272,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
 
           <ul className="nav-links">
             <li><ScrollLink to="why" smooth duration={500} onClick={closeMenu}>Why It Matters</ScrollLink></li>
-            <li><ScrollLink to="how" smooth duration={500} onClick={closeMenu}>How it Works</ScrollLink></li>
+            <li><ScrollLink to="how" smooth duration={500} onClick={closeMenu}>How It Works</ScrollLink></li>
             <li><ScrollLink to="dimensions" smooth duration={500} onClick={closeMenu}>Your Dimensions</ScrollLink></li>
             <li><ScrollLink to="archetypes" smooth duration={500} onClick={closeMenu}>Career Profiles</ScrollLink></li>
             <li><ScrollLink to="science" smooth duration={500} onClick={closeMenu}>The Science</ScrollLink></li>

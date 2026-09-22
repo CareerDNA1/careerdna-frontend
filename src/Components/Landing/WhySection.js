@@ -234,11 +234,12 @@ export default function WhySection() {
               <div className="icon-circle" aria-hidden="true"><Brain size={21} strokeWidth={1.8} /></div>
               <h3 id="why-solution" className="why-title">A smarter way forward</h3>
               <p className="why-body">
-  Amid endless options and conflicting advice, {' '}
-  <span className="brand">CareerDNA</span> gives young people the clarity,
-  confidence and self-awareness to choose subjects and careers that genuinely fit,
-  and to trust the decision.
-</p>
+                Most people only find out which careers really suit them years after they&rsquo;ve chosen. {' '}
+                <span className="brand">CareerDNA</span> brings that discovery forward, before you pick your subjects,
+                your course or your first job. It builds a complete behavioural profile of you and matches it to the
+                environments you&rsquo;d thrive in and the careers where people like you do well, so you get the big
+                decisions right the first time.
+              </p>
             </article>
 
 

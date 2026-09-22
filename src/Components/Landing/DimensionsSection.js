@@ -149,7 +149,7 @@ export default function DimensionsSection() {
       <div className="section-inner">
         <h2>The four core dimensions</h2>
         <p className="intro-text">
-          CareerDNA is the first platform to unite all four dimensions of career identity into one profile.
+          CareerDNA brings all four dimensions of career identity together in one profile.
           This creates a complete picture of the whole person, helping students make clearer, smarter and more
           confident subject and career decisions.
         </p>
