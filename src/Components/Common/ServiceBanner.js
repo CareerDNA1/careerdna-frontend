@@ -9,7 +9,7 @@ async function checkHealth() {
   for (const url of candidates) {
     try {
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 6000);
+      const timer = setTimeout(() => controller.abort(), 12000);
       const res = await fetch(url, { signal: controller.signal });
       clearTimeout(timer);
       if (!res.ok) continue;
@@ -26,6 +26,9 @@ export default function ServiceBanner() {
   const [down, setDown] = useState(false);
 
   useEffect(() => {
+    // Local development restarts the backend all the time (nodemon), which
+    // would keep tripping this. The banner is for real outages in production.
+    if (process.env.NODE_ENV === 'development') return undefined;
     let cancelled = false;
     let timer = null;
     let fails = 0;
@@ -33,19 +36,19 @@ export default function ServiceBanner() {
       const h = await checkHealth();
       if (cancelled) return;
       const bad = !h.reachable || !h.supabase;
-      // Only show the banner after two consecutive failed checks, so a single
-      // transient blip or a cold-start delay doesn't flash it. Any success
-      // clears it immediately.
+      // Only show the banner after three consecutive failed checks (about a
+      // minute of real outage), so a blip, a slow reply or a cold start never
+      // flashes it. Any success clears it immediately.
       if (bad) {
         fails += 1;
-        if (fails >= 2) setDown(true);
+        if (fails >= 3) setDown(true);
       } else {
         fails = 0;
         setDown(false);
       }
       // Re-check sooner while we suspect a problem, so it clears quickly once
       // the backend recovers.
-      timer = setTimeout(tick, bad ? 15000 : 60000);
+      timer = setTimeout(tick, bad ? 20000 : 90000);
     };
     tick();
     return () => { cancelled = true; if (timer) clearTimeout(timer); };
