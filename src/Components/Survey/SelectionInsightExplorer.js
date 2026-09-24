@@ -9,7 +9,7 @@ import { getCareerWorldIcon, getPathwayIcon } from '../../utils/iconMap';
 import { fetchNonUniRoutes, peekNonUniRoutes } from '../../utils/fetchNonUniRoutes';
 import { fetchGradJobs } from '../../utils/fetchGradJobs';
 import { entryRouteForCard } from '../../utils/entryRouteModes';
-import { ThumbsUp, ThumbsDown, Smiley, SmileyMeh, BookmarkSimple, Heart, Info, Briefcase, Signpost, UsersThree, TrendUp, MapPin, GraduationCap, CalendarBlank, CurrencyGbp, Rocket } from 'phosphor-react';
+import { ThumbsUp, ThumbsDown, Smiley, SmileyMeh, BookmarkSimple, Info, Briefcase, Signpost, UsersThree, TrendUp, MapPin, GraduationCap, CalendarBlank, CurrencyGbp, Rocket } from 'phosphor-react';
 import { getSavedIds, setItemReaction } from '../../utils/savedItems';
 import {
   FaBrain,
@@ -1023,7 +1023,7 @@ export function JobCard({ job, saved = false, onToggleSave, onOpen }) {
           title={saved ? 'Saved' : 'Save to favourites'}
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleSave(job); }}
         >
-          <Heart size={16} weight={saved ? 'fill' : 'bold'} aria-hidden="true" />
+          <BookmarkSimple size={16} weight={saved ? 'fill' : 'bold'} aria-hidden="true" />
         </button>
       ) : null}
       {onOpen ? (
@@ -1126,6 +1126,9 @@ export function JobsModal({ open, onClose, title, heading, lead, data, kindNoun,
         deadline: job.deadline || '',
         closingDate: job.closingDate || null,
         source: job.source || '',
+        experience: job.experience || '',
+        noExperience: Boolean(job.noExperience),
+        salary: job.salary || '',
       },
       reaction,
       remove,
@@ -1208,12 +1211,12 @@ export function JobsModal({ open, onClose, title, heading, lead, data, kindNoun,
               ) : null}
             </>
           ) : (
-            <p className="role-jobs-modal__lead">No live {nounPlural} found right now. Try the links below.</p>
+            <p className="role-jobs-modal__lead">No live {nounPlural} found right now. Check back soon; listings refresh regularly.</p>
           )}
           {/* Optional single provider link (e.g. apprenticeships → Find an
               Apprenticeship), shown only when the caller supplies one. Jobs,
               schemes and internships show the live roles directly, no link. */}
-          {provider && provider.url ? (
+          {provider && provider.url && kindNoun === 'apprenticeship' ? (
             <div className="role-jobs-modal__foot">
               <a className="role-jobs__link" href={provider.url} target="_blank" rel="noopener noreferrer">See all on {provider.name} <span aria-hidden="true">→</span></a>
             </div>

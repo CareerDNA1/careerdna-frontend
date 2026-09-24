@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Heart, X, Briefcase, Compass, GraduationCap, BookOpen, FileText, Signpost, Sparkle, MapPin, CaretRight, ArrowSquareOut, ArrowLeft } from 'phosphor-react';
+import { Heart, X, Briefcase, Compass, GraduationCap, BookOpen, FileText, Signpost, Sparkle, MapPin, CaretRight, ArrowSquareOut, ArrowLeft, CalendarBlank, CurrencyGbp, IdentificationBadge } from 'phosphor-react';
+import { getCareerWorldIcon, getPathwayIcon, getSubjectIcon, getStrengthIcon, getEnvironmentIcon } from '../../utils/iconMap';
 import { getFavouritesByCategory, removeFavourite } from '../../utils/favourites';
 import { loadSubjectRanking } from '../../utils/rankings';
 import { assembleFavouriteWorld, assembleFavouriteRole, assembleFavouriteDegree, assembleFavouriteTraining } from '../../utils/favouriteReportCard';
@@ -15,6 +16,30 @@ const INPLACE_TYPES = new Set(['career_world', 'pathway', 'role', 'subject', 'no
 // Saved live items (a specific university course, a job advert). They open a small
 // in-modal card with the title, the university/employer and a link out.
 const LINK_TYPES = new Set(['course', 'job']);
+
+// Row icon rule: things that have their own icon elsewhere in the report
+// (worlds, pathways, degrees, training routes, strengths, environments) show
+// that icon, tinted by type. Things with no individual icon (roles, job
+// adverts, courses) share one fixed icon per type. The type label on the right
+// of the row carries the category either way.
+function favRowIcon(item, size = 16) {
+  const t = item?.type;
+  const title = item?.title || '';
+  const fixed = (Comp) => <Comp size={size} weight="bold" aria-hidden="true" />;
+  switch (t) {
+    case 'career_world': return getCareerWorldIcon(title);
+    case 'pathway': return getPathwayIcon(title);
+    case 'subject': return getSubjectIcon(title);
+    case 'nonuni_pathway':
+    case 'apprenticeship': return getPathwayIcon(item?.meta?.linkedPathway || item?.subtitle || title);
+    case 'strength': return getStrengthIcon(title);
+    case 'environment': return getEnvironmentIcon(title);
+    case 'role': return fixed(IdentificationBadge);
+    case 'job': return fixed(Briefcase);
+    case 'course': return fixed(GraduationCap);
+    default: return fixed(Heart);
+  }
+}
 
 // Icon + short label per favourite type, for the preview + list rows.
 const FAV_TYPE = {
@@ -181,10 +206,9 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
         <div className="fav-preview">
           {previewItems.map((item) => {
             const meta = FAV_TYPE[item.type] || { Icon: Heart, label: '' };
-            const Icon = meta.Icon;
             return (
               <div className="fav-prev" key={`${item.type}-${item.id}`}>
-                <span className="fav-prev-ic" style={{ background: meta.tint || '#eaf1fe', color: meta.fg || '#2f6fed' }}><Icon size={16} weight="bold" aria-hidden="true" /></span>
+                <span className="fav-prev-ic" style={{ background: meta.tint || '#eaf1fe', color: meta.fg || '#2f6fed' }} aria-hidden="true">{favRowIcon(item, 16)}</span>
                 <span className="fav-prev-main">
                   <span className="fav-prev-title">{item.title}</span>
                   {item.subtitle ? <span className="fav-prev-sub">{item.subtitle}</span> : null}
@@ -208,7 +232,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
       {open ? (
         <div className="fav-overlay" role="dialog" aria-modal="true" aria-label="Your favourites"
           onClick={(e) => { if (e.target === e.currentTarget) { if (detail) setDetail(null); else setOpen(false); } }}>
-          <div className={`fav-modal${detail && INPLACE_TYPES.has(detail.type) ? ' fav-modal--wide' : ''}${detail && LINK_TYPES.has(detail.type) ? ' fav-modal--course' : ''}`}>
+          <div className={`fav-modal${detail && INPLACE_TYPES.has(detail.type) ? ' fav-modal--wide' : ''}${detail && detail.type === 'course' ? ' fav-modal--course' : ''}`}>
             <button type="button" className="fav-close" onClick={() => { if (detail) setDetail(null); else setOpen(false); }} aria-label="Close">
               <X size={18} weight="bold" aria-hidden="true" />
             </button>
@@ -268,6 +292,56 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                   <p className="fav-empty">We could not load this card right now. Open it in your report to see the full detail.</p>
                 )}
               </div>
+            ) : detail && detail.type === 'job' ? (
+              /* ---- SAVED JOB: the same card the job opens as in the report ---- */
+              (() => {
+                const m = detail.meta || {};
+                const pills = [
+                  m.location ? { Icon: MapPin, text: m.location } : null,
+                  m.deadline ? { Icon: CalendarBlank, text: `Closes ${m.deadline}` } : null,
+                  m.noExperience ? null : { Icon: Briefcase, text: m.experience || 'Graduate / entry-level' },
+                  m.salary ? { Icon: CurrencyGbp, text: m.salary } : null,
+                ].filter(Boolean);
+                return (
+                  <div className="fav-cardview">
+                    <button type="button" className="fav-back" onClick={() => setDetail(null)}>
+                      <ArrowLeft size={15} weight="bold" aria-hidden="true" /> All favourites
+                    </button>
+                    {error ? <p className="fav-error">{error}</p> : null}
+                    <div className="fav-detail-head">
+                      <span className="fav-detail-ic" aria-hidden="true"><Briefcase size={22} weight="bold" /></span>
+                      <div className="fav-detail-headtext">
+                        <div className="fav-detail-title">{detail.title}</div>
+                        {detail.subtitle || m.source ? (
+                          <div className="fav-prev-sub" style={{ whiteSpace: 'normal' }}>{detail.subtitle || 'Live job'}{m.source ? ` · via ${m.source}` : ''}</div>
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className="fav-job-body">
+                      {detail.expired ? <div className="job-detail-closed">This advert has closed, so it may no longer be accepting applications.</div> : null}
+                      {pills.length ? (
+                        <div className="role-jobcard__facts job-detail-facts">
+                          {pills.map(({ Icon, text }, i) => (
+                            <span className="role-jobcard__fact" key={i}><Icon size={13} weight="bold" aria-hidden="true" />{text}</span>
+                          ))}
+                        </div>
+                      ) : null}
+                      <PathwayReactionRow
+                        reaction="like"
+                        onReact={(next) => { if (next !== 'like') handleRemove(detail); }}
+                        label="Job feedback"
+                      />
+                      {detail.url ? (
+                        <div className="job-detail-actions">
+                          <a className="cw-readmore job-detail-apply" href={detail.url} target="_blank" rel="noopener noreferrer">
+                            Apply on {m.source || 'the job board'} <span aria-hidden="true">↗</span>
+                          </a>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })()
             ) : detail && LINK_TYPES.has(detail.type) ? (
               /* ---- SAVED LINK CARD (a specific university course or job advert) ---- */
               <div className="fav-cardview">
@@ -324,7 +398,6 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                   <div className="fav-items">
                     {g.items.map((item) => {
                       const meta = FAV_TYPE[item.type] || { Icon: Heart, label: '' };
-                      const Icon = meta.Icon;
                       const isExternal = Boolean(item.url);
                       const opensInModal = INPLACE_TYPES.has(item.type) || LINK_TYPES.has(item.type);
                       const canOpen = isExternal || opensInModal || REPORT_TYPES.has(item.type);
@@ -340,7 +413,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                           } : {})}
                         >
                           <span className="fav-item-ic" style={{ background: meta.tint || '#eaf1fe', color: meta.fg || '#2f6fed' }} aria-hidden="true">
-                            <Icon size={17} weight="bold" />
+                            {favRowIcon(item, 17)}
                           </span>
                           <span className="fav-item-main">
                             <span className="fav-item-title">{item.title}</span>

@@ -11,27 +11,47 @@ import { supabase } from './supabaseClient';
 //
 // Requires the one-off migration adding result_feedback.item_meta (jsonb).
 //
-// Components that use this (RankingsModal, JobCard) are mounted outside the
-// results page, so they don't have the assessment run id to hand. We resolve the
-// user's latest run here (favourites are always from the most recent run) and
-// cache it briefly.
+// Components that use this (RankingsModal, JobCard) are mounted deep inside the
+// results page and do not receive the run id as a prop. The results page
+// registers the report it is showing with setActiveRunId(), so a saved job or
+// course lands on THAT report, the same run the other reactions and the profile
+// favourites read from. Outside a report we fall back to the profile's current
+// report, then the newest run.
 
+let activeRunId = null;
 let runCache = { id: null, at: 0 };
+
+export function setActiveRunId(runId) {
+  activeRunId = runId ? String(runId) : null;
+}
 
 async function getContext() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { userId: null, runId: null };
+  if (activeRunId) return { userId: user.id, runId: activeRunId };
   if (runCache.id && Date.now() - runCache.at < 60000) {
     return { userId: user.id, runId: runCache.id };
   }
-  const { data } = await supabase
-    .from('assessment_runs')
-    .select('id')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  runCache = { id: data?.id || null, at: Date.now() };
+  let id = null;
+  try {
+    const { data: prof } = await supabase
+      .from('profiles')
+      .select('current_run_id')
+      .eq('id', user.id)
+      .maybeSingle();
+    id = prof?.current_run_id || null;
+  } catch (_) { id = null; }
+  if (!id) {
+    const { data } = await supabase
+      .from('assessment_runs')
+      .select('id')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    id = data?.id || null;
+  }
+  runCache = { id, at: Date.now() };
   return { userId: user.id, runId: runCache.id };
 }
 

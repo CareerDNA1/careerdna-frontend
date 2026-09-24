@@ -79,6 +79,7 @@ export async function getFavouritesByCategory(runId) {
       subtitle: meta.university || meta.employer || idUni || '',
       subject: meta.subject || '',
       stats: (meta.stats && typeof meta.stats === 'object') ? meta.stats : null,
+      meta,
     };
     // Saved jobs can close: flag ones whose closing date has passed so the
     // student can clear them out. Other saved types never expire.

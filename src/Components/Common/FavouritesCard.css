@@ -273,6 +273,8 @@
 /* The report card renders open by default inside the popup. */
 .fav-cardview .cw-accordion-item { border: 1px solid #e6ebf3; border-radius: 14px; }
 .fav-detail-head { display: flex; align-items: flex-start; gap: 13px; }
+.fav-job-body { margin-top: 16px; }
+.fav-job-body .job-detail-facts { margin: 0 0 14px; }
 .fav-detail-ic {
   flex: 0 0 auto;
   width: 44px; height: 44px; border-radius: 11px;
@@ -295,3 +297,8 @@
 .fav-detail-light p { margin: 0; font-size: 0.88rem; color: #43526a; line-height: 1.55; }
 .fav-detail-actions { display: flex; gap: 10px; margin-top: 20px; padding-top: 14px; border-top: 1px solid #eef2f8; flex-wrap: wrap; }
 .fav-detail-actions .fav-btn { padding: 7px 15px; font-size: 0.82rem; }
+
+/* Row icons come from several icon sets (phosphor, tabler, font awesome); pin
+   them to one size so the boxes look uniform. */
+.fav-prev-ic svg { width: 16px; height: 16px; }
+.fav-item-ic svg { width: 17px; height: 17px; }

@@ -28,6 +28,7 @@ import { applyCouponCode } from '../../utils/applyCoupon';
 import { getStrengthIcon, getEnvironmentIcon, getCareerWorldIcon, getPathwayIcon } from '../../utils/iconMap';
 import { ThumbsUp, ThumbsDown } from 'phosphor-react';
 import { getProfileQualityGateMessage } from '../../utils/profileQualityGate';
+import { setActiveRunId } from '../../utils/savedItems';
 
 // Per-section contextual advisor config: which analysis tabs get an inline
 // "ask the advisor" panel, the section tag used to store/filter its own thread,
@@ -1647,6 +1648,13 @@ export default function ResultsComponent({
 
     return '';
   }, [assessmentRunId, analysisMeta]);
+
+  // Saved jobs and courses (savedItems.js) must land on the report being shown,
+  // not on whichever run happens to be newest.
+  useEffect(() => {
+    setActiveRunId(effectiveAssessmentRunId || null);
+    return () => setActiveRunId(null);
+  }, [effectiveAssessmentRunId]);
 
   const displayName = useMemo(() => getFirstName(profileFirstName), [profileFirstName]);
   const selectableMaps = useMemo(() => buildSelectableMaps(analysisMeta), [analysisMeta]);

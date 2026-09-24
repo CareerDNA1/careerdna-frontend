@@ -311,10 +311,17 @@
 .profile-showall:hover { text-decoration: underline; }
 
 @media (max-width: 600px) {
-  .profile-hero { padding: 16px; }
+  .profile-hero { padding: 16px; position: relative; }
   .profile-hero-welcome { font-size: 1.05rem; }
   .profile-hero-email { max-width: 180px; }
   .profile-hero-continue { flex: 1 1 auto; justify-content: center; }
+  /* Phones: the two real actions share the row; the admin shortcut (staff
+     only) moves to a small pill in the top-right corner of the card. */
+  .profile-hero-actions { flex-wrap: wrap; }
+  .profile-hero-btn--muted {
+    position: absolute; top: 12px; right: 12px;
+    font-size: 0.72rem; padding: 3px 10px;
+  }
 }
 
 .profile-welcome {
