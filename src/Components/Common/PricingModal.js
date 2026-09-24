@@ -1,20 +1,20 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './PricingModal.css';
-import { changeSubscriptionPlan, createBillingPortalSession, createCheckoutSession } from '../../utils/stripeCheckout';
+import { changeSubscriptionPlan, createBillingPortalSession, createCheckoutSession, setCancelAtPeriodEnd } from '../../utils/stripeCheckout';
 
 const planRank = {
   free: 0,
   starter: 0,
-  plus: 2,
+  explore: 2,
   premium: 3,
   premium_school: 4,
   premium_university: 4,
   dev: 4,
 };
 
-// Feature lists differ between school and university students. The report itself
-// is the "CareerDNA Original©"; the © also marks the proprietary rankings. AI
-// advisor questions are top-up-able (extra packs at £3.99).
+// Feature lists differ between school and university students. Explorer and
+// Premium are both yearly subscriptions. AI advisor questions are top-up-able
+// (extra packs at £3.99). CareerDNA is an unregistered mark, hence ™ not ®.
 const plans = [
   {
     title: 'CareerDNA Starter',
@@ -23,16 +23,16 @@ const plans = [
     variant: 'starter',
     features: {
       school: [
-        'Basic CareerDNA© profile',
-        'See how well you know yourself',
-        'See where you sit across the seven CareerDNA profiles',
-        'Get to know your core traits',
+        'Basic CareerDNA™ profile',
+        'Your seven-profile breakdown',
+        'Your top traits and how strong they are',
+        'A first look at the career worlds that suit you',
       ],
       university: [
-        'Basic CareerDNA© profile',
-        'See how well you know yourself',
-        'See where you sit across the seven CareerDNA profiles',
-        'Get to know your core traits',
+        'Basic CareerDNA™ profile',
+        'Your seven-profile breakdown',
+        'Your top traits and how strong they are',
+        'A first look at the career worlds that suit you',
       ],
     },
   },
@@ -41,12 +41,12 @@ const plans = [
     subtitle: 'Essentials, all year',
     price: '£29.99',
     suffix: '/ year',
-    note: 'Annual subscription, renews yearly',
-    variant: 'single',
+    note: 'Yearly subscription, renews annually',
+    variant: 'explore',
     checkoutPlan: 'explore',
     features: {
       school: [
-        { type: 'lead', text: 'Your full CareerDNA© profile' },
+        { type: 'lead', text: 'Your full CareerDNA™ profile' },
         { type: 'header', text: 'Your profile' },
         'Personal strengths insights',
         'Ideal work environment insights',
@@ -54,13 +54,13 @@ const plans = [
         'A-level & university subject recommendations',
         '1 CareerDNA report a year',
         { type: 'header', text: 'Guidance' },
-        '5 CareerDNA advisor questions',
+        '5 CareerDNA advisor questions a year',
         'Track your development over time',
-        'New tools and expert advice all year',
+        'Every new feature we add, included',
         { type: 'note', text: 'Extra advisor question packs available' },
       ],
       university: [
-        { type: 'lead', text: 'Your full CareerDNA© profile' },
+        { type: 'lead', text: 'Your full CareerDNA™ profile' },
         { type: 'header', text: 'Your profile' },
         'Personal strengths insights',
         'Ideal work environment insights',
@@ -69,9 +69,9 @@ const plans = [
         'Further study & postgraduate recommendations',
         '1 CareerDNA report a year',
         { type: 'header', text: 'Guidance' },
-        '5 CareerDNA advisor questions',
+        '5 CareerDNA advisor questions a year',
         'Track your development over time',
-        'New tools and expert advice all year',
+        'Every new feature we add, included',
         { type: 'note', text: 'Extra advisor question packs available' },
       ],
     },
@@ -82,29 +82,29 @@ const plans = [
     price: '£39.99',
     suffix: '/ year',
     anchorPrice: '£59.99',
-    note: 'Annual subscription, renews yearly',
+    anchorLabel: 'Launch price',
+    note: 'Yearly subscription, renews annually',
     badge: 'Most popular',
     variant: 'premium',
     checkoutPlan: 'premium',
     features: {
       school: [
-        { type: 'lead', text: 'Everything in CareerDNA Explorer, plus:' },
-        '1 more CareerDNA report a year',
-        '15 more CareerDNA advisor questions',
+        { type: 'lead', text: 'Everything in Explorer, plus:' },
+        '2 CareerDNA reports and 20 advisor questions a year',
         { type: 'header', text: 'Premium tools' },
-        'Live apprenticeships and other non-university routes',
-        'CareerDNA Subject & University Rankings©',
-        'Live university & course search',
-        { type: 'note', text: 'Extra advisor question packs available' },
+        'Your chances of an offer, from your grades',
+        'CareerDNA Subject & University Rankings™',
+        'Entry requirements and offer rates',
+        'Live courses, apprenticeships and training routes',
       ],
       university: [
-        { type: 'lead', text: 'Everything in CareerDNA Explorer, plus:' },
-        '1 more CareerDNA report a year',
-        '15 more CareerDNA advisor questions',
+        { type: 'lead', text: 'Everything in Explorer, plus:' },
+        '2 CareerDNA reports and 20 advisor questions a year',
         { type: 'header', text: 'Premium tools' },
         'Live graduate jobs from LinkedIn, Indeed, Glassdoor and more',
-        'Live internship & graduate programme search',
-        { type: 'note', text: 'Extra advisor question packs available' },
+        'Internships, graduate schemes and programmes',
+        'CareerDNA Subject & University Rankings™ for further study',
+        'Degree apprenticeships and other routes into work',
       ],
     },
   },
@@ -153,7 +153,7 @@ function getPlanFeatures(plan, audience) {
   return [];
 }
 
-const PAYMENTS_TEMPORARILY_PAUSED = true;
+export const PAYMENTS_TEMPORARILY_PAUSED = true;
 const PAYMENT_PAUSE_MESSAGE =
   'CareerDNA is currently undergoing beta testing, so paid plans are not available to purchase yet. They will be available very soon.';
 
@@ -166,9 +166,8 @@ function normalisePlan(value = '') {
 
 function getPlanDisplayName(value = '') {
   const plan = normalisePlan(value);
-  if (plan === 'plus') return 'CareerDNA Plus';
   if (plan === 'premium') return 'CareerDNA Premium';
-  if (plan === 'explore') return 'CareerDNA Explore';
+  if (plan === 'explore') return 'CareerDNA Explorer';
   return 'CareerDNA Starter';
 }
 
@@ -180,7 +179,7 @@ function formatDisplayDate(value = '') {
 }
 
 function isSubscriptionPlan(plan = '') {
-  return ['plus', 'premium', 'premium_school', 'premium_university', 'dev'].includes(normalisePlan(plan));
+  return ['explore', 'premium', 'premium_school', 'premium_university', 'dev'].includes(normalisePlan(plan));
 }
 
 function getPlanButtonLabel(plan, currentPlan, pendingPlan = '', isCancellingAtPeriodEnd = false) {
@@ -192,7 +191,6 @@ function getPlanButtonLabel(plan, currentPlan, pendingPlan = '', isCancellingAtP
   if (isCancellingAtPeriodEnd && variant === 'starter' && currentRank > 0) return 'Scheduled';
   if (variant === pending) return 'Scheduled';
   if (variant === 'institution') return 'Contact us';
-  if (variant === 'single') return currentRank >= 2 ? 'Buy extra report' : 'Buy report';
 
   if (variant === 'starter') {
     if (currentRank <= 0) return 'Current plan';
@@ -201,16 +199,16 @@ function getPlanButtonLabel(plan, currentPlan, pendingPlan = '', isCancellingAtP
 
   if (variant === current) return 'Current plan';
 
-  if (variant === 'plus') {
+  if (variant === 'explore') {
     if (current === 'premium') return 'Downgrade';
-    return 'Upgrade';
+    return 'Subscribe';
   }
 
   if (variant === 'premium') {
-    return 'Upgrade';
+    return current === 'explore' ? 'Upgrade' : 'Subscribe';
   }
 
-  return 'Upgrade';
+  return 'Subscribe';
 }
 
 function getPlanStatus(plan, currentPlan, pendingPlan = '', isCancellingAtPeriodEnd = false) {
@@ -222,11 +220,12 @@ function getPlanStatus(plan, currentPlan, pendingPlan = '', isCancellingAtPeriod
   if (isCancellingAtPeriodEnd && variant === 'starter' && currentRank > 0) return 'scheduled';
   if (variant === pending) return 'scheduled';
   if (variant === current) return 'current';
+  // Free users are on Starter: mark it current so the card highlights properly.
+  if (variant === 'starter' && currentRank <= 0) return 'current';
   if (variant === 'starter' && currentRank > 0) return 'downgrade';
-  if (variant === 'plus' && current === 'premium') return 'downgrade';
-  if (variant === 'premium' && current === 'plus') return 'upgrade';
-  if (['plus', 'premium'].includes(variant) && currentRank === 0) return 'upgrade';
-  if (variant === 'single') return 'available';
+  if (variant === 'explore' && current === 'premium') return 'downgrade';
+  if (variant === 'premium' && current === 'explore') return 'upgrade';
+  if (['explore', 'premium'].includes(variant) && currentRank === 0) return 'upgrade';
   if (variant === 'institution') return 'available';
   return 'available';
 }
@@ -239,28 +238,27 @@ function buildConfirmationCopy({ variant, checkoutPlanKey, status, effectivePlan
       tone: 'downgrade',
       title: 'Cancel your paid plan?',
       body:
-        `You are about to open Stripe to cancel your ${currentName} subscription. ` +
-        'You will normally keep your current access until the end of your billing period, and your plan will not renew after that.',
+        `Your ${currentName} subscription will not renew. ` +
+        'You keep your current access until the end of your billing year and nothing more is charged.',
       bullets: [
-        'At the end of your billing period, your account will return to the free CareerDNA Starter plan.',
-          'You will lose access to monthly full CareerDNA reports and AI advisor questions.',
-          'Your account will still include a basic CareerDNA profile and self-awareness insights.',
-        ],
-      confirmLabel: 'Continue to Stripe',
+        'At the end of your billing year, your account will return to the free CareerDNA Starter plan.',
+        'You will lose access to full CareerDNA reports, AI advisor questions and any premium tools.',
+        'Your account will still include your basic CareerDNA profile, and you can change your mind at any time before then.',
+      ],
+      confirmLabel: 'Cancel my plan',
       cancelLabel: 'Keep current plan',
     };
   }
 
-  if (checkoutPlanKey === 'plus' && !hasSubscription) {
+  if (checkoutPlanKey === 'explore' && !hasSubscription) {
     return {
       tone: 'upgrade',
-      title: 'Upgrade to CareerDNA Plus?',
-      body: 'You will be taken to Stripe Checkout to start CareerDNA Plus at £3.99 per month.',
+      title: 'Subscribe to CareerDNA Explorer?',
+      body: 'You will be taken to Stripe Checkout to start CareerDNA Explorer at £29.99 a year.',
       bullets: [
-        'Includes 1 full report per month.',
-        'Includes 5 AI advisor questions per month.',
-        'You can manage or cancel your subscription anytime.',
-        'Exclusive access to new features and content as we launch them.',
+        'Includes 1 full CareerDNA report a year.',
+        'Includes 5 AI advisor questions a year.',
+        'Renews annually. You can manage or cancel your subscription from your account at any time.',
       ],
       confirmLabel: 'Continue to Stripe',
       cancelLabel: 'Not now',
@@ -270,27 +268,29 @@ function buildConfirmationCopy({ variant, checkoutPlanKey, status, effectivePlan
   if (checkoutPlanKey === 'premium' && !hasSubscription) {
     return {
       tone: 'upgrade',
-      title: 'Upgrade to CareerDNA Premium?',
-      body: 'You will be taken to Stripe Checkout to start CareerDNA Premium at £6.99 per month.',
+      title: 'Subscribe to CareerDNA Premium?',
+      body: 'You will be taken to Stripe Checkout to start CareerDNA Premium at £39.99 a year.',
       bullets: [
-        'Includes 2 full reports per month.',
-        'Includes 20 AI advisor questions per month.',
-        'You can manage or cancel your subscription from your account.',
+        'Includes 2 full CareerDNA reports a year.',
+        'Includes 20 AI advisor questions a year.',
+        'Includes all premium tools: rankings, your chances, live jobs and apprenticeships.',
+        'Renews annually. You can manage or cancel your subscription from your account at any time.',
       ],
       confirmLabel: 'Continue to Stripe',
       cancelLabel: 'Not now',
     };
   }
 
-  if (variant === 'premium' && effectivePlan === 'plus') {
+  if (variant === 'premium' && effectivePlan === 'explore') {
     return {
       tone: 'upgrade',
       title: 'Upgrade to CareerDNA Premium?',
       body:
-        'Your existing CareerDNA subscription will be changed from Plus to Premium now. Stripe will apply a pro-rated charge for the rest of the current billing period.',
+        'Your subscription will be changed from Explorer to Premium now. Stripe will apply a pro-rated charge for the rest of your current billing year.',
       bullets: [
-        'Your monthly report allowance will increase to 2 immediately.',
-        'Your AI advisor allowance will increase to 20 questions per month immediately.',
+        'Your report allowance will increase to 2 a year immediately.',
+        'Your AI advisor allowance will increase to 20 questions a year immediately.',
+        'All premium tools unlock straight away.',
         'The change will be made using your saved Stripe payment method.',
       ],
       confirmLabel: 'Confirm upgrade',
@@ -298,35 +298,20 @@ function buildConfirmationCopy({ variant, checkoutPlanKey, status, effectivePlan
     };
   }
 
-  if (variant === 'plus' && effectivePlan === 'premium') {
+  if (variant === 'explore' && effectivePlan === 'premium') {
     return {
       tone: 'downgrade',
-      title: 'Schedule downgrade to CareerDNA Plus?',
+      title: 'Schedule downgrade to CareerDNA Explorer?',
       body:
         pendingDate
           ? `Your downgrade will take effect on ${pendingDate}. You will keep CareerDNA Premium access until then.`
-          : 'Your downgrade will take effect at the end of your current billing period. You will keep CareerDNA Premium access until then.',
+          : 'Your downgrade will take effect at the end of your current billing year. You will keep CareerDNA Premium access until then.',
       bullets: [
-        'You will keep 2 reports per month until the change date.',
-        'You will keep 20 AI advisor questions per month until the change date.',
-        'From the next billing period, your plan will become Plus.',
+        'You will keep your Premium allowances and tools until the change date.',
+        'From your next billing year, your plan will become Explorer.',
       ],
       confirmLabel: 'Schedule downgrade',
       cancelLabel: 'Keep Premium',
-    };
-  }
-
-  if (checkoutPlanKey === 'explore') {
-    return {
-      tone: 'upgrade',
-      title: 'Buy a CareerDNA Explore report?',
-      body: 'You will be taken to Stripe Checkout to buy a one-time CareerDNA report.',
-      bullets: [
-        'This is a one-off purchase, not a monthly subscription.',
-        'Your report credit will be added after payment.',
-      ],
-      confirmLabel: 'Continue to Stripe',
-      cancelLabel: 'Not now',
     };
   }
 
@@ -513,7 +498,28 @@ function PricingModal({
 
     if (variant === 'starter') {
       if (hasSubscription) {
-        await openBillingPortal('starter');
+        try {
+          setCheckoutError('');
+          setCheckoutPlan('starter');
+          const result = await setCancelAtPeriodEnd(true);
+          if (typeof onManageSubscription === 'function') {
+            await onManageSubscription({
+              requestedPlan: 'starter',
+              currentPlan: effectivePlan,
+              action: 'cancel',
+              profile: result?.profile,
+              result,
+            });
+            setCheckoutPlan('');
+            setPendingAction(null);
+            return;
+          }
+          window.location.assign('/profile?subscription=updated');
+        } catch (err) {
+          setCheckoutError(err?.message || 'Could not cancel your plan. Please try again.');
+          setCheckoutPlan('');
+          setPendingAction(null);
+        }
         return;
       }
 
@@ -521,7 +527,7 @@ function PricingModal({
       return;
     }
 
-    if (hasSubscription && ['plus', 'premium'].includes(variant)) {
+    if (hasSubscription && ['explore', 'premium'].includes(variant)) {
       if (variant === effectivePlan) return;
 
       try {
@@ -584,7 +590,7 @@ function PricingModal({
     const requiresConfirmation =
       variant === 'starter' ||
       checkoutPlanKey === 'explore' ||
-      ['plus', 'premium'].includes(variant);
+      ['explore', 'premium'].includes(variant);
 
     if (requiresConfirmation) {
       setCheckoutError('');
@@ -622,10 +628,10 @@ function PricingModal({
           {hasSubscription ? (
             <p>
               {isCancellingAtPeriodEnd && cancellationDate
-                ? `Your ${effectivePlan === 'premium' ? 'Premium' : 'Plus'} plan will end on ${cancellationDate}.`
+                ? `Your ${effectivePlan === 'premium' ? 'Premium' : 'Explorer'} plan will end on ${cancellationDate}.`
                 : pendingPlan && pendingDate
-                  ? `You are currently on the ${effectivePlan === 'premium' ? 'Premium' : 'Plus'} plan. Your plan will change to ${getPlanDisplayName(pendingPlan)} on ${pendingDate}.`
-                  : `You are currently on the ${effectivePlan === 'premium' ? 'Premium' : 'Plus'} plan.`}
+                  ? `You are currently on the ${effectivePlan === 'premium' ? 'Premium' : 'Explorer'} plan. Your plan will change to ${getPlanDisplayName(pendingPlan)} on ${pendingDate}.`
+                  : `You are currently on the ${effectivePlan === 'premium' ? 'Premium' : 'Explorer'} plan.`}
             </p>
           ) : null}
 
@@ -689,7 +695,7 @@ function PricingModal({
             return (
               <article
                 key={plan.title}
-                className={`pricing-plan-card pricing-plan-card--${plan.variant} pricing-plan-card--carousel-${getCarouselPosition(index)} ${hasSubscription && plan.variant === 'plus' && !isCurrent && !isScheduled ? 'pricing-plan-card--plus-neutral' : ''} ${isCurrent ? 'pricing-plan-card--current' : ''} ${isScheduled ? 'pricing-plan-card--scheduled' : ''}`}
+                className={`pricing-plan-card pricing-plan-card--${plan.variant} pricing-plan-card--carousel-${getCarouselPosition(index)} ${hasSubscription && plan.variant === 'explore' && !isCurrent && !isScheduled ? 'pricing-plan-card--plus-neutral' : ''} ${isCurrent ? 'pricing-plan-card--current' : ''} ${isScheduled ? 'pricing-plan-card--scheduled' : ''}`}
                 data-carousel-position={getCarouselPosition(index)}
               >
                 {plan.badge && !hasSubscription && !isCurrent && !isScheduled ? (
@@ -707,13 +713,16 @@ function PricingModal({
                   <p className="pricing-plan-subtitle">{plan.subtitle}</p>
 
                   <div className="pricing-price-block">
-                    {plan.anchorPrice ? (
-                      <div className="pricing-plan-anchor"><s>{plan.anchorPrice}</s></div>
-                    ) : null}
                     <div className="pricing-plan-price">
                       {plan.price}
                       {plan.suffix && <span>{plan.suffix}</span>}
                     </div>
+                    {plan.anchorPrice ? (
+                      <div className="pricing-plan-anchor">
+                        {plan.anchorLabel ? <span className="pricing-plan-anchor-label">{plan.anchorLabel}, usually </span> : null}
+                        <s>{plan.anchorPrice}</s>
+                      </div>
+                    ) : null}
 
                     <p className={`pricing-plan-note ${!plan.note ? 'pricing-plan-note--empty' : ''}`}>
                       {plan.note || '\u00A0'}
@@ -759,7 +768,7 @@ function PricingModal({
                   disabled={Boolean(checkoutPlan) || isCurrent || isScheduled || isPaymentActionPaused}
                   title={isPaymentActionPaused ? PAYMENT_PAUSE_MESSAGE : undefined}
                 >
-                  {loading ? 'Opening…' : isPaymentActionPaused ? 'Coming soon' : buttonLabel}
+                  {loading ? 'Opening…' : isPaymentActionPaused ? 'Coming soon' : isCurrent ? '✓ Current plan' : buttonLabel}
                 </button>
               </article>
             );

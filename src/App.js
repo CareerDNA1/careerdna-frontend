@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import TeamPage from './pages/TeamPage';
 
@@ -14,6 +14,16 @@ import LegalPage, { PrivacyPage, TermsPage, LegalModal } from './pages/LegalPage
 import ReportProblemModal from './Components/Common/ReportProblemModal';
 import ServiceBanner from './Components/Common/ServiceBanner';
 import RankingsModal from './Components/Rankings/RankingsModal';
+import ReportLimitModal from './Components/Common/ReportLimitModal';
+import { applyCouponCode } from './utils/applyCoupon';
+import { getMyProfile } from './utils/profile';
+import { hideSelectionTooltip } from './Components/Survey/SelectionInsightExplorer';
+import {
+  PREMIUM_FEATURE_ATTR,
+  PREMIUM_FEATURE_LABELS,
+  getCurrentPlan,
+  isPremiumPlan,
+} from './utils/premiumGate';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProfilePage from './pages/ProfilePage';
 import SavedResultPage from './pages/SavedResultPage';
@@ -133,12 +143,75 @@ function GlobalRankingsModal() {
   );
 }
 
+// Premium gate. The Premium boxes stay visible to everyone; this intercepts the
+// action inside them. Any element with data-premium-feature="<feature>" opens the
+// standard upgrade prompt for non-Premium users instead of doing its action.
+// Runs in the capture phase so it fires before React handlers, link navigation
+// and the rankings listener above. Mounted once.
+function GlobalPremiumGate() {
+  const [gate, setGate] = useState(null); // { feature }
+
+  useEffect(() => {
+    const onClickCapture = (e) => {
+      if (e.button !== 0) return;
+      const el = e.target && e.target.closest ? e.target.closest(`[${PREMIUM_FEATURE_ATTR}]`) : null;
+      if (!el) return;
+      if (isPremiumPlan(getCurrentPlan())) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setGate({ feature: el.getAttribute(PREMIUM_FEATURE_ATTR) || '' });
+    };
+    document.addEventListener('click', onClickCapture, true);
+    return () => document.removeEventListener('click', onClickCapture, true);
+  }, []);
+
+  useEffect(() => {
+    if (!gate) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') setGate(null); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [gate]);
+
+  if (!gate) return null;
+  return (
+    <ReportLimitModal
+      mode="premium"
+      currentPlan={getCurrentPlan() || 'free'}
+      featureLabel={PREMIUM_FEATURE_LABELS[gate.feature] || ''}
+      onClose={() => setGate(null)}
+      onApplyCoupon={async (code) => {
+        await applyCouponCode(code);
+        await getMyProfile(); // refreshes the plan held by the gate
+        setGate(null);
+      }}
+    />
+  );
+}
+
+// Body-level tooltips (archetype, trait, clarity, feedback and the pinned
+// definition boxes) live outside React, so a page change would otherwise leave
+// one floating on the next page. Hide them all whenever the route changes.
+export function hideAllFloatingTooltips() {
+  try { hideSelectionTooltip({ force: true }); } catch (_) { /* ignore */ }
+  document
+    .querySelectorAll('.cdna-archetype-tooltip, .cdna-clarity-tooltip, .cdna-subdim-tooltip, .cdna-feedback-tooltip, .selection-floating-tooltip')
+    .forEach((el) => { el.style.opacity = '0'; el.classList.remove('is-pinned'); });
+}
+
+function RouteChangeCleanup() {
+  const location = useLocation();
+  useEffect(() => { hideAllFloatingTooltips(); }, [location.pathname]);
+  return null;
+}
+
 export default function App() {
   return (
     <Router>
+      <RouteChangeCleanup />
       <ServiceBanner />
       <GlobalLegalModal />
       <GlobalReportProblemModal />
+      <GlobalPremiumGate />
       <GlobalRankingsModal />
       <ErrorBoundary>
         <Routes>

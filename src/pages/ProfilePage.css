@@ -218,7 +218,7 @@
 /* Overview stats strip (Journey / Favourites / Assessments). */
 .profile-stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 18px;
 }
@@ -251,84 +251,19 @@
 .profile-stat--runs .profile-stat-ic { background: #1d9e75; }
 .profile-stat--runs .profile-stat-num { color: #04342c; }
 .profile-stat--runs .profile-stat-label { color: #0f6e56; }
+.profile-stat--advisor { background: #eef0fb; }
+.profile-stat--advisor .profile-stat-ic { background: #5b5fc7; }
+.profile-stat--advisor .profile-stat-num { color: #24276b; }
+.profile-stat--advisor .profile-stat-label { color: #3f43a3; }
 @media (max-width: 560px) {
   /* Keep the three stats as a compact row (icon over number) instead of three
      tall stacked blocks. */
-  .profile-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .profile-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .profile-stat { flex-direction: column; align-items: flex-start; gap: 6px; padding: 11px 12px; min-width: 0; }
   .profile-stat-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
   .profile-stat-ic { width: 30px; height: 30px; border-radius: 9px; }
   .profile-stat-num { font-size: 1.15rem; }
   .profile-stat-label { font-size: 0.72rem; }
-}
-
-/* Compact journey card: progress ring + single next step + Continue. */
-.profile-jcard {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  grid-template-areas:
-    "ring eyebrow go"
-    "ring next    go";
-  align-items: center;
-  column-gap: 22px;
-  row-gap: 4px;
-  background: #fff;
-  border: 1px solid #e6ebf3;
-  border-radius: 16px;
-  padding: 18px 22px;
-  margin-bottom: 18px;
-}
-.profile-jring { grid-area: ring; position: relative; width: 88px; height: 88px; flex: 0 0 auto; align-self: center; }
-.profile-jcard-eyebrow { grid-area: eyebrow; align-self: end; }
-.profile-jcard-next { grid-area: next; align-self: start; }
-.profile-jcard-go { grid-area: go; align-self: center; }
-.profile-jring-lbl { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.profile-jring-n { font-size: 1.25rem; font-weight: 700; color: #14233c; line-height: 1; }
-.profile-jring-s { font-size: 0.7rem; color: #8a97ac; margin-top: 2px; }
-.profile-jcard-main { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
-.profile-jcard-eyebrow { font-size: 0.82rem; font-weight: 700; color: #8a97ac; letter-spacing: 0.01em; }
-.profile-jcard-next { display: flex; align-items: center; gap: 12px; }
-.profile-jcard-ic {
-  width: 40px; height: 40px; border-radius: 12px;
-  background: #eaf1fe; color: #2f6fed;
-  display: flex; align-items: center; justify-content: center;
-  flex: 0 0 auto;
-}
-.profile-jcard-ic svg { width: 20px; height: 20px; }
-.profile-jcard-ic--done { background: #e7f6ee; color: #0f8a53; }
-.profile-jcard-nexttext { display: flex; flex-direction: column; flex: 1; min-width: 130px; }
-.profile-jcard-nextlabel { font-size: 0.78rem; color: #8a97ac; }
-.profile-jcard-nextname { font-size: 0.98rem; font-weight: 700; color: #14233c; }
-/* The whole journey card is clickable when there is a next step: a discreet
-   hover lift plus an arrow on the right that brightens and nudges, no loud
-   button. */
-.profile-jcard--clickable { cursor: pointer; transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease; }
-.profile-jcard--clickable:hover { border-color: #cddbf0; background: #fbfdff; box-shadow: 0 3px 14px rgba(15, 23, 42, 0.06); }
-.profile-jcard--clickable:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
-.profile-jcard-go {
-  flex: 0 0 auto;
-  width: 38px; height: 38px; border-radius: 999px;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: #eaf1fe; color: #2f6fed;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
-}
-.profile-jcard--clickable:hover .profile-jcard-go { background: #2f6fed; color: #fff; transform: translateX(3px); }
-@media (max-width: 600px) {
-  /* Ring + title + arrow on the top row; the next step gets its own full-width
-     row below so it never squashes into two cramped lines. */
-  .profile-jcard {
-    grid-template-areas:
-      "ring eyebrow go"
-      "next next    next";
-    column-gap: 14px;
-    row-gap: 14px;
-    padding: 16px;
-  }
-  .profile-jring, .profile-jring svg { width: 58px; height: 58px; }
-  .profile-jring-n { font-size: 0.92rem; }
-  .profile-jcard-eyebrow { align-self: center; }
-  .profile-jcard-next { background: #f7f9fc; border-radius: 12px; padding: 10px 12px; }
-  .profile-jcard-nextname { font-size: 0.95rem; }
 }
 
 /* Favourites (left) + grades (right) row. */
@@ -719,7 +654,7 @@
   top: calc(100% + 6px);
   right: 0;
   z-index: 30;
-  min-width: 148px;
+  min-width: 200px;
   padding: 4px;
   background: #fff;
   border: 1px solid #e8edf4;
@@ -732,6 +667,7 @@
   align-items: center;
   gap: 9px;
   width: 100%;
+  white-space: nowrap;
   padding: 9px 11px;
   border: none;
   background: transparent;
@@ -3407,4 +3343,154 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .profile-skel { animation: none; }
+}
+
+/* Plan card: "Cancel downgrade" as a quiet link under the change note, so the
+   Manage button (plans, further downgrade, cancel) stays available. */
+.profile-account-plan-link {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #2f6fed;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.profile-account-plan-link:hover { text-decoration: underline; }
+
+/* Journey card: header row (label + next step | count + arrow) and a quiet blue stepper. */
+.profile-jcard {
+  display: block;
+  background: #fff;
+  border: 1px solid #e6ebf3;
+  border-radius: 16px;
+  padding: 18px 22px 18px;
+  margin-bottom: 18px;
+}
+.profile-jcard-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.profile-jcard-headtext { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; }
+.profile-jcard-title { display: flex; align-items: center; gap: 10px; font-size: 1.05rem; font-weight: 700; color: #14233c; }
+.profile-jcard-pill {
+  display: inline-flex; align-items: center;
+  padding: 3px 10px; border-radius: 999px;
+  background: #eef4ff; color: #2f6fed;
+  font-size: 0.76rem; font-weight: 700; white-space: nowrap;
+}
+.profile-jcard-nextname { font-size: 0.98rem; font-weight: 600; color: #14233c; line-height: 1.35; }
+.profile-jcard-nextlabel { font-weight: 500; color: #6b7a8c; margin-right: 6px; }
+.profile-jcard-go {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0; border: 0; background: transparent;
+  color: #2f6fed; font-family: inherit; font-size: inherit; font-weight: 700;
+  cursor: pointer;
+}
+.profile-jcard-go svg { transition: transform .15s ease; }
+.profile-jcard-go:hover { text-decoration: underline; }
+.profile-jcard-go:hover svg { transform: translateX(3px); }
+.profile-jrail {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  position: relative;
+}
+.profile-jrail-step { position: relative; }
+.profile-jrail-btn {
+  width: 100%;
+  border: 0; background: transparent; padding: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  cursor: pointer; font-family: inherit;
+}
+.profile-jrail-dot {
+  position: relative; z-index: 1;
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid #d3dbe8; background: #fff; color: #a4afc0;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: transform .15s ease, border-color .15s ease;
+}
+.profile-jrail-dot svg { width: 11px; height: 11px; }
+.profile-jrail-btn:hover .profile-jrail-dot { transform: scale(1.1); border-color: #2f6fed; }
+.profile-jrail-lbl { font-size: 0.72rem; font-weight: 500; color: #7a8798; text-align: center; line-height: 1.2; }
+.profile-jrail-btn:hover .profile-jrail-lbl { color: #2f6fed; }
+/* connector line: sits at the centre of the small dots */
+.profile-jrail-step + .profile-jrail-step::before {
+  content: "";
+  position: absolute;
+  top: 11px;
+  right: 50%;
+  width: 100%;
+  height: 1.5px;
+  background: #e3e9f2;
+  transform: translateY(-50%);
+}
+.profile-jrail-step.is-done + .profile-jrail-step::before { background: #b9cdf6; }
+.profile-jrail-step.is-done .profile-jrail-dot { background: #dfe9fc; border-color: #dfe9fc; color: #2f6fed; }
+.profile-jrail-step.is-done .profile-jrail-lbl { color: #4b5c6b; }
+.profile-jrail-step.is-current .profile-jrail-dot {
+  width: 34px; height: 34px; margin: -6px 0;
+  background: #2f6fed; border-color: #2f6fed; color: #fff;
+  box-shadow: 0 0 0 4px rgba(47,111,237,0.14);
+}
+.profile-jrail-step.is-current .profile-jrail-dot svg { width: 15px; height: 15px; }
+.profile-jrail-step.is-current .profile-jrail-lbl { color: #2f6fed; font-weight: 700; }
+.profile-jrail-wrap { position: relative; }
+.profile-jrail-arrow { display: none; }
+
+@media (max-width: 720px) {
+  .profile-jcard { padding: 16px 14px; }
+  .profile-jcard-head { margin-bottom: 6px; flex-wrap: wrap; }
+  .profile-jcard-nextname { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+  .profile-jcard-nextname { font-size: 0.98rem; }
+  /* Same stepper as desktop, scrolled sideways like a carousel. Fixed step
+     width keeps the labels readable; the rail bleeds to the card edges and
+     opens centred on the current step (see ProfilePage.js). */
+  .profile-jrail {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    margin: 0 -14px;
+    padding: 12px 0 6px 30px; /* room for the enlarged current dot and its glow */
+  }
+  /* Browsers drop trailing padding inside a scroll container, so the end
+     breathing room is a real flex spacer instead. Keeps the last step and its
+     arrow clear of the card edge. */
+  .profile-jrail::after { content: ""; flex: 0 0 30px; }
+  .profile-jrail::-webkit-scrollbar { display: none; }
+  /* Scroll cues: soft fades at whichever edge still hides steps, plus small
+     round arrows. Both only appear when there is something to scroll to. */
+  .profile-jrail-wrap { position: relative; margin: 0 -14px; }
+  .profile-jrail-wrap .profile-jrail { margin: 0; }
+  .profile-jrail-wrap::before,
+  .profile-jrail-wrap::after {
+    content: "";
+    position: absolute; top: 0; bottom: 0; width: 64px;
+    pointer-events: none; opacity: 0; transition: opacity .18s ease; z-index: 1;
+  }
+  .profile-jrail-wrap::before { left: 0; background: linear-gradient(90deg, #fff 55%, rgba(255,255,255,0)); }
+  .profile-jrail-wrap::after { right: 0; background: linear-gradient(270deg, #fff 55%, rgba(255,255,255,0)); }
+  .profile-jrail-wrap.can-left::before, .profile-jrail-wrap.can-right::after { opacity: 1; }
+  .profile-jrail-arrow {
+    position: absolute; top: 10px; z-index: 2;
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 1px solid #d5deea; background: #fff; color: #2f6fed;
+    display: none; align-items: center; justify-content: center; padding: 0;
+    box-shadow: 0 1px 4px rgba(20, 40, 80, .12); cursor: pointer;
+  }
+  .profile-jrail-arrow--left { left: 4px; }
+  .profile-jrail-arrow--right { right: 4px; }
+  .profile-jrail-wrap.can-left .profile-jrail-arrow--left,
+  .profile-jrail-wrap.can-right .profile-jrail-arrow--right { display: flex; }
+  .profile-jrail-step { flex: 0 0 96px; scroll-snap-align: center; }
+  .profile-jrail-lbl { font-size: 0.7rem; }
 }

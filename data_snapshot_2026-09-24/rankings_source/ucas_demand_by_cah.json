@@ -1,0 +1,962 @@
+{
+ "CAH25": {
+  "pct": -2,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "design, and creative and performing arts"
+ },
+ "CAH10": {
+  "pct": 36,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "engineering and technology"
+ },
+ "CAH02": {
+  "pct": 19,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "subjects allied to medicine"
+ },
+ "CAH19": {
+  "pct": -23,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "language and area studies"
+ },
+ "CAH24": {
+  "pct": 15,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "media, journalism and communications"
+ },
+ "CAH23": {
+  "pct": 2,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "combined and general studies"
+ },
+ "CAH17": {
+  "pct": 13,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "business and management"
+ },
+ "CAH15": {
+  "pct": 0,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "social sciences"
+ },
+ "CAH03": {
+  "pct": 3,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "biological and sport sciences"
+ },
+ "CAH13": {
+  "pct": 18,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "architecture, building and planning"
+ },
+ "CAH01": {
+  "pct": 20,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "medicine and dentistry"
+ },
+ "CAH20": {
+  "pct": -8,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "historical, philosophical and religious studies"
+ },
+ "CAH11": {
+  "pct": 25,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "computing"
+ },
+ "CAH26": {
+  "pct": 4,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "geography, earth and environmental studies"
+ },
+ "CAH07": {
+  "pct": 6,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "physical sciences"
+ },
+ "CAH04": {
+  "pct": 2,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "psychology"
+ },
+ "CAH09": {
+  "pct": 24,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "mathematical sciences"
+ },
+ "CAH22": {
+  "pct": -12,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "education and teaching"
+ },
+ "CAH06": {
+  "pct": 3,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "agriculture, food and related studies"
+ },
+ "CAH16": {
+  "pct": 27,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "law"
+ },
+ "CAH05": {
+  "pct": 8,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "veterinary sciences"
+ },
+ "CAH25-01-03": {
+  "pct": -1,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "design studies"
+ },
+ "CAH25-02-02": {
+  "pct": 8,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "music"
+ },
+ "CAH25-01-04": {
+  "pct": -6,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "cinematics and photography"
+ },
+ "CAH25-01-02": {
+  "pct": 1,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "art"
+ },
+ "CAH25-02-03": {
+  "pct": -11,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "drama"
+ },
+ "CAH25-02-04": {
+  "pct": 33,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "dance"
+ },
+ "CAH25-02-01": {
+  "pct": -67,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "performing arts (non-specific)"
+ },
+ "CAH25-01-05": {
+  "pct": -23,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "others in creative arts and design"
+ },
+ "CAH25-01-01": {
+  "pct": 53,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "creative arts and design (non-specific)"
+ },
+ "CAH10-01-06": {
+  "pct": 65,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "bioengineering, medical and biomedical engineering"
+ },
+ "CAH10-03-02": {
+  "pct": 43,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "materials technology"
+ },
+ "CAH10-03-06": {
+  "pct": 20,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "others in technology"
+ },
+ "CAH10-01-03": {
+  "pct": 36,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "production and manufacturing engineering"
+ },
+ "CAH10-01-04": {
+  "pct": 43,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "aeronautical and aerospace engineering"
+ },
+ "CAH10-01-08": {
+  "pct": 47,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "electrical and electronic engineering"
+ },
+ "CAH10-01-07": {
+  "pct": 10,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "civil engineering"
+ },
+ "CAH10-03-05": {
+  "pct": 25,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "biotechnology"
+ },
+ "CAH10-01-09": {
+  "pct": 29,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "chemical, process and energy engineering"
+ },
+ "CAH10-01-01": {
+  "pct": 23,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "engineering (non-specific)"
+ },
+ "CAH10-01-02": {
+  "pct": 47,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "mechanical engineering"
+ },
+ "CAH10-03-07": {
+  "pct": 38,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "materials science"
+ },
+ "CAH02-06-03": {
+  "pct": 23,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "ophthalmics"
+ },
+ "CAH02-05-04": {
+  "pct": 13,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "anatomy, physiology and pathology"
+ },
+ "CAH02-05-01": {
+  "pct": 125,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "medical technology"
+ },
+ "CAH02-06-06": {
+  "pct": -3,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "complementary and alternative medicine"
+ },
+ "CAH02-06-01": {
+  "pct": 26,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "health sciences (non-specific)"
+ },
+ "CAH02-06-02": {
+  "pct": -14,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "nutrition and dietetics"
+ },
+ "CAH02-06-04": {
+  "pct": 58,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "environmental and public health"
+ },
+ "CAH02-06-07": {
+  "pct": 28,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "counselling, psychotherapy and occupational therapy"
+ },
+ "CAH02-02-01": {
+  "pct": 69,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "pharmacology"
+ },
+ "CAH02-02-03": {
+  "pct": 100,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "pharmacy"
+ },
+ "CAH02-06-05": {
+  "pct": 35,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "physiotherapy"
+ },
+ "CAH02-05-02": {
+  "pct": -10,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "healthcare science (non-specific)"
+ },
+ "CAH02-05-03": {
+  "pct": 16,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "biomedical sciences (non-specific)"
+ },
+ "CAH02-04-02": {
+  "pct": 2,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "adult nursing"
+ },
+ "CAH02-04-05": {
+  "pct": 3,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "children's nursing"
+ },
+ "CAH02-04-09": {
+  "pct": -10,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "others in nursing"
+ },
+ "CAH02-04-06": {
+  "pct": 263,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "dental nursing"
+ },
+ "CAH02-04-08": {
+  "pct": -19,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "learning disabilities nursing"
+ },
+ "CAH02-04-07": {
+  "pct": 8,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "mental health nursing"
+ },
+ "CAH02-04-04": {
+  "pct": -18,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "midwifery"
+ },
+ "CAH02-04-01": {
+  "pct": -19,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "nursing (non-specific)"
+ },
+ "CAH19-01-05": {
+  "pct": -5,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "creative writing"
+ },
+ "CAH19-04-08": {
+  "pct": -73,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "American and Australasian studies"
+ },
+ "CAH19-01-02": {
+  "pct": -31,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "English language"
+ },
+ "CAH19-01-03": {
+  "pct": -15,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "literature in English"
+ },
+ "CAH19-01-01": {
+  "pct": -19,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "English studies (non-specific)"
+ },
+ "CAH19-04-01": {
+  "pct": -45,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "French studies"
+ },
+ "CAH19-04-02": {
+  "pct": -47,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "German and Scandinavian studies"
+ },
+ "CAH19-04-04": {
+  "pct": -44,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "Iberian studies"
+ },
+ "CAH19-04-03": {
+  "pct": -34,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "Italian studies"
+ },
+ "CAH19-01-07": {
+  "pct": 0,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "linguistics"
+ },
+ "CAH19-04-09": {
+  "pct": -9,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "others in language and area studies"
+ },
+ "CAH19-04-05": {
+  "pct": -5,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "Slavic studies"
+ },
+ "CAH19-04-06": {
+  "pct": -54,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "Asian studies"
+ },
+ "CAH19-04-07": {
+  "pct": -39,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "African and modern Middle Eastern studies"
+ },
+ "CAH24-01-05": {
+  "pct": 21,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "media studies"
+ },
+ "CAH24-01-02": {
+  "pct": 25,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "publicity studies"
+ },
+ "CAH24-01-01": {
+  "pct": 31,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "information services"
+ },
+ "CAH24-01-04": {
+  "pct": 1,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "journalism"
+ },
+ "CAH23-01-04": {
+  "pct": 13,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "liberal arts (non-specific)"
+ },
+ "CAH23-01-03": {
+  "pct": -10,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "humanities (non-specific)"
+ },
+ "CAH23-01-02": {
+  "pct": 18,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "personal development"
+ },
+ "CAH23-01-01": {
+  "pct": -11,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "combined, general or negotiated studies"
+ },
+ "CAH17-01-03": {
+  "pct": 15,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "marketing"
+ },
+ "CAH17-01-01": {
+  "pct": 11,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "business and management (non-specific)"
+ },
+ "CAH17-01-02": {
+  "pct": 3,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "business studies"
+ },
+ "CAH17-01-06": {
+  "pct": -39,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "tourism, transport and travel"
+ },
+ "CAH17-01-05": {
+  "pct": -27,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "human resource management"
+ },
+ "CAH17-01-04": {
+  "pct": 8,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "management studies"
+ },
+ "CAH17-01-08": {
+  "pct": 41,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "accounting"
+ },
+ "CAH17-01-07": {
+  "pct": 49,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "finance"
+ },
+ "CAH15-03-01": {
+  "pct": 10,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "politics"
+ },
+ "CAH15-01-04": {
+  "pct": -25,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "anthropology"
+ },
+ "CAH15-02-01": {
+  "pct": 23,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "economics"
+ },
+ "CAH15-04-02": {
+  "pct": -28,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "childhood and youth studies"
+ },
+ "CAH15-04-01": {
+  "pct": -19,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "social work"
+ },
+ "CAH15-01-01": {
+  "pct": -7,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "social sciences (non-specific)"
+ },
+ "CAH15-04-03": {
+  "pct": 7,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "health studies"
+ },
+ "CAH15-01-03": {
+  "pct": -22,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "social policy"
+ },
+ "CAH15-01-02": {
+  "pct": -15,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "sociology"
+ },
+ "CAH15-01-05": {
+  "pct": -1,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "development studies"
+ },
+ "CAH15-01-06": {
+  "pct": -5,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "cultural studies"
+ },
+ "CAH03-02-01": {
+  "pct": 8,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "sport and exercise sciences"
+ },
+ "CAH03-01-07": {
+  "pct": -44,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "genetics"
+ },
+ "CAH03-01-10": {
+  "pct": -1,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "others in biosciences"
+ },
+ "CAH03-01-08": {
+  "pct": 3,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "molecular biology, biophysics and biochemistry"
+ },
+ "CAH03-01-01": {
+  "pct": 3,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "biosciences (non-specific)"
+ },
+ "CAH03-01-02": {
+  "pct": -12,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "biology (non-specific)"
+ },
+ "CAH03-01-03": {
+  "pct": 25,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "ecology and environmental biology"
+ },
+ "CAH03-01-04": {
+  "pct": -5,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "microbiology and cell science"
+ },
+ "CAH03-01-06": {
+  "pct": 2,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "zoology"
+ },
+ "CAH13-01-01": {
+  "pct": 20,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "architecture"
+ },
+ "CAH13-01-02": {
+  "pct": 23,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "building"
+ },
+ "CAH13-01-04": {
+  "pct": -6,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "planning (urban, rural and regional)"
+ },
+ "CAH01-01-03": {
+  "pct": 40,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "medicine by specialism"
+ },
+ "CAH01-01-04": {
+  "pct": 104,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "dentistry"
+ },
+ "CAH01-01-02": {
+  "pct": 4,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "medicine (non-specific)"
+ },
+ "CAH01-01-01": {
+  "pct": 30,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "medical sciences (non-specific)"
+ },
+ "CAH20-01-01": {
+  "pct": -14,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "history"
+ },
+ "CAH20-01-03": {
+  "pct": 17,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "archaeology"
+ },
+ "CAH20-01-05": {
+  "pct": 16,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "classics"
+ },
+ "CAH20-01-02": {
+  "pct": -9,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "history of art, architecture and design"
+ },
+ "CAH20-02-01": {
+  "pct": -3,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "philosophy"
+ },
+ "CAH20-02-02": {
+  "pct": -8,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "theology and religious studies"
+ },
+ "CAH11-01-08": {
+  "pct": 16,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "others in computing"
+ },
+ "CAH11-01-05": {
+  "pct": 151,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "artificial intelligence"
+ },
+ "CAH11-01-07": {
+  "pct": -47,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "business computing"
+ },
+ "CAH11-01-06": {
+  "pct": 10,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "computer games and animation"
+ },
+ "CAH11-01-01": {
+  "pct": 23,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "computer science"
+ },
+ "CAH11-01-02": {
+  "pct": -25,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "information technology"
+ },
+ "CAH11-01-03": {
+  "pct": 45,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "information systems"
+ },
+ "CAH11-01-04": {
+  "pct": 64,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "software engineering"
+ },
+ "CAH26-01-06": {
+  "pct": 14,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "earth sciences"
+ },
+ "CAH26-01-04": {
+  "pct": 17,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "environmental sciences"
+ },
+ "CAH26-01-02": {
+  "pct": 4,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "physical geographical sciences"
+ },
+ "CAH26-01-01": {
+  "pct": 8,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "geography (non-specific)"
+ },
+ "CAH26-01-03": {
+  "pct": -7,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "human geography"
+ },
+ "CAH07-04-02": {
+  "pct": 3,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "forensic and archaeological sciences"
+ },
+ "CAH07-04-03": {
+  "pct": 160,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "sciences (non-specific)"
+ },
+ "CAH07-04-04": {
+  "pct": 9,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "natural sciences (non-specific)"
+ },
+ "CAH07-02-01": {
+  "pct": 6,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "chemistry"
+ },
+ "CAH07-01-02": {
+  "pct": 16,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "astronomy"
+ },
+ "CAH07-01-01": {
+  "pct": 2,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "physics"
+ },
+ "CAH04-01-02": {
+  "pct": 14,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "applied psychology"
+ },
+ "CAH04-01-04": {
+  "pct": 54,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "psychology and health"
+ },
+ "CAH04-01-03": {
+  "pct": 90,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "developmental psychology"
+ },
+ "CAH04-01-01": {
+  "pct": -1,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "psychology (non-specific)"
+ },
+ "CAH04-01-05": {
+  "pct": -4,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "others in psychology"
+ },
+ "CAH09-01-01": {
+  "pct": 16,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "mathematics"
+ },
+ "CAH09-01-03": {
+  "pct": 116,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "statistics"
+ },
+ "CAH22-01-01": {
+  "pct": -3,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "education"
+ },
+ "CAH22-01-02": {
+  "pct": -17,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "teacher training"
+ },
+ "CAH06-01-03": {
+  "pct": 20,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "agriculture"
+ },
+ "CAH06-01-01": {
+  "pct": -7,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "animal science"
+ },
+ "CAH06-01-07": {
+  "pct": -3,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "food sciences"
+ },
+ "CAH16-01-01": {
+  "pct": 27,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "law"
+ },
+ "CAH05-01-01": {
+  "pct": 16,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "veterinary medicine and dentistry"
+ },
+ "CAH05-01-02": {
+  "pct": -10,
+  "fromYear": 2019,
+  "toYear": 2025,
+  "area": "others in veterinary sciences"
+ }
+}

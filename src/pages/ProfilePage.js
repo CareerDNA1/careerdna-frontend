@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { BrainCircuit } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AccountNavbar from '../Components/Common/AccountNavbar';
 import { useAuth } from '../context/AuthContext';
@@ -6,8 +7,10 @@ import { supabase } from '../utils/supabaseClient';
 import {
   deleteAssessmentRun,
   getAssessmentRunCount,
-  getLatestAssessmentRun,
+  getCurrentAssessmentRun,
+  setCurrentRunId,
   listAssessmentRuns,
+  getDistinctSurveyCount,
   rerunAssessmentWithOutputParameters,
 } from '../utils/assessmentRuns';
 import { getMyProfile, updateMyProfileDetails } from '../utils/profile';
@@ -15,12 +18,12 @@ import { buildApiCandidates } from '../utils/config';
 import IntroQuestions from '../Components/Survey/IntroQuestions';
 import PricingModal from '../Components/Common/PricingModal';
 import SatisfactionCard from '../Components/Common/SatisfactionCard';
-import { getSatisfactionPrompt } from '../utils/satisfaction';
+import { getSatisfactionPrompt, dismissSatisfactionPulse } from '../utils/satisfaction';
 import { getFavouritesByCategory } from '../utils/favourites';
 import AcademicProfileCard from '../Components/Common/AcademicProfileCard';
 import FavouritesCard from '../Components/Common/FavouritesCard';
 import { getMyAcademicProfile, hasAcademicData } from '../utils/academicProfile';
-import { cancelScheduledDowngrade } from '../utils/stripeCheckout';
+import { cancelScheduledDowngrade, setCancelAtPeriodEnd } from '../utils/stripeCheckout';
 import './ProfilePage.css';
 import { ageFromDOB, ukSchoolYearGroup } from '../utils/educationProgression';
 
@@ -134,7 +137,7 @@ function formatPlanName(profile = {}) {
 
   if (['premium_school', 'premium_university'].includes(plan)) return 'Unlimited access';
   if (plan === 'dev') return 'Developer access';
-  if (plan === 'plus') return 'CareerDNA Plus';
+  if (plan === 'explore') return 'CareerDNA Explorer';
   if (plan === 'premium') return 'CareerDNA Premium';
   if (plan === 'starter') return 'CareerDNA Starter';
   return 'Free profile';
@@ -181,7 +184,7 @@ function getAccountEntitlementNote(profile = {}, reportUsage, advisorUsage) {
 
   // Access codes/coupons are now credit events, not active plan identities.
   // Do not show an “Access code active” banner for paid subscribers.
-  if (['plus', 'premium', 'premium_school', 'premium_university'].includes(plan)) {
+  if (['explore', 'premium', 'premium_school', 'premium_university'].includes(plan)) {
     return '';
   }
 
@@ -207,7 +210,7 @@ function formatPendingPlanDate(profile = {}) {
 
 function formatPlanNameFromKey(plan = '') {
   const key = String(plan || '').toLowerCase();
-  if (key === 'plus') return 'CareerDNA Plus';
+  if (key === 'explore') return 'CareerDNA Explorer';
   if (key === 'premium') return 'CareerDNA Premium';
   return 'your selected plan';
 }
@@ -398,6 +401,13 @@ const PlayIcon = () => (
 );
 
 /* Trash icon */
+const PinIcon = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 17v5"/>
+    <path d="M9 3h6l-1 7 3 3H7l3-3z"/>
+  </svg>
+);
+
 const TrashIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="3 6 5 6 21 6"/>
@@ -428,7 +438,10 @@ export default function ProfilePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profile, setProfile] = useState(() => profileBundleCache?.profileData || null);
   const [runs, setRuns] = useState(() => profileBundleCache?.runData || []);
+  const [currentRun, setCurrentRun] = useState(() => profileBundleCache?.currentRun || null);
+  const [settingCurrentId, setSettingCurrentId] = useState(null);
   const [totalRuns, setTotalRuns] = useState(() => Number(profileBundleCache?.runCount) || 0);
+  const [totalSurveys, setTotalSurveys] = useState(() => Number(profileBundleCache?.surveyCount) || 0);
   const [loadingRuns, setLoadingRuns] = useState(() => !profileBundleCache);
   // Which item types the user has reacted to (liked/disliked) on the latest run.
   // Drives the journey timeline: a step counts as done only once the user has
@@ -452,7 +465,7 @@ export default function ProfilePage() {
   // Load which sections the user has interacted with (liked/disliked) on their
   // latest run, so the journey timeline can mark those steps complete.
   useEffect(() => {
-    const runId = runs?.[0]?.id;
+    const runId = currentRun?.id;
     const uid = user?.id;
     if (!uid) return undefined; // wait for the user before deciding
     if (!runId) {
@@ -466,17 +479,24 @@ export default function ProfilePage() {
       try {
         const { data, error } = await supabase
           .from('result_feedback')
-          .select('item_type')
+          .select('item_type, reaction')
           .eq('user_id', uid)
           .eq('assessment_run_id', runId)
           .eq('feedback_scope', 'item_reaction');
         if (error) throw error;
         if (cancelled) return;
+        const rows = Array.isArray(data) ? data : [];
         const set = new Set(
-          (Array.isArray(data) ? data : [])
-            .map((r) => String(r?.item_type || '').trim().toLowerCase())
-            .filter(Boolean)
+          rows.map((r) => String(r?.item_type || '').trim().toLowerCase()).filter(Boolean)
         );
+        // Types the student has actually SAVED (liked), for steps whose point is
+        // a shortlist rather than a judgement either way.
+        rows.forEach((r) => {
+          if (String(r?.reaction || '').toLowerCase() === 'like') {
+            const t = String(r?.item_type || '').trim().toLowerCase();
+            if (t) set.add(`liked:${t}`);
+          }
+        });
         setEngagedTypes(set);
       } catch (_) {
         if (!cancelled) setEngagedTypes(new Set());
@@ -487,7 +507,7 @@ export default function ProfilePage() {
     return () => {
       cancelled = true;
     };
-  }, [runs, user?.id]);
+  }, [currentRun?.id, user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Recurring "How useful is CareerDNA?" prompt: record this visit and work out
   // whether a satisfaction pulse is due for this visit number (schedule lives in
@@ -499,7 +519,7 @@ export default function ProfilePage() {
   const satPromptRef = useRef(false);
 
   useEffect(() => {
-    const runId = runs?.[0]?.id;
+    const runId = currentRun?.id;
     if (!user?.id) return undefined; // wait for the user
     if (!runId) { setFavGroups([]); setFavForRun('none'); return undefined; }
     let cancelled = false;
@@ -507,10 +527,10 @@ export default function ProfilePage() {
       .then((groups) => { if (!cancelled) { setFavGroups(groups || []); setFavForRun(runId); } })
       .catch(() => { if (!cancelled) { setFavGroups([]); setFavForRun(runId); } });
     return () => { cancelled = true; };
-  }, [runs, user?.id]);
+  }, [currentRun?.id, user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
   const favCount = favGroups ? favGroups.reduce((a, g) => a + g.items.length, 0) : null;
   useEffect(() => {
-    const runId = runs?.[0]?.id;
+    const runId = currentRun?.id;
     const uid = user?.id;
     if (!runId || !uid || satPromptRef.current) return undefined;
     satPromptRef.current = true;
@@ -524,7 +544,7 @@ export default function ProfilePage() {
       }
     })();
     return () => { cancelled = true; };
-  }, [runs, user?.id]);
+  }, [currentRun?.id, user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [editingRun, setEditingRun] = useState(null);
   const [editIntroResponses, setEditIntroResponses] = useState(defaultIntroResponses);
@@ -658,16 +678,16 @@ export default function ProfilePage() {
     // The run list only needs light fields (date + status). We fetch the heavy
     // results_json for the LATEST run alone (one row), then attach it, so the
     // page no longer downloads megabytes of report JSON/markdown for 20 runs.
-    const [profileData, runData, runCount, latestFull] = await Promise.all([
-      getMyProfile(),
+    // The page follows one "current" report: the run pinned on the profile
+    // (profiles.current_run_id) or, when nothing is pinned, the newest run.
+    const profileData = await getMyProfile();
+    const [runData, runCount, currentFull, surveyCount] = await Promise.all([
       listAssessmentRuns(20, 'id, created_at, intro_answers_json, output_version'),
       getAssessmentRunCount(),
-      getLatestAssessmentRun(),
+      getCurrentAssessmentRun(profileData?.current_run_id || null),
+      getDistinctSurveyCount().catch((e) => { console.warn('Assessment count failed:', e?.message || e); return null; }),
     ]);
-    if (runData && runData[0] && latestFull && runData[0].id === latestFull.id) {
-      runData[0] = { ...runData[0], results_json: latestFull.results_json, summary_markdown: latestFull.summary_markdown };
-    }
-    return { profileData, runData, runCount };
+    return { profileData, runData, runCount, surveyCount, currentRun: currentFull || null };
   }
 
   async function loadPageData() {
@@ -687,7 +707,10 @@ export default function ProfilePage() {
 
       setProfile(bundle.profileData || null);
       setRuns(bundle.runData || []);
+      setCurrentRun(bundle.currentRun || null);
       setTotalRuns(Number(bundle.runCount) || 0);
+      // If the distinct count could not be computed, fall back to the run count rather than showing 0.
+      setTotalSurveys(bundle.surveyCount == null ? (Number(bundle.runCount) || 0) : Number(bundle.surveyCount) || 0);
     } catch (err) {
       if (await handleInvalidSession(err)) return;
       if (isAuthLockNoise(err)) return; // transient — a concurrent request handled it
@@ -783,8 +806,8 @@ export default function ProfilePage() {
   // Keep the module cache in step with what's on screen, so the next visit (and
   // state after deletes/re-runs) shows the correct runs instantly.
   useEffect(() => {
-    profileBundleCache = { profileData: profile, runData: runs, runCount: totalRuns };
-  }, [profile, runs, totalRuns]);
+    profileBundleCache = { profileData: profile, runData: runs, runCount: totalRuns, surveyCount: totalSurveys, currentRun };
+  }, [profile, runs, totalRuns, totalSurveys, currentRun]);
 
   useEffect(() => {
     let cancelled = false;
@@ -806,7 +829,9 @@ export default function ProfilePage() {
         if (!cancelled) {
           setProfile(bundle.profileData || null);
           setRuns(bundle.runData || []);
+          setCurrentRun(bundle.currentRun || null);
           setTotalRuns(Number(bundle.runCount) || 0);
+          setTotalSurveys(bundle.surveyCount == null ? (Number(bundle.runCount) || 0) : Number(bundle.surveyCount) || 0);
         }
       } catch (err) {
         if (!cancelled) {
@@ -862,8 +887,8 @@ export default function ProfilePage() {
   const isAdminProfile =
     Boolean(profile?.is_admin) ||
     String(profile?.email || user?.email || '').toLowerCase() === 'georgealexandridis@hotmail.com';
-  const isRecurringPlan = ['plus', 'premium'].includes(currentPlanKey);
-  const planIconType = currentPlanKey === 'premium' ? 'crown' : currentPlanKey === 'plus' ? 'sparkles' : 'shield';
+  const isRecurringPlan = ['explore', 'premium'].includes(currentPlanKey);
+  const planIconType = currentPlanKey === 'premium' ? 'crown' : currentPlanKey === 'explore' ? 'sparkles' : 'shield';
   const authProvider = String(user?.app_metadata?.provider || '').toLowerCase();
   const authIdentityProviders = Array.isArray(user?.identities)
     ? user.identities.map((identity) => String(identity?.provider || '').toLowerCase()).filter(Boolean)
@@ -914,15 +939,9 @@ export default function ProfilePage() {
 
     if (!profile) return;
 
-    if (profile?.cancel_at_period_end && renewalDate) {
-      setProfileNotice(`Your subscription will end on ${renewalDate}. You will keep ${formatPlanName(profile)} access until then.`);
-      return;
-    }
-
-    if (profile?.pending_plan_change && pendingPlanDate) {
-      setProfileNotice(`Your plan will change to ${pendingPlanName} on ${pendingPlanDate}. You will keep ${formatPlanName(profile)} access until then.`);
-      return;
-    }
+    // A scheduled downgrade or cancellation is shown on the plan card itself
+    // ("Changes to ... on ..." / "Ends on ..."), so no standing banner for it.
+    // Notices below only appear once, straight after an action.
 
     if (checkoutSuccess) {
       setProfileNotice('Your payment was successful and your CareerDNA access has been updated.');
@@ -939,8 +958,8 @@ export default function ProfilePage() {
     }
   }, [location.search, profile, renewalDate, pendingPlanDate, pendingPlanName]);
 
-  const reportLimitTitle = isRecurringPlan ? 'Monthly reports' : 'Reports left';
-  const reportLimitSubtitle = isRecurringPlan ? 'Included in your plan each month' : 'Explore career reports';
+  const reportLimitTitle = isRecurringPlan ? 'Reports this year' : 'Reports left';
+  const reportLimitSubtitle = isRecurringPlan ? 'Included in your plan each year' : 'Explore career reports';
   const reportLimitValue = reportUsage?.unlimited
     ? '∞'
     : isRecurringPlan
@@ -949,11 +968,11 @@ export default function ProfilePage() {
   const reportLimitSuffix = reportUsage?.unlimited
     ? 'included'
     : isRecurringPlan
-      ? 'per month'
+      ? 'per year'
       : 'left';
 
-  const advisorLimitTitle = isRecurringPlan ? 'Monthly AI questions' : 'AI questions left';
-  const advisorLimitSubtitle = isRecurringPlan ? 'Included in your plan each month' : 'Chat with your AI advisor';
+  const advisorLimitTitle = isRecurringPlan ? 'AI questions this year' : 'AI questions left';
+  const advisorLimitSubtitle = isRecurringPlan ? 'Included in your plan each year' : 'Chat with your AI advisor';
   const advisorLimitValue = advisorUsage?.unlimited
     ? '∞'
     : isRecurringPlan
@@ -962,7 +981,7 @@ export default function ProfilePage() {
   const advisorLimitSuffix = advisorUsage?.unlimited
     ? 'included'
     : isRecurringPlan
-      ? 'per month'
+      ? 'per year'
       : 'left';
 
 
@@ -1088,6 +1107,26 @@ export default function ProfilePage() {
     }
   };
 
+  // Pin a saved report as the one the profile follows (journey, favourites,
+  // tiles). Newest stays the default when nothing is pinned.
+  const handleSetCurrentRun = async (runId) => {
+    if (!runId) return;
+    try {
+      setSettingCurrentId(runId);
+      setErrorMsg('');
+      await setCurrentRunId(runId);
+      const full = await getCurrentAssessmentRun(runId);
+      setCurrentRun(full || null);
+      setProfile((p) => (p ? { ...p, current_run_id: runId } : p));
+      setEngagedForRun(null);
+      setFavForRun(null);
+    } catch (err) {
+      setErrorMsg(err.message || 'Could not set the current report.');
+    } finally {
+      setSettingCurrentId(null);
+    }
+  };
+
   const handleDeleteRun = async (runId) => {
     if (!runId) return;
 
@@ -1095,6 +1134,7 @@ export default function ProfilePage() {
       setDeletingRunId(runId);
       setErrorMsg('');
       await deleteAssessmentRun(runId);
+      if (currentRun?.id === runId) setCurrentRun(null);
       await loadPageData();
       setDeleteConfirmRunId(null);
     } catch (err) {
@@ -1106,13 +1146,19 @@ export default function ProfilePage() {
 
 
 
-  const openPlanAction = () => {
-    if (profile?.pending_plan_change) {
-      setCancelDowngradeOpen(true);
-      return;
+  const [resumingPlan, setResumingPlan] = useState(false);
+  const handleResumePlan = async () => {
+    if (resumingPlan) return;
+    setResumingPlan(true);
+    try {
+      const result = await setCancelAtPeriodEnd(false);
+      if (result?.profile) setProfile(result.profile);
+      setProfileNotice(`Your cancellation has been removed. ${formatPlanName(result?.profile || profile)} will renew as normal.`);
+    } catch (err) {
+      setProfileNotice(err?.message || 'Could not resume your plan. Please try again.');
+    } finally {
+      setResumingPlan(false);
     }
-
-    setPricingModalOpen(true);
   };
 
   const closeCancelDowngradeModal = () => {
@@ -1274,10 +1320,10 @@ export default function ProfilePage() {
     }
   };
 
-  // ---- Journey timeline (latest run) ----
+  // ---- Journey timeline (current run) ----
   // Survey/Profile are milestones from the run itself; the exploration steps only
   // complete once the user has actually interacted (liked/disliked) on that page.
-  const latestRun = runs?.[0] || null;
+  const latestRun = currentRun || runs?.[0] || null;
   const latestArchetypes = latestRun?.results_json?.archetypes || null;
   // University students explore pathways then roles; school students explore
   // career worlds then pathways. The roadmap labels/gating adapt accordingly.
@@ -1290,7 +1336,9 @@ export default function ProfilePage() {
     environments: engagedTypes.has('environment'),
     careerworlds: isUniversity ? engagedTypes.has('pathway') : engagedTypes.has('career_world'),
     discovermore: isUniversity ? engagedTypes.has('role') : engagedTypes.has('pathway'),
-    exploreuni: engagedTypes.has('subject') || engagedTypes.has('nonuni_pathway'),
+    // Explore university or training: the aim is a shortlist, so this needs at
+    // least one SAVED degree, course, training pathway or apprenticeship.
+    exploreuni: ['subject', 'course', 'nonuni_pathway', 'apprenticeship'].some((t) => engagedTypes.has(`liked:${t}`)),
     grades: academicHasData,
     advisor: engagedTypes.has('advisor'),
     apply: false, // terminal, real-world step — never auto-completed
@@ -1308,17 +1356,15 @@ export default function ProfilePage() {
       { key: 'exploreuni', label: 'Explore university or training/work' },
       { key: 'grades', label: 'Enter your grades' },
     ] : []),
-    ...(!isUniversity ? [
-      { key: 'apply', label: 'Apply for university or training/work' },
-    ] : []),
+    // Terminal step for everyone: never auto-completed, so the journey is
+    // never shown as 100% done.
+    { key: 'apply', label: isUniversity ? 'Apply for graduate roles or further study' : 'Apply for university or training/work' },
   ].map((step) => ({ ...step, done: Boolean(journeyDone[step.key]) }));
   const journeyCurrentIdx = journeySteps.findIndex((s) => !s.done);
   // Overview journey summary: progress ring + the single next step.
   const journeyTotal = journeySteps.length;
   const journeyDoneCount = journeySteps.filter((s) => s.done).length;
-  const journeyPct = journeyTotal ? Math.round((journeyDoneCount / journeyTotal) * 100) : 0;
   const journeyNextStep = journeyCurrentIdx >= 0 ? journeySteps[journeyCurrentIdx] : null;
-  const journeyRingOffset = 238.8 * (1 - journeyPct / 100);
   // Only render the overview once EVERY piece of its data is in for the CURRENT
   // run, so the stats, ring and step count never flash a wrong partial value
   // (e.g. 2/9 then 8/9, or a "—" favourites count) while loading. We require the
@@ -1353,7 +1399,7 @@ export default function ProfilePage() {
     discovermore: { section: 'analysis', tab: 'discovermore' },
     exploreuni: { section: 'analysis', tab: 'furtherstudy' },
     advisor: { section: 'analysis', tab: 'advisor' },
-    apply: { section: 'analysis', tab: 'furtherstudy' },
+    apply: { section: 'analysis', tab: isUniversity ? 'roleexplorer' : 'furtherstudy' },
   };
   const openRunAt = (target) => {
     if (!latestRun) return;
@@ -1402,6 +1448,55 @@ export default function ProfilePage() {
     advisor: (<path d="M12 4l1.5 4.3L18 10l-4.5 1.7L12 16l-1.5-4.3L6 10l4.5-1.7z" />),
     apply: (<><path d="M22 3 11 14" /><path d="M22 3 15 21l-4-7-7-4 18-7z" /></>),
   };
+  // On phones the stepper scrolls sideways; open it centred on the current step.
+  const journeyRailRef = useRef(null);
+  const journeyCurrentKey = journeyNextStep ? journeyNextStep.key : '';
+  // Which sides still have hidden steps; drives the edge fades and arrows.
+  const [journeyRailEdges, setJourneyRailEdges] = useState({ left: false, right: false });
+  const updateJourneyRailEdges = () => {
+    const rail = journeyRailRef.current;
+    if (!rail) return;
+    const max = rail.scrollWidth - rail.clientWidth;
+    const next = { left: rail.scrollLeft > 4, right: max - rail.scrollLeft > 4 };
+    setJourneyRailEdges((prev) => (prev.left === next.left && prev.right === next.right ? prev : next));
+  };
+  const scrollJourneyRail = (dir) => {
+    const rail = journeyRailRef.current;
+    if (!rail) return;
+    rail.scrollBy({ left: dir * Math.round(rail.clientWidth * 0.7), behavior: 'smooth' });
+  };
+  useEffect(() => {
+    const rail = journeyRailRef.current;
+    if (!rail) return undefined;
+    // Wait a frame so the rail has its real width before we centre the current step.
+    const raf = window.requestAnimationFrame(() => {
+      if (rail.scrollWidth > rail.clientWidth + 4) {
+        const cur = rail.querySelector('[data-current="1"]');
+        if (cur) {
+          const left = cur.offsetLeft - (rail.clientWidth - cur.offsetWidth) / 2;
+          rail.scrollTo({ left: Math.max(0, left) });
+        }
+      }
+      updateJourneyRailEdges();
+    });
+    window.addEventListener('resize', updateJourneyRailEdges);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener('resize', updateJourneyRailEdges);
+    };
+  }, [journeyCurrentKey, overviewReady, journeySteps.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const JOURNEY_SHORT = {
+    survey: 'Survey',
+    profile: 'Your CareerDNA',
+    strengths: 'Strengths',
+    environments: 'Work styles',
+    careerworlds: isUniversity ? 'Pathways' : 'Career worlds',
+    discovermore: isUniversity ? 'Roles' : 'Pathways',
+    exploreuni: 'University or training',
+    grades: 'Your grades',
+    apply: 'Apply',
+  };
   const renderJourneyIcon = (key) => (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       {journeyIconPaths[key] || <circle cx="12" cy="12" r="3.5" />}
@@ -1426,19 +1521,13 @@ export default function ProfilePage() {
                 </h1>
                 <div className="profile-hero-meta">
                   <span className="profile-hero-email">{profile?.email || user?.email || '—'}</span>
-                  <span className="profile-hero-sep">·</span>
-                  <span className="profile-hero-runs">
-                    {loadingRuns
-                      ? <span className="profile-skel profile-skel--pill" aria-label="Loading" />
-                      : `${totalRuns} ${totalRuns === 1 ? 'run' : 'runs'}`}
-                  </span>
                 </div>
               </div>
             </div>
             <div className="profile-hero-actions">
               <button type="button" className="profile-hero-btn profile-hero-btn--primary" onClick={handleRetake}>
                 <PlayIcon />
-                New report
+                New assessment
               </button>
               <button type="button" className="profile-hero-btn" onClick={openProfileEditor}>
                 <SettingsIcon />
@@ -1469,11 +1558,11 @@ export default function ProfilePage() {
             <div className="profile-stats">
               <div className="profile-stat profile-stat--journey">
                 <span className="profile-stat-ic" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg>
                 </span>
                 <div className="profile-stat-body">
-                  <span className="profile-stat-num">{journeyPct}%</span>
-                  <span className="profile-stat-label">Journey</span>
+                  <span className="profile-stat-num">{totalSurveys}</span>
+                  <span className="profile-stat-label">Assessments</span>
                 </div>
               </div>
               <div className="profile-stat profile-stat--fav">
@@ -1491,53 +1580,67 @@ export default function ProfilePage() {
                 </span>
                 <div className="profile-stat-body">
                   <span className="profile-stat-num">{totalRuns}</span>
-                  <span className="profile-stat-label">Assessments</span>
+                  <span className="profile-stat-label">Reports</span>
+                </div>
+              </div>
+              <div className="profile-stat profile-stat--advisor">
+                <span className="profile-stat-ic" aria-hidden="true">
+                  <BrainCircuit size={20} aria-hidden="true" focusable="false" />
+                </span>
+                <div className="profile-stat-body">
+                  <span className="profile-stat-num">{Number(profile?.advisor_questions_used || 0)}</span>
+                  <span className="profile-stat-label">Questions asked</span>
                 </div>
               </div>
             </div>
 
-            <section
-              className={`profile-jcard${journeyNextStep ? ' profile-jcard--clickable' : ''}`}
-              aria-label={journeyNextStep ? `Your journey. Next step: ${journeyNextStep.label}` : 'Your journey'}
-              {...(journeyNextStep ? {
-                role: 'button',
-                tabIndex: 0,
-                onClick: () => goToStep(journeyNextStep),
-                onKeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToStep(journeyNextStep); } },
-              } : {})}
-            >
-              <div className="profile-jring" aria-hidden="true">
-                <svg viewBox="0 0 88 88" width="88" height="88">
-                  <circle cx="44" cy="44" r="38" fill="none" stroke="#eef2f8" strokeWidth="8" />
-                  <circle cx="44" cy="44" r="38" fill="none" stroke="#2f6fed" strokeWidth="8" strokeLinecap="round" strokeDasharray="238.8" strokeDashoffset={journeyRingOffset} transform="rotate(-90 44 44)" />
-                </svg>
-                <span className="profile-jring-lbl">
-                  <span className="profile-jring-n">{journeyDoneCount}/{journeyTotal}</span>
-                  <span className="profile-jring-s">steps</span>
-                </span>
+            <section className="profile-jcard" aria-label={journeyNextStep ? `Your journey. Next step: ${journeyNextStep.label}` : 'Your journey'}>
+              <div className="profile-jcard-head">
+                <div className="profile-jcard-headtext">
+                  <span className="profile-jcard-title">
+                    Your journey
+                    <span className="profile-jcard-pill">{journeyDoneCount} of {journeyTotal} steps done</span>
+                  </span>
+                  <span className="profile-jcard-nextname">
+                    <span className="profile-jcard-nextlabel">Next step:</span>
+                    <button
+                      type="button"
+                      className="profile-jcard-go"
+                      onClick={() => (journeyNextStep ? goToStep(journeyNextStep) : openRunAt({ section: 'analysis' }))}
+                    >
+                      {journeyNextStep ? journeyNextStep.label : 'Open your report'}
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="M13 6l6 6-6 6" /></svg>
+                    </button>
+                  </span>
+                </div>
               </div>
-              <span className="profile-jcard-eyebrow">
-                {journeyNextStep
-                  ? ((journeyTotal - journeyDoneCount) <= 2 ? 'Your journey, almost there' : 'Your journey')
-                  : 'Your journey, all done'}
-              </span>
-              <div className="profile-jcard-next">
-                <span className={`profile-jcard-ic${journeyNextStep ? '' : ' profile-jcard-ic--done'}`}>
-                  {journeyNextStep ? renderJourneyIcon(journeyNextStep.key) : (
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg>
-                  )}
-                </span>
-                <span className="profile-jcard-nexttext">
-                  {journeyNextStep ? <span className="profile-jcard-nextlabel">Next step</span> : null}
-                  <span className="profile-jcard-nextname">{journeyNextStep ? journeyNextStep.label : 'You have completed every step. Nice work.'}</span>
-                </span>
+              <div className={`profile-jrail-wrap${journeyRailEdges.left ? ' can-left' : ''}${journeyRailEdges.right ? ' can-right' : ''}`}>
+                <button type="button" className="profile-jrail-arrow profile-jrail-arrow--left" aria-label="Earlier steps" onClick={() => scrollJourneyRail(-1)}>
+                  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </button>
+                <button type="button" className="profile-jrail-arrow profile-jrail-arrow--right" aria-label="Later steps" onClick={() => scrollJourneyRail(1)}>
+                  <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </button>
+              <ol className="profile-jrail" aria-label="Journey steps" ref={journeyRailRef} onScroll={updateJourneyRailEdges}>
+                {journeySteps.map((step, i) => {
+                  const isCurrent = journeyNextStep && journeyNextStep.key === step.key;
+                  return (
+                    <li key={step.key} className={`profile-jrail-step${step.done ? ' is-done' : ''}${isCurrent ? ' is-current' : ''}`} data-current={isCurrent ? '1' : undefined}>
+                      <button type="button" className="profile-jrail-btn" onClick={() => goToStep(step)} aria-label={`${step.done ? 'Done: ' : isCurrent ? 'Next: ' : ''}${step.label}`}>
+                        <span className="profile-jrail-dot" aria-hidden="true">
+                          {step.done
+                            ? <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7" /></svg>
+                            : renderJourneyIcon(step.key)}
+                        </span>
+                        <span className="profile-jrail-lbl">{JOURNEY_SHORT[step.key] || step.label}</span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
               </div>
-              {journeyNextStep ? (
-                <span className="profile-jcard-go" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M13 6l6 6-6 6" /></svg>
-                </span>
-              ) : null}
             </section>
+
           </>
         ) : null}
 
@@ -1547,7 +1650,7 @@ export default function ProfilePage() {
             assessmentRunId={latestRun.id}
             asModal
             wave={satWave}
-            onClose={() => setSatDismissed(true)}
+            onClose={() => { setSatDismissed(true); dismissSatisfactionPulse(user.id, latestRun.id, satWave); }}
             onSubmitted={() => setSatDismissed(true)}
           />
         ) : null}
@@ -1604,7 +1707,7 @@ export default function ProfilePage() {
                     <span className={`profile-run-number ${idx === 0 ? 'profile-run-number--latest' : ''}`}>
                       #{totalRuns - idx}
                     </span>
-                    {idx === 0 && <span className="profile-run-badge">Latest</span>}
+                    {latestRun?.id === run.id && <span className="profile-run-badge">Current</span>}
                   </div>
 
                   {/* Date */}
@@ -1649,6 +1752,18 @@ export default function ProfilePage() {
                       </button>
                       {openRunMenuId === run.id ? (
                         <div className="profile-run-menu" role="menu" onClick={(e) => e.stopPropagation()}>
+                          {latestRun?.id !== run.id ? (
+                            <button
+                              type="button"
+                              role="menuitem"
+                              className="profile-run-menu-item"
+                              onClick={() => { setOpenRunMenuId(null); handleSetCurrentRun(run.id); }}
+                              disabled={settingCurrentId === run.id}
+                            >
+                              <PinIcon />
+                              {settingCurrentId === run.id ? 'Setting…' : 'Set as current report'}
+                            </button>
+                          ) : null}
                           <button
                             type="button"
                             role="menuitem"
@@ -1910,17 +2025,31 @@ export default function ProfilePage() {
                                 : `Renews on ${renewalDate}`}
                           </div>
                         ) : null}
+                        {profile?.cancel_at_period_end ? (
+                          <button
+                            type="button"
+                            className="profile-account-plan-link"
+                            onClick={handleResumePlan}
+                            disabled={resumingPlan}
+                          >
+                            {resumingPlan ? 'Resuming…' : 'Keep my plan'}
+                          </button>
+                        ) : profile?.pending_plan_change ? (
+                          <button
+                            type="button"
+                            className="profile-account-plan-link"
+                            onClick={() => setCancelDowngradeOpen(true)}
+                          >
+                            Cancel downgrade
+                          </button>
+                        ) : null}
                       </div>
                       <button
                         type="button"
                         className="profile-account-upgrade-pill"
-                        onClick={openPlanAction}
+                        onClick={() => setPricingModalOpen(true)}
                       >
-                        {profile?.pending_plan_change
-                          ? 'Cancel downgrade'
-                          : String(profile?.plan || 'free').toLowerCase() === 'free'
-                            ? 'Upgrade'
-                            : 'Manage'}
+                        {String(profile?.plan || 'free').toLowerCase() === 'free' ? 'Upgrade' : 'Manage'}
                       </button>
                     </div>
                   </div>
@@ -2066,17 +2195,24 @@ export default function ProfilePage() {
           if (updatedProfile) setProfile(updatedProfile);
           setPricingModalOpen(false);
 
-          if (requestedPlan === 'premium') {
-            setProfileNotice('Your subscription has been upgraded to CareerDNA Premium. Your new monthly limits are now active.');
-          } else if (requestedPlan === 'plus' && action === 'downgrade') {
+          if (requestedPlan === 'starter' && action === 'cancel') {
+            const endDate = formatPendingPlanDate(updatedProfile) || formatRenewalDate(updatedProfile);
+            setProfileNotice(
+              endDate
+                ? `Your plan has been cancelled and will not renew. You keep full access until ${endDate}, then your account returns to CareerDNA Starter.`
+                : 'Your plan has been cancelled and will not renew. You keep full access until the end of your billing year.'
+            );
+          } else if (requestedPlan === 'premium') {
+            setProfileNotice('Your subscription has been upgraded to CareerDNA Premium. Your new yearly allowances are now active.');
+          } else if (requestedPlan === 'explore' && action === 'downgrade') {
             const nextDate = formatPendingPlanDate(updatedProfile);
             setProfileNotice(
               nextDate
-                ? `Your plan will change to CareerDNA Plus on ${nextDate}. You will keep CareerDNA Premium access until then.`
-                : 'Your plan will change to CareerDNA Plus at the end of your current billing period.'
+                ? `Your plan will change to CareerDNA Explorer on ${nextDate}. You will keep CareerDNA Premium access until then.`
+                : 'Your plan will change to CareerDNA Explorer at the end of your current billing year.'
             );
-          } else if (requestedPlan === 'plus') {
-            setProfileNotice('Your subscription has been upgraded to CareerDNA Plus. Your monthly limits are now active.');
+          } else if (requestedPlan === 'explore') {
+            setProfileNotice('Your subscription has been changed to CareerDNA Explorer. Your yearly allowances are now active.');
           } else {
             setProfileNotice('Your subscription has been updated.');
           }

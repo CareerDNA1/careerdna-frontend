@@ -9,7 +9,7 @@ import { useSurveyEngine } from '../Hooks/useSurveyEngine';
 import scoreSubdimensions from '../utils/scoreSubdimensions';
 import QUESTIONS from '../utils/questions';
 import { computeClarityPercents } from '../utils/selfAwarenessSummary';
-import { saveAssessmentRun, updateAssessmentRun } from '../utils/assessmentRuns';
+import { saveAssessmentRun, updateAssessmentRun, findExistingRunForSurvey } from '../utils/assessmentRuns';
 import { useAuth } from '../context/AuthContext';
 import { readProgress } from '../Hooks/useProgress';
 import { calculateProfileQualityGate } from '../utils/profileQualityGate';
@@ -88,6 +88,7 @@ export default function ResultsPage() {
       subdimensionRows,
       claritySummary,
       profileQualityGate,
+      surveyNonce: nonce,
     };
 
     let cancelled = false;
@@ -134,6 +135,34 @@ export default function ResultsPage() {
         try {
           sessionStorage.setItem(saveKey, 'pending');
         } catch {}
+
+        // The session slot only protects this browser session. If this survey
+        // was already saved (for example the user came back weeks later, or
+        // after upgrading, and the analysis ran again), update that run.
+        let existingRun = null;
+        try {
+          existingRun = await findExistingRunForSurvey({ nonce, surveyAnswers: answersFallback || {} });
+        } catch (lookupErr) {
+          console.warn('Existing run lookup failed:', lookupErr?.message || lookupErr);
+        }
+        if (existingRun?.id) {
+          if (!cancelled) setAssessmentRunId(existingRun.id);
+          try {
+            sessionStorage.setItem(saveKey, existingRun.id);
+          } catch {}
+          try {
+            await updateAssessmentRun(existingRun.id, {
+              results_json: resultsPayload,
+              ...(trimmedSummary ? { summary_markdown: trimmedSummary } : {}),
+            });
+            if (trimmedSummary) {
+              try { sessionStorage.setItem(`${saveKey}_summary_${trimmedSummary.length}`, '1'); } catch {}
+            }
+          } catch (updateErr) {
+            console.error('Failed to update existing assessment run:', updateErr);
+          }
+          return;
+        }
 
         let savedRun;
         try {

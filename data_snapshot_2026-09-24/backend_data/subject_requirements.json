@@ -1,0 +1,3749 @@
+{
+  "_meta": {
+    "description": "Subject-level UK entry requirements (A-levels/GCSEs) for CareerDNA subjects. Per-university grade bars live in university_rankings.json (typicalGrades/tariffPoints).",
+    "as_of": "2026-09",
+    "tariff": {
+      "A*": 56,
+      "A": 48,
+      "B": 40,
+      "C": 32,
+      "D": 24,
+      "E": 16
+    },
+    "alevel_vocabulary": [
+      "Maths",
+      "Further Maths",
+      "Physics",
+      "Chemistry",
+      "Biology",
+      "Computer Science",
+      "Economics",
+      "Geography",
+      "History",
+      "English Literature",
+      "English Language",
+      "Psychology",
+      "Sociology",
+      "Politics",
+      "Philosophy",
+      "Religious Studies",
+      "Art & Design",
+      "Design & Technology",
+      "Media Studies",
+      "Film Studies",
+      "Music",
+      "Music Technology",
+      "Drama & Theatre Studies",
+      "Dance",
+      "Physical Education",
+      "Business",
+      "Law",
+      "A modern language",
+      "A classical language",
+      "A science",
+      "An essay-based subject",
+      "Statistics",
+      "Environmental Science",
+      "Electronics"
+    ],
+    "sources": [
+      "https://www.informedchoices.ac.uk/",
+      "https://www.ucas.com/"
+    ],
+    "note": "Values authored from established guidance; a verification pass against live course pages is Phase 1 step 4."
+  },
+  "sub_mathematics_and_statistics": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Further Maths",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 7
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "Further Maths strongly preferred at the most selective universities.",
+    "title": "Mathematics and Statistics",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_data_science": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Further Maths",
+      "Computer Science",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 7
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "",
+    "title": "Data Science",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_statistics": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Further Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 7
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "",
+    "title": "Statistics",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_actuarial_science": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Further Maths",
+      "Economics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 7
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "Grade A/A* in A-level Maths is commonly specified.",
+    "title": "Actuarial Science",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_mathematics": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Further Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 7
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "A*A*A to AAA",
+    "notes": "Further Maths required or strongly preferred at top universities.",
+    "title": "Mathematics",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_operational_research": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Further Maths",
+      "Economics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB",
+    "notes": "",
+    "title": "Operational Research",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_financial_mathematics": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Further Maths",
+      "Economics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 7
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "",
+    "title": "Financial Mathematics",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_computer_science_and_artificial_intelligence": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Further Maths",
+      "Computer Science",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "",
+    "title": "Computer Science and Artificial Intelligence",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_software_engineering": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Computer Science",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAA",
+    "notes": "",
+    "title": "Software Engineering",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_computer_science_with_cyber_security": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Computer Science",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAA",
+    "notes": "",
+    "title": "Computer Science with Cyber Security",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_artificial_intelligence": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Further Maths",
+      "Computer Science",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "",
+    "title": "Artificial Intelligence",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_computer_science": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Further Maths",
+      "Computer Science",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "A few universities accept strong applicants without A-level Maths; most require it.",
+    "title": "Computer Science",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_cyber_security": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Maths",
+      "Computer Science",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to BBB",
+    "notes": "Maths preferred; required at the more technical universities.",
+    "title": "Cyber Security",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_games_technology": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Maths",
+      "Computer Science",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "Programming-heavy courses prefer Maths.",
+    "title": "Games Technology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_human_computer_interaction": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Maths",
+      "Computer Science",
+      "Psychology",
+      "Art & Design"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Human-Computer Interaction",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_mechanical_engineering": {
+    "required_alevels": [
+      "Maths",
+      "Physics"
+    ],
+    "preferred_alevels": [
+      "Further Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "",
+    "title": "Mechanical Engineering",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_civil_engineering": {
+    "required_alevels": [
+      "Maths",
+      "Physics"
+    ],
+    "preferred_alevels": [
+      "Further Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAA",
+    "notes": "Some accept Maths plus another science instead of Physics.",
+    "title": "Civil Engineering",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_electrical_and_electronic_engineering": {
+    "required_alevels": [
+      "Maths",
+      "Physics"
+    ],
+    "preferred_alevels": [
+      "Further Maths",
+      "Electronics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to A*AA",
+    "notes": "",
+    "title": "Electrical and Electronic Engineering",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_chemical_engineering": {
+    "required_alevels": [
+      "Maths",
+      "Chemistry"
+    ],
+    "preferred_alevels": [
+      "Physics",
+      "Further Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "",
+    "title": "Chemical Engineering",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_aeronautical_and_aerospace_engineering": {
+    "required_alevels": [
+      "Maths",
+      "Physics"
+    ],
+    "preferred_alevels": [
+      "Further Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "",
+    "title": "Aeronautical and Aerospace Engineering",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_manufacturing_engineering": {
+    "required_alevels": [
+      "Maths",
+      "Physics"
+    ],
+    "preferred_alevels": [
+      "Further Maths",
+      "Design & Technology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAA",
+    "notes": "",
+    "title": "Manufacturing Engineering",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_robotics_and_mechatronic_engineering": {
+    "required_alevels": [
+      "Maths",
+      "Physics"
+    ],
+    "preferred_alevels": [
+      "Further Maths",
+      "Computer Science"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to A*AA",
+    "notes": "",
+    "title": "Robotics and Mechatronic Engineering",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_biomedical_engineering": {
+    "required_alevels": [
+      "Maths",
+      "Physics"
+    ],
+    "preferred_alevels": [
+      "Biology",
+      "Chemistry"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "Some universities accept Biology or Chemistry in place of Physics.",
+    "title": "Biomedical Engineering",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_systems_engineering": {
+    "required_alevels": [
+      "Maths",
+      "Physics"
+    ],
+    "preferred_alevels": [
+      "Further Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAA",
+    "notes": "",
+    "title": "Systems Engineering",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_architecture": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Art & Design",
+      "Maths",
+      "Physics",
+      "History"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio usually required",
+    "typical_offer_range": "ABB to A*AA",
+    "notes": "No single required subject; a portfolio is central. Art & Design and Maths both valued.",
+    "title": "Architecture",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_architecture_and_urban_planning": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Art & Design",
+      "Geography",
+      "Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio often required",
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Architecture and Urban Planning",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_architectural_technology": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Maths",
+      "Physics",
+      "Design & Technology",
+      "Art & Design"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to BBC",
+    "notes": "",
+    "title": "Architectural Technology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_construction_management": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Maths",
+      "Physics",
+      "Design & Technology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to BBC",
+    "notes": "",
+    "title": "Construction Management",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_interior_architecture_and_design": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Art & Design",
+      "Design & Technology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Interior Architecture and Design",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_landscape_architecture": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Art & Design",
+      "Geography",
+      "Biology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio often required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Landscape Architecture",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_urban_planning_and_development": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Geography",
+      "Maths",
+      "Economics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Urban Planning and Development",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_biomedical_science": {
+    "required_alevels": [
+      "Biology",
+      "Chemistry"
+    ],
+    "preferred_alevels": [
+      "Maths",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5,
+      "science": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAA",
+    "notes": "",
+    "title": "Biomedical Science",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_biochemistry": {
+    "required_alevels": [
+      "Chemistry"
+    ],
+    "preferred_alevels": [
+      "Biology",
+      "Maths",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5,
+      "science": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "Chemistry required; a second science (usually Biology) preferred.",
+    "title": "Biochemistry",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_chemistry": {
+    "required_alevels": [
+      "Chemistry"
+    ],
+    "preferred_alevels": [
+      "Maths",
+      "Biology",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6,
+      "science": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "Maths increasingly preferred alongside Chemistry.",
+    "title": "Chemistry",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_biology": {
+    "required_alevels": [
+      "Biology"
+    ],
+    "preferred_alevels": [
+      "Chemistry",
+      "Maths",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5,
+      "science": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to A*AA",
+    "notes": "Many universities also require or prefer Chemistry.",
+    "title": "Biology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_physics": {
+    "required_alevels": [
+      "Maths",
+      "Physics"
+    ],
+    "preferred_alevels": [
+      "Further Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6,
+      "science": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "Further Maths preferred at top universities.",
+    "title": "Physics",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_neuroscience": {
+    "required_alevels": [
+      "Biology"
+    ],
+    "preferred_alevels": [
+      "Chemistry",
+      "Maths",
+      "Psychology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5,
+      "science": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAA",
+    "notes": "Chemistry required at many universities.",
+    "title": "Neuroscience",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_biotechnology": {
+    "required_alevels": [
+      "Biology",
+      "Chemistry"
+    ],
+    "preferred_alevels": [
+      "Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5,
+      "science": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to AAB",
+    "notes": "",
+    "title": "Biotechnology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_natural_sciences": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Physics",
+      "Chemistry",
+      "Biology",
+      "Further Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 6,
+      "maths": 7,
+      "science": 7
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "A*A*A to AAA",
+    "notes": "Highly selective; two or three sciences plus Maths expected.",
+    "title": "Natural Sciences",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_pharmacology": {
+    "required_alevels": [
+      "Chemistry",
+      "Biology"
+    ],
+    "preferred_alevels": [
+      "Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5,
+      "science": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAA",
+    "notes": "",
+    "title": "Pharmacology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_medicine": {
+    "required_alevels": [
+      "Chemistry",
+      "Biology"
+    ],
+    "preferred_alevels": [
+      "Maths",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 6,
+      "maths": 6,
+      "science": 7
+    },
+    "admissions_test": [
+      "UCAT"
+    ],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "A*AA to AAA",
+    "notes": "Chemistry and Biology both usually required. UCAT sat in Year 13; most schools interview. Work experience expected.",
+    "title": "Medicine",
+    "gcse_min": {
+      "english": 6,
+      "maths": 6,
+      "science": 6
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_dentistry": {
+    "required_alevels": [
+      "Chemistry",
+      "Biology"
+    ],
+    "preferred_alevels": [
+      "Maths",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 6,
+      "maths": 6,
+      "science": 7
+    },
+    "admissions_test": [
+      "UCAT"
+    ],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAA",
+    "notes": "Chemistry and Biology required; UCAT and interview standard.",
+    "title": "Dentistry",
+    "gcse_min": {
+      "english": 6,
+      "maths": 6,
+      "science": 6
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_pharmacy": {
+    "required_alevels": [
+      "Chemistry"
+    ],
+    "preferred_alevels": [
+      "Biology",
+      "Maths",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5,
+      "science": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAB",
+    "notes": "Chemistry required plus one of Biology/Maths/Physics. MPharm is a 4-year integrated masters.",
+    "title": "Pharmacy",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_nursing": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Biology",
+      "Psychology",
+      "Physical Education",
+      "Sociology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4,
+      "science": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to ABB",
+    "notes": "A science (often Biology) preferred. DBS check and health screening required.",
+    "title": "Nursing",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_midwifery": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Biology",
+      "Psychology",
+      "Sociology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4,
+      "science": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "Biology preferred. DBS and health screening required; competitive with interview.",
+    "title": "Midwifery",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_physiotherapy": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Biology",
+      "Physical Education"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5,
+      "science": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to AAB",
+    "notes": "A science or PE usually required. DBS and interview standard.",
+    "title": "Physiotherapy",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_occupational_therapy": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Biology",
+      "Psychology",
+      "Sociology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4,
+      "science": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "DBS check and interview standard.",
+    "title": "Occupational Therapy",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_paramedic_science": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Biology",
+      "Psychology",
+      "Physical Education"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4,
+      "science": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "A science preferred. Full manual driving licence usually required by qualification; DBS check.",
+    "title": "Paramedic Science",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_social_work": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Sociology",
+      "Psychology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "DBS check and interview standard.",
+    "title": "Social Work",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_sport_and_exercise_science": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Biology",
+      "Physical Education",
+      "Chemistry"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4,
+      "science": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to ABB",
+    "notes": "A science or PE preferred.",
+    "title": "Sport and Exercise Science",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_diagnostic_radiography": {
+    "required_alevels": [
+      "A science"
+    ],
+    "preferred_alevels": [
+      "Physics",
+      "Biology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5,
+      "science": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "One science required (Physics or Biology preferred). DBS and interview standard.",
+    "title": "Diagnostic Radiography",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_optometry": {
+    "required_alevels": [
+      "A science"
+    ],
+    "preferred_alevels": [
+      "Biology",
+      "Chemistry",
+      "Physics",
+      "Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5,
+      "science": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to ABB",
+    "notes": "Two from Biology/Chemistry/Physics/Maths usually required.",
+    "title": "Optometry",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_psychology": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Biology",
+      "Maths",
+      "Psychology",
+      "A science"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAB",
+    "notes": "For BPS-accredited BSc some universities require a science or Maths; GCSE Maths at grade 5+ common.",
+    "title": "Psychology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_counselling_and_psychotherapy": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Psychology",
+      "Sociology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Counselling and Psychotherapy",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_cognitive_science": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Maths",
+      "Psychology",
+      "Biology",
+      "Computer Science"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAB",
+    "notes": "",
+    "title": "Cognitive Science",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_forensic_psychology": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Biology",
+      "Psychology",
+      "A science"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Forensic Psychology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_behavioural_science": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Maths",
+      "Psychology",
+      "Biology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Behavioural Science",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_psychology_with_neuroscience": {
+    "required_alevels": [
+      "Biology"
+    ],
+    "preferred_alevels": [
+      "Chemistry",
+      "Maths",
+      "Psychology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5,
+      "science": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAB",
+    "notes": "Biology (or another science) usually required for the neuroscience component.",
+    "title": "Psychology with Neuroscience",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_education_studies": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "English Literature",
+      "Psychology",
+      "Sociology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Education Studies",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_primary_education_qts": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "An essay-based subject",
+      "Psychology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to ABB",
+    "notes": "GCSE grade 4/C in English, Maths and Science is a statutory requirement for QTS. Interview and DBS standard.",
+    "title": "Primary Education (QTS)",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_early_years_education_and_care": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Psychology",
+      "Sociology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "CCC to BBC",
+    "notes": "DBS check standard.",
+    "title": "Early Years Education and Care",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_secondary_education_qts": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "An essay-based subject",
+      "A science",
+      "Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "An A-level in (or close to) the intended teaching subject is normally required, the specific subject depends on the specialism, so it is not encoded as a single required A-level. GCSE English and Maths grade 4 needed for QTS.",
+    "title": "Secondary Education (QTS)",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_sports_coaching_and_development": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Physical Education",
+      "Biology",
+      "Psychology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BCC",
+    "notes": "",
+    "title": "Sports Coaching and Development",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_law": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "An essay-based subject",
+      "History",
+      "English Literature",
+      "Politics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [
+      "LNAT (some universities)"
+    ],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "No required subject; essay-writing subjects valued. A handful of universities (e.g. UCL, Bristol) require the LNAT.",
+    "title": "Law",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_politics": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "An essay-based subject",
+      "History",
+      "Politics",
+      "Economics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAB",
+    "notes": "",
+    "title": "Politics",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_social_and_public_policy": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "An essay-based subject",
+      "Sociology",
+      "Politics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Social and Public Policy",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_criminology": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Sociology",
+      "Psychology",
+      "An essay-based subject"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to ABB",
+    "notes": "",
+    "title": "Criminology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_philosophy_politics_and_economics_ppe": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Maths",
+      "History",
+      "Economics",
+      "An essay-based subject"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 6,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "A*AA to AAA",
+    "notes": "Maths strongly recommended (required at some, e.g. Warwick; recommended not required at Oxford). Essay-based subjects valued.",
+    "title": "Philosophy, Politics and Economics (PPE)",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_law_with_criminology": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "An essay-based subject",
+      "Sociology",
+      "Psychology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAA",
+    "notes": "",
+    "title": "Law with Criminology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_business_management": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Maths",
+      "Economics",
+      "Business"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to AAB",
+    "notes": "",
+    "title": "Business Management",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_business_analytics": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Economics",
+      "Further Maths",
+      "Statistics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAA",
+    "notes": "Maths required or strongly preferred for the analytics component.",
+    "title": "Business Analytics",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_international_business": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "A modern language",
+      "Economics",
+      "Business"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "International Business",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_human_resource_management": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Business",
+      "Psychology",
+      "Sociology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to BBC",
+    "notes": "",
+    "title": "Human Resource Management",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_operations_and_supply_chain_management": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Maths",
+      "Business",
+      "Economics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Operations and Supply Chain Management",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_real_estate_and_property": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Maths",
+      "Geography",
+      "Economics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "RICS-accredited routes valued by employers.",
+    "title": "Real Estate & Property",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_hospitality_tourism_and_events_management": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Business",
+      "A modern language",
+      "Geography"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Hospitality, Tourism & Events Management",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_accounting": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Maths",
+      "Economics",
+      "Business"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAA",
+    "notes": "Maths preferred and required at some universities.",
+    "title": "Accounting",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_finance": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Economics",
+      "Further Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to A*AA",
+    "notes": "Maths required or strongly preferred.",
+    "title": "Finance",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_accounting_and_finance": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Maths",
+      "Economics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAA",
+    "notes": "Maths preferred; required at more quantitative universities.",
+    "title": "Accounting and Finance",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_economics": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Further Maths",
+      "Economics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [
+      "TMUA (some universities)"
+    ],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "A*AA to AAA",
+    "notes": "Maths required almost everywhere; Further Maths preferred at LSE/UCL/Warwick etc. TMUA required or recommended at some (e.g. Warwick, Cambridge).",
+    "title": "Economics",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_finance_and_financial_technology": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Further Maths",
+      "Computer Science",
+      "Economics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to A*AA",
+    "notes": "",
+    "title": "Finance and Financial Technology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_economics_with_data_science": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Further Maths",
+      "Computer Science"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 7
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "",
+    "title": "Economics with Data Science",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_investment_management": {
+    "required_alevels": [
+      "Maths"
+    ],
+    "preferred_alevels": [
+      "Economics",
+      "Further Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to A*AA",
+    "notes": "",
+    "title": "Investment Management",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_entrepreneurship_and_innovation": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Business",
+      "Economics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to BBC",
+    "notes": "",
+    "title": "Entrepreneurship and Innovation",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_business_management_with_entrepreneurship": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Business",
+      "Economics",
+      "Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Business Management with Entrepreneurship",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_social_enterprise_and_community_development": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Sociology",
+      "Business",
+      "Politics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Social Enterprise and Community Development",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_innovation_and_technology_management": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Maths",
+      "Business",
+      "Computer Science"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Innovation and Technology Management",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_marketing": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Business",
+      "Economics",
+      "Media Studies"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Marketing",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_public_relations_and_communications": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "English Language",
+      "Media Studies",
+      "An essay-based subject"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Public Relations and Communications",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_digital_media_production_and_technology": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Media Studies",
+      "Film Studies",
+      "Art & Design",
+      "Computer Science"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio or showreel sometimes required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Digital Media Production and Technology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_digital_marketing_and_social_media": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Business",
+      "Media Studies"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Digital Marketing and Social Media",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_journalism": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "English Language",
+      "English Literature",
+      "Media Studies",
+      "Politics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "Strong written English expected.",
+    "title": "Journalism",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_advertising_and_brand_management": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Business",
+      "Media Studies",
+      "Art & Design"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Advertising and Brand Management",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_media_studies": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Media Studies",
+      "Film Studies",
+      "English Literature"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Media Studies",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_product_design": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Art & Design",
+      "Design & Technology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "A creative/design A-level plus portfolio; a Foundation Diploma is a common route.",
+    "title": "Product Design",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_graphic_design": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Art & Design",
+      "Design & Technology",
+      "Media Studies"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "Art Foundation Diploma often preferred before entry.",
+    "title": "Graphic Design",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_animation": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Art & Design",
+      "Media Studies",
+      "Film Studies"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Animation",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_ux_design_and_interaction_design": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Art & Design",
+      "Computer Science",
+      "Psychology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio often required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "UX Design and Interaction Design",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_game_design": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Art & Design",
+      "Computer Science",
+      "Media Studies"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio often required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Game Design",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_fashion_design": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Art & Design",
+      "Design & Technology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "Art Foundation Diploma often preferred.",
+    "title": "Fashion Design",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_fine_art": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Art & Design"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "Art Foundation Diploma is the common route; portfolio is decisive.",
+    "title": "Fine Art",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_film_and_television_production": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Film Studies",
+      "Media Studies",
+      "Art & Design"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Showreel or portfolio sometimes required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Film and Television Production",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_illustration": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Art & Design"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Illustration",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_geography": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Geography",
+      "A science",
+      "Maths",
+      "Economics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to A*AA",
+    "notes": "Geography usually required or strongly preferred; BSc routes value a science.",
+    "title": "Geography",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_environmental_science": {
+    "required_alevels": [
+      "A science"
+    ],
+    "preferred_alevels": [
+      "Geography",
+      "Biology",
+      "Chemistry",
+      "Maths"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5,
+      "science": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "At least one science (Geography accepted as a science at many universities).",
+    "title": "Environmental Science",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_environmental_management": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Geography",
+      "Biology",
+      "A science"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to BBC",
+    "notes": "",
+    "title": "Environmental Management",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_ecology_and_conservation_biology": {
+    "required_alevels": [
+      "Biology"
+    ],
+    "preferred_alevels": [
+      "Geography",
+      "Chemistry",
+      "Environmental Science"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5,
+      "science": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Ecology and Conservation Biology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_climate_science_and_sustainability": {
+    "required_alevels": [
+      "A science"
+    ],
+    "preferred_alevels": [
+      "Geography",
+      "Maths",
+      "Physics",
+      "Chemistry"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 6,
+      "science": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAB",
+    "notes": "",
+    "title": "Climate Science and Sustainability",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_sustainable_development": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Geography",
+      "A science",
+      "Economics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Sustainable Development",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_modern_languages": {
+    "required_alevels": [
+      "A modern language"
+    ],
+    "preferred_alevels": [
+      "An essay-based subject",
+      "History"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "An A-level in the target language required for post-A-level routes; beginner routes exist for some languages.",
+    "title": "Modern Languages",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_sociology": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Sociology",
+      "Psychology",
+      "An essay-based subject"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Sociology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_anthropology": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "An essay-based subject",
+      "Sociology",
+      "Biology"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to AAB",
+    "notes": "",
+    "title": "Anthropology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_international_relations": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "An essay-based subject",
+      "History",
+      "Politics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAB",
+    "notes": "",
+    "title": "International Relations",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_history": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "History",
+      "An essay-based subject",
+      "Politics",
+      "English Literature"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAB to A*AA",
+    "notes": "History is a facilitating subject, strongly preferred and required at some selective universities (e.g. Cambridge, Durham), but not universally required.",
+    "title": "History",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_philosophy": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "An essay-based subject",
+      "History",
+      "Maths",
+      "Religious Studies"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "ABB to AAB",
+    "notes": "",
+    "title": "Philosophy",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_global_development_studies": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "An essay-based subject",
+      "Geography",
+      "Politics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Global Development Studies",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_music": {
+    "required_alevels": [
+      "Music"
+    ],
+    "preferred_alevels": [
+      "An essay-based subject"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Audition and Grade 5+ (often Grade 8) performance/theory",
+    "typical_offer_range": "ABB to AAB",
+    "notes": "Music A-level plus graded exams; conservatoires audition and may waive academic tariff.",
+    "title": "Music",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_music_technology": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Music Technology",
+      "Music",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio of work often required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Music Technology",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_drama_and_theatre_studies": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Drama & Theatre Studies",
+      "English Literature"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Audition usually required",
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Drama & Theatre Studies",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_dance": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Dance",
+      "Physical Education"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Audition required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "Audition is decisive; conservatoire routes may waive tariff.",
+    "title": "Dance",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_musical_theatre": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Drama & Theatre Studies",
+      "Music",
+      "Dance"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Audition required (singing, acting, dance)",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "Audition is the primary selector.",
+    "title": "Musical Theatre",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_technical_theatre_and_stage_management": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Drama & Theatre Studies",
+      "Design & Technology",
+      "Art & Design"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": "Portfolio or interview often required",
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Technical Theatre & Stage Management",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_veterinary_medicine": {
+    "required_alevels": [
+      "Chemistry",
+      "Biology"
+    ],
+    "preferred_alevels": [
+      "Maths",
+      "Physics"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 6,
+      "maths": 6,
+      "science": 6
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "AAA to A*AA",
+    "notes": "Chemistry and Biology both required; extensive animal work experience expected; interview standard. No single national admissions test.",
+    "title": "Veterinary Medicine",
+    "gcse_min": {
+      "english": 6,
+      "maths": 6,
+      "science": 6
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_animal_science": {
+    "required_alevels": [
+      "Biology"
+    ],
+    "preferred_alevels": [
+      "Chemistry",
+      "A science"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 5,
+      "science": 5
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to ABB",
+    "notes": "Biology required plus a second science preferred.",
+    "title": "Animal Science",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_agriculture": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Biology",
+      "A science",
+      "Geography"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "A science (usually Biology) preferred.",
+    "title": "Agriculture",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4,
+      "science": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_forestry": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "Biology",
+      "Geography",
+      "A science",
+      "Environmental Science"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 4,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBC to BBB",
+    "notes": "",
+    "title": "Forestry",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  },
+  "sub_heritage_and_museum_studies": {
+    "required_alevels": [],
+    "preferred_alevels": [
+      "History",
+      "An essay-based subject",
+      "Art & Design"
+    ],
+    "excluded_alevels": [
+      "General Studies",
+      "Critical Thinking"
+    ],
+    "min_alevels": 3,
+    "gcse": {
+      "english": 5,
+      "maths": 4
+    },
+    "admissions_test": [],
+    "portfolio_or_audition": null,
+    "typical_offer_range": "BBB to ABB",
+    "notes": "",
+    "title": "Heritage and Museum Studies",
+    "gcse_min": {
+      "english": 4,
+      "maths": 4
+    },
+    "as_of": "2026-09",
+    "authored_from": "Russell Group Informed Choices + UCAS + representative course pages (verification pending)"
+  }
+}

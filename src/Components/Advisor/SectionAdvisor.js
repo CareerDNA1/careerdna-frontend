@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { renderSafeMarkdown } from '../../utils/renderSafeMarkdown';
-import { PaperPlaneTilt, Sparkle } from 'phosphor-react';
+import { PaperPlaneTilt } from 'phosphor-react';
 import { BrainCircuit } from 'lucide-react';
 import ReportLimitModal from '../Common/ReportLimitModal';
 import { applyCouponCode } from '../../utils/applyCoupon';
@@ -136,6 +136,9 @@ export default function SectionAdvisor({
     <section className="section-advisor" aria-label={`Ask about ${title}`}>
       {showLimitModal && (
         <ReportLimitModal
+          mode="advisor"
+          currentPlan={entitlement?.plan || 'free'}
+          entitlement={entitlement}
           onClose={() => setShowLimitModal(false)}
           onReturnToProfile={() => { window.location.href = '/profile'; }}
           onApplyCoupon={handleApplyCoupon}
@@ -143,7 +146,7 @@ export default function SectionAdvisor({
       )}
 
       <div className="section-advisor__head">
-        <span className="section-advisor__icon" aria-hidden="true"><Sparkle size={18} weight="fill" /></span>
+        <span className="section-advisor__icon career-advisor-avatar" aria-hidden="true"><BrainCircuit aria-hidden="true" focusable="false" /></span>
         <span className="section-advisor__title">Ask about {title}</span>
       </div>
       <p className="section-advisor__intro">Your advisor knows your full CareerDNA. Pick a question or ask your own.</p>
@@ -183,10 +186,19 @@ export default function SectionAdvisor({
                 <span className="section-advisor__avatar" aria-hidden="true"><BrainCircuit /></span>
                 AI Advisor
               </span>
-              <div className="section-advisor__msg-body muted">Thinking…</div>
+              <div className="section-advisor__msg-body muted section-advisor__thinking"><span className="cdna-load-spinner" aria-hidden="true" /><span>Thinking…</span></div>
             </div>
           ) : null}
           <div ref={bottomRef} />
+          {!sending ? (
+            <button
+              type="button"
+              className="section-advisor__toggle section-advisor__toggle--bottom"
+              onClick={() => setThreadOpen(false)}
+            >
+              Hide answers
+            </button>
+          ) : null}
         </div>
       ) : null}
 

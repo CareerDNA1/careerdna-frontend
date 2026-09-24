@@ -149,9 +149,18 @@ const BarChart = ({ archetypes }) => {
     onResize();
     window.addEventListener("resize", onResize);
     window.addEventListener("scroll", hideArchetypeTooltip, { passive: true });
+    // On touch devices there is no mouse-out, so a tap anywhere outside the
+    // chart closes the tooltip.
+    const onDocPointer = (e) => {
+      if (e.target instanceof Element && e.target.closest("canvas")) return;
+      hideArchetypeTooltip();
+    };
+    document.addEventListener("pointerdown", onDocPointer, true);
     return () => {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", hideArchetypeTooltip);
+      document.removeEventListener("pointerdown", onDocPointer, true);
+      hideArchetypeTooltip(); // never leave the tooltip behind when the chart unmounts
     };
   }, []);
 

@@ -1,0 +1,298 @@
+{
+ "sub_entrepreneurship_and_innovation": [
+  "entrepreneur",
+  "enterprise",
+  "innovation management"
+ ],
+ "sub_business_management_with_entrepreneurship": [
+  "entrepreneur"
+ ],
+ "sub_innovation_and_technology_management": [
+  "innovation management",
+  "innovation and technology",
+  "technology and innovation",
+  "business innovation",
+  "innovation and enterprise",
+  "enterprise and innovation",
+  "managing innovation"
+ ],
+ "sub_operations_and_supply_chain_management": [
+  "operations management",
+  "supply chain",
+  "logistics"
+ ],
+ "sub_social_enterprise_and_community_development": [
+  "social enterprise",
+  "community development",
+  "social entrepreneur"
+ ],
+ "sub_business_analytics": [
+  "business analytic",
+  "business intelligence",
+  "business data"
+ ],
+ "sub_international_business": [
+  "international business",
+  "global business"
+ ],
+ "sub_real_estate_and_property": [
+  "real estate",
+  "property",
+  "surveying"
+ ],
+ "sub_investment_management": [
+  "investment",
+  "asset management",
+  "wealth"
+ ],
+ "sub_finance_and_financial_technology": [
+  "fintech",
+  "financial technology",
+  "finance and technology"
+ ],
+ "sub_advertising_and_brand_management": [
+  "advertis",
+  "brand"
+ ],
+ "sub_digital_marketing_and_social_media": [
+  "digital marketing",
+  "social media"
+ ],
+ "sub_public_relations_and_communications": [
+  "public relations",
+  "communication studies",
+  "corporate communication",
+  "strategic communication",
+  "media and communication"
+ ],
+ "sub_cyber_security": [
+  "cyber",
+  "information security"
+ ],
+ "sub_computer_science_with_cyber_security": [
+  "cyber"
+ ],
+ "sub_data_science": [
+  "data science",
+  "data analytics"
+ ],
+ "sub_computer_science_and_artificial_intelligence": [
+  "artificial intelligence",
+  "machine learning"
+ ],
+ "sub_human_computer_interaction": [
+  "human-computer",
+  "human computer",
+  "interaction design",
+  "user experience"
+ ],
+ "sub_artificial_intelligence": [
+  "artificial intelligence",
+  "machine learning"
+ ],
+ "sub_software_engineering": [
+  "software engineer",
+  "software development"
+ ],
+ "sub_operational_research": [
+  "operational research",
+  "operations research"
+ ],
+ "sub_statistics": [
+  "statistics",
+  "statistical"
+ ],
+ "sub_biotechnology": [
+  "biotechnolog"
+ ],
+ "sub_animation": [
+  "animation"
+ ],
+ "sub_product_design": [
+  "product design",
+  "industrial design"
+ ],
+ "sub_graphic_design": [
+  "graphic design",
+  "graphic communication"
+ ],
+ "sub_ux_design_and_interaction_design": [
+  "user experience",
+  "ux ",
+  "interaction design",
+  "interactive media"
+ ],
+ "sub_game_design": [
+  "game design",
+  "games design"
+ ],
+ "sub_fashion_design": [
+  "fashion"
+ ],
+ "sub_actuarial_science": [
+  "actuarial"
+ ],
+ "sub_financial_mathematics": [
+  "financial mathematic",
+  "mathematics with finance",
+  "mathematics and finance"
+ ],
+ "sub_forensic_psychology": [
+  "forensic psycholog"
+ ],
+ "sub_cognitive_science": [
+  "cognitive"
+ ],
+ "sub_behavioural_science": [
+  "behavioural science",
+  "behavioral science",
+  "psychological and behavioural"
+ ],
+ "sub_psychology_with_neuroscience": [
+  "neuroscience"
+ ],
+ "sub_chemical_engineering": [
+  "chemical engineer",
+  "process engineer"
+ ],
+ "sub_biomedical_engineering": [
+  "biomedical engineer",
+  "medical engineer",
+  "bioengineer"
+ ],
+ "sub_manufacturing_engineering": [
+  "manufacturing"
+ ],
+ "sub_robotics_and_mechatronic_engineering": [
+  "robotic",
+  "mechatronic"
+ ],
+ "sub_systems_engineering": [
+  "systems engineer"
+ ],
+ "sub_paramedic_science": [
+  "paramedic"
+ ],
+ "sub_diagnostic_radiography": [
+  "radiograph",
+  "diagnostic imaging",
+  "radiotherapy"
+ ],
+ "sub_occupational_therapy": [
+  "occupational therapy"
+ ],
+ "sub_counselling_and_psychotherapy": [
+  "counselling",
+  "psychotherapy",
+  "counseling"
+ ],
+ "sub_nursing": [
+  "nursing",
+  "nurse"
+ ],
+ "sub_midwifery": [
+  "midwifery",
+  "midwife"
+ ],
+ "sub_optometry": [
+  "optometry",
+  "ophthalmic",
+  "optician"
+ ],
+ "sub_early_years_education_and_care": [
+  "early years",
+  "early childhood"
+ ],
+ "sub_primary_education_qts": [
+  "primary education",
+  "primary teaching"
+ ],
+ "sub_secondary_education_qts": [
+  "secondary education",
+  "secondary teaching"
+ ],
+ "sub_international_relations": [
+  "international relations",
+  "global politics",
+  "diplomacy",
+  "war studies"
+ ],
+ "sub_global_development_studies": [
+  "development studies",
+  "international development",
+  "global development"
+ ],
+ "sub_sustainable_development": [
+  "sustainab"
+ ],
+ "sub_law_with_criminology": [
+  "criminolog"
+ ],
+ "sub_criminology": [
+  "criminolog"
+ ],
+ "sub_social_and_public_policy": [
+  "social policy",
+  "public policy"
+ ],
+ "sub_neuroscience": [
+  "neuroscience"
+ ],
+ "sub_climate_science_and_sustainability": [
+  "climate",
+  "sustainab",
+  "environmental"
+ ],
+ "sub_sport_and_exercise_science": [
+  "sport and exercise",
+  "sport science",
+  "sports science",
+  "exercise science"
+ ],
+ "sub_sports_coaching_and_development": [
+  "coaching",
+  "sports development"
+ ],
+ "sub_illustration": [
+  "illustration"
+ ],
+ "sub_digital_media_production_and_technology": [
+  "digital media",
+  "media production",
+  "media technology"
+ ],
+ "sub_games_technology": [
+  "games technolog",
+  "game development",
+  "computer games",
+  "games programming"
+ ],
+ "sub_philosophy_politics_and_economics_ppe": [
+  "philosophy, politics",
+  "politics and economics",
+  "ppe"
+ ],
+ "sub_hospitality_tourism_and_events_management": [
+  "hospitality",
+  "tourism",
+  "event"
+ ],
+ "sub_architectural_technology": [
+  "architectural technolog"
+ ],
+ "sub_construction_management": [
+  "construction"
+ ],
+ "sub_urban_planning_and_development": [
+  "urban planning",
+  "town planning",
+  "urban studies",
+  "city planning"
+ ],
+ "sub_interior_architecture_and_design": [
+  "interior"
+ ],
+ "sub_landscape_architecture": [
+  "landscape"
+ ]
+}

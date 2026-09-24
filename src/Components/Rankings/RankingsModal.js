@@ -206,7 +206,7 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
 
         <div className="rk-head">
           <div>
-            <div className="rk-title">CareerDNA 2026 University Rankings©</div>
+            <div className="rk-title">CareerDNA 2026 University Rankings™</div>
             <div className="rk-sub">
               {data ? (
                 <>

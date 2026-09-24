@@ -204,3 +204,21 @@
   .satisfaction-face svg { width: 20px; height: 20px; }
   .satisfaction-face-label { font-size: 0.78rem; white-space: nowrap; }
 }
+
+/* Phones: stack the three ratings full width so they always fit and are easy to tap. */
+@media (max-width: 600px) {
+  .satisfaction-modal .satisfaction-faces {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 8px;
+    width: 100%;
+  }
+  .satisfaction-modal .satisfaction-face {
+    flex: 0 0 auto;
+    width: 100%;
+    justify-content: center;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .satisfaction-modal .satisfaction-face-label { font-size: 0.9rem; }
+}

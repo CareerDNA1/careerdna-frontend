@@ -1,0 +1,236 @@
+[
+  {
+    "id": "sir_accounting_finance_economics",
+    "title": "Accounting, Finance & Economics",
+    "primaryCareerWorldIds": [
+      "cw_money_finance_accounting"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_technology_digital",
+      "cw_business_management"
+    ]
+  },
+  {
+    "id": "sir_business_management_entrepreneurship",
+    "title": "Business, Management & Entrepreneurship",
+    "primaryCareerWorldIds": [
+      "cw_business_management",
+      "cw_entrepreneurship_innovation_venture_building"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_media_marketing_content_communication",
+      "cw_money_finance_accounting"
+    ]
+  },
+  {
+    "id": "sir_data_maths_analytics",
+    "title": "Data, Maths & Analytics",
+    "primaryCareerWorldIds": [
+      "cw_technology_digital"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_money_finance_accounting",
+      "cw_technology_digital"
+    ]
+  },
+  {
+    "id": "sir_computer_science_software_ai",
+    "title": "Computer Science, Software & AI",
+    "primaryCareerWorldIds": [
+      "cw_technology_digital"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_technology_digital",
+      "cw_engineering_manufacturing"
+    ]
+  },
+  {
+    "id": "sir_engineering_technology",
+    "title": "Engineering & Technology",
+    "primaryCareerWorldIds": [
+      "cw_engineering_manufacturing"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_technology_digital",
+      "cw_construction_the_built_environment"
+    ]
+  },
+  {
+    "id": "sir_architecture_built_environment_planning",
+    "title": "Architecture, Built Environment & Planning",
+    "primaryCareerWorldIds": [
+      "cw_construction_the_built_environment"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_engineering_manufacturing",
+      "cw_environment_sustainability"
+    ]
+  },
+  {
+    "id": "sir_biological_biomedical_sciences",
+    "title": "Biological & Biomedical Sciences",
+    "primaryCareerWorldIds": [
+      "cw_science_research"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_healthcare_medicine"
+    ]
+  },
+  {
+    "id": "sir_chemistry",
+    "title": "Chemistry",
+    "primaryCareerWorldIds": [
+      "cw_science_research"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_engineering_manufacturing",
+      "cw_environment_sustainability"
+    ]
+  },
+  {
+    "id": "sir_physics",
+    "title": "Physics",
+    "primaryCareerWorldIds": [
+      "cw_science_research"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_engineering_manufacturing",
+      "cw_technology_digital"
+    ]
+  },
+  {
+    "id": "sir_medicine_pharmacy_dentistry",
+    "title": "Medicine, Pharmacy & Dentistry",
+    "primaryCareerWorldIds": [
+      "cw_healthcare_medicine"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_science_research"
+    ]
+  },
+  {
+    "id": "sir_nursing_midwifery_allied_health",
+    "title": "Nursing, Midwifery & Allied Health",
+    "primaryCareerWorldIds": [
+      "cw_healthcare_medicine"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_education_early_years",
+      "cw_psychology_human_behaviour"
+    ]
+  },
+  {
+    "id": "sir_psychology_behaviour",
+    "title": "Psychology & Behaviour",
+    "primaryCareerWorldIds": [
+      "cw_psychology_human_behaviour"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_healthcare_medicine",
+      "cw_education_early_years"
+    ]
+  },
+  {
+    "id": "sir_education_childhood",
+    "title": "Education & Childhood",
+    "primaryCareerWorldIds": [
+      "cw_education_early_years"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_psychology_human_behaviour",
+      "cw_healthcare_medicine"
+    ]
+  },
+  {
+    "id": "sir_law_politics_public_policy",
+    "title": "Law, Politics & Public Policy",
+    "primaryCareerWorldIds": [
+      "cw_law_justice_public_services"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_society_culture_languages"
+    ]
+  },
+  {
+    "id": "int_languages_culture_and_international_relations",
+    "title": "Languages, Culture & International Relations",
+    "primaryCareerWorldIds": [
+      "cw_society_culture_languages"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_law_justice_public_services",
+      "cw_media_marketing_content_communication"
+    ]
+  },
+  {
+    "id": "sir_sociology_anthropology_social_research",
+    "title": "Sociology, Anthropology & Social Research",
+    "primaryCareerWorldIds": [
+      "cw_society_culture_languages"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_psychology_human_behaviour",
+      "cw_law_justice_public_services"
+    ]
+  },
+  {
+    "id": "sir_marketing_pr_media",
+    "title": "Marketing, PR & Media",
+    "primaryCareerWorldIds": [
+      "cw_media_marketing_content_communication"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_business_management",
+      "cw_creative_arts_design"
+    ]
+  },
+  {
+    "id": "sir_product_graphic_animation_design",
+    "title": "Product, Graphic & Animation Design",
+    "primaryCareerWorldIds": [
+      "cw_creative_arts_design"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_construction_the_built_environment",
+      "cw_media_marketing_content_communication"
+    ]
+  },
+  {
+    "id": "sir_environment_sustainability",
+    "title": "Environment & Sustainability",
+    "primaryCareerWorldIds": [
+      "cw_environment_sustainability"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_science_research",
+      "cw_construction_the_built_environment"
+    ]
+  },
+  {
+    "id": "sir_arts_performance_creative_media",
+    "title": "Arts, Performance & Creative Media",
+    "primaryCareerWorldIds": [
+      "cw_creative_arts_design"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_media_marketing_content_communication"
+    ]
+  },
+  {
+    "id": "sir_sport_exercise_health",
+    "title": "Sport, Exercise & Health",
+    "primaryCareerWorldIds": [
+      "cw_healthcare_medicine"
+    ],
+    "adjacentCareerWorldIds": [
+      "cw_science_research",
+      "cw_psychology_human_behaviour"
+    ]
+  },
+  {
+    "id": "sir_other",
+    "title": "Other",
+    "primaryCareerWorldIds": [],
+    "adjacentCareerWorldIds": []
+  }
+]

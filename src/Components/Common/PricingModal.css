@@ -1,7 +1,8 @@
 .pricing-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 95000;
+  /* Opened from the upgrade prompt (98000), so it must sit above it. */
+  z-index: 98500;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -105,6 +106,7 @@
 }
 
 .pricing-plan-card--single,
+.pricing-plan-card--explore,
 .pricing-plan-card--starter,
 .pricing-plan-card--institution {
   background: #f9fcff;
@@ -116,11 +118,14 @@
   box-shadow: 0 6px 18px rgba(47, 111, 237, 0.13);
 }
 
+/* Featured plan: white card with a strong blue frame and a light blue wash at
+   the top. Dark text stays readable with a long feature list; the frame, badge
+   and filled button carry the emphasis instead of a solid blue background. */
 .pricing-plan-card--premium {
-  background: linear-gradient(180deg, #3b82f6 0%, #2560d8 100%);
-  color: #ffffff;
-  border-color: #2f6fed;
-  box-shadow: 0 8px 22px rgba(47, 111, 237, 0.28);
+  background: linear-gradient(180deg, #eef4ff 0%, #ffffff 26%, #ffffff 100%);
+  color: inherit;
+  border: 2px solid #2f6fed;
+  box-shadow: 0 10px 26px rgba(47, 111, 237, 0.18);
 }
 
 .pricing-plan-card--current {
@@ -248,24 +253,14 @@
 }
 
 .pricing-plan-card--premium h3,
-.pricing-plan-card--premium .pricing-plan-subtitle,
-.pricing-plan-card--premium .pricing-plan-price,
-.pricing-plan-card--premium .pricing-plan-price span,
-.pricing-plan-card--premium .pricing-plan-note,
-.pricing-plan-card--premium .pricing-feature-list li {
-  color: #ffffff !important;
+.pricing-plan-card--premium .pricing-plan-price {
+  color: #1c2b4b;
 }
-
-.pricing-plan-card--premium .pricing-plan-subtitle {
-  opacity: 0.92;
+.pricing-plan-card--premium .pricing-plan-price span {
+  color: #2f6fed;
 }
-
-.pricing-plan-card--premium .pricing-plan-note {
-  opacity: 0.88;
-}
-
 .pricing-plan-card--premium .pricing-feature-list li::before {
-  color: #b8d8ff;
+  color: #2f6fed;
 }
 
 /* Lead line: the headline payoff at the top of a plan (no tick). */
@@ -323,8 +318,8 @@
   color: #2f6fed;
 }
 .pricing-plan-card--premium .pricing-feature-tag {
-  background: rgba(255, 255, 255, 0.22);
-  color: #ffffff;
+  background: #e7f0ff;
+  color: #2f6fed;
 }
 
 .pricing-plan-button {
@@ -353,26 +348,31 @@
 
 .pricing-plan-button--premium {
   border: 0;
-  background: #ffffff;
-  color: #1c2b4b;
+  background: #2f6fed;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(47, 111, 237, 0.22);
 }
 
 .pricing-plan-button--starter,
 .pricing-plan-button--single,
+.pricing-plan-button--explore,
 .pricing-plan-button--institution {
   border: 1.5px solid #c8d6e6;
   background: #ffffff;
   color: #1f2a37;
 }
 
+/* The plan you're on: solid app blue so it reads as "you are here" at a glance,
+   distinct from the outlined Subscribe buttons. On the blue Premium card it
+   inverts to white so it still stands out. */
 .pricing-plan-button--current,
 .pricing-plan-button:disabled.pricing-plan-button--current {
-  border: 1.5px solid #bbf7d0 !important;
-  background: #ecfdf3 !important;
-  color: #15803d !important;
+  border: 1.5px solid #16a34a !important;
+  background: #16a34a !important;
+  color: #ffffff !important;
   cursor: default !important;
   opacity: 1 !important;
-  box-shadow: none !important;
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.22) !important;
   transform: none !important;
 }
 
@@ -1076,17 +1076,25 @@
 }
 
 /* Struck-through anchor price, sits just above the live price without pushing it down */
+/* Launch price sits inline to the right of the price ("£39.99 / year  Launch
+   price £59.99"), in normal case, so the higher figure reads as a genuine
+   introductory reference price without dominating the number. */
 .pricing-plan-anchor {
-  font-size: 0.72rem;
-  font-weight: 700;
-  line-height: 1;
+  display: block;
+  margin: 4px 0 2px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.2;
   color: #93a1b0;
-  margin: -14px 0 3px;
 }
 .pricing-plan-anchor s {
   color: inherit;
   text-decoration-thickness: 1.5px;
 }
+.pricing-plan-anchor-label {
+  font-weight: 500;
+}
 .pricing-plan-card--premium .pricing-plan-anchor {
-  color: rgba(255, 255, 255, 0.72);
+  color: #93a1b0;
 }

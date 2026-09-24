@@ -1,0 +1,2599 @@
+[
+  {
+    "id": "sub_mathematics_and_statistics",
+    "title": "Mathematics and Statistics",
+    "careerWorld": "Data, Analytics & Quantitative Insight",
+    "cahCode": "CAH09-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "mathematics",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH09-01-03",
+        "name": "statistics",
+        "score": 0.95
+      },
+      {
+        "code": "CAH04-01-04",
+        "name": "psychology and health",
+        "score": 0.1
+      }
+    ]
+  },
+  {
+    "id": "sub_data_science",
+    "title": "Data Science",
+    "careerWorld": "Data, Analytics & Quantitative Insight",
+    "cahCode": "CAH11-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "computer science",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH11-01-01",
+        "name": "computer science",
+        "score": 0.28
+      },
+      {
+        "code": "CAH06-01-01",
+        "name": "animal science",
+        "score": 0.27
+      }
+    ],
+    "curated": true,
+    "review": false
+  },
+  {
+    "id": "sub_statistics",
+    "title": "Statistics",
+    "careerWorld": "Data, Analytics & Quantitative Insight",
+    "cahCode": "CAH09-01",
+    "cahLevel": "CAH3",
+    "cahName": "mathematical sciences",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_actuarial_science",
+    "title": "Actuarial Science",
+    "careerWorld": "Data, Analytics & Quantitative Insight",
+    "cahCode": "CAH09-01",
+    "cahLevel": "CAH2",
+    "cahName": "mathematical sciences",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH11-01-01",
+        "name": "computer science",
+        "score": 0.28
+      },
+      {
+        "code": "CAH06-01-01",
+        "name": "animal science",
+        "score": 0.27
+      }
+    ],
+    "curated": true,
+    "review": false
+  },
+  {
+    "id": "sub_mathematics",
+    "title": "Mathematics",
+    "careerWorld": "Data, Analytics & Quantitative Insight",
+    "cahCode": "CAH09-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "mathematics",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_operational_research",
+    "title": "Operational Research",
+    "careerWorld": "Data, Analytics & Quantitative Insight",
+    "cahCode": "CAH09-01",
+    "cahLevel": "CAH3",
+    "cahName": "mathematical sciences",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_financial_mathematics",
+    "title": "Financial Mathematics",
+    "careerWorld": "Data, Analytics & Quantitative Insight",
+    "cahCode": "CAH09-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "mathematics",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_computer_science_and_artificial_intelligence",
+    "title": "Computer Science and Artificial Intelligence",
+    "careerWorld": "Software, AI & Digital Systems",
+    "cahCode": "CAH11-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "computer science",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH11-01-05",
+        "name": "artificial intelligence",
+        "score": 0.95
+      },
+      {
+        "code": "CAH25-01-02",
+        "name": "art",
+        "score": 0.95
+      }
+    ]
+  },
+  {
+    "id": "sub_software_engineering",
+    "title": "Software Engineering",
+    "careerWorld": "Software, AI & Digital Systems",
+    "cahCode": "CAH11-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "computer science",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH10-01",
+        "name": "engineering",
+        "score": 0.95
+      },
+      {
+        "code": "CAH10-01-02",
+        "name": "mechanical engineering",
+        "score": 0.25
+      }
+    ]
+  },
+  {
+    "id": "sub_computer_science_with_cyber_security",
+    "title": "Computer Science with Cyber Security",
+    "careerWorld": "Software, AI & Digital Systems",
+    "cahCode": "CAH11-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "computer science",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH10-03-07",
+        "name": "materials science",
+        "score": 0.13
+      },
+      {
+        "code": "CAH06-01-01",
+        "name": "animal science",
+        "score": 0.13
+      }
+    ]
+  },
+  {
+    "id": "sub_artificial_intelligence",
+    "title": "Artificial Intelligence",
+    "careerWorld": "Software, AI & Digital Systems",
+    "cahCode": "CAH11-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "computer science",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH25-01-02",
+        "name": "art",
+        "score": 0.95
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_computer_science",
+    "title": "Computer Science",
+    "careerWorld": "Software, AI & Digital Systems",
+    "cahCode": "CAH11-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "computer science",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH10-03-07",
+        "name": "materials science",
+        "score": 0.31
+      },
+      {
+        "code": "CAH06-01-01",
+        "name": "animal science",
+        "score": 0.29
+      }
+    ]
+  },
+  {
+    "id": "sub_cyber_security",
+    "title": "Cyber Security",
+    "careerWorld": "Software, AI & Digital Systems",
+    "cahCode": "CAH11-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "computer science",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01-02",
+        "name": "medicine (non-specific)",
+        "score": 0.0
+      }
+    ],
+    "curated": true,
+    "review": false
+  },
+  {
+    "id": "sub_games_technology",
+    "title": "Games Technology",
+    "careerWorld": "Software, AI & Digital Systems",
+    "cahCode": "CAH11-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "computer science",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH10-03-02",
+        "name": "materials technology",
+        "score": 0.29
+      },
+      {
+        "code": "CAH11-01-02",
+        "name": "information technology",
+        "score": 0.29
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_human_computer_interaction",
+    "title": "Human-Computer Interaction",
+    "careerWorld": "Software, AI & Digital Systems",
+    "cahCode": "CAH11-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "computer science",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH26-01-03",
+        "name": "human geography",
+        "score": 0.24
+      },
+      {
+        "code": "CAH17-01-05",
+        "name": "human resource management",
+        "score": 0.2
+      }
+    ],
+    "curated": true,
+    "review": false
+  },
+  {
+    "id": "sub_mechanical_engineering",
+    "title": "Mechanical Engineering",
+    "careerWorld": "Engineering, Manufacturing & Infrastructure",
+    "cahCode": "CAH10-01-02",
+    "cahLevel": "CAH3",
+    "cahName": "mechanical engineering",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH10-01",
+        "name": "engineering",
+        "score": 0.95
+      },
+      {
+        "code": "CAH10-01-07",
+        "name": "civil engineering",
+        "score": 0.25
+      }
+    ]
+  },
+  {
+    "id": "sub_civil_engineering",
+    "title": "Civil Engineering",
+    "careerWorld": "Engineering, Manufacturing & Infrastructure",
+    "cahCode": "CAH10-01-07",
+    "cahLevel": "CAH3",
+    "cahName": "civil engineering",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH10-01",
+        "name": "engineering",
+        "score": 0.95
+      },
+      {
+        "code": "CAH10-01-02",
+        "name": "mechanical engineering",
+        "score": 0.25
+      }
+    ]
+  },
+  {
+    "id": "sub_electrical_and_electronic_engineering",
+    "title": "Electrical and Electronic Engineering",
+    "careerWorld": "Engineering, Manufacturing & Infrastructure",
+    "cahCode": "CAH10-01-08",
+    "cahLevel": "CAH3",
+    "cahName": "electrical and electronic engineering",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH10-01",
+        "name": "engineering",
+        "score": 0.95
+      },
+      {
+        "code": "CAH10-01-03",
+        "name": "production and manufacturing engineering",
+        "score": 0.22
+      }
+    ]
+  },
+  {
+    "id": "sub_chemical_engineering",
+    "title": "Chemical Engineering",
+    "careerWorld": "Engineering, Manufacturing & Infrastructure",
+    "cahCode": "CAH10-01",
+    "cahLevel": "CAH2",
+    "cahName": "engineering",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH10-01-09",
+        "name": "chemical, process and energy engineering",
+        "score": 0.41
+      },
+      {
+        "code": "CAH10-01-02",
+        "name": "mechanical engineering",
+        "score": 0.25
+      }
+    ]
+  },
+  {
+    "id": "sub_aeronautical_and_aerospace_engineering",
+    "title": "Aeronautical and Aerospace Engineering",
+    "careerWorld": "Engineering, Manufacturing & Infrastructure",
+    "cahCode": "CAH10-01-04",
+    "cahLevel": "CAH3",
+    "cahName": "aeronautical and aerospace engineering",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH10-01",
+        "name": "engineering",
+        "score": 0.95
+      },
+      {
+        "code": "CAH10-01-03",
+        "name": "production and manufacturing engineering",
+        "score": 0.22
+      }
+    ]
+  },
+  {
+    "id": "sub_manufacturing_engineering",
+    "title": "Manufacturing Engineering",
+    "careerWorld": "Engineering, Manufacturing & Infrastructure",
+    "cahCode": "CAH10-01",
+    "cahLevel": "CAH2",
+    "cahName": "engineering",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH10-01-03",
+        "name": "production and manufacturing engineering",
+        "score": 0.95
+      },
+      {
+        "code": "CAH10-01-02",
+        "name": "mechanical engineering",
+        "score": 0.25
+      }
+    ]
+  },
+  {
+    "id": "sub_robotics_and_mechatronic_engineering",
+    "title": "Robotics and Mechatronic Engineering",
+    "careerWorld": "Engineering, Manufacturing & Infrastructure",
+    "cahCode": "CAH10-01",
+    "cahLevel": "CAH2",
+    "cahName": "engineering",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH10-01-03",
+        "name": "production and manufacturing engineering",
+        "score": 0.21
+      },
+      {
+        "code": "CAH10-01-04",
+        "name": "aeronautical and aerospace engineering",
+        "score": 0.2
+      }
+    ]
+  },
+  {
+    "id": "sub_biomedical_engineering",
+    "title": "Biomedical Engineering",
+    "careerWorld": "Engineering, Manufacturing & Infrastructure",
+    "cahCode": "CAH10-01",
+    "cahLevel": "CAH2",
+    "cahName": "engineering",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH10-01-06",
+        "name": "bioengineering, medical and biomedical engineering",
+        "score": 0.95
+      },
+      {
+        "code": "CAH02-05-03",
+        "name": "biomedical sciences (non-specific)",
+        "score": 0.28
+      }
+    ]
+  },
+  {
+    "id": "sub_systems_engineering",
+    "title": "Systems Engineering",
+    "careerWorld": "Engineering, Manufacturing & Infrastructure",
+    "cahCode": "CAH10-01",
+    "cahLevel": "CAH2",
+    "cahName": "engineering",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH11-01-03",
+        "name": "information systems",
+        "score": 0.39
+      },
+      {
+        "code": "CAH10-01-02",
+        "name": "mechanical engineering",
+        "score": 0.25
+      }
+    ]
+  },
+  {
+    "id": "sub_architecture",
+    "title": "Architecture",
+    "careerWorld": "Architecture, Built Environment & Spatial Design",
+    "cahCode": "CAH13-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "architecture",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH10-01-05",
+        "name": "naval architecture",
+        "score": 0.95
+      },
+      {
+        "code": "CAH13-01",
+        "name": "architecture, building and planning",
+        "score": 0.95
+      }
+    ]
+  },
+  {
+    "id": "sub_architecture_and_urban_planning",
+    "title": "Architecture and Urban Planning",
+    "careerWorld": "Architecture, Built Environment & Spatial Design",
+    "cahCode": "CAH13-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "architecture",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH13-01",
+        "name": "architecture, building and planning",
+        "score": 0.53
+      },
+      {
+        "code": "CAH13-01-04",
+        "name": "planning (urban, rural and regional)",
+        "score": 0.46
+      }
+    ]
+  },
+  {
+    "id": "sub_architectural_technology",
+    "title": "Architectural Technology",
+    "careerWorld": "Architecture, Built Environment & Spatial Design",
+    "cahCode": "CAH13-01",
+    "cahLevel": "CAH2",
+    "cahName": "architecture, building and planning",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH10-03-02",
+        "name": "materials technology",
+        "score": 0.27
+      },
+      {
+        "code": "CAH11-01-02",
+        "name": "information technology",
+        "score": 0.27
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_construction_management",
+    "title": "Construction Management",
+    "careerWorld": "Architecture, Built Environment & Spatial Design",
+    "cahCode": "CAH13-01-02",
+    "cahLevel": "CAH3",
+    "cahName": "building",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH17-01",
+        "name": "business and management",
+        "score": 0.25
+      },
+      {
+        "code": "CAH06-01-04",
+        "name": "rural estate management",
+        "score": 0.2
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_interior_architecture_and_design",
+    "title": "Interior Architecture and Design",
+    "careerWorld": "Architecture, Built Environment & Spatial Design",
+    "cahCode": "CAH13-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "architecture",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH20-01-02",
+        "name": "history of art, architecture and design",
+        "score": 0.34
+      },
+      {
+        "code": "CAH25-01",
+        "name": "creative arts and design",
+        "score": 0.25
+      }
+    ]
+  },
+  {
+    "id": "sub_landscape_architecture",
+    "title": "Landscape Architecture",
+    "careerWorld": "Architecture, Built Environment & Spatial Design",
+    "cahCode": "CAH13-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "architecture",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH13-01-03",
+        "name": "landscape design",
+        "score": 0.38
+      },
+      {
+        "code": "CAH10-01-05",
+        "name": "naval architecture",
+        "score": 0.29
+      }
+    ]
+  },
+  {
+    "id": "sub_urban_planning_and_development",
+    "title": "Urban Planning and Development",
+    "careerWorld": "Architecture, Built Environment & Spatial Design",
+    "cahCode": "CAH13-01-04",
+    "cahLevel": "CAH3",
+    "cahName": "planning (urban, rural and regional)",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH13-01",
+        "name": "architecture, building and planning",
+        "score": 0.26
+      },
+      {
+        "code": "CAH15-01-05",
+        "name": "development studies",
+        "score": 0.25
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_biomedical_science",
+    "title": "Biomedical Science",
+    "careerWorld": "Scientific Discovery & Innovation",
+    "cahCode": "CAH02-05-03",
+    "cahLevel": "CAH3",
+    "cahName": "biomedical sciences (non-specific)",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH10-03-07",
+        "name": "materials science",
+        "score": 0.31
+      },
+      {
+        "code": "CAH11-01-01",
+        "name": "computer science",
+        "score": 0.3
+      }
+    ]
+  },
+  {
+    "id": "sub_biochemistry",
+    "title": "Biochemistry",
+    "careerWorld": "Scientific Discovery & Innovation",
+    "cahCode": "CAH03-01-08",
+    "cahLevel": "CAH3",
+    "cahName": "molecular biology, biophysics and biochemistry",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH07-02-01",
+        "name": "chemistry",
+        "score": 0.95
+      },
+      {
+        "code": "CAH07-02",
+        "name": "chemistry",
+        "score": 0.95
+      }
+    ]
+  },
+  {
+    "id": "sub_chemistry",
+    "title": "Chemistry",
+    "careerWorld": "Scientific Discovery & Innovation",
+    "cahCode": "CAH07-02-01",
+    "cahLevel": "CAH3",
+    "cahName": "chemistry",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH07-02",
+        "name": "chemistry",
+        "score": 1.0
+      },
+      {
+        "code": "CAH03-01-08",
+        "name": "molecular biology, biophysics and biochemistry",
+        "score": 0.95
+      }
+    ]
+  },
+  {
+    "id": "sub_biology",
+    "title": "Biology",
+    "careerWorld": "Scientific Discovery & Innovation",
+    "cahCode": "CAH03-01-02",
+    "cahLevel": "CAH3",
+    "cahName": "biology (non-specific)",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH03-01-03",
+        "name": "ecology and environmental biology",
+        "score": 0.95
+      },
+      {
+        "code": "CAH03-01-04",
+        "name": "microbiology and cell science",
+        "score": 0.95
+      }
+    ]
+  },
+  {
+    "id": "sub_physics",
+    "title": "Physics",
+    "careerWorld": "Scientific Discovery & Innovation",
+    "cahCode": "CAH07-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "physics",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH03-01-08",
+        "name": "molecular biology, biophysics and biochemistry",
+        "score": 0.95
+      },
+      {
+        "code": "CAH07-01",
+        "name": "physics and astronomy",
+        "score": 0.95
+      }
+    ]
+  },
+  {
+    "id": "sub_neuroscience",
+    "title": "Neuroscience",
+    "careerWorld": "Scientific Discovery & Innovation",
+    "cahCode": "CAH03-01",
+    "cahLevel": "CAH2",
+    "cahName": "biosciences",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01-02",
+        "name": "medicine (non-specific)",
+        "score": 0.0
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_biotechnology",
+    "title": "Biotechnology",
+    "careerWorld": "Scientific Discovery & Innovation",
+    "cahCode": "CAH03-01",
+    "cahLevel": "CAH3",
+    "cahName": "biosciences",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_natural_sciences",
+    "title": "Natural Sciences",
+    "careerWorld": "Scientific Discovery & Innovation",
+    "cahCode": "CAH07-04-04",
+    "cahLevel": "CAH3",
+    "cahName": "natural sciences (non-specific)",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH02-05",
+        "name": "medical sciences",
+        "score": 0.24
+      },
+      {
+        "code": "CAH06-01-07",
+        "name": "food sciences",
+        "score": 0.24
+      }
+    ]
+  },
+  {
+    "id": "sub_pharmacology",
+    "title": "Pharmacology",
+    "careerWorld": "Scientific Discovery & Innovation",
+    "cahCode": "CAH02-02-01",
+    "cahLevel": "CAH3",
+    "cahName": "pharmacology",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH02-02",
+        "name": "pharmacology, toxicology and pharmacy",
+        "score": 0.95
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_medicine",
+    "title": "Medicine",
+    "careerWorld": "Health Care & Clinical Practice",
+    "cahCode": "CAH01-01",
+    "cahLevel": "CAH2",
+    "cahName": "medicine and dentistry",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH01-01-02",
+        "name": "medicine (non-specific)",
+        "score": 0.95
+      },
+      {
+        "code": "CAH01-01-03",
+        "name": "medicine by specialism",
+        "score": 0.95
+      }
+    ]
+  },
+  {
+    "id": "sub_dentistry",
+    "title": "Dentistry",
+    "careerWorld": "Health Care & Clinical Practice",
+    "cahCode": "CAH01-01-04",
+    "cahLevel": "CAH3",
+    "cahName": "dentistry",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.95
+      },
+      {
+        "code": "CAH05-01-01",
+        "name": "veterinary medicine and dentistry",
+        "score": 0.95
+      }
+    ]
+  },
+  {
+    "id": "sub_pharmacy",
+    "title": "Pharmacy",
+    "careerWorld": "Health Care & Clinical Practice",
+    "cahCode": "CAH02-02-03",
+    "cahLevel": "CAH3",
+    "cahName": "pharmacy",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH02-02",
+        "name": "pharmacology, toxicology and pharmacy",
+        "score": 0.95
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_nursing",
+    "title": "Nursing",
+    "careerWorld": "Health Care & Clinical Practice",
+    "cahCode": "CAH02-04",
+    "cahLevel": "CAH2",
+    "cahName": "nursing and midwifery",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH02-04",
+        "name": "nursing and midwifery",
+        "score": 0.95
+      },
+      {
+        "code": "CAH02-04-02",
+        "name": "adult nursing",
+        "score": 0.95
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_midwifery",
+    "title": "Midwifery",
+    "careerWorld": "Health Care & Clinical Practice",
+    "cahCode": "CAH02-04-04",
+    "cahLevel": "CAH3",
+    "cahName": "midwifery",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH02-04",
+        "name": "nursing and midwifery",
+        "score": 0.95
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_physiotherapy",
+    "title": "Physiotherapy",
+    "careerWorld": "Health Care & Clinical Practice",
+    "cahCode": "CAH02-06-05",
+    "cahLevel": "CAH3",
+    "cahName": "physiotherapy",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_occupational_therapy",
+    "title": "Occupational Therapy",
+    "careerWorld": "Health Care & Clinical Practice",
+    "cahCode": "CAH02-06-07",
+    "cahLevel": "CAH3",
+    "cahName": "counselling, psychotherapy and occupational therapy",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_paramedic_science",
+    "title": "Paramedic Science",
+    "careerWorld": "Health Care & Clinical Practice",
+    "cahCode": "CAH02-06",
+    "cahLevel": "CAH2",
+    "cahName": "allied health",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH11-01-01",
+        "name": "computer science",
+        "score": 0.28
+      },
+      {
+        "code": "CAH06-01-01",
+        "name": "animal science",
+        "score": 0.27
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_social_work",
+    "title": "Social Work",
+    "careerWorld": "Health Care & Clinical Practice",
+    "cahCode": "CAH15-04-01",
+    "cahLevel": "CAH3",
+    "cahName": "social work",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH15-01-03",
+        "name": "social policy",
+        "score": 0.29
+      },
+      {
+        "code": "CAH15-01-01",
+        "name": "social sciences (non-specific)",
+        "score": 0.23
+      }
+    ]
+  },
+  {
+    "id": "sub_sport_and_exercise_science",
+    "title": "Sport and Exercise Science",
+    "careerWorld": "Health Care & Clinical Practice",
+    "cahCode": "CAH03-02-01",
+    "cahLevel": "CAH3",
+    "cahName": "sport and exercise sciences",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH03-02",
+        "name": "sport and exercise sciences",
+        "score": 0.95
+      },
+      {
+        "code": "CAH03-01-04",
+        "name": "microbiology and cell science",
+        "score": 0.24
+      }
+    ]
+  },
+  {
+    "id": "sub_diagnostic_radiography",
+    "title": "Diagnostic Radiography",
+    "careerWorld": "Health Care & Clinical Practice",
+    "cahCode": "CAH02-06",
+    "cahLevel": "CAH2",
+    "cahName": "allied health",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01-02",
+        "name": "medicine (non-specific)",
+        "score": 0.0
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_optometry",
+    "title": "Optometry",
+    "careerWorld": "Health Care & Clinical Practice",
+    "cahCode": "CAH02-06-03",
+    "cahLevel": "CAH3",
+    "cahName": "ophthalmics",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01-02",
+        "name": "medicine (non-specific)",
+        "score": 0.0
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_psychology",
+    "title": "Psychology",
+    "careerWorld": "Psychology, Behaviour & Human Insight",
+    "cahCode": "CAH04-01",
+    "cahLevel": "CAH2",
+    "cahName": "psychology",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH04-01-01",
+        "name": "psychology (non-specific)",
+        "score": 0.95
+      },
+      {
+        "code": "CAH04-01-02",
+        "name": "applied psychology",
+        "score": 0.95
+      }
+    ]
+  },
+  {
+    "id": "sub_counselling_and_psychotherapy",
+    "title": "Counselling and Psychotherapy",
+    "careerWorld": "Psychology, Behaviour & Human Insight",
+    "cahCode": "CAH02-06-07",
+    "cahLevel": "CAH3",
+    "cahName": "counselling, psychotherapy and occupational therapy",
+    "confidence": 0.55,
+    "alt": [
+      {
+        "code": "CAH04-01-04",
+        "name": "psychology and health",
+        "score": 0.1
+      },
+      {
+        "code": "CAH17-01",
+        "name": "business and management",
+        "score": 0.1
+      }
+    ]
+  },
+  {
+    "id": "sub_cognitive_science",
+    "title": "Cognitive Science",
+    "careerWorld": "Psychology, Behaviour & Human Insight",
+    "cahCode": "CAH04-01",
+    "cahLevel": "CAH2",
+    "cahName": "psychology",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH11-01-01",
+        "name": "computer science",
+        "score": 0.28
+      },
+      {
+        "code": "CAH06-01-01",
+        "name": "animal science",
+        "score": 0.27
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_forensic_psychology",
+    "title": "Forensic Psychology",
+    "careerWorld": "Psychology, Behaviour & Human Insight",
+    "cahCode": "CAH04-01",
+    "cahLevel": "CAH2",
+    "cahName": "psychology",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH04-01-02",
+        "name": "applied psychology",
+        "score": 0.3
+      },
+      {
+        "code": "CAH04-01-03",
+        "name": "developmental psychology",
+        "score": 0.29
+      }
+    ]
+  },
+  {
+    "id": "sub_behavioural_science",
+    "title": "Behavioural Science",
+    "careerWorld": "Psychology, Behaviour & Human Insight",
+    "cahCode": "CAH04-01",
+    "cahLevel": "CAH2",
+    "cahName": "psychology",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH11-01-01",
+        "name": "computer science",
+        "score": 0.28
+      },
+      {
+        "code": "CAH06-01-01",
+        "name": "animal science",
+        "score": 0.27
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_psychology_with_neuroscience",
+    "title": "Psychology with Neuroscience",
+    "careerWorld": "Psychology, Behaviour & Human Insight",
+    "cahCode": "CAH04-01",
+    "cahLevel": "CAH2",
+    "cahName": "psychology",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH04-01-02",
+        "name": "applied psychology",
+        "score": 0.2
+      },
+      {
+        "code": "CAH04-01-03",
+        "name": "developmental psychology",
+        "score": 0.19
+      }
+    ]
+  },
+  {
+    "id": "sub_education_studies",
+    "title": "Education Studies",
+    "careerWorld": "Education, Coaching & People Development",
+    "cahCode": "CAH22-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "education",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH22-01",
+        "name": "education and teaching",
+        "score": 0.33
+      },
+      {
+        "code": "CAH15-04-03",
+        "name": "health studies",
+        "score": 0.22
+      }
+    ]
+  },
+  {
+    "id": "sub_primary_education_qts",
+    "title": "Primary Education (QTS)",
+    "careerWorld": "Education, Coaching & People Development",
+    "cahCode": "CAH22-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "education",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH22-01",
+        "name": "education and teaching",
+        "score": 0.2
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_early_years_education_and_care",
+    "title": "Early Years Education and Care",
+    "careerWorld": "Education, Coaching & People Development",
+    "cahCode": "CAH22-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "education",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH22-01",
+        "name": "education and teaching",
+        "score": 0.24
+      },
+      {
+        "code": "CAH15-04",
+        "name": "health and social care",
+        "score": 0.23
+      }
+    ]
+  },
+  {
+    "id": "sub_secondary_education_qts",
+    "title": "Secondary Education (QTS)",
+    "careerWorld": "Education, Coaching & People Development",
+    "cahCode": "CAH22-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "education",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH22-01",
+        "name": "education and teaching",
+        "score": 0.2
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_sports_coaching_and_development",
+    "title": "Sports Coaching and Development",
+    "careerWorld": "Education, Coaching & People Development",
+    "cahCode": "CAH03-02-01",
+    "cahLevel": "CAH3",
+    "cahName": "sport and exercise sciences",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH23-01-02",
+        "name": "personal development",
+        "score": 0.2
+      },
+      {
+        "code": "CAH04-01-04",
+        "name": "psychology and health",
+        "score": 0.08
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_law",
+    "title": "Law",
+    "careerWorld": "Law, Governance & Public Impact",
+    "cahCode": "CAH16-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "law",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH16-01",
+        "name": "law",
+        "score": 1.0
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_politics",
+    "title": "Politics",
+    "careerWorld": "Law, Governance & Public Impact",
+    "cahCode": "CAH15-03-01",
+    "cahLevel": "CAH3",
+    "cahName": "politics",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH15-03",
+        "name": "politics",
+        "score": 1.0
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_social_and_public_policy",
+    "title": "Social and Public Policy",
+    "careerWorld": "Law, Governance & Public Impact",
+    "cahCode": "CAH15-01-03",
+    "cahLevel": "CAH3",
+    "cahName": "social policy",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH15-01",
+        "name": "sociology, social policy and anthropology",
+        "score": 0.43
+      },
+      {
+        "code": "CAH02-06-04",
+        "name": "environmental and public health",
+        "score": 0.3
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_criminology",
+    "title": "Criminology",
+    "careerWorld": "Law, Governance & Public Impact",
+    "cahCode": "CAH15-01",
+    "cahLevel": "CAH2",
+    "cahName": "sociology, social policy and anthropology",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01-02",
+        "name": "medicine (non-specific)",
+        "score": 0.0
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_philosophy_politics_and_economics_ppe",
+    "title": "Philosophy, Politics and Economics (PPE)",
+    "careerWorld": "Law, Governance & Public Impact",
+    "cahCode": "CAH15-02-01",
+    "cahLevel": "CAH3",
+    "cahName": "economics",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH15-02",
+        "name": "economics",
+        "score": 0.95
+      },
+      {
+        "code": "CAH15-03-01",
+        "name": "politics",
+        "score": 0.95
+      }
+    ]
+  },
+  {
+    "id": "sub_law_with_criminology",
+    "title": "Law with Criminology",
+    "careerWorld": "Law, Governance & Public Impact",
+    "cahCode": "CAH16-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "law",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH16-01",
+        "name": "law",
+        "score": 0.95
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_business_management",
+    "title": "Business Management",
+    "careerWorld": "Business Strategy, Commercial & Leadership",
+    "cahCode": "CAH17-01",
+    "cahLevel": "CAH2",
+    "cahName": "business and management",
+    "confidence": 0.8,
+    "alt": [
+      {
+        "code": "CAH17-01-01",
+        "name": "business and management (non-specific)",
+        "score": 0.51
+      },
+      {
+        "code": "CAH17-01-09",
+        "name": "others in business and management",
+        "score": 0.48
+      }
+    ]
+  },
+  {
+    "id": "sub_business_analytics",
+    "title": "Business Analytics",
+    "careerWorld": "Business Strategy, Commercial & Leadership",
+    "cahCode": "CAH17-01-02",
+    "cahLevel": "CAH3",
+    "cahName": "business studies",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH11-01-07",
+        "name": "business computing",
+        "score": 0.29
+      },
+      {
+        "code": "CAH17-01",
+        "name": "business and management",
+        "score": 0.26
+      }
+    ],
+    "curated": true,
+    "review": false
+  },
+  {
+    "id": "sub_international_business",
+    "title": "International Business",
+    "careerWorld": "Business Strategy, Commercial & Leadership",
+    "cahCode": "CAH17-01-02",
+    "cahLevel": "CAH3",
+    "cahName": "business studies",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH11-01-07",
+        "name": "business computing",
+        "score": 0.29
+      },
+      {
+        "code": "CAH17-01",
+        "name": "business and management",
+        "score": 0.26
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_human_resource_management",
+    "title": "Human Resource Management",
+    "careerWorld": "Business Strategy, Commercial & Leadership",
+    "cahCode": "CAH17-01-05",
+    "cahLevel": "CAH3",
+    "cahName": "human resource management",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH26-01-03",
+        "name": "human geography",
+        "score": 0.26
+      },
+      {
+        "code": "CAH17-01-04",
+        "name": "management studies",
+        "score": 0.24
+      }
+    ]
+  },
+  {
+    "id": "sub_operations_and_supply_chain_management",
+    "title": "Operations and Supply Chain Management",
+    "careerWorld": "Business Strategy, Commercial & Leadership",
+    "cahCode": "CAH17-01",
+    "cahLevel": "CAH2",
+    "cahName": "business and management",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH17-01-01",
+        "name": "business and management (non-specific)",
+        "score": 0.18
+      },
+      {
+        "code": "CAH17-01-09",
+        "name": "others in business and management",
+        "score": 0.18
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_real_estate_and_property",
+    "title": "Real Estate & Property",
+    "careerWorld": "Business Strategy, Commercial & Leadership",
+    "cahCode": "CAH17-01-02",
+    "cahLevel": "CAH3",
+    "cahName": "business studies",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      }
+    ],
+    "curated": true,
+    "review": false
+  },
+  {
+    "id": "sub_hospitality_tourism_and_events_management",
+    "title": "Hospitality, Tourism & Events Management",
+    "careerWorld": "Business Strategy, Commercial & Leadership",
+    "cahCode": "CAH17-01-06",
+    "cahLevel": "CAH3",
+    "cahName": "tourism, transport and travel",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH17-01-06",
+        "name": "tourism, transport and travel",
+        "score": 0.16
+      },
+      {
+        "code": "CAH17-01",
+        "name": "business and management",
+        "score": 0.15
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_accounting",
+    "title": "Accounting",
+    "careerWorld": "Finance, Economics & Investment",
+    "cahCode": "CAH17-01-08",
+    "cahLevel": "CAH3",
+    "cahName": "accounting",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_finance",
+    "title": "Finance",
+    "careerWorld": "Finance, Economics & Investment",
+    "cahCode": "CAH17-01-07",
+    "cahLevel": "CAH3",
+    "cahName": "finance",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_accounting_and_finance",
+    "title": "Accounting and Finance",
+    "careerWorld": "Finance, Economics & Investment",
+    "cahCode": "CAH17-01-07",
+    "cahLevel": "CAH3",
+    "cahName": "finance",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH17-01-08",
+        "name": "accounting",
+        "score": 0.95
+      },
+      {
+        "code": "CAH04-01-04",
+        "name": "psychology and health",
+        "score": 0.1
+      }
+    ]
+  },
+  {
+    "id": "sub_economics",
+    "title": "Economics",
+    "careerWorld": "Finance, Economics & Investment",
+    "cahCode": "CAH15-02-01",
+    "cahLevel": "CAH3",
+    "cahName": "economics",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH15-02",
+        "name": "economics",
+        "score": 1.0
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_finance_and_financial_technology",
+    "title": "Finance and Financial Technology",
+    "careerWorld": "Finance, Economics & Investment",
+    "cahCode": "CAH17-01-07",
+    "cahLevel": "CAH3",
+    "cahName": "finance",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH10-03",
+        "name": "materials and technology",
+        "score": 0.28
+      },
+      {
+        "code": "CAH02-05-01",
+        "name": "medical technology",
+        "score": 0.18
+      }
+    ],
+    "curated": true,
+    "review": false
+  },
+  {
+    "id": "sub_economics_with_data_science",
+    "title": "Economics with Data Science",
+    "careerWorld": "Finance, Economics & Investment",
+    "cahCode": "CAH15-02-01",
+    "cahLevel": "CAH3",
+    "cahName": "economics",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH15-02",
+        "name": "economics",
+        "score": 0.95
+      },
+      {
+        "code": "CAH10-03-07",
+        "name": "materials science",
+        "score": 0.17
+      }
+    ]
+  },
+  {
+    "id": "sub_investment_management",
+    "title": "Investment Management",
+    "careerWorld": "Finance, Economics & Investment",
+    "cahCode": "CAH17-01-07",
+    "cahLevel": "CAH3",
+    "cahName": "finance",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH17-01",
+        "name": "business and management",
+        "score": 0.25
+      },
+      {
+        "code": "CAH06-01-04",
+        "name": "rural estate management",
+        "score": 0.2
+      }
+    ],
+    "curated": true,
+    "review": false
+  },
+  {
+    "id": "sub_entrepreneurship_and_innovation",
+    "title": "Entrepreneurship and Innovation",
+    "careerWorld": "Entrepreneurship, Innovation & Venture Building",
+    "cahCode": "CAH17-01",
+    "cahLevel": "CAH2",
+    "cahName": "business and management",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH17-01",
+        "name": "business and management",
+        "score": 0.09
+      },
+      {
+        "code": "CAH10-03",
+        "name": "materials and technology",
+        "score": 0.09
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_business_management_with_entrepreneurship",
+    "title": "Business Management with Entrepreneurship",
+    "careerWorld": "Entrepreneurship, Innovation & Venture Building",
+    "cahCode": "CAH17-01",
+    "cahLevel": "CAH2",
+    "cahName": "business and management",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH17-01-01",
+        "name": "business and management (non-specific)",
+        "score": 0.3
+      },
+      {
+        "code": "CAH17-01-09",
+        "name": "others in business and management",
+        "score": 0.29
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_social_enterprise_and_community_development",
+    "title": "Social Enterprise and Community Development",
+    "careerWorld": "Entrepreneurship, Innovation & Venture Building",
+    "cahCode": "CAH17-01",
+    "cahLevel": "CAH2",
+    "cahName": "business and management",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH15-04",
+        "name": "health and social care",
+        "score": 0.2
+      },
+      {
+        "code": "CAH15-01-05",
+        "name": "development studies",
+        "score": 0.2
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_innovation_and_technology_management",
+    "title": "Innovation and Technology Management",
+    "careerWorld": "Entrepreneurship, Innovation & Venture Building",
+    "cahCode": "CAH17-01",
+    "cahLevel": "CAH2",
+    "cahName": "business and management",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH10-03",
+        "name": "materials and technology",
+        "score": 0.29
+      },
+      {
+        "code": "CAH17-01-01",
+        "name": "business and management (non-specific)",
+        "score": 0.24
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_marketing",
+    "title": "Marketing",
+    "careerWorld": "Marketing, Media & Communication",
+    "cahCode": "CAH17-01-03",
+    "cahLevel": "CAH3",
+    "cahName": "marketing",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_public_relations_and_communications",
+    "title": "Public Relations and Communications",
+    "careerWorld": "Marketing, Media & Communication",
+    "cahCode": "CAH24-01",
+    "cahLevel": "CAH2",
+    "cahName": "media, journalism and communications",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH24-01",
+        "name": "media, journalism and communications",
+        "score": 0.26
+      },
+      {
+        "code": "CAH04-01-04",
+        "name": "psychology and health",
+        "score": 0.08
+      }
+    ],
+    "curated": true,
+    "review": false
+  },
+  {
+    "id": "sub_digital_media_production_and_technology",
+    "title": "Digital Media Production and Technology",
+    "careerWorld": "Marketing, Media & Communication",
+    "cahCode": "CAH24-01",
+    "cahLevel": "CAH2",
+    "cahName": "media studies",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH10-01-03",
+        "name": "production and manufacturing engineering",
+        "score": 0.23
+      },
+      {
+        "code": "CAH06-01-08",
+        "name": "food and beverage production",
+        "score": 0.23
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_digital_marketing_and_social_media",
+    "title": "Digital Marketing and Social Media",
+    "careerWorld": "Marketing, Media & Communication",
+    "cahCode": "CAH17-01-03",
+    "cahLevel": "CAH3",
+    "cahName": "marketing",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH24-01",
+        "name": "media, journalism and communications",
+        "score": 0.21
+      },
+      {
+        "code": "CAH15-04",
+        "name": "health and social care",
+        "score": 0.2
+      }
+    ]
+  },
+  {
+    "id": "sub_journalism",
+    "title": "Journalism",
+    "careerWorld": "Marketing, Media & Communication",
+    "cahCode": "CAH24-01-04",
+    "cahLevel": "CAH3",
+    "cahName": "journalism",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH24-01",
+        "name": "media, journalism and communications",
+        "score": 0.95
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_advertising_and_brand_management",
+    "title": "Advertising and Brand Management",
+    "careerWorld": "Marketing, Media & Communication",
+    "cahCode": "CAH17-01-03",
+    "cahLevel": "CAH3",
+    "cahName": "marketing",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH17-01-01",
+        "name": "business and management (non-specific)",
+        "score": 0.22
+      },
+      {
+        "code": "CAH17-01-09",
+        "name": "others in business and management",
+        "score": 0.21
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_media_studies",
+    "title": "Media Studies",
+    "careerWorld": "Marketing, Media & Communication",
+    "cahCode": "CAH24-01-05",
+    "cahLevel": "CAH3",
+    "cahName": "media studies",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH24-01",
+        "name": "media, journalism and communications",
+        "score": 0.25
+      },
+      {
+        "code": "CAH15-04-03",
+        "name": "health studies",
+        "score": 0.22
+      }
+    ]
+  },
+  {
+    "id": "sub_product_design",
+    "title": "Product Design",
+    "careerWorld": "Creative Arts, Design & Experience",
+    "cahCode": "CAH25-01-03",
+    "cahLevel": "CAH3",
+    "cahName": "design studies",
+    "confidence": 0.33,
+    "alt": [
+      {
+        "code": "CAH13-01-03",
+        "name": "landscape design",
+        "score": 0.27
+      },
+      {
+        "code": "CAH25-01",
+        "name": "creative arts and design",
+        "score": 0.2
+      }
+    ],
+    "review": false,
+    "curated": true
+  },
+  {
+    "id": "sub_graphic_design",
+    "title": "Graphic Design",
+    "careerWorld": "Creative Arts, Design & Experience",
+    "cahCode": "CAH25-01-03",
+    "cahLevel": "CAH3",
+    "cahName": "design studies",
+    "confidence": 0.33,
+    "alt": [
+      {
+        "code": "CAH13-01-03",
+        "name": "landscape design",
+        "score": 0.27
+      },
+      {
+        "code": "CAH25-01",
+        "name": "creative arts and design",
+        "score": 0.2
+      }
+    ],
+    "review": false,
+    "curated": true
+  },
+  {
+    "id": "sub_animation",
+    "title": "Animation",
+    "careerWorld": "Creative Arts, Design & Experience",
+    "cahCode": "CAH25-01-03",
+    "cahLevel": "CAH3",
+    "cahName": "design studies",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_ux_design_and_interaction_design",
+    "title": "UX Design and Interaction Design",
+    "careerWorld": "Creative Arts, Design & Experience",
+    "cahCode": "CAH25-01-03",
+    "cahLevel": "CAH3",
+    "cahName": "design studies",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH25-01-03",
+        "name": "design studies",
+        "score": 0.2
+      },
+      {
+        "code": "CAH25-01-01",
+        "name": "creative arts and design (non-specific)",
+        "score": 0.19
+      }
+    ],
+    "curated": true,
+    "review": false
+  },
+  {
+    "id": "sub_game_design",
+    "title": "Game Design",
+    "careerWorld": "Creative Arts, Design & Experience",
+    "cahCode": "CAH25-01-03",
+    "cahLevel": "CAH3",
+    "cahName": "design studies",
+    "confidence": 0.33,
+    "alt": [
+      {
+        "code": "CAH13-01-03",
+        "name": "landscape design",
+        "score": 0.27
+      },
+      {
+        "code": "CAH25-01",
+        "name": "creative arts and design",
+        "score": 0.2
+      }
+    ],
+    "review": false,
+    "curated": true
+  },
+  {
+    "id": "sub_fashion_design",
+    "title": "Fashion Design",
+    "careerWorld": "Creative Arts, Design & Experience",
+    "cahCode": "CAH25-01-03",
+    "cahLevel": "CAH3",
+    "cahName": "design studies",
+    "confidence": 0.33,
+    "alt": [
+      {
+        "code": "CAH13-01-03",
+        "name": "landscape design",
+        "score": 0.27
+      },
+      {
+        "code": "CAH25-01",
+        "name": "creative arts and design",
+        "score": 0.2
+      }
+    ],
+    "review": false,
+    "curated": true
+  },
+  {
+    "id": "sub_fine_art",
+    "title": "Fine Art",
+    "careerWorld": "Creative Arts, Design & Experience",
+    "cahCode": "CAH25-01-02",
+    "cahLevel": "CAH3",
+    "cahName": "art",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH20-01-02",
+        "name": "history of art, architecture and design",
+        "score": 0.16
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_film_and_television_production",
+    "title": "Film and Television Production",
+    "careerWorld": "Creative Arts, Design & Experience",
+    "cahCode": "CAH25-01-04",
+    "cahLevel": "CAH3",
+    "cahName": "cinematics and photography",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH06-01-08",
+        "name": "food and beverage production",
+        "score": 0.25
+      },
+      {
+        "code": "CAH04-01-04",
+        "name": "psychology and health",
+        "score": 0.08
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_illustration",
+    "title": "Illustration",
+    "careerWorld": "Creative Arts, Design & Experience",
+    "cahCode": "CAH25-01",
+    "cahLevel": "CAH2",
+    "cahName": "creative arts and design",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01-02",
+        "name": "medicine (non-specific)",
+        "score": 0.0
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_geography",
+    "title": "Geography",
+    "careerWorld": "Environment, Sustainability & Planetary Futures",
+    "cahCode": "CAH26-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "geography (non-specific)",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH26-01",
+        "name": "geography, earth and environmental studies",
+        "score": 0.95
+      },
+      {
+        "code": "CAH26-01-03",
+        "name": "human geography",
+        "score": 0.95
+      }
+    ]
+  },
+  {
+    "id": "sub_environmental_science",
+    "title": "Environmental Science",
+    "careerWorld": "Environment, Sustainability & Planetary Futures",
+    "cahCode": "CAH26-01-04",
+    "cahLevel": "CAH3",
+    "cahName": "environmental sciences",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH10-03-07",
+        "name": "materials science",
+        "score": 0.32
+      },
+      {
+        "code": "CAH11-01-01",
+        "name": "computer science",
+        "score": 0.31
+      }
+    ]
+  },
+  {
+    "id": "sub_environmental_management",
+    "title": "Environmental Management",
+    "careerWorld": "Environment, Sustainability & Planetary Futures",
+    "cahCode": "CAH26-01-04",
+    "cahLevel": "CAH3",
+    "cahName": "environmental sciences",
+    "confidence": 0.38,
+    "alt": [
+      {
+        "code": "CAH17-01-04",
+        "name": "management studies",
+        "score": 0.37
+      },
+      {
+        "code": "CAH17-01",
+        "name": "business and management",
+        "score": 0.28
+      }
+    ],
+    "review": false,
+    "curated": true
+  },
+  {
+    "id": "sub_ecology_and_conservation_biology",
+    "title": "Ecology and Conservation Biology",
+    "careerWorld": "Environment, Sustainability & Planetary Futures",
+    "cahCode": "CAH03-01-03",
+    "cahLevel": "CAH3",
+    "cahName": "ecology and environmental biology",
+    "confidence": 0.54,
+    "alt": [
+      {
+        "code": "CAH03-01-08",
+        "name": "molecular biology, biophysics and biochemistry",
+        "score": 0.2
+      },
+      {
+        "code": "CAH03-01-02",
+        "name": "biology (non-specific)",
+        "score": 0.19
+      }
+    ]
+  },
+  {
+    "id": "sub_climate_science_and_sustainability",
+    "title": "Climate Science and Sustainability",
+    "careerWorld": "Environment, Sustainability & Planetary Futures",
+    "cahCode": "CAH26-01",
+    "cahLevel": "CAH2",
+    "cahName": "geography, earth and environmental studies",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH10-03-07",
+        "name": "materials science",
+        "score": 0.19
+      },
+      {
+        "code": "CAH11-01-01",
+        "name": "computer science",
+        "score": 0.18
+      }
+    ],
+    "curated": true
+  },
+  {
+    "id": "sub_sustainable_development",
+    "title": "Sustainable Development",
+    "careerWorld": "Environment, Sustainability & Planetary Futures",
+    "cahCode": "CAH26-01",
+    "cahLevel": "CAH3",
+    "cahName": "geography, earth and environmental studies",
+    "confidence": 0.37,
+    "alt": [
+      {
+        "code": "CAH23-01-02",
+        "name": "personal development",
+        "score": 0.3
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ],
+    "review": false,
+    "curated": true
+  },
+  {
+    "id": "sub_modern_languages",
+    "title": "Modern Languages",
+    "careerWorld": "Society, Culture, Languages & Global Affairs",
+    "cahCode": "CAH19-04",
+    "cahLevel": "CAH2",
+    "cahName": "languages and area studies",
+    "confidence": 0.26,
+    "alt": [
+      {
+        "code": "CAH19-04-07",
+        "name": "african and modern middle eastern studies",
+        "score": 0.17
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ],
+    "review": false,
+    "curated": true
+  },
+  {
+    "id": "sub_sociology",
+    "title": "Sociology",
+    "careerWorld": "Society, Culture, Languages & Global Affairs",
+    "cahCode": "CAH15-01-02",
+    "cahLevel": "CAH3",
+    "cahName": "sociology",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH15-01",
+        "name": "sociology, social policy and anthropology",
+        "score": 0.95
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_anthropology",
+    "title": "Anthropology",
+    "careerWorld": "Society, Culture, Languages & Global Affairs",
+    "cahCode": "CAH15-01-04",
+    "cahLevel": "CAH3",
+    "cahName": "anthropology",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH15-01",
+        "name": "sociology, social policy and anthropology",
+        "score": 0.95
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_international_relations",
+    "title": "International Relations",
+    "careerWorld": "Society, Culture, Languages & Global Affairs",
+    "cahCode": "CAH15-03-01",
+    "cahLevel": "CAH3",
+    "cahName": "politics",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH01-01",
+        "name": "medicine and dentistry",
+        "score": 0.0
+      },
+      {
+        "code": "CAH01-01-02",
+        "name": "medicine (non-specific)",
+        "score": 0.0
+      }
+    ],
+    "review": false,
+    "curated": true
+  },
+  {
+    "id": "sub_history",
+    "title": "History",
+    "careerWorld": "Society, Culture, Languages & Global Affairs",
+    "cahCode": "CAH20-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "history",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH20-01",
+        "name": "history and archaeology",
+        "score": 0.95
+      },
+      {
+        "code": "CAH20-01-02",
+        "name": "history of art, architecture and design",
+        "score": 0.95
+      }
+    ]
+  },
+  {
+    "id": "sub_philosophy",
+    "title": "Philosophy",
+    "careerWorld": "Society, Culture, Languages & Global Affairs",
+    "cahCode": "CAH20-02-01",
+    "cahLevel": "CAH3",
+    "cahName": "philosophy",
+    "confidence": 1.0,
+    "alt": [
+      {
+        "code": "CAH20-02",
+        "name": "philosophy and religious studies",
+        "score": 0.95
+      },
+      {
+        "code": "CAH01-01-01",
+        "name": "medical sciences (non-specific)",
+        "score": 0.0
+      }
+    ]
+  },
+  {
+    "id": "sub_global_development_studies",
+    "title": "Global Development Studies",
+    "careerWorld": "Society, Culture, Languages & Global Affairs",
+    "cahCode": "CAH15-01-05",
+    "cahLevel": "CAH3",
+    "cahName": "development studies",
+    "confidence": 0.95,
+    "alt": [
+      {
+        "code": "CAH23-01-02",
+        "name": "personal development",
+        "score": 0.26
+      },
+      {
+        "code": "CAH15-04-03",
+        "name": "health studies",
+        "score": 0.15
+      }
+    ]
+  },
+  {
+    "id": "sub_music",
+    "title": "Music",
+    "careerWorld": "Performing Arts & Music",
+    "cahCode": "CAH25-02-02",
+    "cahLevel": "CAH3",
+    "cahName": "music",
+    "confidence": 1.0
+  },
+  {
+    "id": "sub_music_technology",
+    "title": "Music Technology",
+    "careerWorld": "Performing Arts & Music",
+    "cahCode": "CAH25-02-02",
+    "cahLevel": "CAH3",
+    "cahName": "music",
+    "confidence": 1.0
+  },
+  {
+    "id": "sub_drama_and_theatre_studies",
+    "title": "Drama & Theatre Studies",
+    "careerWorld": "Performing Arts & Music",
+    "cahCode": "CAH25-02-03",
+    "cahLevel": "CAH3",
+    "cahName": "drama",
+    "confidence": 1.0
+  },
+  {
+    "id": "sub_dance",
+    "title": "Dance",
+    "careerWorld": "Performing Arts & Music",
+    "cahCode": "CAH25-02-04",
+    "cahLevel": "CAH3",
+    "cahName": "dance",
+    "confidence": 1.0
+  },
+  {
+    "id": "sub_musical_theatre",
+    "title": "Musical Theatre",
+    "careerWorld": "Performing Arts & Music",
+    "cahCode": "CAH25-02-01",
+    "cahLevel": "CAH3",
+    "cahName": "performing arts",
+    "confidence": 1.0
+  },
+  {
+    "id": "sub_technical_theatre_and_stage_management",
+    "title": "Technical Theatre & Stage Management",
+    "careerWorld": "Performing Arts & Music",
+    "cahCode": "CAH25-02-01",
+    "cahLevel": "CAH3",
+    "cahName": "performing arts",
+    "confidence": 1.0
+  },
+  {
+    "id": "sub_veterinary_medicine",
+    "title": "Veterinary Medicine",
+    "careerWorld": "Land, Animals & the Outdoors",
+    "cahCode": "CAH05-01",
+    "cahLevel": "CAH2",
+    "cahName": "veterinary sciences",
+    "confidence": 1.0
+  },
+  {
+    "id": "sub_animal_science",
+    "title": "Animal Science",
+    "careerWorld": "Land, Animals & the Outdoors",
+    "cahCode": "CAH06-01-01",
+    "cahLevel": "CAH3",
+    "cahName": "animal science",
+    "confidence": 1.0
+  },
+  {
+    "id": "sub_agriculture",
+    "title": "Agriculture",
+    "careerWorld": "Land, Animals & the Outdoors",
+    "cahCode": "CAH06-01-03",
+    "cahLevel": "CAH3",
+    "cahName": "agriculture",
+    "confidence": 1.0
+  },
+  {
+    "id": "sub_forestry",
+    "title": "Forestry",
+    "careerWorld": "Land, Animals & the Outdoors",
+    "cahCode": "CAH06-01-05",
+    "cahLevel": "CAH3",
+    "cahName": "forestry and arboriculture",
+    "confidence": 1.0
+  },
+  {
+    "id": "sub_heritage_and_museum_studies",
+    "title": "Heritage and Museum Studies",
+    "careerWorld": "Society, Culture & Languages",
+    "cahCode": "CAH20-01-04",
+    "cahLevel": "CAH3",
+    "cahName": "heritage studies",
+    "confidence": 1.0
+  }
+]

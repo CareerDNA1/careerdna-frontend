@@ -1,0 +1,3775 @@
+[
+  {
+    "id": "sub_actuarial_science",
+    "title": "Actuarial Science",
+    "careerWorldId": "cw_money_finance_accounting",
+    "primaryPathways": [
+      "Core Data Analysis & Business Insight",
+      "Insurance & Actuarial",
+      "Risk & Quantitative Analysis"
+    ],
+    "adjacentPathways": [
+      "Risk, Compliance & Controls",
+      "Treasury & Liquidity",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Core Data Analysis & Business Insight",
+      "Insurance & Actuarial",
+      "Risk & Quantitative Analysis",
+      "Risk, Compliance & Controls",
+      "Treasury & Liquidity",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_data_science",
+    "title": "Data Science",
+    "careerWorldId": "cw_technology_digital",
+    "primaryPathways": [
+      "Digital Health, Healthtech & Medical Innovation",
+      "AI & Machine Learning",
+      "Business Intelligence & Reporting",
+      "Core Data Analysis & Business Insight",
+      "Data Engineering",
+      "Data Science & Advanced Modelling",
+      "Product, Growth & Experimentation Analytics",
+      "Scientific Data & Bioinformatics"
+    ],
+    "adjacentPathways": [
+      "Customer & Market Insight",
+      "Fintech & Digital Finance",
+      "Risk & Quantitative Analysis",
+      "Business Analysis",
+      "People Analytics & Workplace Behaviour",
+      "Higher Education & Academic Research",
+      "Intelligence, Public Service & Security Analysis",
+      "Market Research & Audience Insight",
+      "Performance Marketing & Growth"
+    ],
+    "pathways": [
+      "Digital Health, Healthtech & Medical Innovation",
+      "AI & Machine Learning",
+      "Business Intelligence & Reporting",
+      "Core Data Analysis & Business Insight",
+      "Data Engineering",
+      "Data Science & Advanced Modelling",
+      "Product, Growth & Experimentation Analytics",
+      "Scientific Data & Bioinformatics",
+      "Customer & Market Insight",
+      "Fintech & Digital Finance",
+      "Risk & Quantitative Analysis",
+      "Business Analysis",
+      "People Analytics & Workplace Behaviour",
+      "Higher Education & Academic Research",
+      "Intelligence, Public Service & Security Analysis",
+      "Market Research & Audience Insight",
+      "Performance Marketing & Growth"
+    ]
+  },
+  {
+    "id": "sub_financial_mathematics",
+    "title": "Financial Mathematics",
+    "careerWorldId": "cw_money_finance_accounting",
+    "primaryPathways": [
+      "Data Science & Advanced Modelling",
+      "Insurance & Actuarial",
+      "Markets & Trading",
+      "Risk & Quantitative Analysis"
+    ],
+    "adjacentPathways": [
+      "Accounting, Audit & Assurance",
+      "Asset & Wealth Management",
+      "Equity Research & Investment Research",
+      "Investment Banking & Corporate Finance",
+      "Treasury & Liquidity",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Data Science & Advanced Modelling",
+      "Insurance & Actuarial",
+      "Markets & Trading",
+      "Risk & Quantitative Analysis",
+      "Accounting, Audit & Assurance",
+      "Asset & Wealth Management",
+      "Equity Research & Investment Research",
+      "Investment Banking & Corporate Finance",
+      "Treasury & Liquidity",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_mathematics",
+    "title": "Mathematics",
+    "careerWorldId": "cw_money_finance_accounting",
+    "primaryPathways": [
+      "AI & Machine Learning",
+      "Data Science & Advanced Modelling",
+      "Risk & Quantitative Analysis"
+    ],
+    "adjacentPathways": [
+      "Core Data Analysis & Business Insight",
+      "Insurance & Actuarial",
+      "Markets & Trading",
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "R&D Science",
+      "Scientific Data & Bioinformatics"
+    ],
+    "pathways": [
+      "AI & Machine Learning",
+      "Data Science & Advanced Modelling",
+      "Risk & Quantitative Analysis",
+      "Core Data Analysis & Business Insight",
+      "Insurance & Actuarial",
+      "Markets & Trading",
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "R&D Science",
+      "Scientific Data & Bioinformatics"
+    ]
+  },
+  {
+    "id": "sub_mathematics_and_statistics",
+    "title": "Mathematics and Statistics",
+    "careerWorldId": "cw_technology_digital",
+    "primaryPathways": [
+      "Business Intelligence & Reporting",
+      "Core Data Analysis & Business Insight",
+      "Data Science & Advanced Modelling",
+      "Risk & Quantitative Analysis"
+    ],
+    "adjacentPathways": [
+      "AI & Machine Learning",
+      "Data Engineering",
+      "Equity Research & Investment Research",
+      "Insurance & Actuarial",
+      "Business Analysis",
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "Scientific Data & Bioinformatics"
+    ],
+    "pathways": [
+      "Business Intelligence & Reporting",
+      "Core Data Analysis & Business Insight",
+      "Data Science & Advanced Modelling",
+      "Risk & Quantitative Analysis",
+      "AI & Machine Learning",
+      "Data Engineering",
+      "Equity Research & Investment Research",
+      "Insurance & Actuarial",
+      "Business Analysis",
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "Scientific Data & Bioinformatics"
+    ]
+  },
+  {
+    "id": "sub_operational_research",
+    "title": "Operational Research",
+    "careerWorldId": "cw_technology_digital",
+    "primaryPathways": [
+      "Business Intelligence & Reporting",
+      "Core Data Analysis & Business Insight",
+      "Risk & Quantitative Analysis"
+    ],
+    "adjacentPathways": [
+      "Consulting & Strategic Improvement",
+      "Operations & Supply Chain",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Business Intelligence & Reporting",
+      "Core Data Analysis & Business Insight",
+      "Risk & Quantitative Analysis",
+      "Consulting & Strategic Improvement",
+      "Operations & Supply Chain",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_statistics",
+    "title": "Statistics",
+    "careerWorldId": "cw_technology_digital",
+    "primaryPathways": [
+      "Business Intelligence & Reporting",
+      "Core Data Analysis & Business Insight",
+      "Data Science & Advanced Modelling",
+      "Risk & Quantitative Analysis"
+    ],
+    "adjacentPathways": [
+      "Public Health Medicine, Epidemiology & Health Policy",
+      "AI & Machine Learning",
+      "Customer & Market Insight",
+      "Product, Growth & Experimentation Analytics",
+      "Insurance & Actuarial",
+      "Markets & Trading",
+      "Higher Education & Academic Research",
+      "Market Research & Audience Insight",
+      "Scientific Data & Bioinformatics"
+    ],
+    "pathways": [
+      "Business Intelligence & Reporting",
+      "Core Data Analysis & Business Insight",
+      "Data Science & Advanced Modelling",
+      "Risk & Quantitative Analysis",
+      "Public Health Medicine, Epidemiology & Health Policy",
+      "AI & Machine Learning",
+      "Customer & Market Insight",
+      "Product, Growth & Experimentation Analytics",
+      "Insurance & Actuarial",
+      "Markets & Trading",
+      "Higher Education & Academic Research",
+      "Market Research & Audience Insight",
+      "Scientific Data & Bioinformatics"
+    ]
+  },
+  {
+    "id": "sub_artificial_intelligence",
+    "title": "Artificial Intelligence",
+    "careerWorldId": "cw_technology_digital",
+    "primaryPathways": [
+      "AI & Machine Learning",
+      "Data Engineering"
+    ],
+    "adjacentPathways": [
+      "Digital Health, Healthtech & Medical Innovation",
+      "Data Science & Advanced Modelling",
+      "Software Engineering",
+      "Higher Education & Academic Research",
+      "Robotics & Automation Engineering"
+    ],
+    "pathways": [
+      "AI & Machine Learning",
+      "Data Engineering",
+      "Digital Health, Healthtech & Medical Innovation",
+      "Data Science & Advanced Modelling",
+      "Software Engineering",
+      "Higher Education & Academic Research",
+      "Robotics & Automation Engineering"
+    ]
+  },
+  {
+    "id": "sub_computer_science",
+    "title": "Computer Science",
+    "careerWorldId": "cw_technology_digital",
+    "primaryPathways": [
+      "Digital Health, Healthtech & Medical Innovation",
+      "AI & Machine Learning",
+      "Backend & Platform Engineering",
+      "Data Engineering",
+      "Frontend & Web Development",
+      "Quality Assurance & Test Engineering",
+      "Software Engineering"
+    ],
+    "adjacentPathways": [
+      "Business Intelligence & Reporting",
+      "Cyber Security",
+      "Data Science & Advanced Modelling",
+      "Game Design & Development",
+      "UX/UI Design",
+      "Fintech & Digital Finance",
+      "Higher Education & Academic Research",
+      "Learning Design & Educational Technology",
+      "Electrical & Electronic Engineering",
+      "Robotics & Automation Engineering",
+      "Systems Engineering",
+      "Venture Building & Founder",
+      "Scientific Data & Bioinformatics"
+    ],
+    "pathways": [
+      "Digital Health, Healthtech & Medical Innovation",
+      "AI & Machine Learning",
+      "Backend & Platform Engineering",
+      "Data Engineering",
+      "Frontend & Web Development",
+      "Quality Assurance & Test Engineering",
+      "Software Engineering",
+      "Business Intelligence & Reporting",
+      "Cyber Security",
+      "Data Science & Advanced Modelling",
+      "Game Design & Development",
+      "UX/UI Design",
+      "Fintech & Digital Finance",
+      "Higher Education & Academic Research",
+      "Learning Design & Educational Technology",
+      "Electrical & Electronic Engineering",
+      "Robotics & Automation Engineering",
+      "Systems Engineering",
+      "Venture Building & Founder",
+      "Scientific Data & Bioinformatics"
+    ]
+  },
+  {
+    "id": "sub_computer_science_and_artificial_intelligence",
+    "title": "Computer Science and Artificial Intelligence",
+    "careerWorldId": "cw_technology_digital",
+    "primaryPathways": [
+      "AI & Machine Learning",
+      "Backend & Platform Engineering",
+      "Frontend & Web Development",
+      "Software Engineering"
+    ],
+    "adjacentPathways": [
+      "Cyber Security",
+      "Data Engineering",
+      "Quality Assurance & Test Engineering",
+      "UX/UI Design",
+      "Fintech & Digital Finance",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "AI & Machine Learning",
+      "Backend & Platform Engineering",
+      "Frontend & Web Development",
+      "Software Engineering",
+      "Cyber Security",
+      "Data Engineering",
+      "Quality Assurance & Test Engineering",
+      "UX/UI Design",
+      "Fintech & Digital Finance",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_computer_science_with_cyber_security",
+    "title": "Computer Science with Cyber Security",
+    "careerWorldId": "cw_technology_digital",
+    "primaryPathways": [
+      "Cyber Security"
+    ],
+    "adjacentPathways": [
+      "Backend & Platform Engineering",
+      "Quality Assurance & Test Engineering",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Cyber Security",
+      "Backend & Platform Engineering",
+      "Quality Assurance & Test Engineering",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_cyber_security",
+    "title": "Cyber Security",
+    "careerWorldId": "cw_technology_digital",
+    "primaryPathways": [
+      "Cyber Security",
+      "Software Engineering"
+    ],
+    "adjacentPathways": [
+      "Backend & Platform Engineering",
+      "Quality Assurance & Test Engineering",
+      "Higher Education & Academic Research",
+      "Governance, Risk & Compliance"
+    ],
+    "pathways": [
+      "Cyber Security",
+      "Software Engineering",
+      "Backend & Platform Engineering",
+      "Quality Assurance & Test Engineering",
+      "Higher Education & Academic Research",
+      "Governance, Risk & Compliance"
+    ]
+  },
+  {
+    "id": "sub_games_technology",
+    "title": "Games Technology",
+    "careerWorldId": "cw_technology_digital",
+    "primaryPathways": [
+      "Frontend & Web Development",
+      "Game Design & Development",
+      "Software Engineering"
+    ],
+    "adjacentPathways": [
+      "Backend & Platform Engineering",
+      "Animation & Motion Design",
+      "Digital Design & Multimedia",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Frontend & Web Development",
+      "Game Design & Development",
+      "Software Engineering",
+      "Backend & Platform Engineering",
+      "Animation & Motion Design",
+      "Digital Design & Multimedia",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_human_computer_interaction",
+    "title": "Human-Computer Interaction",
+    "careerWorldId": "cw_technology_digital",
+    "primaryPathways": [
+      "Frontend & Web Development",
+      "Software Engineering",
+      "UX Research & Behavioural Insight"
+    ],
+    "adjacentPathways": [
+      "Digital Health, Healthtech & Medical Innovation",
+      "Game Design & Development",
+      "UX/UI Design",
+      "Higher Education & Academic Research",
+      "Learning Design & Educational Technology"
+    ],
+    "pathways": [
+      "Frontend & Web Development",
+      "Software Engineering",
+      "UX Research & Behavioural Insight",
+      "Digital Health, Healthtech & Medical Innovation",
+      "Game Design & Development",
+      "UX/UI Design",
+      "Higher Education & Academic Research",
+      "Learning Design & Educational Technology"
+    ]
+  },
+  {
+    "id": "sub_software_engineering",
+    "title": "Software Engineering",
+    "careerWorldId": "cw_technology_digital",
+    "primaryPathways": [
+      "Digital Health, Healthtech & Medical Innovation",
+      "Backend & Platform Engineering",
+      "Data Engineering",
+      "Frontend & Web Development",
+      "Quality Assurance & Test Engineering",
+      "Software Engineering"
+    ],
+    "adjacentPathways": [
+      "AI & Machine Learning",
+      "Cyber Security",
+      "Game Design & Development",
+      "UX/UI Design",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Digital Health, Healthtech & Medical Innovation",
+      "Backend & Platform Engineering",
+      "Data Engineering",
+      "Frontend & Web Development",
+      "Quality Assurance & Test Engineering",
+      "Software Engineering",
+      "AI & Machine Learning",
+      "Cyber Security",
+      "Game Design & Development",
+      "UX/UI Design",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_aeronautical_and_aerospace_engineering",
+    "title": "Aeronautical and Aerospace Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "primaryPathways": [
+      "Aerospace & Defence Engineering",
+      "Mechanical Design & Development Engineering"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Infrastructure, Maintenance & Asset Engineering",
+      "Robotics & Automation Engineering",
+      "Systems Engineering"
+    ],
+    "pathways": [
+      "Aerospace & Defence Engineering",
+      "Mechanical Design & Development Engineering",
+      "Higher Education & Academic Research",
+      "Infrastructure, Maintenance & Asset Engineering",
+      "Robotics & Automation Engineering",
+      "Systems Engineering"
+    ]
+  },
+  {
+    "id": "sub_biomedical_engineering",
+    "title": "Biomedical Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "primaryPathways": [
+      "Digital Health, Healthtech & Medical Innovation"
+    ],
+    "adjacentPathways": [
+      "Clinical Science & Laboratory Diagnostics",
+      "Higher Education & Academic Research",
+      "Electrical & Electronic Engineering",
+      "Mechanical Design & Development Engineering",
+      "Systems Engineering",
+      "Biomedical & Clinical Research"
+    ],
+    "pathways": [
+      "Digital Health, Healthtech & Medical Innovation",
+      "Clinical Science & Laboratory Diagnostics",
+      "Higher Education & Academic Research",
+      "Electrical & Electronic Engineering",
+      "Mechanical Design & Development Engineering",
+      "Systems Engineering",
+      "Biomedical & Clinical Research"
+    ]
+  },
+  {
+    "id": "sub_chemical_engineering",
+    "title": "Chemical Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "primaryPathways": [
+      "Chemical & Process Engineering",
+      "Materials & Chemical Analysis"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Manufacturing & Production Engineering",
+      "Environmental Science & Monitoring"
+    ],
+    "pathways": [
+      "Chemical & Process Engineering",
+      "Materials & Chemical Analysis",
+      "Higher Education & Academic Research",
+      "Manufacturing & Production Engineering",
+      "Environmental Science & Monitoring"
+    ]
+  },
+  {
+    "id": "sub_civil_engineering",
+    "title": "Civil Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "primaryPathways": [
+      "Construction Project Delivery",
+      "Civil & Structural Engineering",
+      "Infrastructure, Maintenance & Asset Engineering"
+    ],
+    "adjacentPathways": [
+      "Architectural Technology & BIM",
+      "Surveying, Valuation & Cost Consultancy",
+      "Sustainability & Building Performance",
+      "Town Planning & Urban Development",
+      "Higher Education & Academic Research",
+      "Systems Engineering",
+      "Environmental Policy & Impact Assessment"
+    ],
+    "pathways": [
+      "Construction Project Delivery",
+      "Civil & Structural Engineering",
+      "Infrastructure, Maintenance & Asset Engineering",
+      "Architectural Technology & BIM",
+      "Surveying, Valuation & Cost Consultancy",
+      "Sustainability & Building Performance",
+      "Town Planning & Urban Development",
+      "Higher Education & Academic Research",
+      "Systems Engineering",
+      "Environmental Policy & Impact Assessment"
+    ]
+  },
+  {
+    "id": "sub_electrical_and_electronic_engineering",
+    "title": "Electrical and Electronic Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "primaryPathways": [
+      "Electrical & Electronic Engineering",
+      "Robotics & Automation Engineering",
+      "Systems Engineering"
+    ],
+    "adjacentPathways": [
+      "AI & Machine Learning",
+      "Data Engineering",
+      "Higher Education & Academic Research",
+      "Aerospace & Defence Engineering",
+      "Infrastructure, Maintenance & Asset Engineering"
+    ],
+    "pathways": [
+      "Electrical & Electronic Engineering",
+      "Robotics & Automation Engineering",
+      "Systems Engineering",
+      "AI & Machine Learning",
+      "Data Engineering",
+      "Higher Education & Academic Research",
+      "Aerospace & Defence Engineering",
+      "Infrastructure, Maintenance & Asset Engineering"
+    ]
+  },
+  {
+    "id": "sub_manufacturing_engineering",
+    "title": "Manufacturing Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "primaryPathways": [
+      "Manufacturing & Production Engineering"
+    ],
+    "adjacentPathways": [
+      "Operations & Supply Chain",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research",
+      "Chemical & Process Engineering",
+      "Infrastructure, Maintenance & Asset Engineering",
+      "Mechanical Design & Development Engineering",
+      "Systems Engineering"
+    ],
+    "pathways": [
+      "Manufacturing & Production Engineering",
+      "Operations & Supply Chain",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research",
+      "Chemical & Process Engineering",
+      "Infrastructure, Maintenance & Asset Engineering",
+      "Mechanical Design & Development Engineering",
+      "Systems Engineering"
+    ]
+  },
+  {
+    "id": "sub_mechanical_engineering",
+    "title": "Mechanical Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "primaryPathways": [
+      "Aerospace & Defence Engineering",
+      "Manufacturing & Production Engineering",
+      "Mechanical Design & Development Engineering",
+      "Robotics & Automation Engineering"
+    ],
+    "adjacentPathways": [
+      "Product & Industrial Design",
+      "Higher Education & Academic Research",
+      "Chemical & Process Engineering",
+      "Infrastructure, Maintenance & Asset Engineering",
+      "Systems Engineering"
+    ],
+    "pathways": [
+      "Aerospace & Defence Engineering",
+      "Manufacturing & Production Engineering",
+      "Mechanical Design & Development Engineering",
+      "Robotics & Automation Engineering",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research",
+      "Chemical & Process Engineering",
+      "Infrastructure, Maintenance & Asset Engineering",
+      "Systems Engineering"
+    ]
+  },
+  {
+    "id": "sub_robotics_and_mechatronic_engineering",
+    "title": "Robotics and Mechatronic Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "primaryPathways": [
+      "Electrical & Electronic Engineering",
+      "Mechanical Design & Development Engineering",
+      "Robotics & Automation Engineering"
+    ],
+    "adjacentPathways": [
+      "AI & Machine Learning",
+      "Higher Education & Academic Research",
+      "Manufacturing & Production Engineering"
+    ],
+    "pathways": [
+      "Electrical & Electronic Engineering",
+      "Mechanical Design & Development Engineering",
+      "Robotics & Automation Engineering",
+      "AI & Machine Learning",
+      "Higher Education & Academic Research",
+      "Manufacturing & Production Engineering"
+    ]
+  },
+  {
+    "id": "sub_systems_engineering",
+    "title": "Systems Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "primaryPathways": [
+      "Aerospace & Defence Engineering",
+      "Infrastructure, Maintenance & Asset Engineering",
+      "Systems Engineering"
+    ],
+    "adjacentPathways": [
+      "Project, PMO & Transformation",
+      "Higher Education & Academic Research",
+      "Civil & Structural Engineering",
+      "Electrical & Electronic Engineering",
+      "Manufacturing & Production Engineering",
+      "Mechanical Design & Development Engineering",
+      "Robotics & Automation Engineering"
+    ],
+    "pathways": [
+      "Aerospace & Defence Engineering",
+      "Infrastructure, Maintenance & Asset Engineering",
+      "Systems Engineering",
+      "Project, PMO & Transformation",
+      "Higher Education & Academic Research",
+      "Civil & Structural Engineering",
+      "Electrical & Electronic Engineering",
+      "Manufacturing & Production Engineering",
+      "Mechanical Design & Development Engineering",
+      "Robotics & Automation Engineering"
+    ]
+  },
+  {
+    "id": "sub_architectural_technology",
+    "title": "Architectural Technology",
+    "careerWorldId": "cw_construction_the_built_environment",
+    "primaryPathways": [
+      "Architectural Technology & BIM",
+      "Sustainability & Building Performance"
+    ],
+    "adjacentPathways": [
+      "Architecture",
+      "Construction Project Delivery",
+      "Higher Education & Academic Research",
+      "Civil & Structural Engineering",
+      "Mechanical Design & Development Engineering"
+    ],
+    "pathways": [
+      "Architectural Technology & BIM",
+      "Sustainability & Building Performance",
+      "Architecture",
+      "Construction Project Delivery",
+      "Higher Education & Academic Research",
+      "Civil & Structural Engineering",
+      "Mechanical Design & Development Engineering"
+    ]
+  },
+  {
+    "id": "sub_architecture",
+    "title": "Architecture",
+    "careerWorldId": "cw_construction_the_built_environment",
+    "primaryPathways": [
+      "Architectural Technology & BIM",
+      "Architecture"
+    ],
+    "adjacentPathways": [
+      "Sustainability & Building Performance",
+      "Town Planning & Urban Development",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Architectural Technology & BIM",
+      "Architecture",
+      "Sustainability & Building Performance",
+      "Town Planning & Urban Development",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_architecture_and_urban_planning",
+    "title": "Architecture and Urban Planning",
+    "careerWorldId": "cw_construction_the_built_environment",
+    "primaryPathways": [
+      "Architecture",
+      "Town Planning & Urban Development"
+    ],
+    "adjacentPathways": [
+      "Sustainability & Building Performance",
+      "Higher Education & Academic Research",
+      "Civil & Structural Engineering",
+      "Environmental Policy & Impact Assessment",
+      "Policy & Public Sector Analysis"
+    ],
+    "pathways": [
+      "Architecture",
+      "Town Planning & Urban Development",
+      "Sustainability & Building Performance",
+      "Higher Education & Academic Research",
+      "Civil & Structural Engineering",
+      "Environmental Policy & Impact Assessment",
+      "Policy & Public Sector Analysis"
+    ]
+  },
+  {
+    "id": "sub_construction_management",
+    "title": "Construction Management",
+    "careerWorldId": "cw_construction_the_built_environment",
+    "primaryPathways": [
+      "Construction Project Delivery",
+      "Facilities & Property Management",
+      "Property Development & Asset Management",
+      "Surveying, Valuation & Cost Consultancy",
+      "Sustainability & Building Performance"
+    ],
+    "adjacentPathways": [
+      "Project, PMO & Transformation",
+      "Architectural Technology & BIM",
+      "Higher Education & Academic Research",
+      "Civil & Structural Engineering"
+    ],
+    "pathways": [
+      "Construction Project Delivery",
+      "Facilities & Property Management",
+      "Property Development & Asset Management",
+      "Surveying, Valuation & Cost Consultancy",
+      "Sustainability & Building Performance",
+      "Project, PMO & Transformation",
+      "Architectural Technology & BIM",
+      "Higher Education & Academic Research",
+      "Civil & Structural Engineering"
+    ]
+  },
+  {
+    "id": "sub_interior_architecture_and_design",
+    "title": "Interior Architecture and Design",
+    "careerWorldId": "cw_construction_the_built_environment",
+    "primaryPathways": [
+      "Architectural Technology & BIM",
+      "Architecture"
+    ],
+    "adjacentPathways": [
+      "Graphic Design & Visual Communication",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Architectural Technology & BIM",
+      "Architecture",
+      "Graphic Design & Visual Communication",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_landscape_architecture",
+    "title": "Landscape Architecture",
+    "careerWorldId": "cw_construction_the_built_environment",
+    "primaryPathways": [
+      "Town Planning & Urban Development"
+    ],
+    "adjacentPathways": [
+      "Architecture",
+      "Sustainability & Building Performance",
+      "Higher Education & Academic Research",
+      "Conservation & Land Management",
+      "Environmental Policy & Impact Assessment"
+    ],
+    "pathways": [
+      "Town Planning & Urban Development",
+      "Architecture",
+      "Sustainability & Building Performance",
+      "Higher Education & Academic Research",
+      "Conservation & Land Management",
+      "Environmental Policy & Impact Assessment"
+    ]
+  },
+  {
+    "id": "sub_urban_planning_and_development",
+    "title": "Urban Planning and Development",
+    "careerWorldId": "cw_construction_the_built_environment",
+    "primaryPathways": [
+      "Town Planning & Urban Development"
+    ],
+    "adjacentPathways": [
+      "Facilities & Property Management",
+      "Property Development & Asset Management",
+      "Surveying, Valuation & Cost Consultancy",
+      "Sustainability & Building Performance",
+      "Higher Education & Academic Research",
+      "Environmental Policy & Impact Assessment",
+      "Policy & Public Sector Analysis"
+    ],
+    "pathways": [
+      "Town Planning & Urban Development",
+      "Facilities & Property Management",
+      "Property Development & Asset Management",
+      "Surveying, Valuation & Cost Consultancy",
+      "Sustainability & Building Performance",
+      "Higher Education & Academic Research",
+      "Environmental Policy & Impact Assessment",
+      "Policy & Public Sector Analysis"
+    ]
+  },
+  {
+    "id": "sub_biochemistry",
+    "title": "Biochemistry",
+    "careerWorldId": "cw_science_research",
+    "primaryPathways": [
+      "Biomedical & Clinical Research",
+      "Laboratory Science",
+      "Pharmaceutical Industry & Drug Development",
+      "R&D Science",
+      "Scientific Data & Bioinformatics"
+    ],
+    "adjacentPathways": [
+      "Academic Medicine & Clinical Research",
+      "Clinical Pharmacy",
+      "Clinical Science & Laboratory Diagnostics",
+      "Higher Education & Academic Research",
+      "Clinical Trials & Translational Research",
+      "Forensic Science",
+      "Regulatory Affairs & Medicines Safety"
+    ],
+    "pathways": [
+      "Biomedical & Clinical Research",
+      "Laboratory Science",
+      "Pharmaceutical Industry & Drug Development",
+      "R&D Science",
+      "Scientific Data & Bioinformatics",
+      "Academic Medicine & Clinical Research",
+      "Clinical Pharmacy",
+      "Clinical Science & Laboratory Diagnostics",
+      "Higher Education & Academic Research",
+      "Clinical Trials & Translational Research",
+      "Forensic Science",
+      "Regulatory Affairs & Medicines Safety"
+    ]
+  },
+  {
+    "id": "sub_biology",
+    "title": "Biology",
+    "careerWorldId": "cw_science_research",
+    "primaryPathways": [
+      "Public Health & Health Improvement",
+      "Biomedical & Clinical Research",
+      "Clinical Trials & Translational Research",
+      "Forensic Science",
+      "Laboratory Science",
+      "R&D Science"
+    ],
+    "adjacentPathways": [
+      "Academic Medicine & Clinical Research",
+      "Clinical Research Nursing",
+      "Clinical Science & Laboratory Diagnostics",
+      "Dental Research & Academic Dentistry",
+      "Public Health Medicine, Epidemiology & Health Policy",
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "Conservation & Land Management",
+      "Environmental Science & Monitoring",
+      "Scientific Data & Bioinformatics",
+      "Veterinary & Animal Science",
+      "Sport & Exercise Science"
+    ],
+    "pathways": [
+      "Public Health & Health Improvement",
+      "Biomedical & Clinical Research",
+      "Clinical Trials & Translational Research",
+      "Forensic Science",
+      "Laboratory Science",
+      "R&D Science",
+      "Academic Medicine & Clinical Research",
+      "Clinical Research Nursing",
+      "Clinical Science & Laboratory Diagnostics",
+      "Dental Research & Academic Dentistry",
+      "Public Health Medicine, Epidemiology & Health Policy",
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "Conservation & Land Management",
+      "Environmental Science & Monitoring",
+      "Scientific Data & Bioinformatics",
+      "Veterinary & Animal Science",
+      "Sport & Exercise Science"
+    ]
+  },
+  {
+    "id": "sub_biomedical_science",
+    "title": "Biomedical Science",
+    "careerWorldId": "cw_science_research",
+    "primaryPathways": [
+      "Clinical Science & Laboratory Diagnostics",
+      "Biomedical & Clinical Research",
+      "Clinical Trials & Translational Research",
+      "Forensic Science",
+      "Laboratory Science"
+    ],
+    "adjacentPathways": [
+      "Academic Medicine & Clinical Research",
+      "Clinical Medicine / Doctor",
+      "Clinical Pharmacy",
+      "Clinical Research Nursing",
+      "Community Pharmacy",
+      "Dental Research & Academic Dentistry",
+      "Dentistry / Dentist",
+      "Diagnostic & Investigative Medicine",
+      "Diagnostics, Imaging & Clinical Support",
+      "Medicines Policy & Public Health Pharmacy",
+      "Nursing",
+      "Oral Health Policy & Dental Public Health",
+      "Public Health Medicine, Epidemiology & Health Policy",
+      "Specialist Dentistry",
+      "Surgery & Procedural Medicine",
+      "Higher Education & Academic Research",
+      "Pharmaceutical Industry & Drug Development",
+      "Regulatory Affairs & Medicines Safety",
+      "Scientific Data & Bioinformatics",
+      "Veterinary & Animal Science"
+    ],
+    "pathways": [
+      "Clinical Science & Laboratory Diagnostics",
+      "Biomedical & Clinical Research",
+      "Clinical Trials & Translational Research",
+      "Forensic Science",
+      "Laboratory Science",
+      "Academic Medicine & Clinical Research",
+      "Clinical Medicine / Doctor",
+      "Clinical Pharmacy",
+      "Clinical Research Nursing",
+      "Community Pharmacy",
+      "Dental Research & Academic Dentistry",
+      "Dentistry / Dentist",
+      "Diagnostic & Investigative Medicine",
+      "Diagnostics, Imaging & Clinical Support",
+      "Medicines Policy & Public Health Pharmacy",
+      "Nursing",
+      "Oral Health Policy & Dental Public Health",
+      "Public Health Medicine, Epidemiology & Health Policy",
+      "Specialist Dentistry",
+      "Surgery & Procedural Medicine",
+      "Higher Education & Academic Research",
+      "Pharmaceutical Industry & Drug Development",
+      "Regulatory Affairs & Medicines Safety",
+      "Scientific Data & Bioinformatics",
+      "Veterinary & Animal Science"
+    ]
+  },
+  {
+    "id": "sub_biotechnology",
+    "title": "Biotechnology",
+    "careerWorldId": "cw_science_research",
+    "primaryPathways": [
+      "Biomedical & Clinical Research",
+      "Materials & Chemical Analysis",
+      "R&D Science"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Chemical & Process Engineering",
+      "Clinical Trials & Translational Research",
+      "Laboratory Science",
+      "Pharmaceutical Industry & Drug Development",
+      "Scientific Data & Bioinformatics"
+    ],
+    "pathways": [
+      "Biomedical & Clinical Research",
+      "Materials & Chemical Analysis",
+      "R&D Science",
+      "Higher Education & Academic Research",
+      "Chemical & Process Engineering",
+      "Clinical Trials & Translational Research",
+      "Laboratory Science",
+      "Pharmaceutical Industry & Drug Development",
+      "Scientific Data & Bioinformatics"
+    ]
+  },
+  {
+    "id": "sub_chemistry",
+    "title": "Chemistry",
+    "careerWorldId": "cw_science_research",
+    "primaryPathways": [
+      "Forensic Science",
+      "Laboratory Science",
+      "Materials & Chemical Analysis",
+      "R&D Science"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "Chemical & Process Engineering",
+      "Manufacturing & Production Engineering",
+      "Environmental Science & Monitoring",
+      "Pharmaceutical Industry & Drug Development"
+    ],
+    "pathways": [
+      "Forensic Science",
+      "Laboratory Science",
+      "Materials & Chemical Analysis",
+      "R&D Science",
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "Chemical & Process Engineering",
+      "Manufacturing & Production Engineering",
+      "Environmental Science & Monitoring",
+      "Pharmaceutical Industry & Drug Development"
+    ]
+  },
+  {
+    "id": "sub_natural_sciences",
+    "title": "Natural Sciences",
+    "careerWorldId": "cw_science_research",
+    "primaryPathways": [
+      "Laboratory Science",
+      "R&D Science"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Environmental Science & Monitoring",
+      "Biomedical & Clinical Research",
+      "Materials & Chemical Analysis",
+      "Scientific Data & Bioinformatics"
+    ],
+    "pathways": [
+      "Laboratory Science",
+      "R&D Science",
+      "Higher Education & Academic Research",
+      "Environmental Science & Monitoring",
+      "Biomedical & Clinical Research",
+      "Materials & Chemical Analysis",
+      "Scientific Data & Bioinformatics"
+    ]
+  },
+  {
+    "id": "sub_neuroscience",
+    "title": "Neuroscience",
+    "careerWorldId": "cw_science_research",
+    "primaryPathways": [
+      "Biomedical & Clinical Research",
+      "R&D Science"
+    ],
+    "adjacentPathways": [
+      "Academic Medicine & Clinical Research",
+      "Higher Education & Academic Research",
+      "Clinical Psychology & Mental Health Support",
+      "Clinical Trials & Translational Research",
+      "Scientific Data & Bioinformatics"
+    ],
+    "pathways": [
+      "Biomedical & Clinical Research",
+      "R&D Science",
+      "Academic Medicine & Clinical Research",
+      "Higher Education & Academic Research",
+      "Clinical Psychology & Mental Health Support",
+      "Clinical Trials & Translational Research",
+      "Scientific Data & Bioinformatics"
+    ]
+  },
+  {
+    "id": "sub_pharmacology",
+    "title": "Pharmacology",
+    "careerWorldId": "cw_science_research",
+    "primaryPathways": [
+      "Biomedical & Clinical Research",
+      "Clinical Trials & Translational Research",
+      "Laboratory Science",
+      "Pharmaceutical Industry & Drug Development",
+      "R&D Science",
+      "Regulatory Affairs & Medicines Safety"
+    ],
+    "adjacentPathways": [
+      "Clinical Pharmacy",
+      "Clinical Science & Laboratory Diagnostics",
+      "Community Pharmacy",
+      "Medicines Policy & Public Health Pharmacy",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Biomedical & Clinical Research",
+      "Clinical Trials & Translational Research",
+      "Laboratory Science",
+      "Pharmaceutical Industry & Drug Development",
+      "R&D Science",
+      "Regulatory Affairs & Medicines Safety",
+      "Clinical Pharmacy",
+      "Clinical Science & Laboratory Diagnostics",
+      "Community Pharmacy",
+      "Medicines Policy & Public Health Pharmacy",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_physics",
+    "title": "Physics",
+    "careerWorldId": "cw_science_research",
+    "primaryPathways": [
+      "R&D Science"
+    ],
+    "adjacentPathways": [
+      "AI & Machine Learning",
+      "Data Science & Advanced Modelling",
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "Aerospace & Defence Engineering",
+      "Chemical & Process Engineering",
+      "Electrical & Electronic Engineering",
+      "Systems Engineering",
+      "Materials & Chemical Analysis",
+      "Scientific Data & Bioinformatics"
+    ],
+    "pathways": [
+      "R&D Science",
+      "AI & Machine Learning",
+      "Data Science & Advanced Modelling",
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "Aerospace & Defence Engineering",
+      "Chemical & Process Engineering",
+      "Electrical & Electronic Engineering",
+      "Systems Engineering",
+      "Materials & Chemical Analysis",
+      "Scientific Data & Bioinformatics"
+    ]
+  },
+  {
+    "id": "sub_animal_science",
+    "title": "Animal Science",
+    "careerWorldId": "cw_animals_land_the_outdoors",
+    "primaryPathways": [
+      "Veterinary & Animal Science"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Conservation & Land Management",
+      "Agriculture, Forestry & Land Management"
+    ],
+    "pathways": [
+      "Veterinary & Animal Science",
+      "Higher Education & Academic Research",
+      "Conservation & Land Management",
+      "Agriculture, Forestry & Land Management"
+    ]
+  },
+  {
+    "id": "sub_dentistry",
+    "title": "Dentistry",
+    "careerWorldId": "cw_healthcare_medicine",
+    "primaryPathways": [
+      "Dental Research & Academic Dentistry",
+      "Dentistry / Dentist",
+      "Oral Health Policy & Dental Public Health",
+      "Specialist Dentistry"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Dental Research & Academic Dentistry",
+      "Dentistry / Dentist",
+      "Oral Health Policy & Dental Public Health",
+      "Specialist Dentistry",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_diagnostic_radiography",
+    "title": "Diagnostic Radiography",
+    "careerWorldId": "cw_healthcare_medicine",
+    "primaryPathways": [
+      "Clinical Science & Laboratory Diagnostics",
+      "Diagnostic & Investigative Medicine",
+      "Diagnostics, Imaging & Clinical Support"
+    ],
+    "adjacentPathways": [
+      "Healthcare Management & Service Improvement",
+      "Nursing",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Clinical Science & Laboratory Diagnostics",
+      "Diagnostic & Investigative Medicine",
+      "Diagnostics, Imaging & Clinical Support",
+      "Healthcare Management & Service Improvement",
+      "Nursing",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_medicine",
+    "title": "Medicine",
+    "careerWorldId": "cw_healthcare_medicine",
+    "primaryPathways": [
+      "Academic Medicine & Clinical Research",
+      "Acute, Emergency & Critical Care",
+      "Clinical Medicine / Doctor",
+      "Diagnostic & Investigative Medicine",
+      "Mental Health & Behavioural Medicine",
+      "Public Health Medicine, Epidemiology & Health Policy",
+      "Surgery & Procedural Medicine"
+    ],
+    "adjacentPathways": [
+      "Diagnostics, Imaging & Clinical Support",
+      "Healthcare Management & Service Improvement",
+      "Higher Education & Academic Research",
+      "Clinical Trials & Translational Research"
+    ],
+    "pathways": [
+      "Academic Medicine & Clinical Research",
+      "Acute, Emergency & Critical Care",
+      "Clinical Medicine / Doctor",
+      "Diagnostic & Investigative Medicine",
+      "Mental Health & Behavioural Medicine",
+      "Public Health Medicine, Epidemiology & Health Policy",
+      "Surgery & Procedural Medicine",
+      "Diagnostics, Imaging & Clinical Support",
+      "Healthcare Management & Service Improvement",
+      "Higher Education & Academic Research",
+      "Clinical Trials & Translational Research"
+    ]
+  },
+  {
+    "id": "sub_midwifery",
+    "title": "Midwifery",
+    "careerWorldId": "cw_healthcare_medicine",
+    "primaryPathways": [
+      "Midwifery"
+    ],
+    "adjacentPathways": [
+      "Nursing",
+      "Public Health Nursing & Health Visiting",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Midwifery",
+      "Nursing",
+      "Public Health Nursing & Health Visiting",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_nursing",
+    "title": "Nursing",
+    "careerWorldId": "cw_healthcare_medicine",
+    "primaryPathways": [
+      "Clinical Research Nursing",
+      "Mental Health & Behavioural Medicine",
+      "Nurse Education & Leadership",
+      "Nursing",
+      "Public Health Nursing & Health Visiting"
+    ],
+    "adjacentPathways": [
+      "Acute, Emergency & Critical Care",
+      "Diagnostics, Imaging & Clinical Support",
+      "Healthcare Management & Service Improvement",
+      "Midwifery",
+      "Paramedic Practice & Emergency Care",
+      "Public Health & Health Improvement",
+      "Rehabilitation & Functional Independence",
+      "Higher Education & Academic Research",
+      "Clinical Trials & Translational Research",
+      "Emergency Planning & Ambulance Service Leadership"
+    ],
+    "pathways": [
+      "Clinical Research Nursing",
+      "Mental Health & Behavioural Medicine",
+      "Nurse Education & Leadership",
+      "Nursing",
+      "Public Health Nursing & Health Visiting",
+      "Acute, Emergency & Critical Care",
+      "Diagnostics, Imaging & Clinical Support",
+      "Healthcare Management & Service Improvement",
+      "Midwifery",
+      "Paramedic Practice & Emergency Care",
+      "Public Health & Health Improvement",
+      "Rehabilitation & Functional Independence",
+      "Higher Education & Academic Research",
+      "Clinical Trials & Translational Research",
+      "Emergency Planning & Ambulance Service Leadership"
+    ]
+  },
+  {
+    "id": "sub_occupational_therapy",
+    "title": "Occupational Therapy",
+    "careerWorldId": "cw_healthcare_medicine",
+    "primaryPathways": [
+      "Rehabilitation & Functional Independence"
+    ],
+    "adjacentPathways": [
+      "Healthcare Management & Service Improvement",
+      "Higher Education & Academic Research",
+      "SEND & Inclusion Support"
+    ],
+    "pathways": [
+      "Rehabilitation & Functional Independence",
+      "Healthcare Management & Service Improvement",
+      "Higher Education & Academic Research",
+      "SEND & Inclusion Support"
+    ]
+  },
+  {
+    "id": "sub_optometry",
+    "title": "Optometry",
+    "careerWorldId": "cw_healthcare_medicine",
+    "primaryPathways": [
+      "Diagnostic & Investigative Medicine"
+    ],
+    "adjacentPathways": [
+      "Clinical Science & Laboratory Diagnostics",
+      "Diagnostics, Imaging & Clinical Support",
+      "Healthcare Management & Service Improvement",
+      "Rehabilitation & Functional Independence",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Diagnostic & Investigative Medicine",
+      "Clinical Science & Laboratory Diagnostics",
+      "Diagnostics, Imaging & Clinical Support",
+      "Healthcare Management & Service Improvement",
+      "Rehabilitation & Functional Independence",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_paramedic_science",
+    "title": "Paramedic Science",
+    "careerWorldId": "cw_healthcare_medicine",
+    "primaryPathways": [
+      "Paramedic Practice & Emergency Care",
+      "Emergency Planning & Ambulance Service Leadership"
+    ],
+    "adjacentPathways": [
+      "Acute, Emergency & Critical Care",
+      "Diagnostics, Imaging & Clinical Support",
+      "Healthcare Management & Service Improvement",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Paramedic Practice & Emergency Care",
+      "Emergency Planning & Ambulance Service Leadership",
+      "Acute, Emergency & Critical Care",
+      "Diagnostics, Imaging & Clinical Support",
+      "Healthcare Management & Service Improvement",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_pharmacy",
+    "title": "Pharmacy",
+    "careerWorldId": "cw_healthcare_medicine",
+    "primaryPathways": [
+      "Clinical Pharmacy",
+      "Community Pharmacy",
+      "Medicines Policy & Public Health Pharmacy",
+      "Pharmaceutical Industry & Drug Development",
+      "Regulatory Affairs & Medicines Safety"
+    ],
+    "adjacentPathways": [
+      "Healthcare Management & Service Improvement",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Clinical Pharmacy",
+      "Community Pharmacy",
+      "Medicines Policy & Public Health Pharmacy",
+      "Pharmaceutical Industry & Drug Development",
+      "Regulatory Affairs & Medicines Safety",
+      "Healthcare Management & Service Improvement",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_physiotherapy",
+    "title": "Physiotherapy",
+    "careerWorldId": "cw_healthcare_medicine",
+    "primaryPathways": [
+      "Rehabilitation & Functional Independence"
+    ],
+    "adjacentPathways": [
+      "Diagnostic & Investigative Medicine",
+      "Diagnostics, Imaging & Clinical Support",
+      "Healthcare Management & Service Improvement",
+      "Higher Education & Academic Research",
+      "Biomedical & Clinical Research",
+      "Sport & Exercise Science"
+    ],
+    "pathways": [
+      "Rehabilitation & Functional Independence",
+      "Diagnostic & Investigative Medicine",
+      "Diagnostics, Imaging & Clinical Support",
+      "Healthcare Management & Service Improvement",
+      "Higher Education & Academic Research",
+      "Biomedical & Clinical Research",
+      "Sport & Exercise Science"
+    ]
+  },
+  {
+    "id": "sub_social_work",
+    "title": "Social Work",
+    "careerWorldId": "cw_care_support_work",
+    "primaryPathways": [
+      "Social Work & Safeguarding"
+    ],
+    "adjacentPathways": [
+      "Early Years & Family Support",
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "SEND & Inclusion Support",
+      "Teaching Assistant & Learning Support",
+      "Justice, Rehabilitation & Behaviour Change",
+      "Policy & Public Sector Analysis",
+      "Clinical Psychology & Mental Health Support",
+      "Counselling, Psychotherapy & Therapeutic Practice"
+    ],
+    "pathways": [
+      "Social Work & Safeguarding",
+      "Early Years & Family Support",
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "SEND & Inclusion Support",
+      "Teaching Assistant & Learning Support",
+      "Justice, Rehabilitation & Behaviour Change",
+      "Policy & Public Sector Analysis",
+      "Clinical Psychology & Mental Health Support",
+      "Counselling, Psychotherapy & Therapeutic Practice"
+    ]
+  },
+  {
+    "id": "sub_sport_and_exercise_science",
+    "title": "Sport and Exercise Science",
+    "careerWorldId": "cw_healthcare_medicine",
+    "primaryPathways": [
+      "Public Health & Health Improvement",
+      "Rehabilitation & Functional Independence",
+      "Sport & Exercise Science"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Biomedical & Clinical Research"
+    ],
+    "pathways": [
+      "Public Health & Health Improvement",
+      "Rehabilitation & Functional Independence",
+      "Sport & Exercise Science",
+      "Higher Education & Academic Research",
+      "Biomedical & Clinical Research"
+    ]
+  },
+  {
+    "id": "sub_veterinary_medicine",
+    "title": "Veterinary Medicine",
+    "careerWorldId": "cw_animals_land_the_outdoors",
+    "primaryPathways": [
+      "Veterinary & Animal Science"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Veterinary & Animal Science",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_behavioural_science",
+    "title": "Behavioural Science",
+    "careerWorldId": "cw_business_management",
+    "primaryPathways": [
+      "UX Research & Behavioural Insight",
+      "People Analytics & Workplace Behaviour",
+      "Occupational & Organisational Psychology"
+    ],
+    "adjacentPathways": [
+      "Customer & Market Insight",
+      "HR, People & Organisations",
+      "Higher Education & Academic Research",
+      "Teaching Assistant & Learning Support",
+      "Market Research & Audience Insight"
+    ],
+    "pathways": [
+      "UX Research & Behavioural Insight",
+      "People Analytics & Workplace Behaviour",
+      "Occupational & Organisational Psychology",
+      "Customer & Market Insight",
+      "HR, People & Organisations",
+      "Higher Education & Academic Research",
+      "Teaching Assistant & Learning Support",
+      "Market Research & Audience Insight"
+    ]
+  },
+  {
+    "id": "sub_cognitive_science",
+    "title": "Cognitive Science",
+    "careerWorldId": "cw_technology_digital",
+    "primaryPathways": [
+      "UX Research & Behavioural Insight",
+      "People Analytics & Workplace Behaviour"
+    ],
+    "adjacentPathways": [
+      "AI & Machine Learning",
+      "Software Engineering",
+      "Higher Education & Academic Research",
+      "Teaching Assistant & Learning Support"
+    ],
+    "pathways": [
+      "UX Research & Behavioural Insight",
+      "People Analytics & Workplace Behaviour",
+      "AI & Machine Learning",
+      "Software Engineering",
+      "Higher Education & Academic Research",
+      "Teaching Assistant & Learning Support"
+    ]
+  },
+  {
+    "id": "sub_counselling_and_psychotherapy",
+    "title": "Counselling and Psychotherapy",
+    "careerWorldId": "cw_psychology_human_behaviour",
+    "primaryPathways": [
+      "Clinical Psychology & Mental Health Support",
+      "Counselling, Psychotherapy & Therapeutic Practice"
+    ],
+    "adjacentPathways": [
+      "Mental Health & Behavioural Medicine",
+      "Higher Education & Academic Research",
+      "Teaching Assistant & Learning Support",
+      "Occupational & Organisational Psychology",
+      "Social Work & Safeguarding"
+    ],
+    "pathways": [
+      "Clinical Psychology & Mental Health Support",
+      "Counselling, Psychotherapy & Therapeutic Practice",
+      "Mental Health & Behavioural Medicine",
+      "Higher Education & Academic Research",
+      "Teaching Assistant & Learning Support",
+      "Occupational & Organisational Psychology",
+      "Social Work & Safeguarding"
+    ]
+  },
+  {
+    "id": "sub_forensic_psychology",
+    "title": "Forensic Psychology",
+    "careerWorldId": "cw_law_justice_public_services",
+    "primaryPathways": [
+      "Justice, Rehabilitation & Behaviour Change",
+      "Clinical Psychology & Mental Health Support"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Intelligence, Public Service & Security Analysis",
+      "Investigations & Financial Crime",
+      "Legal Support & Paralegal Work",
+      "Forensic Science",
+      "Social Work & Safeguarding"
+    ],
+    "pathways": [
+      "Justice, Rehabilitation & Behaviour Change",
+      "Clinical Psychology & Mental Health Support",
+      "Higher Education & Academic Research",
+      "Intelligence, Public Service & Security Analysis",
+      "Investigations & Financial Crime",
+      "Legal Support & Paralegal Work",
+      "Forensic Science",
+      "Social Work & Safeguarding"
+    ]
+  },
+  {
+    "id": "sub_psychology",
+    "title": "Psychology",
+    "careerWorldId": "cw_psychology_human_behaviour",
+    "primaryPathways": [
+      "UX Research & Behavioural Insight",
+      "People Analytics & Workplace Behaviour",
+      "Clinical Psychology & Mental Health Support",
+      "Counselling, Psychotherapy & Therapeutic Practice",
+      "Occupational & Organisational Psychology"
+    ],
+    "adjacentPathways": [
+      "Mental Health & Behavioural Medicine",
+      "Business Intelligence & Reporting",
+      "Customer & Market Insight",
+      "HR, People & Organisations",
+      "Early Years & Family Support",
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "Primary Teaching & Classroom Practice",
+      "SEND & Inclusion Support",
+      "Secondary Teaching",
+      "Teaching Assistant & Learning Support",
+      "Training, Learning & Development",
+      "Social Research & Cultural Analysis",
+      "Justice, Rehabilitation & Behaviour Change",
+      "Brand & Marketing Strategy",
+      "Market Research & Audience Insight",
+      "Social Work & Safeguarding"
+    ],
+    "pathways": [
+      "UX Research & Behavioural Insight",
+      "People Analytics & Workplace Behaviour",
+      "Clinical Psychology & Mental Health Support",
+      "Counselling, Psychotherapy & Therapeutic Practice",
+      "Occupational & Organisational Psychology",
+      "Mental Health & Behavioural Medicine",
+      "Business Intelligence & Reporting",
+      "Customer & Market Insight",
+      "HR, People & Organisations",
+      "Early Years & Family Support",
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "Primary Teaching & Classroom Practice",
+      "SEND & Inclusion Support",
+      "Secondary Teaching",
+      "Teaching Assistant & Learning Support",
+      "Training, Learning & Development",
+      "Social Research & Cultural Analysis",
+      "Justice, Rehabilitation & Behaviour Change",
+      "Brand & Marketing Strategy",
+      "Market Research & Audience Insight",
+      "Social Work & Safeguarding"
+    ]
+  },
+  {
+    "id": "sub_psychology_with_neuroscience",
+    "title": "Psychology with Neuroscience",
+    "careerWorldId": "cw_psychology_human_behaviour",
+    "primaryPathways": [
+      "Clinical Psychology & Mental Health Support"
+    ],
+    "adjacentPathways": [
+      "Mental Health & Behavioural Medicine",
+      "Higher Education & Academic Research",
+      "Teaching Assistant & Learning Support",
+      "Counselling, Psychotherapy & Therapeutic Practice",
+      "Biomedical & Clinical Research",
+      "R&D Science"
+    ],
+    "pathways": [
+      "Clinical Psychology & Mental Health Support",
+      "Mental Health & Behavioural Medicine",
+      "Higher Education & Academic Research",
+      "Teaching Assistant & Learning Support",
+      "Counselling, Psychotherapy & Therapeutic Practice",
+      "Biomedical & Clinical Research",
+      "R&D Science"
+    ]
+  },
+  {
+    "id": "sub_early_years_education_and_care",
+    "title": "Early Years Education and Care",
+    "careerWorldId": "cw_education_early_years",
+    "primaryPathways": [
+      "Early Years & Family Support",
+      "SEND & Inclusion Support",
+      "Teaching Assistant & Learning Support"
+    ],
+    "adjacentPathways": [
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "Primary Teaching & Classroom Practice"
+    ],
+    "pathways": [
+      "Early Years & Family Support",
+      "SEND & Inclusion Support",
+      "Teaching Assistant & Learning Support",
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "Primary Teaching & Classroom Practice"
+    ]
+  },
+  {
+    "id": "sub_education_studies",
+    "title": "Education Studies",
+    "careerWorldId": "cw_education_early_years",
+    "primaryPathways": [
+      "Early Years & Family Support",
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "Learning Design & Educational Technology",
+      "Primary Teaching & Classroom Practice",
+      "SEND & Inclusion Support",
+      "Secondary Teaching",
+      "Teaching Assistant & Learning Support",
+      "Training, Learning & Development"
+    ],
+    "adjacentPathways": [],
+    "pathways": [
+      "Early Years & Family Support",
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "Learning Design & Educational Technology",
+      "Primary Teaching & Classroom Practice",
+      "SEND & Inclusion Support",
+      "Secondary Teaching",
+      "Teaching Assistant & Learning Support",
+      "Training, Learning & Development",
+      "Nurse Education & Leadership"
+    ]
+  },
+  {
+    "id": "sub_primary_education_qts",
+    "title": "Primary Education (QTS)",
+    "careerWorldId": "cw_education_early_years",
+    "primaryPathways": [
+      "Primary Teaching & Classroom Practice",
+      "SEND & Inclusion Support"
+    ],
+    "adjacentPathways": [
+      "Early Years & Family Support",
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "Learning Design & Educational Technology",
+      "Secondary Teaching",
+      "Teaching Assistant & Learning Support"
+    ],
+    "pathways": [
+      "Primary Teaching & Classroom Practice",
+      "SEND & Inclusion Support",
+      "Early Years & Family Support",
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "Learning Design & Educational Technology",
+      "Secondary Teaching",
+      "Teaching Assistant & Learning Support"
+    ]
+  },
+  {
+    "id": "sub_secondary_education_qts",
+    "title": "Secondary Education (QTS)",
+    "careerWorldId": "cw_education_early_years",
+    "primaryPathways": [
+      "SEND & Inclusion Support",
+      "Secondary Teaching"
+    ],
+    "adjacentPathways": [
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "Learning Design & Educational Technology"
+    ],
+    "pathways": [
+      "SEND & Inclusion Support",
+      "Secondary Teaching",
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "Learning Design & Educational Technology"
+    ]
+  },
+  {
+    "id": "sub_sports_coaching_and_development",
+    "title": "Sports Coaching and Development",
+    "careerWorldId": "cw_education_early_years",
+    "primaryPathways": [],
+    "adjacentPathways": [
+      "Public Health & Health Improvement",
+      "Rehabilitation & Functional Independence",
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "Training, Learning & Development",
+      "Sport & Exercise Science"
+    ],
+    "pathways": [
+      "Public Health & Health Improvement",
+      "Rehabilitation & Functional Independence",
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "Training, Learning & Development",
+      "Sport & Exercise Science"
+    ]
+  },
+  {
+    "id": "sub_criminology",
+    "title": "Criminology",
+    "careerWorldId": "cw_law_justice_public_services",
+    "primaryPathways": [
+      "Investigations & Financial Crime",
+      "Justice, Rehabilitation & Behaviour Change",
+      "Legal Support & Paralegal Work"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Governance, Risk & Compliance",
+      "Intelligence, Public Service & Security Analysis",
+      "Solicitor Practice",
+      "Forensic Science",
+      "Social Work & Safeguarding"
+    ],
+    "pathways": [
+      "Investigations & Financial Crime",
+      "Justice, Rehabilitation & Behaviour Change",
+      "Legal Support & Paralegal Work",
+      "Higher Education & Academic Research",
+      "Governance, Risk & Compliance",
+      "Intelligence, Public Service & Security Analysis",
+      "Solicitor Practice",
+      "Forensic Science",
+      "Social Work & Safeguarding"
+    ]
+  },
+  {
+    "id": "sub_law",
+    "title": "Law",
+    "careerWorldId": "cw_law_justice_public_services",
+    "primaryPathways": [
+      "Barrister & Advocacy",
+      "Governance, Risk & Compliance",
+      "Legal Support & Paralegal Work",
+      "Solicitor Practice"
+    ],
+    "adjacentPathways": [
+      "Risk, Compliance & Controls",
+      "Higher Education & Academic Research",
+      "Investigations & Financial Crime",
+      "Policy & Public Sector Analysis",
+      "Public Affairs & Advocacy",
+      "Regulatory Affairs & Medicines Safety"
+    ],
+    "pathways": [
+      "Barrister & Advocacy",
+      "Governance, Risk & Compliance",
+      "Legal Support & Paralegal Work",
+      "Solicitor Practice",
+      "Risk, Compliance & Controls",
+      "Higher Education & Academic Research",
+      "Investigations & Financial Crime",
+      "Policy & Public Sector Analysis",
+      "Public Affairs & Advocacy",
+      "Regulatory Affairs & Medicines Safety"
+    ]
+  },
+  {
+    "id": "sub_law_with_criminology",
+    "title": "Law with Criminology",
+    "careerWorldId": "cw_law_justice_public_services",
+    "primaryPathways": [
+      "Barrister & Advocacy",
+      "Investigations & Financial Crime",
+      "Legal Support & Paralegal Work",
+      "Solicitor Practice"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Governance, Risk & Compliance",
+      "Justice, Rehabilitation & Behaviour Change"
+    ],
+    "pathways": [
+      "Barrister & Advocacy",
+      "Investigations & Financial Crime",
+      "Legal Support & Paralegal Work",
+      "Solicitor Practice",
+      "Higher Education & Academic Research",
+      "Governance, Risk & Compliance",
+      "Justice, Rehabilitation & Behaviour Change"
+    ]
+  },
+  {
+    "id": "sub_philosophy_politics_and_economics_ppe",
+    "title": "Philosophy, Politics and Economics (PPE)",
+    "careerWorldId": "cw_law_justice_public_services",
+    "primaryPathways": [
+      "Governance, Risk & Compliance",
+      "Policy & Public Sector Analysis",
+      "Public Affairs & Advocacy"
+    ],
+    "adjacentPathways": [
+      "Investment Banking & Corporate Finance",
+      "Higher Education & Academic Research",
+      "International Relations, Policy & Geopolitical Analysis"
+    ],
+    "pathways": [
+      "Governance, Risk & Compliance",
+      "Policy & Public Sector Analysis",
+      "Public Affairs & Advocacy",
+      "Investment Banking & Corporate Finance",
+      "Higher Education & Academic Research",
+      "International Relations, Policy & Geopolitical Analysis",
+      "Barrister & Advocacy"
+    ]
+  },
+  {
+    "id": "sub_politics",
+    "title": "Politics",
+    "careerWorldId": "cw_law_justice_public_services",
+    "primaryPathways": [
+      "International Relations, Policy & Geopolitical Analysis",
+      "Intelligence, Public Service & Security Analysis",
+      "Policy & Public Sector Analysis",
+      "Public Affairs & Advocacy"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Environmental Policy & Impact Assessment",
+      "International Development & NGO Programmes",
+      "Social Research & Cultural Analysis",
+      "Governance, Risk & Compliance",
+      "PR & Communications"
+    ],
+    "pathways": [
+      "International Relations, Policy & Geopolitical Analysis",
+      "Intelligence, Public Service & Security Analysis",
+      "Policy & Public Sector Analysis",
+      "Public Affairs & Advocacy",
+      "Higher Education & Academic Research",
+      "Environmental Policy & Impact Assessment",
+      "International Development & NGO Programmes",
+      "Social Research & Cultural Analysis",
+      "Barrister & Advocacy",
+      "Governance, Risk & Compliance",
+      "Solicitor Practice",
+      "PR & Communications"
+    ]
+  },
+  {
+    "id": "sub_social_and_public_policy",
+    "title": "Social and Public Policy",
+    "careerWorldId": "cw_law_justice_public_services",
+    "primaryPathways": [
+      "Public Health & Health Improvement",
+      "Social Research & Cultural Analysis",
+      "Policy & Public Sector Analysis",
+      "Public Affairs & Advocacy"
+    ],
+    "adjacentPathways": [
+      "Healthcare Management & Service Improvement",
+      "Medicines Policy & Public Health Pharmacy",
+      "Oral Health Policy & Dental Public Health",
+      "Public Health Medicine, Epidemiology & Health Policy",
+      "Public Health Nursing & Health Visiting",
+      "Town Planning & Urban Development",
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "Environmental Policy & Impact Assessment",
+      "International Development & NGO Programmes",
+      "International Relations, Policy & Geopolitical Analysis",
+      "Governance, Risk & Compliance",
+      "Social Work & Safeguarding",
+      "Emergency Planning & Ambulance Service Leadership"
+    ],
+    "pathways": [
+      "Public Health & Health Improvement",
+      "Social Research & Cultural Analysis",
+      "Policy & Public Sector Analysis",
+      "Public Affairs & Advocacy",
+      "Healthcare Management & Service Improvement",
+      "Medicines Policy & Public Health Pharmacy",
+      "Oral Health Policy & Dental Public Health",
+      "Public Health Medicine, Epidemiology & Health Policy",
+      "Public Health Nursing & Health Visiting",
+      "Town Planning & Urban Development",
+      "Education Support, Outreach & Student Services",
+      "Higher Education & Academic Research",
+      "Environmental Policy & Impact Assessment",
+      "International Development & NGO Programmes",
+      "International Relations, Policy & Geopolitical Analysis",
+      "Governance, Risk & Compliance",
+      "Social Work & Safeguarding",
+      "Emergency Planning & Ambulance Service Leadership"
+    ]
+  },
+  {
+    "id": "sub_business_analytics",
+    "title": "Business Analytics",
+    "careerWorldId": "cw_business_management",
+    "primaryPathways": [
+      "Business Intelligence & Reporting",
+      "Core Data Analysis & Business Insight",
+      "Customer & Market Insight",
+      "Product, Growth & Experimentation Analytics",
+      "Business Analysis",
+      "Consulting & Strategic Improvement",
+      "Operations & Supply Chain",
+      "People Analytics & Workplace Behaviour",
+      "Market Research & Audience Insight"
+    ],
+    "adjacentPathways": [
+      "Data Engineering",
+      "Data Science & Advanced Modelling",
+      "Financial Analysis & FP&A",
+      "Fintech & Digital Finance",
+      "Risk & Quantitative Analysis",
+      "Generalist Business Programmes",
+      "Project, PMO & Transformation",
+      "Higher Education & Academic Research",
+      "Product Growth & Business Development in Start-ups",
+      "Performance Marketing & Growth"
+    ],
+    "pathways": [
+      "Business Intelligence & Reporting",
+      "Core Data Analysis & Business Insight",
+      "Customer & Market Insight",
+      "Product, Growth & Experimentation Analytics",
+      "Business Analysis",
+      "Consulting & Strategic Improvement",
+      "Operations & Supply Chain",
+      "People Analytics & Workplace Behaviour",
+      "Market Research & Audience Insight",
+      "Data Engineering",
+      "Data Science & Advanced Modelling",
+      "Financial Analysis & FP&A",
+      "Fintech & Digital Finance",
+      "Risk & Quantitative Analysis",
+      "Generalist Business Programmes",
+      "Project, PMO & Transformation",
+      "Higher Education & Academic Research",
+      "Product Growth & Business Development in Start-ups",
+      "Performance Marketing & Growth"
+    ]
+  },
+  {
+    "id": "sub_business_management",
+    "title": "Business Management",
+    "careerWorldId": "cw_business_management",
+    "primaryPathways": [
+      "Business Intelligence & Reporting",
+      "Business Analysis",
+      "Business Development & Commercial Partnerships",
+      "Consulting & Strategic Improvement",
+      "Generalist Business Programmes",
+      "HR, People & Organisations",
+      "Operations & Supply Chain",
+      "Project, PMO & Transformation",
+      "Venture Building & Founder"
+    ],
+    "adjacentPathways": [
+      "Healthcare Management & Service Improvement",
+      "Facilities & Property Management",
+      "Banking Operations & Middle Office",
+      "Governance, Risk & Compliance",
+      "Customer & Market Insight",
+      "Product, Growth & Experimentation Analytics",
+      "Accounting, Audit & Assurance",
+      "Asset & Wealth Management",
+      "Commercial & Corporate Banking",
+      "Equity Research & Investment Research",
+      "Financial Analysis & FP&A",
+      "Fintech & Digital Finance",
+      "Investment Banking & Corporate Finance",
+      "Private Equity & Venture Capital",
+      "Real Estate Investment & Finance",
+      "Risk, Compliance & Controls",
+      "Sustainable Finance & Impact Investing",
+      "Treasury & Liquidity",
+      "People Analytics & Workplace Behaviour",
+      "Construction Project Delivery",
+      "Property Development & Asset Management",
+      "Surveying, Valuation & Cost Consultancy",
+      "Higher Education & Academic Research",
+      "Training, Learning & Development",
+      "Manufacturing & Production Engineering",
+      "Product Growth & Business Development in Start-ups",
+      "Start-up Operations",
+      "Circular Economy & Sustainable Supply Chains",
+      "Net Zero, Climate & Sustainability Strategy",
+      "Sustainability & ESG Advisory",
+      "Brand & Marketing Strategy",
+      "Performance Marketing & Growth",
+      "Events & Experience Management",
+      "Food & Beverage Operations",
+      "Hospitality & Hotel Management",
+      "Real Estate Agency & Brokerage",
+      "Travel & Tourism"
+    ],
+    "pathways": [
+      "Healthcare Management & Service Improvement",
+      "Business Intelligence & Reporting",
+      "Banking Operations & Middle Office",
+      "Business Analysis",
+      "Business Development & Commercial Partnerships",
+      "Consulting & Strategic Improvement",
+      "Generalist Business Programmes",
+      "HR, People & Organisations",
+      "Operations & Supply Chain",
+      "Project, PMO & Transformation",
+      "Facilities & Property Management",
+      "Venture Building & Founder",
+      "Governance, Risk & Compliance",
+      "Nurse Education & Leadership",
+      "Customer & Market Insight",
+      "Product, Growth & Experimentation Analytics",
+      "Accounting, Audit & Assurance",
+      "Asset & Wealth Management",
+      "Commercial & Corporate Banking",
+      "Equity Research & Investment Research",
+      "Financial Analysis & FP&A",
+      "Fintech & Digital Finance",
+      "Investment Banking & Corporate Finance",
+      "Private Equity & Venture Capital",
+      "Real Estate Investment & Finance",
+      "Risk, Compliance & Controls",
+      "Sustainable Finance & Impact Investing",
+      "Treasury & Liquidity",
+      "People Analytics & Workplace Behaviour",
+      "Construction Project Delivery",
+      "Property Development & Asset Management",
+      "Surveying, Valuation & Cost Consultancy",
+      "Higher Education & Academic Research",
+      "Training, Learning & Development",
+      "Manufacturing & Production Engineering",
+      "Product Growth & Business Development in Start-ups",
+      "Start-up Operations",
+      "Circular Economy & Sustainable Supply Chains",
+      "Net Zero, Climate & Sustainability Strategy",
+      "Sustainability & ESG Advisory",
+      "Legal Support & Paralegal Work",
+      "Solicitor Practice",
+      "Brand & Marketing Strategy",
+      "Performance Marketing & Growth",
+      "Occupational & Organisational Psychology",
+      "Events & Experience Management",
+      "Food & Beverage Operations",
+      "Hospitality & Hotel Management",
+      "Emergency Planning & Ambulance Service Leadership",
+      "Real Estate Agency & Brokerage",
+      "Travel & Tourism"
+    ]
+  },
+  {
+    "id": "sub_hospitality_tourism_and_events_management",
+    "title": "Hospitality, Tourism & Events Management",
+    "careerWorldId": "cw_hospitality_food_events",
+    "primaryPathways": [
+      "Events & Experience Management",
+      "Food & Beverage Operations",
+      "Hospitality & Hotel Management",
+      "Travel & Tourism"
+    ],
+    "adjacentPathways": [
+      "Customer & Market Insight",
+      "Business Development & Commercial Partnerships",
+      "Operations & Supply Chain",
+      "Project, PMO & Transformation",
+      "Higher Education & Academic Research",
+      "Venture Building & Founder",
+      "Brand & Marketing Strategy"
+    ],
+    "pathways": [
+      "Events & Experience Management",
+      "Food & Beverage Operations",
+      "Hospitality & Hotel Management",
+      "Travel & Tourism",
+      "Customer & Market Insight",
+      "Business Development & Commercial Partnerships",
+      "Operations & Supply Chain",
+      "Project, PMO & Transformation",
+      "Higher Education & Academic Research",
+      "Venture Building & Founder",
+      "Brand & Marketing Strategy"
+    ]
+  },
+  {
+    "id": "sub_human_resource_management",
+    "title": "Human Resource Management",
+    "careerWorldId": "cw_business_management",
+    "primaryPathways": [
+      "HR, People & Organisations",
+      "People Analytics & Workplace Behaviour",
+      "Training, Learning & Development"
+    ],
+    "adjacentPathways": [
+      "Business Analysis",
+      "Consulting & Strategic Improvement",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "HR, People & Organisations",
+      "People Analytics & Workplace Behaviour",
+      "Training, Learning & Development",
+      "Business Analysis",
+      "Consulting & Strategic Improvement",
+      "Higher Education & Academic Research",
+      "Occupational & Organisational Psychology"
+    ]
+  },
+  {
+    "id": "sub_international_business",
+    "title": "International Business",
+    "careerWorldId": "cw_business_management",
+    "primaryPathways": [
+      "Business Development & Commercial Partnerships",
+      "Consulting & Strategic Improvement",
+      "Generalist Business Programmes"
+    ],
+    "adjacentPathways": [
+      "Business Intelligence & Reporting",
+      "Commercial & Corporate Banking",
+      "Business Analysis",
+      "HR, People & Organisations",
+      "Operations & Supply Chain",
+      "Project, PMO & Transformation",
+      "Higher Education & Academic Research",
+      "International Relations, Policy & Geopolitical Analysis",
+      "Languages, Translation & Localisation",
+      "Brand & Marketing Strategy",
+      "Hospitality & Hotel Management"
+    ],
+    "pathways": [
+      "Business Development & Commercial Partnerships",
+      "Consulting & Strategic Improvement",
+      "Generalist Business Programmes",
+      "Business Intelligence & Reporting",
+      "Commercial & Corporate Banking",
+      "Business Analysis",
+      "HR, People & Organisations",
+      "Operations & Supply Chain",
+      "Project, PMO & Transformation",
+      "Higher Education & Academic Research",
+      "International Relations, Policy & Geopolitical Analysis",
+      "Languages, Translation & Localisation",
+      "Brand & Marketing Strategy",
+      "Hospitality & Hotel Management"
+    ]
+  },
+  {
+    "id": "sub_operations_and_supply_chain_management",
+    "title": "Operations and Supply Chain Management",
+    "careerWorldId": "cw_business_management",
+    "primaryPathways": [
+      "Business Analysis",
+      "Operations & Supply Chain",
+      "Project, PMO & Transformation"
+    ],
+    "adjacentPathways": [
+      "Healthcare Management & Service Improvement",
+      "Business Intelligence & Reporting",
+      "Consulting & Strategic Improvement",
+      "Facilities & Property Management",
+      "Higher Education & Academic Research",
+      "Manufacturing & Production Engineering",
+      "Start-up Operations",
+      "Circular Economy & Sustainable Supply Chains",
+      "Food & Beverage Operations"
+    ],
+    "pathways": [
+      "Business Analysis",
+      "Operations & Supply Chain",
+      "Project, PMO & Transformation",
+      "Healthcare Management & Service Improvement",
+      "Business Intelligence & Reporting",
+      "Consulting & Strategic Improvement",
+      "Facilities & Property Management",
+      "Higher Education & Academic Research",
+      "Manufacturing & Production Engineering",
+      "Start-up Operations",
+      "Circular Economy & Sustainable Supply Chains",
+      "Food & Beverage Operations"
+    ]
+  },
+  {
+    "id": "sub_real_estate_and_property",
+    "title": "Real Estate & Property",
+    "careerWorldId": "cw_money_finance_accounting",
+    "primaryPathways": [
+      "Real Estate Investment & Finance",
+      "Facilities & Property Management",
+      "Property Development & Asset Management",
+      "Surveying, Valuation & Cost Consultancy",
+      "Real Estate Agency & Brokerage"
+    ],
+    "adjacentPathways": [
+      "Asset & Wealth Management",
+      "Commercial & Corporate Banking",
+      "Investment Banking & Corporate Finance",
+      "Construction Project Delivery",
+      "Sustainability & Building Performance",
+      "Town Planning & Urban Development",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Real Estate Investment & Finance",
+      "Facilities & Property Management",
+      "Property Development & Asset Management",
+      "Surveying, Valuation & Cost Consultancy",
+      "Real Estate Agency & Brokerage",
+      "Asset & Wealth Management",
+      "Commercial & Corporate Banking",
+      "Investment Banking & Corporate Finance",
+      "Construction Project Delivery",
+      "Sustainability & Building Performance",
+      "Town Planning & Urban Development",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_accounting",
+    "title": "Accounting",
+    "careerWorldId": "cw_money_finance_accounting",
+    "primaryPathways": [
+      "Accounting, Audit & Assurance",
+      "Financial Analysis & FP&A",
+      "Risk, Compliance & Controls",
+      "Treasury & Liquidity"
+    ],
+    "adjacentPathways": [
+      "Business Intelligence & Reporting",
+      "Asset & Wealth Management",
+      "Banking Operations & Middle Office",
+      "Commercial & Corporate Banking",
+      "Fintech & Digital Finance",
+      "Insurance & Actuarial",
+      "Investment Banking & Corporate Finance",
+      "Business Analysis",
+      "Consulting & Strategic Improvement",
+      "Higher Education & Academic Research",
+      "Venture Building & Founder",
+      "Investigations & Financial Crime"
+    ],
+    "pathways": [
+      "Accounting, Audit & Assurance",
+      "Financial Analysis & FP&A",
+      "Risk, Compliance & Controls",
+      "Treasury & Liquidity",
+      "Business Intelligence & Reporting",
+      "Asset & Wealth Management",
+      "Banking Operations & Middle Office",
+      "Commercial & Corporate Banking",
+      "Fintech & Digital Finance",
+      "Insurance & Actuarial",
+      "Investment Banking & Corporate Finance",
+      "Business Analysis",
+      "Consulting & Strategic Improvement",
+      "Higher Education & Academic Research",
+      "Venture Building & Founder",
+      "Investigations & Financial Crime"
+    ]
+  },
+  {
+    "id": "sub_accounting_and_finance",
+    "title": "Accounting and Finance",
+    "careerWorldId": "cw_money_finance_accounting",
+    "primaryPathways": [
+      "Accounting, Audit & Assurance",
+      "Asset & Wealth Management",
+      "Commercial & Corporate Banking",
+      "Financial Analysis & FP&A",
+      "Investment Banking & Corporate Finance",
+      "Risk, Compliance & Controls",
+      "Treasury & Liquidity"
+    ],
+    "adjacentPathways": [
+      "Business Intelligence & Reporting",
+      "Banking Operations & Middle Office",
+      "Equity Research & Investment Research",
+      "Fintech & Digital Finance",
+      "Markets & Trading",
+      "Private Equity & Venture Capital",
+      "Real Estate Investment & Finance",
+      "Sustainable Finance & Impact Investing",
+      "Business Analysis",
+      "Consulting & Strategic Improvement",
+      "Generalist Business Programmes",
+      "Higher Education & Academic Research",
+      "Venture Building & Founder",
+      "Governance, Risk & Compliance",
+      "Investigations & Financial Crime"
+    ],
+    "pathways": [
+      "Accounting, Audit & Assurance",
+      "Asset & Wealth Management",
+      "Commercial & Corporate Banking",
+      "Financial Analysis & FP&A",
+      "Investment Banking & Corporate Finance",
+      "Risk, Compliance & Controls",
+      "Treasury & Liquidity",
+      "Business Intelligence & Reporting",
+      "Banking Operations & Middle Office",
+      "Equity Research & Investment Research",
+      "Fintech & Digital Finance",
+      "Markets & Trading",
+      "Private Equity & Venture Capital",
+      "Real Estate Investment & Finance",
+      "Sustainable Finance & Impact Investing",
+      "Business Analysis",
+      "Consulting & Strategic Improvement",
+      "Generalist Business Programmes",
+      "Higher Education & Academic Research",
+      "Venture Building & Founder",
+      "Governance, Risk & Compliance",
+      "Investigations & Financial Crime"
+    ]
+  },
+  {
+    "id": "sub_economics",
+    "title": "Economics",
+    "careerWorldId": "cw_law_justice_public_services",
+    "primaryPathways": [
+      "Equity Research & Investment Research",
+      "Investment Banking & Corporate Finance",
+      "Markets & Trading",
+      "Private Equity & Venture Capital",
+      "Sustainable Finance & Impact Investing",
+      "Business Analysis",
+      "Consulting & Strategic Improvement",
+      "Policy & Public Sector Analysis"
+    ],
+    "adjacentPathways": [
+      "Healthcare Management & Service Improvement",
+      "Core Data Analysis & Business Insight",
+      "Data Science & Advanced Modelling",
+      "Accounting, Audit & Assurance",
+      "Asset & Wealth Management",
+      "Banking Operations & Middle Office",
+      "Commercial & Corporate Banking",
+      "Financial Analysis & FP&A",
+      "Insurance & Actuarial",
+      "Real Estate Investment & Finance",
+      "Risk & Quantitative Analysis",
+      "Risk, Compliance & Controls",
+      "Treasury & Liquidity",
+      "Business Development & Commercial Partnerships",
+      "Generalist Business Programmes",
+      "Operations & Supply Chain",
+      "Higher Education & Academic Research",
+      "Venture Capital, Accelerators & Innovation Support",
+      "Sustainability & ESG Advisory",
+      "Governance, Risk & Compliance",
+      "Investigations & Financial Crime",
+      "Public Affairs & Advocacy"
+    ],
+    "pathways": [
+      "Equity Research & Investment Research",
+      "Investment Banking & Corporate Finance",
+      "Markets & Trading",
+      "Private Equity & Venture Capital",
+      "Sustainable Finance & Impact Investing",
+      "Business Analysis",
+      "Consulting & Strategic Improvement",
+      "Policy & Public Sector Analysis",
+      "Healthcare Management & Service Improvement",
+      "Core Data Analysis & Business Insight",
+      "Data Science & Advanced Modelling",
+      "Accounting, Audit & Assurance",
+      "Asset & Wealth Management",
+      "Banking Operations & Middle Office",
+      "Commercial & Corporate Banking",
+      "Financial Analysis & FP&A",
+      "Insurance & Actuarial",
+      "Real Estate Investment & Finance",
+      "Risk & Quantitative Analysis",
+      "Risk, Compliance & Controls",
+      "Treasury & Liquidity",
+      "Business Development & Commercial Partnerships",
+      "Generalist Business Programmes",
+      "Operations & Supply Chain",
+      "Higher Education & Academic Research",
+      "Venture Capital, Accelerators & Innovation Support",
+      "Sustainability & ESG Advisory",
+      "Governance, Risk & Compliance",
+      "Investigations & Financial Crime",
+      "Public Affairs & Advocacy"
+    ]
+  },
+  {
+    "id": "sub_economics_with_data_science",
+    "title": "Economics with Data Science",
+    "careerWorldId": "cw_money_finance_accounting",
+    "primaryPathways": [
+      "Equity Research & Investment Research",
+      "Financial Analysis & FP&A",
+      "Risk, Compliance & Controls"
+    ],
+    "adjacentPathways": [
+      "AI & Machine Learning",
+      "Business Intelligence & Reporting",
+      "Core Data Analysis & Business Insight",
+      "Data Science & Advanced Modelling",
+      "Product, Growth & Experimentation Analytics",
+      "Fintech & Digital Finance",
+      "Investment Banking & Corporate Finance",
+      "Risk & Quantitative Analysis",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Equity Research & Investment Research",
+      "Financial Analysis & FP&A",
+      "Risk, Compliance & Controls",
+      "AI & Machine Learning",
+      "Business Intelligence & Reporting",
+      "Core Data Analysis & Business Insight",
+      "Data Science & Advanced Modelling",
+      "Product, Growth & Experimentation Analytics",
+      "Fintech & Digital Finance",
+      "Investment Banking & Corporate Finance",
+      "Risk & Quantitative Analysis",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_finance",
+    "title": "Finance",
+    "careerWorldId": "cw_money_finance_accounting",
+    "primaryPathways": [
+      "Asset & Wealth Management",
+      "Banking Operations & Middle Office",
+      "Commercial & Corporate Banking",
+      "Equity Research & Investment Research",
+      "Financial Analysis & FP&A",
+      "Fintech & Digital Finance",
+      "Investment Banking & Corporate Finance",
+      "Markets & Trading",
+      "Private Equity & Venture Capital",
+      "Real Estate Investment & Finance",
+      "Risk, Compliance & Controls",
+      "Sustainable Finance & Impact Investing",
+      "Treasury & Liquidity",
+      "Venture Capital, Accelerators & Innovation Support"
+    ],
+    "adjacentPathways": [
+      "Business Intelligence & Reporting",
+      "Accounting, Audit & Assurance",
+      "Insurance & Actuarial",
+      "Risk & Quantitative Analysis",
+      "Business Analysis",
+      "Consulting & Strategic Improvement",
+      "HR, People & Organisations",
+      "Operations & Supply Chain",
+      "Project, PMO & Transformation",
+      "Property Development & Asset Management",
+      "Higher Education & Academic Research",
+      "Product Growth & Business Development in Start-ups",
+      "Start-up Operations",
+      "Venture Building & Founder",
+      "Sustainability & ESG Advisory",
+      "Governance, Risk & Compliance"
+    ],
+    "pathways": [
+      "Asset & Wealth Management",
+      "Banking Operations & Middle Office",
+      "Commercial & Corporate Banking",
+      "Equity Research & Investment Research",
+      "Financial Analysis & FP&A",
+      "Fintech & Digital Finance",
+      "Investment Banking & Corporate Finance",
+      "Markets & Trading",
+      "Private Equity & Venture Capital",
+      "Real Estate Investment & Finance",
+      "Risk, Compliance & Controls",
+      "Sustainable Finance & Impact Investing",
+      "Treasury & Liquidity",
+      "Venture Capital, Accelerators & Innovation Support",
+      "Business Intelligence & Reporting",
+      "Accounting, Audit & Assurance",
+      "Insurance & Actuarial",
+      "Risk & Quantitative Analysis",
+      "Business Analysis",
+      "Consulting & Strategic Improvement",
+      "HR, People & Organisations",
+      "Operations & Supply Chain",
+      "Project, PMO & Transformation",
+      "Property Development & Asset Management",
+      "Higher Education & Academic Research",
+      "Product Growth & Business Development in Start-ups",
+      "Start-up Operations",
+      "Venture Building & Founder",
+      "Sustainability & ESG Advisory",
+      "Governance, Risk & Compliance"
+    ]
+  },
+  {
+    "id": "sub_finance_and_financial_technology",
+    "title": "Finance and Financial Technology",
+    "careerWorldId": "cw_money_finance_accounting",
+    "primaryPathways": [
+      "Fintech & Digital Finance",
+      "Investment Banking & Corporate Finance",
+      "Markets & Trading"
+    ],
+    "adjacentPathways": [
+      "Backend & Platform Engineering",
+      "Data Science & Advanced Modelling",
+      "Software Engineering",
+      "Asset & Wealth Management",
+      "Financial Analysis & FP&A",
+      "Risk & Quantitative Analysis",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Fintech & Digital Finance",
+      "Investment Banking & Corporate Finance",
+      "Markets & Trading",
+      "Backend & Platform Engineering",
+      "Data Science & Advanced Modelling",
+      "Software Engineering",
+      "Asset & Wealth Management",
+      "Financial Analysis & FP&A",
+      "Risk & Quantitative Analysis",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_investment_management",
+    "title": "Investment Management",
+    "careerWorldId": "cw_money_finance_accounting",
+    "primaryPathways": [
+      "Asset & Wealth Management",
+      "Equity Research & Investment Research",
+      "Investment Banking & Corporate Finance",
+      "Private Equity & Venture Capital"
+    ],
+    "adjacentPathways": [
+      "Banking Operations & Middle Office",
+      "Commercial & Corporate Banking",
+      "Financial Analysis & FP&A",
+      "Fintech & Digital Finance",
+      "Markets & Trading",
+      "Real Estate Investment & Finance",
+      "Risk & Quantitative Analysis",
+      "Sustainable Finance & Impact Investing",
+      "Treasury & Liquidity",
+      "Consulting & Strategic Improvement",
+      "Higher Education & Academic Research",
+      "Venture Capital, Accelerators & Innovation Support"
+    ],
+    "pathways": [
+      "Asset & Wealth Management",
+      "Equity Research & Investment Research",
+      "Investment Banking & Corporate Finance",
+      "Private Equity & Venture Capital",
+      "Banking Operations & Middle Office",
+      "Commercial & Corporate Banking",
+      "Financial Analysis & FP&A",
+      "Fintech & Digital Finance",
+      "Markets & Trading",
+      "Real Estate Investment & Finance",
+      "Risk & Quantitative Analysis",
+      "Sustainable Finance & Impact Investing",
+      "Treasury & Liquidity",
+      "Consulting & Strategic Improvement",
+      "Higher Education & Academic Research",
+      "Venture Capital, Accelerators & Innovation Support"
+    ]
+  },
+  {
+    "id": "sub_business_management_with_entrepreneurship",
+    "title": "Business Management with Entrepreneurship",
+    "careerWorldId": "cw_entrepreneurship_innovation_venture_building",
+    "primaryPathways": [
+      "Product Growth & Business Development in Start-ups",
+      "Start-up Operations",
+      "Venture Building & Founder"
+    ],
+    "adjacentPathways": [
+      "Business Intelligence & Reporting",
+      "Financial Analysis & FP&A",
+      "Fintech & Digital Finance",
+      "Business Development & Commercial Partnerships",
+      "Consulting & Strategic Improvement",
+      "Generalist Business Programmes",
+      "Higher Education & Academic Research",
+      "Venture Capital, Accelerators & Innovation Support",
+      "Brand & Marketing Strategy"
+    ],
+    "pathways": [
+      "Product Growth & Business Development in Start-ups",
+      "Start-up Operations",
+      "Venture Building & Founder",
+      "Business Intelligence & Reporting",
+      "Financial Analysis & FP&A",
+      "Fintech & Digital Finance",
+      "Business Development & Commercial Partnerships",
+      "Consulting & Strategic Improvement",
+      "Generalist Business Programmes",
+      "Higher Education & Academic Research",
+      "Venture Capital, Accelerators & Innovation Support",
+      "Brand & Marketing Strategy"
+    ]
+  },
+  {
+    "id": "sub_entrepreneurship_and_innovation",
+    "title": "Entrepreneurship and Innovation",
+    "careerWorldId": "cw_entrepreneurship_innovation_venture_building",
+    "primaryPathways": [
+      "Product Growth & Business Development in Start-ups",
+      "Start-up Operations",
+      "Venture Building & Founder",
+      "Venture Capital, Accelerators & Innovation Support"
+    ],
+    "adjacentPathways": [
+      "Business Intelligence & Reporting",
+      "Product, Growth & Experimentation Analytics",
+      "Fintech & Digital Finance",
+      "Private Equity & Venture Capital",
+      "Business Development & Commercial Partnerships",
+      "Consulting & Strategic Improvement",
+      "Higher Education & Academic Research",
+      "Brand & Marketing Strategy",
+      "Performance Marketing & Growth"
+    ],
+    "pathways": [
+      "Product Growth & Business Development in Start-ups",
+      "Start-up Operations",
+      "Venture Building & Founder",
+      "Venture Capital, Accelerators & Innovation Support",
+      "Business Intelligence & Reporting",
+      "Product, Growth & Experimentation Analytics",
+      "Fintech & Digital Finance",
+      "Private Equity & Venture Capital",
+      "Business Development & Commercial Partnerships",
+      "Consulting & Strategic Improvement",
+      "Higher Education & Academic Research",
+      "Brand & Marketing Strategy",
+      "Performance Marketing & Growth"
+    ]
+  },
+  {
+    "id": "sub_innovation_and_technology_management",
+    "title": "Innovation and Technology Management",
+    "careerWorldId": "cw_entrepreneurship_innovation_venture_building",
+    "primaryPathways": [
+      "Product Growth & Business Development in Start-ups",
+      "Start-up Operations",
+      "Venture Capital, Accelerators & Innovation Support"
+    ],
+    "adjacentPathways": [
+      "Product, Growth & Experimentation Analytics",
+      "Software Engineering",
+      "Business Analysis",
+      "Business Development & Commercial Partnerships",
+      "Consulting & Strategic Improvement",
+      "Project, PMO & Transformation",
+      "Higher Education & Academic Research",
+      "Venture Building & Founder"
+    ],
+    "pathways": [
+      "Product Growth & Business Development in Start-ups",
+      "Start-up Operations",
+      "Venture Capital, Accelerators & Innovation Support",
+      "Product, Growth & Experimentation Analytics",
+      "Software Engineering",
+      "Business Analysis",
+      "Business Development & Commercial Partnerships",
+      "Consulting & Strategic Improvement",
+      "Project, PMO & Transformation",
+      "Higher Education & Academic Research",
+      "Venture Building & Founder"
+    ]
+  },
+  {
+    "id": "sub_social_enterprise_and_community_development",
+    "title": "Social Enterprise and Community Development",
+    "careerWorldId": "cw_entrepreneurship_innovation_venture_building",
+    "primaryPathways": [
+      "Start-up Operations",
+      "Venture Building & Founder"
+    ],
+    "adjacentPathways": [
+      "Consulting & Strategic Improvement",
+      "Higher Education & Academic Research",
+      "Net Zero, Climate & Sustainability Strategy",
+      "Sustainability & ESG Advisory",
+      "International Development & NGO Programmes",
+      "Public Affairs & Advocacy",
+      "Social Work & Safeguarding"
+    ],
+    "pathways": [
+      "Start-up Operations",
+      "Venture Building & Founder",
+      "Consulting & Strategic Improvement",
+      "Higher Education & Academic Research",
+      "Net Zero, Climate & Sustainability Strategy",
+      "Sustainability & ESG Advisory",
+      "International Development & NGO Programmes",
+      "Public Affairs & Advocacy",
+      "Social Work & Safeguarding"
+    ]
+  },
+  {
+    "id": "sub_advertising_and_brand_management",
+    "title": "Advertising and Brand Management",
+    "careerWorldId": "cw_media_marketing_content_communication",
+    "primaryPathways": [
+      "Brand & Marketing Strategy",
+      "PR & Communications",
+      "Performance Marketing & Growth"
+    ],
+    "adjacentPathways": [
+      "Customer & Market Insight",
+      "Business Development & Commercial Partnerships",
+      "Digital Design & Multimedia",
+      "Graphic Design & Visual Communication",
+      "Higher Education & Academic Research",
+      "Content & Social Media",
+      "Journalism, Publishing & Editorial",
+      "Market Research & Audience Insight"
+    ],
+    "pathways": [
+      "Brand & Marketing Strategy",
+      "PR & Communications",
+      "Performance Marketing & Growth",
+      "Customer & Market Insight",
+      "Business Development & Commercial Partnerships",
+      "Digital Design & Multimedia",
+      "Graphic Design & Visual Communication",
+      "Higher Education & Academic Research",
+      "Content & Social Media",
+      "Journalism, Publishing & Editorial",
+      "Market Research & Audience Insight"
+    ]
+  },
+  {
+    "id": "sub_digital_marketing_and_social_media",
+    "title": "Digital Marketing and Social Media",
+    "careerWorldId": "cw_media_marketing_content_communication",
+    "primaryPathways": [
+      "Brand & Marketing Strategy",
+      "Content & Social Media",
+      "Performance Marketing & Growth"
+    ],
+    "adjacentPathways": [
+      "Business Development & Commercial Partnerships",
+      "Graphic Design & Visual Communication",
+      "Higher Education & Academic Research",
+      "Market Research & Audience Insight"
+    ],
+    "pathways": [
+      "Brand & Marketing Strategy",
+      "Content & Social Media",
+      "Performance Marketing & Growth",
+      "Business Development & Commercial Partnerships",
+      "Graphic Design & Visual Communication",
+      "Higher Education & Academic Research",
+      "Market Research & Audience Insight"
+    ]
+  },
+  {
+    "id": "sub_digital_media_production_and_technology",
+    "title": "Digital Media Production and Technology",
+    "careerWorldId": "cw_media_marketing_content_communication",
+    "primaryPathways": [
+      "Digital Design & Multimedia",
+      "Content & Social Media",
+      "Journalism, Publishing & Editorial"
+    ],
+    "adjacentPathways": [
+      "UX/UI Design",
+      "Graphic Design & Visual Communication",
+      "Higher Education & Academic Research",
+      "Learning Design & Educational Technology",
+      "Brand & Marketing Strategy",
+      "PR & Communications"
+    ],
+    "pathways": [
+      "Digital Design & Multimedia",
+      "Content & Social Media",
+      "Journalism, Publishing & Editorial",
+      "UX/UI Design",
+      "Graphic Design & Visual Communication",
+      "Higher Education & Academic Research",
+      "Learning Design & Educational Technology",
+      "Brand & Marketing Strategy",
+      "PR & Communications"
+    ]
+  },
+  {
+    "id": "sub_journalism",
+    "title": "Journalism",
+    "careerWorldId": "cw_media_marketing_content_communication",
+    "primaryPathways": [
+      "Content & Social Media",
+      "Journalism, Publishing & Editorial"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Public Affairs & Advocacy",
+      "PR & Communications"
+    ],
+    "pathways": [
+      "Content & Social Media",
+      "Journalism, Publishing & Editorial",
+      "Higher Education & Academic Research",
+      "Public Affairs & Advocacy",
+      "PR & Communications"
+    ]
+  },
+  {
+    "id": "sub_marketing",
+    "title": "Marketing",
+    "careerWorldId": "cw_media_marketing_content_communication",
+    "primaryPathways": [
+      "Customer & Market Insight",
+      "Brand & Marketing Strategy",
+      "Content & Social Media",
+      "Market Research & Audience Insight",
+      "PR & Communications",
+      "Performance Marketing & Growth"
+    ],
+    "adjacentPathways": [
+      "Business Intelligence & Reporting",
+      "Product, Growth & Experimentation Analytics",
+      "UX Research & Behavioural Insight",
+      "Business Development & Commercial Partnerships",
+      "Generalist Business Programmes",
+      "Digital Design & Multimedia",
+      "Higher Education & Academic Research",
+      "Product Growth & Business Development in Start-ups",
+      "Events & Experience Management",
+      "Hospitality & Hotel Management",
+      "Real Estate Agency & Brokerage",
+      "Travel & Tourism"
+    ],
+    "pathways": [
+      "Customer & Market Insight",
+      "Brand & Marketing Strategy",
+      "Content & Social Media",
+      "Market Research & Audience Insight",
+      "PR & Communications",
+      "Performance Marketing & Growth",
+      "Business Intelligence & Reporting",
+      "Product, Growth & Experimentation Analytics",
+      "UX Research & Behavioural Insight",
+      "Business Development & Commercial Partnerships",
+      "Generalist Business Programmes",
+      "Digital Design & Multimedia",
+      "Higher Education & Academic Research",
+      "Product Growth & Business Development in Start-ups",
+      "Events & Experience Management",
+      "Hospitality & Hotel Management",
+      "Real Estate Agency & Brokerage",
+      "Travel & Tourism"
+    ]
+  },
+  {
+    "id": "sub_media_studies",
+    "title": "Media Studies",
+    "careerWorldId": "cw_media_marketing_content_communication",
+    "primaryPathways": [
+      "Content & Social Media",
+      "Journalism, Publishing & Editorial",
+      "Market Research & Audience Insight"
+    ],
+    "adjacentPathways": [
+      "Digital Design & Multimedia",
+      "Higher Education & Academic Research",
+      "Social Research & Cultural Analysis",
+      "Brand & Marketing Strategy",
+      "PR & Communications"
+    ],
+    "pathways": [
+      "Content & Social Media",
+      "Journalism, Publishing & Editorial",
+      "Market Research & Audience Insight",
+      "Digital Design & Multimedia",
+      "Higher Education & Academic Research",
+      "Social Research & Cultural Analysis",
+      "Brand & Marketing Strategy",
+      "PR & Communications"
+    ]
+  },
+  {
+    "id": "sub_public_relations_and_communications",
+    "title": "Public Relations and Communications",
+    "careerWorldId": "cw_media_marketing_content_communication",
+    "primaryPathways": [
+      "Public Affairs & Advocacy",
+      "Content & Social Media",
+      "PR & Communications"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Brand & Marketing Strategy",
+      "Journalism, Publishing & Editorial",
+      "Events & Experience Management"
+    ],
+    "pathways": [
+      "Public Affairs & Advocacy",
+      "Content & Social Media",
+      "PR & Communications",
+      "Higher Education & Academic Research",
+      "Brand & Marketing Strategy",
+      "Journalism, Publishing & Editorial",
+      "Events & Experience Management"
+    ]
+  },
+  {
+    "id": "sub_animation",
+    "title": "Animation",
+    "careerWorldId": "cw_creative_arts_design",
+    "primaryPathways": [
+      "Animation & Motion Design",
+      "Digital Design & Multimedia"
+    ],
+    "adjacentPathways": [
+      "Game Design & Development",
+      "Graphic Design & Visual Communication",
+      "Higher Education & Academic Research",
+      "Content & Social Media"
+    ],
+    "pathways": [
+      "Animation & Motion Design",
+      "Digital Design & Multimedia",
+      "Game Design & Development",
+      "Graphic Design & Visual Communication",
+      "Higher Education & Academic Research",
+      "Content & Social Media"
+    ]
+  },
+  {
+    "id": "sub_fashion_design",
+    "title": "Fashion Design",
+    "careerWorldId": "cw_creative_arts_design",
+    "primaryPathways": [],
+    "adjacentPathways": [
+      "Graphic Design & Visual Communication",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research",
+      "Brand & Marketing Strategy"
+    ],
+    "pathways": [
+      "Graphic Design & Visual Communication",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research",
+      "Brand & Marketing Strategy"
+    ]
+  },
+  {
+    "id": "sub_film_and_television_production",
+    "title": "Film and Television Production",
+    "careerWorldId": "cw_creative_arts_design",
+    "primaryPathways": [
+      "Animation & Motion Design"
+    ],
+    "adjacentPathways": [
+      "Digital Design & Multimedia",
+      "Higher Education & Academic Research",
+      "Content & Social Media",
+      "Journalism, Publishing & Editorial",
+      "Sound & Audio Production"
+    ],
+    "pathways": [
+      "Animation & Motion Design",
+      "Digital Design & Multimedia",
+      "Higher Education & Academic Research",
+      "Content & Social Media",
+      "Journalism, Publishing & Editorial",
+      "Sound & Audio Production"
+    ]
+  },
+  {
+    "id": "sub_fine_art",
+    "title": "Fine Art",
+    "careerWorldId": "cw_creative_arts_design",
+    "primaryPathways": [
+      "Graphic Design & Visual Communication"
+    ],
+    "adjacentPathways": [
+      "Animation & Motion Design",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research",
+      "Content & Social Media"
+    ],
+    "pathways": [
+      "Graphic Design & Visual Communication",
+      "Animation & Motion Design",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research",
+      "Content & Social Media"
+    ]
+  },
+  {
+    "id": "sub_game_design",
+    "title": "Game Design",
+    "careerWorldId": "cw_creative_arts_design",
+    "primaryPathways": [
+      "Game Design & Development",
+      "Animation & Motion Design"
+    ],
+    "adjacentPathways": [
+      "Software Engineering",
+      "Digital Design & Multimedia",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Game Design & Development",
+      "Animation & Motion Design",
+      "Software Engineering",
+      "Digital Design & Multimedia",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_graphic_design",
+    "title": "Graphic Design",
+    "careerWorldId": "cw_creative_arts_design",
+    "primaryPathways": [
+      "UX/UI Design",
+      "Digital Design & Multimedia",
+      "Graphic Design & Visual Communication"
+    ],
+    "adjacentPathways": [
+      "Frontend & Web Development",
+      "Animation & Motion Design",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research",
+      "Brand & Marketing Strategy",
+      "Content & Social Media"
+    ],
+    "pathways": [
+      "UX/UI Design",
+      "Digital Design & Multimedia",
+      "Graphic Design & Visual Communication",
+      "Frontend & Web Development",
+      "Animation & Motion Design",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research",
+      "Brand & Marketing Strategy",
+      "Content & Social Media"
+    ]
+  },
+  {
+    "id": "sub_illustration",
+    "title": "Illustration",
+    "careerWorldId": "cw_creative_arts_design",
+    "primaryPathways": [
+      "Animation & Motion Design",
+      "Graphic Design & Visual Communication"
+    ],
+    "adjacentPathways": [
+      "Digital Design & Multimedia",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Animation & Motion Design",
+      "Graphic Design & Visual Communication",
+      "Digital Design & Multimedia",
+      "Product & Industrial Design",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_product_design",
+    "title": "Product Design",
+    "careerWorldId": "cw_creative_arts_design",
+    "primaryPathways": [
+      "UX/UI Design",
+      "Product & Industrial Design"
+    ],
+    "adjacentPathways": [
+      "Architectural Technology & BIM",
+      "Digital Design & Multimedia",
+      "Graphic Design & Visual Communication",
+      "Higher Education & Academic Research",
+      "Mechanical Design & Development Engineering"
+    ],
+    "pathways": [
+      "UX/UI Design",
+      "Product & Industrial Design",
+      "Architectural Technology & BIM",
+      "Digital Design & Multimedia",
+      "Graphic Design & Visual Communication",
+      "Higher Education & Academic Research",
+      "Mechanical Design & Development Engineering"
+    ]
+  },
+  {
+    "id": "sub_ux_design_and_interaction_design",
+    "title": "UX Design and Interaction Design",
+    "careerWorldId": "cw_technology_digital",
+    "primaryPathways": [
+      "UX/UI Design",
+      "Digital Design & Multimedia"
+    ],
+    "adjacentPathways": [
+      "Frontend & Web Development",
+      "Software Engineering",
+      "UX Research & Behavioural Insight",
+      "Graphic Design & Visual Communication",
+      "Higher Education & Academic Research",
+      "Learning Design & Educational Technology"
+    ],
+    "pathways": [
+      "UX/UI Design",
+      "Digital Design & Multimedia",
+      "Frontend & Web Development",
+      "Software Engineering",
+      "UX Research & Behavioural Insight",
+      "Graphic Design & Visual Communication",
+      "Higher Education & Academic Research",
+      "Learning Design & Educational Technology"
+    ]
+  },
+  {
+    "id": "sub_agriculture",
+    "title": "Agriculture",
+    "careerWorldId": "cw_animals_land_the_outdoors",
+    "primaryPathways": [
+      "Agriculture, Forestry & Land Management"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Circular Economy & Sustainable Supply Chains",
+      "Conservation & Land Management",
+      "Environmental Science & Monitoring",
+      "Veterinary & Animal Science"
+    ],
+    "pathways": [
+      "Agriculture, Forestry & Land Management",
+      "Higher Education & Academic Research",
+      "Circular Economy & Sustainable Supply Chains",
+      "Conservation & Land Management",
+      "Environmental Science & Monitoring",
+      "Veterinary & Animal Science"
+    ]
+  },
+  {
+    "id": "sub_climate_science_and_sustainability",
+    "title": "Climate Science and Sustainability",
+    "careerWorldId": "cw_environment_sustainability",
+    "primaryPathways": [
+      "Environmental Policy & Impact Assessment",
+      "Net Zero, Climate & Sustainability Strategy"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Circular Economy & Sustainable Supply Chains",
+      "Environmental Science & Monitoring",
+      "Sustainability & ESG Advisory"
+    ],
+    "pathways": [
+      "Environmental Policy & Impact Assessment",
+      "Net Zero, Climate & Sustainability Strategy",
+      "Higher Education & Academic Research",
+      "Circular Economy & Sustainable Supply Chains",
+      "Environmental Science & Monitoring",
+      "Sustainability & ESG Advisory"
+    ]
+  },
+  {
+    "id": "sub_ecology_and_conservation_biology",
+    "title": "Ecology and Conservation Biology",
+    "careerWorldId": "cw_environment_sustainability",
+    "primaryPathways": [
+      "Conservation & Land Management",
+      "Environmental Science & Monitoring"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Environmental Policy & Impact Assessment",
+      "R&D Science",
+      "Agriculture, Forestry & Land Management"
+    ],
+    "pathways": [
+      "Conservation & Land Management",
+      "Environmental Science & Monitoring",
+      "Higher Education & Academic Research",
+      "Environmental Policy & Impact Assessment",
+      "R&D Science",
+      "Agriculture, Forestry & Land Management"
+    ]
+  },
+  {
+    "id": "sub_environmental_management",
+    "title": "Environmental Management",
+    "careerWorldId": "cw_environment_sustainability",
+    "primaryPathways": [
+      "Circular Economy & Sustainable Supply Chains",
+      "Conservation & Land Management",
+      "Environmental Policy & Impact Assessment",
+      "Net Zero, Climate & Sustainability Strategy",
+      "Sustainability & ESG Advisory"
+    ],
+    "adjacentPathways": [
+      "Sustainable Finance & Impact Investing",
+      "Operations & Supply Chain",
+      "Town Planning & Urban Development",
+      "Higher Education & Academic Research",
+      "Agriculture, Forestry & Land Management"
+    ],
+    "pathways": [
+      "Circular Economy & Sustainable Supply Chains",
+      "Conservation & Land Management",
+      "Environmental Policy & Impact Assessment",
+      "Net Zero, Climate & Sustainability Strategy",
+      "Sustainability & ESG Advisory",
+      "Sustainable Finance & Impact Investing",
+      "Operations & Supply Chain",
+      "Town Planning & Urban Development",
+      "Higher Education & Academic Research",
+      "Agriculture, Forestry & Land Management"
+    ]
+  },
+  {
+    "id": "sub_environmental_science",
+    "title": "Environmental Science",
+    "careerWorldId": "cw_environment_sustainability",
+    "primaryPathways": [
+      "Sustainability & Building Performance",
+      "Conservation & Land Management",
+      "Environmental Policy & Impact Assessment",
+      "Environmental Science & Monitoring",
+      "Sustainability & ESG Advisory"
+    ],
+    "adjacentPathways": [
+      "Public Health & Health Improvement",
+      "Higher Education & Academic Research",
+      "Circular Economy & Sustainable Supply Chains",
+      "Net Zero, Climate & Sustainability Strategy"
+    ],
+    "pathways": [
+      "Sustainability & Building Performance",
+      "Conservation & Land Management",
+      "Environmental Policy & Impact Assessment",
+      "Environmental Science & Monitoring",
+      "Sustainability & ESG Advisory",
+      "Public Health & Health Improvement",
+      "Higher Education & Academic Research",
+      "Circular Economy & Sustainable Supply Chains",
+      "Net Zero, Climate & Sustainability Strategy"
+    ]
+  },
+  {
+    "id": "sub_forestry",
+    "title": "Forestry",
+    "careerWorldId": "cw_animals_land_the_outdoors",
+    "primaryPathways": [
+      "Agriculture, Forestry & Land Management"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Conservation & Land Management",
+      "Environmental Science & Monitoring"
+    ],
+    "pathways": [
+      "Agriculture, Forestry & Land Management",
+      "Higher Education & Academic Research",
+      "Conservation & Land Management",
+      "Environmental Science & Monitoring"
+    ]
+  },
+  {
+    "id": "sub_geography",
+    "title": "Geography",
+    "careerWorldId": "cw_environment_sustainability",
+    "primaryPathways": [
+      "Conservation & Land Management",
+      "Environmental Policy & Impact Assessment",
+      "Environmental Science & Monitoring"
+    ],
+    "adjacentPathways": [
+      "Town Planning & Urban Development",
+      "Higher Education & Academic Research",
+      "Civil & Structural Engineering",
+      "Net Zero, Climate & Sustainability Strategy",
+      "Sustainability & ESG Advisory",
+      "International Development & NGO Programmes",
+      "Agriculture, Forestry & Land Management",
+      "Travel & Tourism"
+    ],
+    "pathways": [
+      "Conservation & Land Management",
+      "Environmental Policy & Impact Assessment",
+      "Environmental Science & Monitoring",
+      "Town Planning & Urban Development",
+      "Higher Education & Academic Research",
+      "Civil & Structural Engineering",
+      "Net Zero, Climate & Sustainability Strategy",
+      "Sustainability & ESG Advisory",
+      "International Development & NGO Programmes",
+      "Agriculture, Forestry & Land Management",
+      "Travel & Tourism"
+    ]
+  },
+  {
+    "id": "sub_sustainable_development",
+    "title": "Sustainable Development",
+    "careerWorldId": "cw_environment_sustainability",
+    "primaryPathways": [
+      "Circular Economy & Sustainable Supply Chains",
+      "Net Zero, Climate & Sustainability Strategy",
+      "Sustainability & ESG Advisory"
+    ],
+    "adjacentPathways": [
+      "Sustainable Finance & Impact Investing",
+      "Sustainability & Building Performance",
+      "Higher Education & Academic Research",
+      "Environmental Policy & Impact Assessment",
+      "International Development & NGO Programmes",
+      "Policy & Public Sector Analysis"
+    ],
+    "pathways": [
+      "Circular Economy & Sustainable Supply Chains",
+      "Net Zero, Climate & Sustainability Strategy",
+      "Sustainability & ESG Advisory",
+      "Sustainable Finance & Impact Investing",
+      "Sustainability & Building Performance",
+      "Higher Education & Academic Research",
+      "Environmental Policy & Impact Assessment",
+      "International Development & NGO Programmes",
+      "Policy & Public Sector Analysis"
+    ]
+  },
+  {
+    "id": "sub_anthropology",
+    "title": "Anthropology",
+    "careerWorldId": "cw_society_culture_languages",
+    "primaryPathways": [
+      "International Development & NGO Programmes",
+      "Social Research & Cultural Analysis"
+    ],
+    "adjacentPathways": [
+      "UX Research & Behavioural Insight",
+      "Higher Education & Academic Research",
+      "Environmental Policy & Impact Assessment",
+      "Heritage, Museums & Archives",
+      "Languages, Translation & Localisation"
+    ],
+    "pathways": [
+      "International Development & NGO Programmes",
+      "Social Research & Cultural Analysis",
+      "UX Research & Behavioural Insight",
+      "Higher Education & Academic Research",
+      "Environmental Policy & Impact Assessment",
+      "Heritage, Museums & Archives",
+      "Languages, Translation & Localisation"
+    ]
+  },
+  {
+    "id": "sub_global_development_studies",
+    "title": "Global Development Studies",
+    "careerWorldId": "cw_society_culture_languages",
+    "primaryPathways": [
+      "International Development & NGO Programmes",
+      "International Relations, Policy & Geopolitical Analysis"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Sustainability & ESG Advisory",
+      "Social Research & Cultural Analysis"
+    ],
+    "pathways": [
+      "International Development & NGO Programmes",
+      "International Relations, Policy & Geopolitical Analysis",
+      "Higher Education & Academic Research",
+      "Sustainability & ESG Advisory",
+      "Social Research & Cultural Analysis"
+    ]
+  },
+  {
+    "id": "sub_heritage_and_museum_studies",
+    "title": "Heritage and Museum Studies",
+    "careerWorldId": "cw_society_culture_languages",
+    "primaryPathways": [
+      "Heritage, Museums & Archives"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "International Development & NGO Programmes",
+      "Social Research & Cultural Analysis"
+    ],
+    "pathways": [
+      "Heritage, Museums & Archives",
+      "Higher Education & Academic Research",
+      "International Development & NGO Programmes",
+      "Social Research & Cultural Analysis"
+    ]
+  },
+  {
+    "id": "sub_history",
+    "title": "History",
+    "careerWorldId": "cw_society_culture_languages",
+    "primaryPathways": [
+      "Heritage, Museums & Archives",
+      "International Relations, Policy & Geopolitical Analysis",
+      "Social Research & Cultural Analysis",
+      "Intelligence, Public Service & Security Analysis",
+      "Policy & Public Sector Analysis",
+      "Journalism, Publishing & Editorial"
+    ],
+    "adjacentPathways": [
+      "Consulting & Strategic Improvement",
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "International Development & NGO Programmes",
+      "Languages, Translation & Localisation",
+      "Public Affairs & Advocacy",
+      "PR & Communications"
+    ],
+    "pathways": [
+      "Heritage, Museums & Archives",
+      "International Relations, Policy & Geopolitical Analysis",
+      "Social Research & Cultural Analysis",
+      "Intelligence, Public Service & Security Analysis",
+      "Policy & Public Sector Analysis",
+      "Journalism, Publishing & Editorial",
+      "Consulting & Strategic Improvement",
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "International Development & NGO Programmes",
+      "Languages, Translation & Localisation",
+      "Barrister & Advocacy",
+      "Public Affairs & Advocacy",
+      "Solicitor Practice",
+      "PR & Communications"
+    ]
+  },
+  {
+    "id": "sub_international_relations",
+    "title": "International Relations",
+    "careerWorldId": "cw_society_culture_languages",
+    "primaryPathways": [
+      "International Development & NGO Programmes",
+      "International Relations, Policy & Geopolitical Analysis",
+      "Intelligence, Public Service & Security Analysis",
+      "Policy & Public Sector Analysis"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Languages, Translation & Localisation",
+      "Public Affairs & Advocacy"
+    ],
+    "pathways": [
+      "International Development & NGO Programmes",
+      "International Relations, Policy & Geopolitical Analysis",
+      "Intelligence, Public Service & Security Analysis",
+      "Policy & Public Sector Analysis",
+      "Higher Education & Academic Research",
+      "Languages, Translation & Localisation",
+      "Public Affairs & Advocacy"
+    ]
+  },
+  {
+    "id": "sub_modern_languages",
+    "title": "Modern Languages",
+    "careerWorldId": "cw_society_culture_languages",
+    "primaryPathways": [
+      "Languages, Translation & Localisation"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "Heritage, Museums & Archives",
+      "International Development & NGO Programmes",
+      "International Relations, Policy & Geopolitical Analysis",
+      "Public Affairs & Advocacy",
+      "Journalism, Publishing & Editorial",
+      "PR & Communications"
+    ],
+    "pathways": [
+      "Languages, Translation & Localisation",
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "Heritage, Museums & Archives",
+      "International Development & NGO Programmes",
+      "International Relations, Policy & Geopolitical Analysis",
+      "Public Affairs & Advocacy",
+      "Journalism, Publishing & Editorial",
+      "PR & Communications"
+    ]
+  },
+  {
+    "id": "sub_philosophy",
+    "title": "Philosophy",
+    "careerWorldId": "cw_society_culture_languages",
+    "primaryPathways": [
+      "Social Research & Cultural Analysis"
+    ],
+    "adjacentPathways": [
+      "Higher Education & Academic Research",
+      "Intelligence, Public Service & Security Analysis",
+      "Policy & Public Sector Analysis"
+    ],
+    "pathways": [
+      "Social Research & Cultural Analysis",
+      "Higher Education & Academic Research",
+      "Intelligence, Public Service & Security Analysis",
+      "Policy & Public Sector Analysis"
+    ]
+  },
+  {
+    "id": "sub_sociology",
+    "title": "Sociology",
+    "careerWorldId": "cw_society_culture_languages",
+    "primaryPathways": [
+      "International Development & NGO Programmes",
+      "Social Research & Cultural Analysis"
+    ],
+    "adjacentPathways": [
+      "Public Health & Health Improvement",
+      "UX Research & Behavioural Insight",
+      "HR, People & Organisations",
+      "Early Years & Family Support",
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "Heritage, Museums & Archives",
+      "Intelligence, Public Service & Security Analysis",
+      "Justice, Rehabilitation & Behaviour Change",
+      "Policy & Public Sector Analysis",
+      "Public Affairs & Advocacy",
+      "Journalism, Publishing & Editorial",
+      "Social Work & Safeguarding"
+    ],
+    "pathways": [
+      "International Development & NGO Programmes",
+      "Social Research & Cultural Analysis",
+      "Public Health & Health Improvement",
+      "UX Research & Behavioural Insight",
+      "HR, People & Organisations",
+      "Early Years & Family Support",
+      "Higher Education & Academic Research",
+      "Secondary Teaching",
+      "Heritage, Museums & Archives",
+      "Intelligence, Public Service & Security Analysis",
+      "Justice, Rehabilitation & Behaviour Change",
+      "Policy & Public Sector Analysis",
+      "Public Affairs & Advocacy",
+      "Journalism, Publishing & Editorial",
+      "Occupational & Organisational Psychology",
+      "Social Work & Safeguarding"
+    ]
+  },
+  {
+    "id": "sub_music",
+    "title": "Music",
+    "careerWorldId": "cw_performing_arts_music",
+    "primaryPathways": [
+      "Music Performance & Production"
+    ],
+    "adjacentPathways": [
+      "Sound & Audio Production",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Music Performance & Production",
+      "Sound & Audio Production",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_drama_and_theatre_studies",
+    "title": "Drama & Theatre Studies",
+    "careerWorldId": "cw_performing_arts_music",
+    "primaryPathways": [
+      "Acting & Performance"
+    ],
+    "adjacentPathways": [
+      "Theatre & Stage Production",
+      "Content & Social Media",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Acting & Performance",
+      "Theatre & Stage Production",
+      "Content & Social Media",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_dance",
+    "title": "Dance",
+    "careerWorldId": "cw_performing_arts_music",
+    "primaryPathways": [
+      "Dance & Choreography"
+    ],
+    "adjacentPathways": [
+      "Acting & Performance",
+      "Higher Education & Academic Research"
+    ],
+    "pathways": [
+      "Dance & Choreography",
+      "Acting & Performance",
+      "Higher Education & Academic Research"
+    ]
+  },
+  {
+    "id": "sub_musical_theatre",
+    "title": "Musical Theatre",
+    "careerWorldId": "cw_performing_arts_music",
+    "primaryPathways": [
+      "Acting & Performance"
+    ],
+    "adjacentPathways": [
+      "Music Performance & Production",
+      "Dance & Choreography"
+    ],
+    "pathways": [
+      "Acting & Performance",
+      "Music Performance & Production",
+      "Dance & Choreography"
+    ]
+  },
+  {
+    "id": "sub_music_technology",
+    "title": "Music Technology",
+    "careerWorldId": "cw_performing_arts_music",
+    "primaryPathways": [
+      "Sound & Audio Production"
+    ],
+    "adjacentPathways": [
+      "Music Performance & Production"
+    ],
+    "pathways": [
+      "Sound & Audio Production",
+      "Music Performance & Production"
+    ]
+  },
+  {
+    "id": "sub_technical_theatre_and_stage_management",
+    "title": "Technical Theatre & Stage Management",
+    "careerWorldId": "cw_performing_arts_music",
+    "primaryPathways": [
+      "Theatre & Stage Production"
+    ],
+    "adjacentPathways": [
+      "Sound & Audio Production"
+    ],
+    "pathways": [
+      "Theatre & Stage Production",
+      "Sound & Audio Production"
+    ]
+  }
+]

@@ -1,0 +1,552 @@
+[
+ {
+  "id": "env_structured_process_oriented",
+  "title": "Structured and process-oriented",
+  "archetypes": [
+   "Organizer",
+   "Achiever",
+   "Thinker"
+  ],
+  "coreSubdimensions": [
+   "Structure",
+   "Precision",
+   "Reliability"
+  ],
+  "secondarySubdimensions": [
+   "Analytical Curiosity",
+   "Achievement",
+   "Data Curiosity",
+   "Collaboration",
+   "Mastery"
+  ],
+  "linkedCareerWorlds": [
+   "Engineering",
+   "Manufacturing & Infrastructure",
+   "Business Strategy",
+   "Commercial & Leadership",
+   "Finance",
+   "Economics & Investment"
+  ]
+ },
+ {
+  "id": "env_analytical_research_focused",
+  "title": "Analytical and research-focused",
+  "archetypes": [
+   "Thinker",
+   "Creator",
+   "Explorer"
+  ],
+  "coreSubdimensions": [
+   "Analytical Curiosity",
+   "Mastery",
+   "Independence"
+  ],
+  "secondarySubdimensions": [
+   "Data Curiosity",
+   "Autonomy",
+   "Precision",
+   "Originality",
+   "Technical Curiosity"
+  ],
+  "linkedCareerWorlds": [
+   "Data",
+   "Analytics & Quantitative Insight",
+   "Science & Research",
+   "Finance",
+   "Economics & Investment",
+   "Psychology",
+   "Behaviour & Human Insight"
+  ]
+ },
+ {
+  "id": "env_precision_quality_driven",
+  "title": "Precision and quality-driven",
+  "archetypes": [
+   "Organizer",
+   "Thinker",
+   "Achiever",
+   "Creator"
+  ],
+  "coreSubdimensions": [
+   "Precision",
+   "Mastery",
+   "Reliability"
+  ],
+  "secondarySubdimensions": [
+   "Structure",
+   "Analytical Curiosity",
+   "Data Curiosity",
+   "Independence",
+   "Achievement"
+  ],
+  "linkedCareerWorlds": [
+   "Finance",
+   "Economics & Investment",
+   "Science & Research",
+   "Healthcare & Medicine",
+   "Law",
+   "Governance & Public Impact"
+  ]
+ },
+ {
+  "id": "env_corporate_goal_driven",
+  "title": "Performance-focused and results-driven",
+  "archetypes": [
+   "Achiever",
+   "Visionary",
+   "Explorer"
+  ],
+  "coreSubdimensions": [
+   "Achievement",
+   "Pace",
+   "Entrepreneurial Drive"
+  ],
+  "secondarySubdimensions": [
+   "Resilience",
+   "Reliability",
+   "Purpose & Impact",
+   "Adaptability",
+   "Social Confidence"
+  ],
+  "linkedCareerWorlds": [
+   "Business Strategy",
+   "Commercial & Leadership",
+   "Finance",
+   "Economics & Investment",
+   "Marketing",
+   "Media & Communication"
+  ]
+ },
+ {
+  "id": "env_strategic_commercial",
+  "title": "Strategic and commercially focused",
+  "archetypes": [
+   "Achiever",
+   "Thinker",
+   "Visionary"
+  ],
+  "coreSubdimensions": [
+   "Entrepreneurial Drive",
+   "Analytical Curiosity",
+   "Achievement"
+  ],
+  "secondarySubdimensions": [
+   "Social Confidence",
+   "Data Curiosity",
+   "Originality",
+   "Purpose & Impact",
+   "Variety"
+  ],
+  "linkedCareerWorlds": [
+   "Business Strategy",
+   "Commercial & Leadership",
+   "Finance",
+   "Economics & Investment",
+   "Marketing",
+   "Media & Communication",
+   "Entrepreneurship",
+   "Innovation & Venture Building"
+  ]
+ },
+ {
+  "id": "env_dynamic_fast_paced",
+  "title": "Dynamic and fast-paced",
+  "archetypes": [
+   "Explorer",
+   "Achiever",
+   "Connector"
+  ],
+  "coreSubdimensions": [
+   "Pace",
+   "Adaptability",
+   "Variety",
+   "Social Confidence"
+  ],
+  "secondarySubdimensions": [
+   "Resilience",
+   "Achievement",
+   "Entrepreneurial Drive",
+   "Originality",
+   "Belonging"
+  ],
+  "linkedCareerWorlds": [
+   "Business Strategy",
+   "Commercial & Leadership",
+   "Finance",
+   "Economics & Investment",
+   "Marketing",
+   "Media & Communication",
+   "Entrepreneurship",
+   "Innovation & Venture Building"
+  ]
+ },
+ {
+  "id": "env_transformation_change_oriented",
+  "title": "Change and transformation-focused",
+  "archetypes": [
+   "Visionary",
+   "Explorer",
+   "Creator"
+  ],
+  "coreSubdimensions": [
+   "Adaptability",
+   "Originality",
+   "Entrepreneurial Drive"
+  ],
+  "secondarySubdimensions": [
+   "Resilience",
+   "Purpose & Impact",
+   "Variety",
+   "Analytical Curiosity",
+   "Collaboration"
+  ],
+  "linkedCareerWorlds": [
+   "Business Strategy",
+   "Commercial & Leadership",
+   "Software",
+   "AI & Digital Systems",
+   "Environment",
+   "Sustainability & Planetary Futures",
+   "Entrepreneurship",
+   "Innovation & Venture Building"
+  ]
+ },
+ {
+  "id": "env_flexible_autonomous",
+  "title": "Flexible and autonomous",
+  "archetypes": [
+   "Thinker",
+   "Explorer",
+   "Creator",
+   "Visionary"
+  ],
+  "coreSubdimensions": [
+   "Autonomy",
+   "Independence",
+   "Adaptability"
+  ],
+  "secondarySubdimensions": [
+   "Variety",
+   "Originality",
+   "Mastery",
+   "Analytical Curiosity",
+   "Technical Curiosity"
+  ],
+  "linkedCareerWorlds": [
+   "Software",
+   "AI & Digital Systems",
+   "Data",
+   "Analytics & Quantitative Insight",
+   "Entrepreneurship",
+   "Innovation & Venture Building",
+   "Creative Arts",
+   "Design & Experience"
+  ]
+ },
+ {
+  "id": "env_creative_design_driven",
+  "title": "Creative and design-driven",
+  "archetypes": [
+   "Creator",
+   "Visionary",
+   "Thinker"
+  ],
+  "coreSubdimensions": [
+   "Creative Expression",
+   "Originality",
+   "Technical Curiosity"
+  ],
+  "secondarySubdimensions": [
+   "Autonomy",
+   "Mastery",
+   "Adaptability",
+   "Variety",
+   "Belonging"
+  ],
+  "linkedCareerWorlds": [
+   "Creative Arts",
+   "Design & Experience",
+   "Marketing",
+   "Media & Communication",
+   "Architecture",
+   "Built Environment & Spatial Design"
+  ]
+ },
+ {
+  "id": "env_innovation_startup",
+  "title": "Entrepreneurial and fast-changing",
+  "archetypes": [
+   "Visionary",
+   "Explorer",
+   "Creator"
+  ],
+  "coreSubdimensions": [
+   "Entrepreneurial Drive",
+   "Originality",
+   "Adaptability"
+  ],
+  "secondarySubdimensions": [
+   "Pace",
+   "Autonomy",
+   "Variety",
+   "Resilience",
+   "Social Confidence",
+   "Achievement"
+  ],
+  "linkedCareerWorlds": [
+   "Entrepreneurship",
+   "Innovation & Venture Building",
+   "Software",
+   "AI & Digital Systems",
+   "Marketing",
+   "Media & Communication",
+   "Creative Arts",
+   "Design & Experience"
+  ]
+ },
+ {
+  "id": "env_hands_on_practical",
+  "title": "Hands-on and practical",
+  "archetypes": [
+   "Thinker",
+   "Creator",
+   "Organizer",
+   "Achiever"
+  ],
+  "coreSubdimensions": [
+   "Technical Curiosity",
+   "Mastery",
+   "Reliability"
+  ],
+  "secondarySubdimensions": [
+   "Precision",
+   "Structure",
+   "Analytical Curiosity",
+   "Achievement",
+   "Adaptability"
+  ],
+  "linkedCareerWorlds": [
+   "Engineering",
+   "Manufacturing & Infrastructure",
+   "Architecture",
+   "Built Environment & Spatial Design",
+   "Healthcare & Medicine"
+  ]
+ },
+ {
+  "id": "env_collaborative_team_oriented",
+  "title": "Collaborative and team-oriented",
+  "archetypes": [
+   "Connector",
+   "Visionary",
+   "Organizer"
+  ],
+  "coreSubdimensions": [
+   "Collaboration",
+   "Belonging",
+   "Empathy",
+   "Social Confidence"
+  ],
+  "secondarySubdimensions": [
+   "Purpose & Impact",
+   "Helping & Caring",
+   "Adaptability",
+   "Resilience",
+   "Mastery"
+  ],
+  "linkedCareerWorlds": [
+   "Business Strategy",
+   "Commercial & Leadership",
+   "Healthcare & Medicine",
+   "Education",
+   "Coaching & People Development",
+   "Marketing",
+   "Media & Communication"
+  ]
+ },
+ {
+  "id": "env_supportive_people_centred",
+  "title": "Supportive and people-centred",
+  "archetypes": [
+   "Connector",
+   "Thinker",
+   "Visionary"
+  ],
+  "coreSubdimensions": [
+   "Helping & Caring",
+   "Empathy",
+   "Purpose & Impact",
+   "Mastery"
+  ],
+  "secondarySubdimensions": [
+   "Belonging",
+   "Social Confidence",
+   "Collaboration",
+   "Resilience",
+   "Adaptability"
+  ],
+  "linkedCareerWorlds": [
+   "Healthcare & Medicine",
+   "Psychology",
+   "Behaviour & Human Insight",
+   "Education",
+   "Coaching & People Development"
+  ]
+ },
+ {
+  "id": "env_public_service_policy_led",
+  "title": "Public service and policy-led",
+  "archetypes": [
+   "Connector",
+   "Thinker",
+   "Visionary"
+  ],
+  "coreSubdimensions": [
+   "Purpose & Impact",
+   "Analytical Curiosity",
+   "Helping & Caring"
+  ],
+  "secondarySubdimensions": [
+   "Cultural & Global Curiosity",
+   "Social Confidence",
+   "Empathy",
+   "Collaboration",
+   "Originality"
+  ],
+  "linkedCareerWorlds": [
+   "Law",
+   "Governance & Public Impact",
+   "Society",
+   "Culture",
+   "Languages & Global Affairs",
+   "Environment",
+   "Sustainability & Planetary Futures",
+   "Education",
+   "Coaching & People Development"
+  ]
+ },
+ {
+  "id": "env_learning_growth_oriented",
+  "title": "Development-focused and growth-oriented",
+  "archetypes": [
+   "Thinker",
+   "Explorer",
+   "Creator"
+  ],
+  "coreSubdimensions": [
+   "Mastery",
+   "Analytical Curiosity",
+   "Adaptability"
+  ],
+  "secondarySubdimensions": [
+   "Autonomy",
+   "Purpose & Impact",
+   "Originality",
+   "Independence",
+   "Technical Curiosity"
+  ],
+  "linkedCareerWorlds": [
+   "Education",
+   "Coaching & People Development",
+   "Psychology",
+   "Behaviour & Human Insight",
+   "Healthcare & Medicine"
+  ]
+ },
+ {
+  "id": "env_independent_remote",
+  "title": "Independent and self-directed",
+  "archetypes": [
+   "Thinker",
+   "Explorer",
+   "Creator",
+   "Visionary"
+  ],
+  "coreSubdimensions": [
+   "Independence",
+   "Autonomy",
+   "Adaptability"
+  ],
+  "secondarySubdimensions": [
+   "Mastery",
+   "Variety",
+   "Originality",
+   "Analytical Curiosity",
+   "Technical Curiosity"
+  ],
+  "linkedCareerWorlds": [
+   "Data",
+   "Analytics & Quantitative Insight",
+   "Software",
+   "AI & Digital Systems",
+   "Society",
+   "Culture",
+   "Languages & Global Affairs"
+  ]
+ },
+ {
+  "id": "env_exploratory_field_based",
+  "title": "Field-based and exploratory",
+  "archetypes": [
+   "Explorer",
+   "Creator",
+   "Thinker"
+  ],
+  "coreSubdimensions": [
+   "Adaptability",
+   "Cultural & Global Curiosity",
+   "Variety",
+   "Technical Curiosity"
+  ],
+  "secondarySubdimensions": [
+   "Resilience",
+   "Analytical Curiosity",
+   "Mastery",
+   "Autonomy",
+   "Belonging"
+  ],
+  "linkedCareerWorlds": [
+   "Environment",
+   "Sustainability & Planetary Futures",
+   "Engineering",
+   "Manufacturing & Infrastructure",
+   "Society",
+   "Culture",
+   "Languages & Global Affairs",
+   "Science & Research"
+  ]
+ },
+ {
+  "id": "env_purpose_driven_mission_led",
+  "title": "Purpose-driven and mission-led",
+  "archetypes": [
+   "Connector",
+   "Explorer",
+   "Visionary"
+  ],
+  "coreSubdimensions": [
+   "Purpose & Impact",
+   "Helping & Caring",
+   "Belonging",
+   "Cultural & Global Curiosity"
+  ],
+  "secondarySubdimensions": [
+   "Empathy",
+   "Collaboration",
+   "Social Confidence",
+   "Resilience",
+   "Adaptability"
+  ],
+  "linkedCareerWorlds": [
+   "Environment",
+   "Sustainability & Planetary Futures",
+   "Law",
+   "Governance & Public Impact",
+   "Society",
+   "Culture",
+   "Languages & Global Affairs",
+   "Education",
+   "Coaching & People Development"
+  ]
+ }
+]

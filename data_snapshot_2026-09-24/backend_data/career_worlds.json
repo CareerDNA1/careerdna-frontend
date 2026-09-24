@@ -1,0 +1,671 @@
+[
+  {
+    "id": "cw_healthcare_medicine",
+    "title": "Healthcare & Medicine",
+    "archetypes": [
+      "Thinker",
+      "Connector",
+      "Achiever"
+    ],
+    "coreSubdimensions": [
+      "Analytical Curiosity",
+      "Helping & Caring",
+      "Mastery",
+      "Precision",
+      "Purpose & Impact",
+      "Technical Curiosity"
+    ],
+    "secondarySubdimensions": [
+      "Autonomy",
+      "Collaboration",
+      "Data Curiosity",
+      "Resilience",
+      "Achievement"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_care_support_work",
+    "title": "Care & Support Work",
+    "archetypes": [
+      "Connector",
+      "Organizer",
+      "Achiever"
+    ],
+    "coreSubdimensions": [
+      "Helping & Caring",
+      "Purpose & Impact",
+      "Empathy",
+      "Reliability",
+      "Belonging",
+      "Precision"
+    ],
+    "secondarySubdimensions": [
+      "Resilience",
+      "Collaboration",
+      "Adaptability",
+      "Social Confidence",
+      "Autonomy",
+      "Structure",
+      "Achievement",
+      "Variety"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_science_research",
+    "title": "Science & Research",
+    "archetypes": [
+      "Thinker",
+      "Creator",
+      "Organizer"
+    ],
+    "coreSubdimensions": [
+      "Analytical Curiosity",
+      "Technical Curiosity",
+      "Mastery",
+      "Purpose & Impact",
+      "Precision",
+      "Data Curiosity"
+    ],
+    "secondarySubdimensions": [
+      "Reliability",
+      "Structure",
+      "Autonomy",
+      "Independence",
+      "Collaboration"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_technology_digital",
+    "title": "Technology & Digital",
+    "archetypes": [
+      "Thinker",
+      "Creator",
+      "Visionary"
+    ],
+    "coreSubdimensions": [
+      "Analytical Curiosity",
+      "Technical Curiosity",
+      "Data Curiosity",
+      "Mastery",
+      "Originality",
+      "Precision"
+    ],
+    "secondarySubdimensions": [
+      "Autonomy",
+      "Collaboration",
+      "Independence",
+      "Variety",
+      "Purpose & Impact",
+      "Achievement"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_engineering_manufacturing",
+    "title": "Engineering & Manufacturing",
+    "archetypes": [
+      "Thinker",
+      "Creator",
+      "Explorer"
+    ],
+    "coreSubdimensions": [
+      "Analytical Curiosity",
+      "Technical Curiosity",
+      "Mastery",
+      "Originality",
+      "Reliability",
+      "Achievement"
+    ],
+    "secondarySubdimensions": [
+      "Structure",
+      "Precision",
+      "Data Curiosity",
+      "Purpose & Impact",
+      "Collaboration"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_construction_the_built_environment",
+    "title": "Construction & the Built Environment",
+    "archetypes": [
+      "Achiever",
+      "Organizer",
+      "Thinker"
+    ],
+    "coreSubdimensions": [
+      "Technical Curiosity",
+      "Analytical Curiosity",
+      "Structure",
+      "Precision",
+      "Reliability",
+      "Mastery"
+    ],
+    "secondarySubdimensions": [
+      "Autonomy",
+      "Collaboration",
+      "Pace",
+      "Purpose & Impact",
+      "Variety",
+      "Achievement",
+      "Security",
+      "Resilience"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_admin_office_support",
+    "title": "Admin & Office Support",
+    "archetypes": [
+      "Organizer",
+      "Achiever",
+      "Connector"
+    ],
+    "coreSubdimensions": [
+      "Structure",
+      "Reliability",
+      "Precision",
+      "Collaboration",
+      "Helping & Caring",
+      "Analytical Curiosity"
+    ],
+    "secondarySubdimensions": [
+      "Adaptability",
+      "Achievement",
+      "Security",
+      "Autonomy",
+      "Purpose & Impact",
+      "Variety",
+      "Social Confidence",
+      "Pace"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_business_management",
+    "title": "Business & Management",
+    "archetypes": [
+      "Thinker",
+      "Achiever",
+      "Organizer"
+    ],
+    "coreSubdimensions": [
+      "Analytical Curiosity",
+      "Achievement",
+      "Structure",
+      "Entrepreneurial Drive",
+      "Social Confidence",
+      "Data Curiosity"
+    ],
+    "secondarySubdimensions": [
+      "Adaptability",
+      "Autonomy",
+      "Pace",
+      "Collaboration",
+      "Resilience",
+      "Precision",
+      "Variety",
+      "Purpose & Impact"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_retail_sales_customer_service",
+    "title": "Retail, Sales & Customer Service",
+    "archetypes": [
+      "Achiever",
+      "Connector",
+      "Organizer"
+    ],
+    "coreSubdimensions": [
+      "Social Confidence",
+      "Achievement",
+      "Reliability",
+      "Collaboration",
+      "Analytical Curiosity",
+      "Adaptability"
+    ],
+    "secondarySubdimensions": [
+      "Variety",
+      "Pace",
+      "Autonomy",
+      "Resilience",
+      "Structure",
+      "Purpose & Impact",
+      "Entrepreneurial Drive"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_media_marketing_content_communication",
+    "title": "Media, Marketing, Content & Communication",
+    "archetypes": [
+      "Creator",
+      "Visionary",
+      "Connector"
+    ],
+    "coreSubdimensions": [
+      "Originality",
+      "Social Confidence",
+      "Creative Expression",
+      "Analytical Curiosity",
+      "Data Curiosity",
+      "Collaboration"
+    ],
+    "secondarySubdimensions": [
+      "Variety",
+      "Mastery",
+      "Autonomy",
+      "Purpose & Impact",
+      "Pace",
+      "Precision"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_money_finance_accounting",
+    "title": "Money, Finance & Accounting",
+    "archetypes": [
+      "Thinker",
+      "Achiever",
+      "Organizer"
+    ],
+    "coreSubdimensions": [
+      "Analytical Curiosity",
+      "Data Curiosity",
+      "Achievement",
+      "Precision",
+      "Reliability",
+      "Security"
+    ],
+    "secondarySubdimensions": [
+      "Structure",
+      "Autonomy",
+      "Mastery",
+      "Collaboration"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_law_justice_public_services",
+    "title": "Law, Justice & Public Services",
+    "archetypes": [
+      "Thinker",
+      "Organizer",
+      "Achiever"
+    ],
+    "coreSubdimensions": [
+      "Analytical Curiosity",
+      "Purpose & Impact",
+      "Reliability",
+      "Achievement",
+      "Precision",
+      "Structure"
+    ],
+    "secondarySubdimensions": [
+      "Collaboration",
+      "Mastery",
+      "Data Curiosity",
+      "Autonomy",
+      "Resilience"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_protective_emergency_services",
+    "title": "Protective & Emergency Services",
+    "archetypes": [
+      "Achiever",
+      "Organizer",
+      "Connector"
+    ],
+    "coreSubdimensions": [
+      "Purpose & Impact",
+      "Reliability",
+      "Resilience",
+      "Structure",
+      "Collaboration",
+      "Analytical Curiosity"
+    ],
+    "secondarySubdimensions": [
+      "Adaptability",
+      "Precision",
+      "Pace",
+      "Social Confidence",
+      "Belonging",
+      "Autonomy",
+      "Helping & Caring",
+      "Achievement"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_creative_arts_design",
+    "title": "Creative Arts & Design",
+    "archetypes": [
+      "Creator",
+      "Thinker",
+      "Visionary"
+    ],
+    "coreSubdimensions": [
+      "Originality",
+      "Creative Expression",
+      "Technical Curiosity",
+      "Mastery",
+      "Precision",
+      "Reliability"
+    ],
+    "secondarySubdimensions": [
+      "Autonomy",
+      "Variety",
+      "Achievement",
+      "Entrepreneurial Drive",
+      "Collaboration",
+      "Independence"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_education_early_years",
+    "title": "Education & Early Years",
+    "archetypes": [
+      "Connector",
+      "Visionary",
+      "Thinker"
+    ],
+    "coreSubdimensions": [
+      "Helping & Caring",
+      "Purpose & Impact",
+      "Empathy",
+      "Belonging",
+      "Social Confidence",
+      "Mastery"
+    ],
+    "secondarySubdimensions": [
+      "Collaboration",
+      "Adaptability",
+      "Resilience",
+      "Creative Expression",
+      "Structure",
+      "Originality"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_animals_land_the_outdoors",
+    "title": "Animals, Land & the Outdoors",
+    "archetypes": [
+      "Achiever",
+      "Organizer",
+      "Connector"
+    ],
+    "coreSubdimensions": [
+      "Precision",
+      "Reliability",
+      "Technical Curiosity",
+      "Mastery",
+      "Helping & Caring",
+      "Purpose & Impact"
+    ],
+    "secondarySubdimensions": [
+      "Resilience",
+      "Structure",
+      "Pace",
+      "Autonomy",
+      "Adaptability",
+      "Achievement",
+      "Variety"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_environment_sustainability",
+    "title": "Environment & Sustainability",
+    "archetypes": [
+      "Thinker",
+      "Explorer",
+      "Visionary"
+    ],
+    "coreSubdimensions": [
+      "Purpose & Impact",
+      "Analytical Curiosity",
+      "Cultural & Global Curiosity",
+      "Technical Curiosity",
+      "Data Curiosity",
+      "Entrepreneurial Drive"
+    ],
+    "secondarySubdimensions": [
+      "Mastery",
+      "Autonomy",
+      "Precision",
+      "Structure",
+      "Collaboration",
+      "Resilience",
+      "Originality"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_transport_travel_logistics",
+    "title": "Transport, Travel & Logistics",
+    "archetypes": [
+      "Achiever",
+      "Organizer",
+      "Thinker"
+    ],
+    "coreSubdimensions": [
+      "Reliability",
+      "Precision",
+      "Structure",
+      "Pace",
+      "Resilience",
+      "Technical Curiosity"
+    ],
+    "secondarySubdimensions": [
+      "Adaptability",
+      "Autonomy",
+      "Security",
+      "Collaboration",
+      "Purpose & Impact",
+      "Achievement",
+      "Variety"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_hospitality_food_events",
+    "title": "Hospitality, Food & Events",
+    "archetypes": [
+      "Achiever",
+      "Creator",
+      "Connector"
+    ],
+    "coreSubdimensions": [
+      "Pace",
+      "Creative Expression",
+      "Mastery",
+      "Reliability",
+      "Achievement",
+      "Precision"
+    ],
+    "secondarySubdimensions": [
+      "Adaptability",
+      "Collaboration",
+      "Variety",
+      "Social Confidence",
+      "Structure",
+      "Resilience",
+      "Originality"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_hair_beauty_personal_care",
+    "title": "Hair, Beauty & Personal Care",
+    "archetypes": [
+      "Connector",
+      "Achiever",
+      "Creator"
+    ],
+    "coreSubdimensions": [
+      "Social Confidence",
+      "Mastery",
+      "Precision",
+      "Helping & Caring",
+      "Creative Expression",
+      "Empathy"
+    ],
+    "secondarySubdimensions": [
+      "Collaboration",
+      "Belonging",
+      "Entrepreneurial Drive",
+      "Adaptability",
+      "Reliability",
+      "Pace",
+      "Technical Curiosity",
+      "Purpose & Impact"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_sport_fitness_leisure",
+    "title": "Sport, Fitness & Leisure",
+    "archetypes": [
+      "Connector",
+      "Achiever",
+      "Explorer"
+    ],
+    "coreSubdimensions": [
+      "Helping & Caring",
+      "Social Confidence",
+      "Reliability",
+      "Achievement",
+      "Purpose & Impact",
+      "Collaboration"
+    ],
+    "secondarySubdimensions": [
+      "Empathy",
+      "Pace",
+      "Resilience",
+      "Mastery",
+      "Autonomy"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_psychology_human_behaviour",
+    "title": "Psychology & Human Behaviour",
+    "archetypes": [
+      "Connector",
+      "Thinker",
+      "Explorer"
+    ],
+    "coreSubdimensions": [
+      "Helping & Caring",
+      "Analytical Curiosity",
+      "Empathy",
+      "Mastery",
+      "Data Curiosity",
+      "Purpose & Impact"
+    ],
+    "secondarySubdimensions": [
+      "Autonomy",
+      "Resilience",
+      "Collaboration",
+      "Belonging",
+      "Originality"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_society_culture_languages",
+    "title": "Languages, Cultures & Global Affairs",
+    "archetypes": [
+      "Explorer",
+      "Thinker",
+      "Visionary"
+    ],
+    "coreSubdimensions": [
+      "Cultural & Global Curiosity",
+      "Purpose & Impact",
+      "Analytical Curiosity",
+      "Collaboration",
+      "Mastery",
+      "Autonomy"
+    ],
+    "secondarySubdimensions": [
+      "Variety",
+      "Precision",
+      "Structure",
+      "Data Curiosity"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_performing_arts_music",
+    "title": "Performing Arts & Music",
+    "archetypes": [
+      "Creator",
+      "Visionary",
+      "Connector"
+    ],
+    "coreSubdimensions": [
+      "Creative Expression",
+      "Originality",
+      "Mastery",
+      "Social Confidence",
+      "Resilience",
+      "Pace"
+    ],
+    "secondarySubdimensions": [
+      "Adaptability",
+      "Collaboration",
+      "Purpose & Impact",
+      "Belonging",
+      "Autonomy",
+      "Variety",
+      "Achievement",
+      "Empathy"
+    ],
+    "adjacentCareerWorlds": []
+  },
+  {
+    "id": "cw_entrepreneurship_innovation_venture_building",
+    "title": "Entrepreneurship, Innovation & Venture Building",
+    "archetypes": [
+      "Visionary",
+      "Thinker",
+      "Explorer",
+      "Creator"
+    ],
+    "coreSubdimensions": [
+      "Entrepreneurial Drive",
+      "Originality",
+      "Achievement",
+      "Autonomy",
+      "Adaptability",
+      "Analytical Curiosity"
+    ],
+    "secondarySubdimensions": [
+      "Resilience",
+      "Collaboration",
+      "Data Curiosity",
+      "Pace",
+      "Social Confidence",
+      "Independence"
+    ],
+    "adjacentCareerWorlds": [
+      "Business Strategy",
+      "Commercial & Leadership",
+      "Marketing",
+      "Media & Communication",
+      "Software",
+      "AI & Digital Systems",
+      "Creative Arts",
+      "Design & Experience"
+    ]
+  }
+]

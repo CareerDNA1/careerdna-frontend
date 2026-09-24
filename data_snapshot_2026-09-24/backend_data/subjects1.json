@@ -1,0 +1,5439 @@
+[
+ {
+  "careerWorldId": "cw_money_finance_accounting",
+  "careerWorld": "Money, Finance & Accounting",
+  "subjects": [
+   {
+    "id": "sub_actuarial_science",
+    "title": "Actuarial Science",
+    "careerWorldId": "cw_money_finance_accounting",
+    "careerWorld": "Money, Finance & Accounting",
+    "archetypes": [
+     "Thinker",
+     "Organizer",
+     "Creator",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Data Curiosity",
+     "Mastery",
+     "Security",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Independence",
+     "Structure",
+     "Autonomy",
+     "Achievement",
+     "Reliability"
+    ],
+    "primaryPathwayFamilies": [
+     "Core Data Analysis & Business Insight",
+     "Insurance & Actuarial",
+     "Risk & Quantitative Analysis"
+    ],
+    "adjacentPathwayFamilies": [
+     "Risk, Compliance & Controls",
+     "Treasury & Liquidity",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_financial_mathematics",
+    "title": "Financial Mathematics",
+    "careerWorldId": "cw_money_finance_accounting",
+    "careerWorld": "Money, Finance & Accounting",
+    "archetypes": [
+     "Thinker",
+     "Organizer",
+     "Creator",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Data Curiosity",
+     "Mastery",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Autonomy",
+     "Independence",
+     "Achievement",
+     "Security",
+     "Structure",
+     "Pace",
+     "Resilience",
+     "Reliability"
+    ],
+    "primaryPathwayFamilies": [
+     "Data Science & Advanced Modelling",
+     "Insurance & Actuarial",
+     "Markets & Trading",
+     "Risk & Quantitative Analysis"
+    ],
+    "adjacentPathwayFamilies": [
+     "Accounting, Audit & Assurance",
+     "Asset & Wealth Management",
+     "Equity Research & Investment Research",
+     "Investment Banking & Corporate Finance",
+     "Treasury & Liquidity",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_mathematics",
+    "title": "Mathematics",
+    "careerWorldId": "cw_money_finance_accounting",
+    "careerWorld": "Money, Finance & Accounting",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Organizer",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Data Curiosity",
+     "Mastery",
+     "Technical Curiosity",
+     "Precision",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Autonomy",
+     "Independence",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "AI & Machine Learning",
+     "Data Science & Advanced Modelling",
+     "Risk & Quantitative Analysis"
+    ],
+    "adjacentPathwayFamilies": [
+     "Core Data Analysis & Business Insight",
+     "Insurance & Actuarial",
+     "Markets & Trading",
+     "Higher Education & Academic Research",
+     "Secondary Teaching",
+     "R&D Science",
+     "Scientific Data & Bioinformatics"
+    ]
+   },
+   {
+    "id": "sub_real_estate_and_property",
+    "title": "Real Estate & Property",
+    "careerWorldId": "cw_money_finance_accounting",
+    "careerWorld": "Money, Finance & Accounting",
+    "archetypes": [
+     "Thinker",
+     "Achiever",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Achievement",
+     "Structure"
+    ],
+    "secondarySubdimensions": [
+     "Data Curiosity",
+     "Precision",
+     "Entrepreneurial Drive",
+     "Reliability",
+     "Security"
+    ],
+    "primaryPathwayFamilies": [
+     "Real Estate Investment & Finance",
+     "Facilities & Property Management",
+     "Property Development & Asset Management",
+     "Surveying, Valuation & Cost Consultancy",
+     "Real Estate Agency & Brokerage"
+    ],
+    "adjacentPathwayFamilies": [
+     "Asset & Wealth Management",
+     "Commercial & Corporate Banking",
+     "Investment Banking & Corporate Finance",
+     "Construction Project Delivery",
+     "Sustainability & Building Performance",
+     "Town Planning & Urban Development",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_accounting",
+    "title": "Accounting",
+    "careerWorldId": "cw_money_finance_accounting",
+    "careerWorld": "Money, Finance & Accounting",
+    "archetypes": [
+     "Achiever",
+     "Explorer",
+     "Organizer",
+     "Thinker"
+    ],
+    "coreSubdimensions": [
+     "Security",
+     "Reliability",
+     "Analytical Curiosity",
+     "Precision",
+     "Data Curiosity",
+     "Achievement"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Mastery",
+     "Collaboration",
+     "Autonomy",
+     "Independence"
+    ],
+    "primaryPathwayFamilies": [
+     "Accounting, Audit & Assurance",
+     "Financial Analysis & FP&A",
+     "Risk, Compliance & Controls",
+     "Treasury & Liquidity"
+    ],
+    "adjacentPathwayFamilies": [
+     "Business Intelligence & Reporting",
+     "Asset & Wealth Management",
+     "Banking Operations & Middle Office",
+     "Commercial & Corporate Banking",
+     "Fintech & Digital Finance",
+     "Insurance & Actuarial",
+     "Investment Banking & Corporate Finance",
+     "Business Analysis",
+     "Consulting & Strategic Improvement",
+     "Higher Education & Academic Research",
+     "Venture Building & Founder",
+     "Investigations & Financial Crime"
+    ]
+   },
+   {
+    "id": "sub_accounting_and_finance",
+    "title": "Accounting and Finance",
+    "careerWorldId": "cw_money_finance_accounting",
+    "careerWorld": "Money, Finance & Accounting",
+    "archetypes": [
+     "Achiever",
+     "Explorer",
+     "Organizer",
+     "Thinker"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Achievement",
+     "Security",
+     "Data Curiosity",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Mastery",
+     "Autonomy",
+     "Reliability",
+     "Collaboration",
+     "Pace",
+     "Variety",
+     "Helping & Caring"
+    ],
+    "primaryPathwayFamilies": [
+     "Accounting, Audit & Assurance",
+     "Asset & Wealth Management",
+     "Commercial & Corporate Banking",
+     "Financial Analysis & FP&A",
+     "Investment Banking & Corporate Finance",
+     "Risk, Compliance & Controls",
+     "Treasury & Liquidity"
+    ],
+    "adjacentPathwayFamilies": [
+     "Business Intelligence & Reporting",
+     "Banking Operations & Middle Office",
+     "Equity Research & Investment Research",
+     "Fintech & Digital Finance",
+     "Markets & Trading",
+     "Private Equity & Venture Capital",
+     "Real Estate Investment & Finance",
+     "Sustainable Finance & Impact Investing",
+     "Business Analysis",
+     "Consulting & Strategic Improvement",
+     "Generalist Business Programmes",
+     "Higher Education & Academic Research",
+     "Venture Building & Founder",
+     "Governance, Risk & Compliance",
+     "Investigations & Financial Crime"
+    ]
+   },
+   {
+    "id": "sub_economics_with_data_science",
+    "title": "Economics with Data Science",
+    "careerWorldId": "cw_money_finance_accounting",
+    "careerWorld": "Money, Finance & Accounting",
+    "archetypes": [
+     "Achiever",
+     "Explorer",
+     "Organizer",
+     "Thinker"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Data Curiosity",
+     "Achievement",
+     "Entrepreneurial Drive",
+     "Security",
+     "Reliability"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Precision",
+     "Autonomy",
+     "Structure",
+     "Collaboration",
+     "Independence"
+    ],
+    "primaryPathwayFamilies": [
+     "Equity Research & Investment Research",
+     "Financial Analysis & FP&A",
+     "Risk, Compliance & Controls"
+    ],
+    "adjacentPathwayFamilies": [
+     "AI & Machine Learning",
+     "Business Intelligence & Reporting",
+     "Core Data Analysis & Business Insight",
+     "Data Science & Advanced Modelling",
+     "Product, Growth & Experimentation Analytics",
+     "Fintech & Digital Finance",
+     "Investment Banking & Corporate Finance",
+     "Risk & Quantitative Analysis",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_finance",
+    "title": "Finance",
+    "careerWorldId": "cw_money_finance_accounting",
+    "careerWorld": "Money, Finance & Accounting",
+    "archetypes": [
+     "Thinker",
+     "Explorer",
+     "Achiever",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Security",
+     "Entrepreneurial Drive",
+     "Data Curiosity",
+     "Precision",
+     "Achievement"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Structure",
+     "Autonomy",
+     "Collaboration",
+     "Reliability",
+     "Variety",
+     "Pace",
+     "Adaptability"
+    ],
+    "primaryPathwayFamilies": [
+     "Asset & Wealth Management",
+     "Banking Operations & Middle Office",
+     "Commercial & Corporate Banking",
+     "Equity Research & Investment Research",
+     "Financial Analysis & FP&A",
+     "Fintech & Digital Finance",
+     "Investment Banking & Corporate Finance",
+     "Markets & Trading",
+     "Private Equity & Venture Capital",
+     "Real Estate Investment & Finance",
+     "Risk, Compliance & Controls",
+     "Sustainable Finance & Impact Investing",
+     "Treasury & Liquidity",
+     "Venture Capital, Accelerators & Innovation Support"
+    ],
+    "adjacentPathwayFamilies": [
+     "Business Intelligence & Reporting",
+     "Accounting, Audit & Assurance",
+     "Insurance & Actuarial",
+     "Risk & Quantitative Analysis",
+     "Business Analysis",
+     "Consulting & Strategic Improvement",
+     "HR, People & Organisations",
+     "Operations & Supply Chain",
+     "Project, PMO & Transformation",
+     "Property Development & Asset Management",
+     "Higher Education & Academic Research",
+     "Product Growth & Business Development in Start-ups",
+     "Start-up Operations",
+     "Venture Building & Founder",
+     "Sustainability & ESG Advisory",
+     "Governance, Risk & Compliance"
+    ]
+   },
+   {
+    "id": "sub_finance_and_financial_technology",
+    "title": "Finance and Financial Technology",
+    "careerWorldId": "cw_money_finance_accounting",
+    "careerWorld": "Money, Finance & Accounting",
+    "archetypes": [
+     "Thinker",
+     "Explorer",
+     "Achiever",
+     "Creator"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Entrepreneurial Drive",
+     "Technical Curiosity",
+     "Achievement",
+     "Social Confidence",
+     "Pace"
+    ],
+    "secondarySubdimensions": [
+     "Data Curiosity",
+     "Mastery",
+     "Variety",
+     "Precision",
+     "Resilience",
+     "Structure",
+     "Autonomy",
+     "Adaptability"
+    ],
+    "primaryPathwayFamilies": [
+     "Fintech & Digital Finance",
+     "Investment Banking & Corporate Finance",
+     "Markets & Trading"
+    ],
+    "adjacentPathwayFamilies": [
+     "Backend & Platform Engineering",
+     "Data Science & Advanced Modelling",
+     "Software Engineering",
+     "Asset & Wealth Management",
+     "Financial Analysis & FP&A",
+     "Risk & Quantitative Analysis",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_investment_management",
+    "title": "Investment Management",
+    "careerWorldId": "cw_money_finance_accounting",
+    "careerWorld": "Money, Finance & Accounting",
+    "archetypes": [
+     "Achiever",
+     "Explorer",
+     "Thinker",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Entrepreneurial Drive",
+     "Data Curiosity",
+     "Achievement",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Autonomy",
+     "Pace",
+     "Structure",
+     "Variety",
+     "Social Confidence",
+     "Resilience",
+     "Collaboration"
+    ],
+    "primaryPathwayFamilies": [
+     "Asset & Wealth Management",
+     "Equity Research & Investment Research",
+     "Investment Banking & Corporate Finance",
+     "Private Equity & Venture Capital"
+    ],
+    "adjacentPathwayFamilies": [
+     "Banking Operations & Middle Office",
+     "Commercial & Corporate Banking",
+     "Financial Analysis & FP&A",
+     "Fintech & Digital Finance",
+     "Markets & Trading",
+     "Real Estate Investment & Finance",
+     "Risk & Quantitative Analysis",
+     "Sustainable Finance & Impact Investing",
+     "Treasury & Liquidity",
+     "Consulting & Strategic Improvement",
+     "Higher Education & Academic Research",
+     "Venture Capital, Accelerators & Innovation Support"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_technology_digital",
+  "careerWorld": "Technology & Digital",
+  "subjects": [
+   {
+    "id": "sub_data_science",
+    "title": "Data Science",
+    "careerWorldId": "cw_technology_digital",
+    "careerWorld": "Technology & Digital",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Organizer",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Data Curiosity",
+     "Mastery",
+     "Technical Curiosity",
+     "Precision",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Autonomy",
+     "Independence",
+     "Structure",
+     "Entrepreneurial Drive",
+     "Achievement",
+     "Variety",
+     "Pace"
+    ],
+    "primaryPathwayFamilies": [
+     "Digital Health, Healthtech & Medical Innovation",
+     "AI & Machine Learning",
+     "Business Intelligence & Reporting",
+     "Core Data Analysis & Business Insight",
+     "Data Engineering",
+     "Data Science & Advanced Modelling",
+     "Product, Growth & Experimentation Analytics",
+     "Scientific Data & Bioinformatics"
+    ],
+    "adjacentPathwayFamilies": [
+     "Customer & Market Insight",
+     "Fintech & Digital Finance",
+     "Risk & Quantitative Analysis",
+     "Business Analysis",
+     "People Analytics & Workplace Behaviour",
+     "Higher Education & Academic Research",
+     "Intelligence, Public Service & Security Analysis",
+     "Market Research & Audience Insight",
+     "Performance Marketing & Growth"
+    ]
+   },
+   {
+    "id": "sub_mathematics_and_statistics",
+    "title": "Mathematics and Statistics",
+    "careerWorldId": "cw_technology_digital",
+    "careerWorld": "Technology & Digital",
+    "archetypes": [
+     "Thinker",
+     "Explorer",
+     "Organizer",
+     "Creator"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Data Curiosity",
+     "Mastery",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Autonomy",
+     "Independence",
+     "Structure",
+     "Achievement",
+     "Entrepreneurial Drive",
+     "Purpose & Impact",
+     "Security",
+     "Social Confidence"
+    ],
+    "primaryPathwayFamilies": [
+     "Business Intelligence & Reporting",
+     "Core Data Analysis & Business Insight",
+     "Data Science & Advanced Modelling",
+     "Risk & Quantitative Analysis"
+    ],
+    "adjacentPathwayFamilies": [
+     "AI & Machine Learning",
+     "Data Engineering",
+     "Equity Research & Investment Research",
+     "Insurance & Actuarial",
+     "Business Analysis",
+     "Higher Education & Academic Research",
+     "Secondary Teaching",
+     "Scientific Data & Bioinformatics"
+    ]
+   },
+   {
+    "id": "sub_operational_research",
+    "title": "Operational Research",
+    "careerWorldId": "cw_technology_digital",
+    "careerWorld": "Technology & Digital",
+    "archetypes": [
+     "Thinker",
+     "Organizer",
+     "Explorer",
+     "Creator"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Data Curiosity",
+     "Mastery",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Autonomy",
+     "Independence",
+     "Structure",
+     "Achievement",
+     "Variety",
+     "Adaptability"
+    ],
+    "primaryPathwayFamilies": [
+     "Business Intelligence & Reporting",
+     "Core Data Analysis & Business Insight",
+     "Risk & Quantitative Analysis"
+    ],
+    "adjacentPathwayFamilies": [
+     "Consulting & Strategic Improvement",
+     "Operations & Supply Chain",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_statistics",
+    "title": "Statistics",
+    "careerWorldId": "cw_technology_digital",
+    "careerWorld": "Technology & Digital",
+    "archetypes": [
+     "Thinker",
+     "Organizer",
+     "Creator",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Data Curiosity",
+     "Mastery",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Independence",
+     "Autonomy",
+     "Structure",
+     "Security",
+     "Achievement",
+     "Technical Curiosity",
+     "Reliability",
+     "Originality"
+    ],
+    "primaryPathwayFamilies": [
+     "Business Intelligence & Reporting",
+     "Core Data Analysis & Business Insight",
+     "Data Science & Advanced Modelling",
+     "Risk & Quantitative Analysis"
+    ],
+    "adjacentPathwayFamilies": [
+     "Public Health Medicine, Epidemiology & Health Policy",
+     "AI & Machine Learning",
+     "Customer & Market Insight",
+     "Product, Growth & Experimentation Analytics",
+     "Insurance & Actuarial",
+     "Markets & Trading",
+     "Higher Education & Academic Research",
+     "Market Research & Audience Insight",
+     "Scientific Data & Bioinformatics"
+    ]
+   },
+   {
+    "id": "sub_artificial_intelligence",
+    "title": "Artificial Intelligence",
+    "careerWorldId": "cw_technology_digital",
+    "careerWorld": "Technology & Digital",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Data Curiosity",
+     "Mastery",
+     "Originality",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Independence",
+     "Precision",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "AI & Machine Learning",
+     "Data Engineering"
+    ],
+    "adjacentPathwayFamilies": [
+     "Digital Health, Healthtech & Medical Innovation",
+     "Data Science & Advanced Modelling",
+     "Software Engineering",
+     "Higher Education & Academic Research",
+     "Robotics & Automation Engineering"
+    ]
+   },
+   {
+    "id": "sub_computer_science",
+    "title": "Computer Science",
+    "careerWorldId": "cw_technology_digital",
+    "careerWorld": "Technology & Digital",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Mastery",
+     "Originality",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Independence",
+     "Precision",
+     "Data Curiosity",
+     "Structure",
+     "Adaptability"
+    ],
+    "primaryPathwayFamilies": [
+     "Digital Health, Healthtech & Medical Innovation",
+     "AI & Machine Learning",
+     "Backend & Platform Engineering",
+     "Data Engineering",
+     "Frontend & Web Development",
+     "Quality Assurance & Test Engineering",
+     "Software Engineering"
+    ],
+    "adjacentPathwayFamilies": [
+     "Business Intelligence & Reporting",
+     "Cyber Security",
+     "Data Science & Advanced Modelling",
+     "Game Design & Development",
+     "UX/UI Design",
+     "Fintech & Digital Finance",
+     "Higher Education & Academic Research",
+     "Learning Design & Educational Technology",
+     "Electrical & Electronic Engineering",
+     "Robotics & Automation Engineering",
+     "Systems Engineering",
+     "Venture Building & Founder",
+     "Scientific Data & Bioinformatics"
+    ]
+   },
+   {
+    "id": "sub_computer_science_and_artificial_intelligence",
+    "title": "Computer Science and Artificial Intelligence",
+    "careerWorldId": "cw_technology_digital",
+    "careerWorld": "Technology & Digital",
+    "archetypes": [
+     "Creator",
+     "Explorer",
+     "Thinker",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Mastery",
+     "Autonomy",
+     "Originality",
+     "Creative Expression"
+    ],
+    "secondarySubdimensions": [
+     "Data Curiosity",
+     "Independence",
+     "Precision",
+     "Structure",
+     "Variety",
+     "Adaptability",
+     "Entrepreneurial Drive",
+     "Empathy"
+    ],
+    "primaryPathwayFamilies": [
+     "AI & Machine Learning",
+     "Backend & Platform Engineering",
+     "Frontend & Web Development",
+     "Software Engineering"
+    ],
+    "adjacentPathwayFamilies": [
+     "Cyber Security",
+     "Data Engineering",
+     "Quality Assurance & Test Engineering",
+     "UX/UI Design",
+     "Fintech & Digital Finance",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_computer_science_with_cyber_security",
+    "title": "Computer Science with Cyber Security",
+    "careerWorldId": "cw_technology_digital",
+    "careerWorld": "Technology & Digital",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Adaptability",
+     "Analytical Curiosity",
+     "Technical Curiosity",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Independence",
+     "Precision",
+     "Data Curiosity",
+     "Autonomy",
+     "Mastery",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "Cyber Security"
+    ],
+    "adjacentPathwayFamilies": [
+     "Backend & Platform Engineering",
+     "Quality Assurance & Test Engineering",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_cyber_security",
+    "title": "Cyber Security",
+    "careerWorldId": "cw_technology_digital",
+    "careerWorld": "Technology & Digital",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Technical Curiosity",
+     "Adaptability",
+     "Autonomy",
+     "Mastery",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Independence",
+     "Data Curiosity",
+     "Structure",
+     "Security",
+     "Reliability",
+     "Achievement",
+     "Collaboration"
+    ],
+    "primaryPathwayFamilies": [
+     "Cyber Security",
+     "Software Engineering"
+    ],
+    "adjacentPathwayFamilies": [
+     "Backend & Platform Engineering",
+     "Quality Assurance & Test Engineering",
+     "Higher Education & Academic Research",
+     "Governance, Risk & Compliance"
+    ]
+   },
+   {
+    "id": "sub_games_technology",
+    "title": "Games Technology",
+    "careerWorldId": "cw_technology_digital",
+    "careerWorld": "Technology & Digital",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Visionary",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Autonomy",
+     "Mastery",
+     "Originality",
+     "Creative Expression"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Independence",
+     "Data Curiosity",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "Frontend & Web Development",
+     "Game Design & Development",
+     "Software Engineering"
+    ],
+    "adjacentPathwayFamilies": [
+     "Backend & Platform Engineering",
+     "Animation & Motion Design",
+     "Digital Design & Multimedia",
+     "Product & Industrial Design",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_human_computer_interaction",
+    "title": "Human-Computer Interaction",
+    "careerWorldId": "cw_technology_digital",
+    "careerWorld": "Technology & Digital",
+    "archetypes": [
+     "Creator",
+     "Thinker",
+     "Visionary",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Originality",
+     "Creative Expression",
+     "Analytical Curiosity",
+     "Autonomy",
+     "Mastery"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Data Curiosity",
+     "Independence",
+     "Structure",
+     "Helping & Caring",
+     "Empathy",
+     "Collaboration",
+     "Purpose & Impact"
+    ],
+    "primaryPathwayFamilies": [
+     "Frontend & Web Development",
+     "Software Engineering",
+     "UX Research & Behavioural Insight"
+    ],
+    "adjacentPathwayFamilies": [
+     "Digital Health, Healthtech & Medical Innovation",
+     "Game Design & Development",
+     "UX/UI Design",
+     "Higher Education & Academic Research",
+     "Learning Design & Educational Technology"
+    ]
+   },
+   {
+    "id": "sub_software_engineering",
+    "title": "Software Engineering",
+    "careerWorldId": "cw_technology_digital",
+    "careerWorld": "Technology & Digital",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Technical Curiosity",
+     "Mastery",
+     "Autonomy",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Independence",
+     "Data Curiosity",
+     "Structure",
+     "Originality",
+     "Creative Expression",
+     "Empathy"
+    ],
+    "primaryPathwayFamilies": [
+     "Digital Health, Healthtech & Medical Innovation",
+     "Backend & Platform Engineering",
+     "Data Engineering",
+     "Frontend & Web Development",
+     "Quality Assurance & Test Engineering",
+     "Software Engineering"
+    ],
+    "adjacentPathwayFamilies": [
+     "AI & Machine Learning",
+     "Cyber Security",
+     "Game Design & Development",
+     "UX/UI Design",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_cognitive_science",
+    "title": "Cognitive Science",
+    "careerWorldId": "cw_technology_digital",
+    "careerWorld": "Technology & Digital",
+    "archetypes": [
+     "Thinker",
+     "Visionary",
+     "Connector",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Helping & Caring",
+     "Originality",
+     "Data Curiosity",
+     "Social Confidence",
+     "Mastery"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Autonomy",
+     "Purpose & Impact",
+     "Technical Curiosity",
+     "Precision",
+     "Independence",
+     "Empathy",
+     "Resilience"
+    ],
+    "primaryPathwayFamilies": [
+     "UX Research & Behavioural Insight",
+     "People Analytics & Workplace Behaviour"
+    ],
+    "adjacentPathwayFamilies": [
+     "AI & Machine Learning",
+     "Software Engineering",
+     "Higher Education & Academic Research",
+     "Teaching Assistant & Learning Support"
+    ]
+   },
+   {
+    "id": "sub_ux_design_and_interaction_design",
+    "title": "UX Design and Interaction Design",
+    "careerWorldId": "cw_technology_digital",
+    "careerWorld": "Technology & Digital",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Visionary",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Originality",
+     "Creative Expression",
+     "Analytical Curiosity",
+     "Technical Curiosity",
+     "Mastery",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Independence",
+     "Data Curiosity",
+     "Empathy",
+     "Collaboration",
+     "Helping & Caring",
+     "Purpose & Impact",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "UX/UI Design",
+     "Digital Design & Multimedia"
+    ],
+    "adjacentPathwayFamilies": [
+     "Frontend & Web Development",
+     "Software Engineering",
+     "UX Research & Behavioural Insight",
+     "Graphic Design & Visual Communication",
+     "Higher Education & Academic Research",
+     "Learning Design & Educational Technology"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_engineering_manufacturing",
+  "careerWorld": "Engineering & Manufacturing",
+  "subjects": [
+   {
+    "id": "sub_aeronautical_and_aerospace_engineering",
+    "title": "Aeronautical and Aerospace Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "careerWorld": "Engineering & Manufacturing",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Mastery",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Structure",
+     "Data Curiosity",
+     "Collaboration",
+     "Reliability",
+     "Creative Expression",
+     "Resilience",
+     "Achievement"
+    ],
+    "primaryPathwayFamilies": [
+     "Aerospace & Defence Engineering",
+     "Mechanical Design & Development Engineering"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Infrastructure, Maintenance & Asset Engineering",
+     "Robotics & Automation Engineering",
+     "Systems Engineering"
+    ]
+   },
+   {
+    "id": "sub_biomedical_engineering",
+    "title": "Biomedical Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "careerWorld": "Engineering & Manufacturing",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Mastery",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Structure",
+     "Data Curiosity",
+     "Collaboration",
+     "Reliability",
+     "Creative Expression",
+     "Autonomy",
+     "Purpose & Impact"
+    ],
+    "primaryPathwayFamilies": [
+     "Digital Health, Healthtech & Medical Innovation"
+    ],
+    "adjacentPathwayFamilies": [
+     "Clinical Science & Laboratory Diagnostics",
+     "Higher Education & Academic Research",
+     "Electrical & Electronic Engineering",
+     "Mechanical Design & Development Engineering",
+     "Systems Engineering",
+     "Biomedical & Clinical Research"
+    ]
+   },
+   {
+    "id": "sub_chemical_engineering",
+    "title": "Chemical Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "careerWorld": "Engineering & Manufacturing",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Technical Curiosity",
+     "Achievement",
+     "Precision",
+     "Mastery"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Reliability",
+     "Data Curiosity",
+     "Collaboration",
+     "Autonomy",
+     "Purpose & Impact",
+     "Originality"
+    ],
+    "primaryPathwayFamilies": [
+     "Chemical & Process Engineering",
+     "Materials & Chemical Analysis"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Manufacturing & Production Engineering",
+     "Environmental Science & Monitoring"
+    ]
+   },
+   {
+    "id": "sub_civil_engineering",
+    "title": "Civil Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "careerWorld": "Engineering & Manufacturing",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Achiever",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Resilience",
+     "Achievement",
+     "Mastery"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Structure",
+     "Collaboration",
+     "Reliability",
+     "Adaptability",
+     "Data Curiosity",
+     "Autonomy",
+     "Purpose & Impact"
+    ],
+    "primaryPathwayFamilies": [
+     "Construction Project Delivery",
+     "Civil & Structural Engineering",
+     "Infrastructure, Maintenance & Asset Engineering"
+    ],
+    "adjacentPathwayFamilies": [
+     "Architectural Technology & BIM",
+     "Surveying, Valuation & Cost Consultancy",
+     "Sustainability & Building Performance",
+     "Town Planning & Urban Development",
+     "Higher Education & Academic Research",
+     "Systems Engineering",
+     "Environmental Policy & Impact Assessment"
+    ]
+   },
+   {
+    "id": "sub_electrical_and_electronic_engineering",
+    "title": "Electrical and Electronic Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "careerWorld": "Engineering & Manufacturing",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Originality",
+     "Mastery"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Structure",
+     "Data Curiosity",
+     "Collaboration",
+     "Autonomy",
+     "Independence",
+     "Reliability"
+    ],
+    "primaryPathwayFamilies": [
+     "Electrical & Electronic Engineering",
+     "Robotics & Automation Engineering",
+     "Systems Engineering"
+    ],
+    "adjacentPathwayFamilies": [
+     "AI & Machine Learning",
+     "Data Engineering",
+     "Higher Education & Academic Research",
+     "Aerospace & Defence Engineering",
+     "Infrastructure, Maintenance & Asset Engineering"
+    ]
+   },
+   {
+    "id": "sub_manufacturing_engineering",
+    "title": "Manufacturing Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "careerWorld": "Engineering & Manufacturing",
+    "archetypes": [
+     "Thinker",
+     "Explorer",
+     "Creator",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Technical Curiosity",
+     "Precision",
+     "Achievement",
+     "Data Curiosity",
+     "Mastery"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Reliability",
+     "Collaboration",
+     "Adaptability",
+     "Purpose & Impact",
+     "Creative Expression",
+     "Originality"
+    ],
+    "primaryPathwayFamilies": [
+     "Manufacturing & Production Engineering"
+    ],
+    "adjacentPathwayFamilies": [
+     "Operations & Supply Chain",
+     "Product & Industrial Design",
+     "Higher Education & Academic Research",
+     "Chemical & Process Engineering",
+     "Infrastructure, Maintenance & Asset Engineering",
+     "Mechanical Design & Development Engineering",
+     "Systems Engineering"
+    ]
+   },
+   {
+    "id": "sub_mechanical_engineering",
+    "title": "Mechanical Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "careerWorld": "Engineering & Manufacturing",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Precision",
+     "Originality",
+     "Mastery",
+     "Achievement"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Reliability",
+     "Data Curiosity",
+     "Creative Expression",
+     "Collaboration",
+     "Autonomy"
+    ],
+    "primaryPathwayFamilies": [
+     "Aerospace & Defence Engineering",
+     "Manufacturing & Production Engineering",
+     "Mechanical Design & Development Engineering",
+     "Robotics & Automation Engineering"
+    ],
+    "adjacentPathwayFamilies": [
+     "Product & Industrial Design",
+     "Higher Education & Academic Research",
+     "Chemical & Process Engineering",
+     "Infrastructure, Maintenance & Asset Engineering",
+     "Systems Engineering"
+    ]
+   },
+   {
+    "id": "sub_robotics_and_mechatronic_engineering",
+    "title": "Robotics and Mechatronic Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "careerWorld": "Engineering & Manufacturing",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Originality",
+     "Mastery"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Structure",
+     "Data Curiosity",
+     "Creative Expression",
+     "Autonomy",
+     "Reliability",
+     "Independence",
+     "Achievement"
+    ],
+    "primaryPathwayFamilies": [
+     "Electrical & Electronic Engineering",
+     "Mechanical Design & Development Engineering",
+     "Robotics & Automation Engineering"
+    ],
+    "adjacentPathwayFamilies": [
+     "AI & Machine Learning",
+     "Higher Education & Academic Research",
+     "Manufacturing & Production Engineering"
+    ]
+   },
+   {
+    "id": "sub_systems_engineering",
+    "title": "Systems Engineering",
+    "careerWorldId": "cw_engineering_manufacturing",
+    "careerWorld": "Engineering & Manufacturing",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Achiever",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Resilience",
+     "Mastery",
+     "Achievement"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Structure",
+     "Collaboration",
+     "Reliability",
+     "Data Curiosity",
+     "Creative Expression",
+     "Originality"
+    ],
+    "primaryPathwayFamilies": [
+     "Aerospace & Defence Engineering",
+     "Infrastructure, Maintenance & Asset Engineering",
+     "Systems Engineering"
+    ],
+    "adjacentPathwayFamilies": [
+     "Project, PMO & Transformation",
+     "Higher Education & Academic Research",
+     "Civil & Structural Engineering",
+     "Electrical & Electronic Engineering",
+     "Manufacturing & Production Engineering",
+     "Mechanical Design & Development Engineering",
+     "Robotics & Automation Engineering"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_construction_the_built_environment",
+  "careerWorld": "Construction & the Built Environment",
+  "subjects": [
+   {
+    "id": "sub_architectural_technology",
+    "title": "Architectural Technology",
+    "careerWorldId": "cw_construction_the_built_environment",
+    "careerWorld": "Construction & the Built Environment",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Visionary",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Precision",
+     "Purpose & Impact",
+     "Analytical Curiosity",
+     "Mastery",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Autonomy",
+     "Achievement",
+     "Resilience",
+     "Adaptability",
+     "Reliability",
+     "Collaboration",
+     "Creative Expression"
+    ],
+    "primaryPathwayFamilies": [
+     "Architectural Technology & BIM",
+     "Sustainability & Building Performance"
+    ],
+    "adjacentPathwayFamilies": [
+     "Architecture",
+     "Construction Project Delivery",
+     "Higher Education & Academic Research",
+     "Civil & Structural Engineering",
+     "Mechanical Design & Development Engineering"
+    ]
+   },
+   {
+    "id": "sub_architecture",
+    "title": "Architecture",
+    "careerWorldId": "cw_construction_the_built_environment",
+    "careerWorld": "Construction & the Built Environment",
+    "archetypes": [
+     "Creator",
+     "Thinker",
+     "Visionary",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Originality",
+     "Creative Expression",
+     "Autonomy",
+     "Precision",
+     "Mastery"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Analytical Curiosity",
+     "Purpose & Impact",
+     "Achievement",
+     "Collaboration"
+    ],
+    "primaryPathwayFamilies": [
+     "Architectural Technology & BIM",
+     "Architecture"
+    ],
+    "adjacentPathwayFamilies": [
+     "Sustainability & Building Performance",
+     "Town Planning & Urban Development",
+     "Product & Industrial Design",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_architecture_and_urban_planning",
+    "title": "Architecture and Urban Planning",
+    "careerWorldId": "cw_construction_the_built_environment",
+    "careerWorld": "Construction & the Built Environment",
+    "archetypes": [
+     "Thinker",
+     "Visionary",
+     "Creator",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Achievement",
+     "Purpose & Impact",
+     "Technical Curiosity",
+     "Mastery",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Autonomy",
+     "Precision",
+     "Structure",
+     "Collaboration",
+     "Data Curiosity",
+     "Cultural & Global Curiosity"
+    ],
+    "primaryPathwayFamilies": [
+     "Architecture",
+     "Town Planning & Urban Development"
+    ],
+    "adjacentPathwayFamilies": [
+     "Sustainability & Building Performance",
+     "Higher Education & Academic Research",
+     "Civil & Structural Engineering",
+     "Environmental Policy & Impact Assessment",
+     "Policy & Public Sector Analysis"
+    ]
+   },
+   {
+    "id": "sub_construction_management",
+    "title": "Construction Management",
+    "careerWorldId": "cw_construction_the_built_environment",
+    "careerWorld": "Construction & the Built Environment",
+    "archetypes": [
+     "Explorer",
+     "Thinker",
+     "Achiever",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Achievement",
+     "Resilience",
+     "Adaptability",
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Mastery"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Reliability",
+     "Precision",
+     "Collaboration",
+     "Pace",
+     "Autonomy"
+    ],
+    "primaryPathwayFamilies": [
+     "Construction Project Delivery",
+     "Facilities & Property Management",
+     "Property Development & Asset Management",
+     "Surveying, Valuation & Cost Consultancy",
+     "Sustainability & Building Performance"
+    ],
+    "adjacentPathwayFamilies": [
+     "Project, PMO & Transformation",
+     "Architectural Technology & BIM",
+     "Higher Education & Academic Research",
+     "Civil & Structural Engineering"
+    ]
+   },
+   {
+    "id": "sub_interior_architecture_and_design",
+    "title": "Interior Architecture and Design",
+    "careerWorldId": "cw_construction_the_built_environment",
+    "careerWorld": "Construction & the Built Environment",
+    "archetypes": [
+     "Creator",
+     "Thinker",
+     "Visionary",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Originality",
+     "Creative Expression",
+     "Autonomy",
+     "Precision",
+     "Mastery"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Purpose & Impact",
+     "Analytical Curiosity"
+    ],
+    "primaryPathwayFamilies": [
+     "Architectural Technology & BIM",
+     "Architecture"
+    ],
+    "adjacentPathwayFamilies": [
+     "Graphic Design & Visual Communication",
+     "Product & Industrial Design",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_landscape_architecture",
+    "title": "Landscape Architecture",
+    "careerWorldId": "cw_construction_the_built_environment",
+    "careerWorld": "Construction & the Built Environment",
+    "archetypes": [
+     "Thinker",
+     "Visionary",
+     "Creator",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Achievement",
+     "Purpose & Impact",
+     "Technical Curiosity",
+     "Mastery",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Autonomy",
+     "Structure",
+     "Collaboration",
+     "Resilience",
+     "Data Curiosity"
+    ],
+    "primaryPathwayFamilies": [
+     "Town Planning & Urban Development"
+    ],
+    "adjacentPathwayFamilies": [
+     "Architecture",
+     "Sustainability & Building Performance",
+     "Higher Education & Academic Research",
+     "Conservation & Land Management",
+     "Environmental Policy & Impact Assessment"
+    ]
+   },
+   {
+    "id": "sub_urban_planning_and_development",
+    "title": "Urban Planning and Development",
+    "careerWorldId": "cw_construction_the_built_environment",
+    "careerWorld": "Construction & the Built Environment",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Technical Curiosity",
+     "Achievement",
+     "Purpose & Impact",
+     "Mastery",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Autonomy",
+     "Precision",
+     "Structure",
+     "Collaboration",
+     "Reliability",
+     "Data Curiosity",
+     "Cultural & Global Curiosity"
+    ],
+    "primaryPathwayFamilies": [
+     "Town Planning & Urban Development"
+    ],
+    "adjacentPathwayFamilies": [
+     "Facilities & Property Management",
+     "Property Development & Asset Management",
+     "Surveying, Valuation & Cost Consultancy",
+     "Sustainability & Building Performance",
+     "Higher Education & Academic Research",
+     "Environmental Policy & Impact Assessment",
+     "Policy & Public Sector Analysis"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_science_research",
+  "careerWorld": "Science & Research",
+  "subjects": [
+   {
+    "id": "sub_biochemistry",
+    "title": "Biochemistry",
+    "careerWorldId": "cw_science_research",
+    "careerWorld": "Science & Research",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Mastery",
+     "Technical Curiosity",
+     "Precision",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Data Curiosity",
+     "Reliability",
+     "Structure",
+     "Collaboration",
+     "Autonomy",
+     "Purpose & Impact",
+     "Achievement",
+     "Helping & Caring"
+    ],
+    "primaryPathwayFamilies": [
+     "Biomedical & Clinical Research",
+     "Laboratory Science",
+     "Pharmaceutical Industry & Drug Development",
+     "R&D Science",
+     "Scientific Data & Bioinformatics"
+    ],
+    "adjacentPathwayFamilies": [
+     "Academic Medicine & Clinical Research",
+     "Clinical Pharmacy",
+     "Clinical Science & Laboratory Diagnostics",
+     "Higher Education & Academic Research",
+     "Clinical Trials & Translational Research",
+     "Forensic Science",
+     "Regulatory Affairs & Medicines Safety"
+    ]
+   },
+   {
+    "id": "sub_biology",
+    "title": "Biology",
+    "careerWorldId": "cw_science_research",
+    "careerWorld": "Science & Research",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Mastery",
+     "Precision",
+     "Technical Curiosity",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Data Curiosity",
+     "Collaboration",
+     "Structure",
+     "Purpose & Impact",
+     "Autonomy",
+     "Reliability",
+     "Achievement",
+     "Social Confidence"
+    ],
+    "primaryPathwayFamilies": [
+     "Public Health & Health Improvement",
+     "Biomedical & Clinical Research",
+     "Clinical Trials & Translational Research",
+     "Forensic Science",
+     "Laboratory Science",
+     "R&D Science"
+    ],
+    "adjacentPathwayFamilies": [
+     "Academic Medicine & Clinical Research",
+     "Clinical Research Nursing",
+     "Clinical Science & Laboratory Diagnostics",
+     "Dental Research & Academic Dentistry",
+     "Public Health Medicine, Epidemiology & Health Policy",
+     "Higher Education & Academic Research",
+     "Secondary Teaching",
+     "Conservation & Land Management",
+     "Environmental Science & Monitoring",
+     "Scientific Data & Bioinformatics",
+     "Veterinary & Animal Science",
+     "Sport & Exercise Science"
+    ]
+   },
+   {
+    "id": "sub_biomedical_science",
+    "title": "Biomedical Science",
+    "careerWorldId": "cw_science_research",
+    "careerWorld": "Science & Research",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Mastery",
+     "Technical Curiosity",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Data Curiosity",
+     "Reliability",
+     "Collaboration",
+     "Structure",
+     "Autonomy",
+     "Purpose & Impact",
+     "Independence",
+     "Achievement"
+    ],
+    "primaryPathwayFamilies": [
+     "Clinical Science & Laboratory Diagnostics",
+     "Biomedical & Clinical Research",
+     "Clinical Trials & Translational Research",
+     "Forensic Science",
+     "Laboratory Science"
+    ],
+    "adjacentPathwayFamilies": [
+     "Academic Medicine & Clinical Research",
+     "Clinical Medicine / Doctor",
+     "Clinical Pharmacy",
+     "Clinical Research Nursing",
+     "Community Pharmacy",
+     "Dental Research & Academic Dentistry",
+     "Dentistry / Dentist",
+     "Diagnostic & Investigative Medicine",
+     "Diagnostics, Imaging & Clinical Support",
+     "Medicines Policy & Public Health Pharmacy",
+     "Nursing",
+     "Oral Health Policy & Dental Public Health",
+     "Public Health Medicine, Epidemiology & Health Policy",
+     "Specialist Dentistry",
+     "Surgery & Procedural Medicine",
+     "Higher Education & Academic Research",
+     "Pharmaceutical Industry & Drug Development",
+     "Regulatory Affairs & Medicines Safety",
+     "Scientific Data & Bioinformatics",
+     "Veterinary & Animal Science"
+    ]
+   },
+   {
+    "id": "sub_biotechnology",
+    "title": "Biotechnology",
+    "careerWorldId": "cw_science_research",
+    "careerWorld": "Science & Research",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Technical Curiosity",
+     "Mastery",
+     "Precision",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Data Curiosity",
+     "Autonomy",
+     "Reliability",
+     "Collaboration",
+     "Structure",
+     "Achievement",
+     "Independence"
+    ],
+    "primaryPathwayFamilies": [
+     "Biomedical & Clinical Research",
+     "Materials & Chemical Analysis",
+     "R&D Science"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Chemical & Process Engineering",
+     "Clinical Trials & Translational Research",
+     "Laboratory Science",
+     "Pharmaceutical Industry & Drug Development",
+     "Scientific Data & Bioinformatics"
+    ]
+   },
+   {
+    "id": "sub_chemistry",
+    "title": "Chemistry",
+    "careerWorldId": "cw_science_research",
+    "careerWorld": "Science & Research",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Technical Curiosity",
+     "Precision",
+     "Mastery",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Data Curiosity",
+     "Reliability",
+     "Structure",
+     "Autonomy",
+     "Purpose & Impact",
+     "Collaboration",
+     "Achievement",
+     "Social Confidence"
+    ],
+    "primaryPathwayFamilies": [
+     "Forensic Science",
+     "Laboratory Science",
+     "Materials & Chemical Analysis",
+     "R&D Science"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Secondary Teaching",
+     "Chemical & Process Engineering",
+     "Manufacturing & Production Engineering",
+     "Environmental Science & Monitoring",
+     "Pharmaceutical Industry & Drug Development"
+    ]
+   },
+   {
+    "id": "sub_natural_sciences",
+    "title": "Natural Sciences",
+    "careerWorldId": "cw_science_research",
+    "careerWorld": "Science & Research",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Technical Curiosity",
+     "Mastery",
+     "Data Curiosity",
+     "Precision",
+     "Independence"
+    ],
+    "secondarySubdimensions": [
+     "Autonomy",
+     "Structure",
+     "Reliability",
+     "Originality",
+     "Collaboration",
+     "Purpose & Impact"
+    ],
+    "primaryPathwayFamilies": [
+     "Laboratory Science",
+     "R&D Science"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Environmental Science & Monitoring",
+     "Biomedical & Clinical Research",
+     "Materials & Chemical Analysis",
+     "Scientific Data & Bioinformatics"
+    ]
+   },
+   {
+    "id": "sub_neuroscience",
+    "title": "Neuroscience",
+    "careerWorldId": "cw_science_research",
+    "careerWorld": "Science & Research",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Mastery",
+     "Technical Curiosity",
+     "Data Curiosity",
+     "Precision",
+     "Independence"
+    ],
+    "secondarySubdimensions": [
+     "Autonomy",
+     "Structure",
+     "Reliability",
+     "Collaboration",
+     "Originality",
+     "Purpose & Impact",
+     "Achievement",
+     "Helping & Caring"
+    ],
+    "primaryPathwayFamilies": [
+     "Biomedical & Clinical Research",
+     "R&D Science"
+    ],
+    "adjacentPathwayFamilies": [
+     "Academic Medicine & Clinical Research",
+     "Higher Education & Academic Research",
+     "Clinical Psychology & Mental Health Support",
+     "Clinical Trials & Translational Research",
+     "Scientific Data & Bioinformatics"
+    ]
+   },
+   {
+    "id": "sub_pharmacology",
+    "title": "Pharmacology",
+    "careerWorldId": "cw_science_research",
+    "careerWorld": "Science & Research",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Mastery",
+     "Technical Curiosity",
+     "Precision",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Data Curiosity",
+     "Collaboration",
+     "Reliability",
+     "Structure",
+     "Autonomy",
+     "Achievement",
+     "Purpose & Impact",
+     "Helping & Caring"
+    ],
+    "primaryPathwayFamilies": [
+     "Biomedical & Clinical Research",
+     "Clinical Trials & Translational Research",
+     "Laboratory Science",
+     "Pharmaceutical Industry & Drug Development",
+     "R&D Science",
+     "Regulatory Affairs & Medicines Safety"
+    ],
+    "adjacentPathwayFamilies": [
+     "Clinical Pharmacy",
+     "Clinical Science & Laboratory Diagnostics",
+     "Community Pharmacy",
+     "Medicines Policy & Public Health Pharmacy",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_physics",
+    "title": "Physics",
+    "careerWorldId": "cw_science_research",
+    "careerWorld": "Science & Research",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Explorer",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Technical Curiosity",
+     "Data Curiosity",
+     "Mastery",
+     "Precision",
+     "Independence"
+    ],
+    "secondarySubdimensions": [
+     "Autonomy",
+     "Structure",
+     "Originality",
+     "Collaboration",
+     "Purpose & Impact",
+     "Social Confidence",
+     "Creative Expression",
+     "Reliability"
+    ],
+    "primaryPathwayFamilies": [
+     "R&D Science"
+    ],
+    "adjacentPathwayFamilies": [
+     "AI & Machine Learning",
+     "Data Science & Advanced Modelling",
+     "Higher Education & Academic Research",
+     "Secondary Teaching",
+     "Aerospace & Defence Engineering",
+     "Chemical & Process Engineering",
+     "Electrical & Electronic Engineering",
+     "Systems Engineering",
+     "Materials & Chemical Analysis",
+     "Scientific Data & Bioinformatics"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_animals_land_the_outdoors",
+  "careerWorld": "Animals, Land & the Outdoors",
+  "subjects": [
+   {
+    "id": "sub_animal_science",
+    "title": "Animal Science",
+    "careerWorldId": "cw_animals_land_the_outdoors",
+    "careerWorld": "Animals, Land & the Outdoors",
+    "archetypes": [
+     "Thinker",
+     "Achiever",
+     "Explorer",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Technical Curiosity",
+     "Data Curiosity",
+     "Mastery"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Reliability",
+     "Helping & Caring",
+     "Purpose & Impact",
+     "Adaptability",
+     "Autonomy",
+     "Achievement",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "Veterinary & Animal Science"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Conservation & Land Management",
+     "Agriculture, Forestry & Land Management"
+    ]
+   },
+   {
+    "id": "sub_veterinary_medicine",
+    "title": "Veterinary Medicine",
+    "careerWorldId": "cw_animals_land_the_outdoors",
+    "careerWorld": "Animals, Land & the Outdoors",
+    "archetypes": [
+     "Achiever",
+     "Thinker",
+     "Connector",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Technical Curiosity",
+     "Mastery",
+     "Helping & Caring"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Reliability",
+     "Empathy",
+     "Resilience",
+     "Purpose & Impact",
+     "Achievement",
+     "Adaptability",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "Veterinary & Animal Science"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_agriculture",
+    "title": "Agriculture",
+    "careerWorldId": "cw_animals_land_the_outdoors",
+    "careerWorld": "Animals, Land & the Outdoors",
+    "archetypes": [
+     "Achiever",
+     "Organizer",
+     "Thinker",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Technical Curiosity",
+     "Mastery",
+     "Purpose & Impact"
+    ],
+    "secondarySubdimensions": [
+     "Reliability",
+     "Precision",
+     "Data Curiosity",
+     "Adaptability",
+     "Autonomy",
+     "Structure",
+     "Achievement",
+     "Independence"
+    ],
+    "primaryPathwayFamilies": [
+     "Agriculture, Forestry & Land Management"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Circular Economy & Sustainable Supply Chains",
+     "Conservation & Land Management",
+     "Environmental Science & Monitoring",
+     "Veterinary & Animal Science"
+    ]
+   },
+   {
+    "id": "sub_forestry",
+    "title": "Forestry",
+    "careerWorldId": "cw_animals_land_the_outdoors",
+    "careerWorld": "Animals, Land & the Outdoors",
+    "archetypes": [
+     "Explorer",
+     "Achiever",
+     "Organizer",
+     "Thinker"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Purpose & Impact",
+     "Mastery",
+     "Analytical Curiosity"
+    ],
+    "secondarySubdimensions": [
+     "Reliability",
+     "Precision",
+     "Adaptability",
+     "Autonomy",
+     "Independence",
+     "Structure",
+     "Achievement",
+     "Data Curiosity"
+    ],
+    "primaryPathwayFamilies": [
+     "Agriculture, Forestry & Land Management"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Conservation & Land Management",
+     "Environmental Science & Monitoring"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_healthcare_medicine",
+  "careerWorld": "Healthcare & Medicine",
+  "subjects": [
+   {
+    "id": "sub_dentistry",
+    "title": "Dentistry",
+    "careerWorldId": "cw_healthcare_medicine",
+    "careerWorld": "Healthcare & Medicine",
+    "archetypes": [
+     "Thinker",
+     "Organizer",
+     "Creator",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Mastery",
+     "Precision",
+     "Achievement",
+     "Helping & Caring",
+     "Analytical Curiosity"
+    ],
+    "secondarySubdimensions": [
+     "Autonomy",
+     "Technical Curiosity",
+     "Originality",
+     "Resilience",
+     "Data Curiosity",
+     "Collaboration",
+     "Purpose & Impact",
+     "Independence"
+    ],
+    "primaryPathwayFamilies": [
+     "Dental Research & Academic Dentistry",
+     "Dentistry / Dentist",
+     "Oral Health Policy & Dental Public Health",
+     "Specialist Dentistry"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_diagnostic_radiography",
+    "title": "Diagnostic Radiography",
+    "careerWorldId": "cw_healthcare_medicine",
+    "careerWorld": "Healthcare & Medicine",
+    "archetypes": [
+     "Thinker",
+     "Explorer",
+     "Creator",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Mastery",
+     "Technical Curiosity",
+     "Precision",
+     "Purpose & Impact"
+    ],
+    "secondarySubdimensions": [
+     "Data Curiosity",
+     "Autonomy",
+     "Reliability",
+     "Collaboration",
+     "Achievement",
+     "Resilience",
+     "Helping & Caring",
+     "Empathy"
+    ],
+    "primaryPathwayFamilies": [
+     "Clinical Science & Laboratory Diagnostics",
+     "Diagnostic & Investigative Medicine",
+     "Diagnostics, Imaging & Clinical Support"
+    ],
+    "adjacentPathwayFamilies": [
+     "Healthcare Management & Service Improvement",
+     "Nursing",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_medicine",
+    "title": "Medicine",
+    "careerWorldId": "cw_healthcare_medicine",
+    "careerWorld": "Healthcare & Medicine",
+    "archetypes": [
+     "Thinker",
+     "Connector",
+     "Explorer",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Helping & Caring",
+     "Mastery",
+     "Purpose & Impact",
+     "Precision",
+     "Empathy"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Resilience",
+     "Autonomy",
+     "Achievement",
+     "Data Curiosity",
+     "Technical Curiosity",
+     "Reliability",
+     "Social Confidence"
+    ],
+    "primaryPathwayFamilies": [
+     "Academic Medicine & Clinical Research",
+     "Acute, Emergency & Critical Care",
+     "Clinical Medicine / Doctor",
+     "Diagnostic & Investigative Medicine",
+     "Mental Health & Behavioural Medicine",
+     "Public Health Medicine, Epidemiology & Health Policy",
+     "Surgery & Procedural Medicine"
+    ],
+    "adjacentPathwayFamilies": [
+     "Diagnostics, Imaging & Clinical Support",
+     "Healthcare Management & Service Improvement",
+     "Higher Education & Academic Research",
+     "Clinical Trials & Translational Research"
+    ]
+   },
+   {
+    "id": "sub_midwifery",
+    "title": "Midwifery",
+    "careerWorldId": "cw_healthcare_medicine",
+    "careerWorld": "Healthcare & Medicine",
+    "archetypes": [
+     "Connector",
+     "Thinker",
+     "Creator",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Mastery",
+     "Purpose & Impact",
+     "Empathy"
+    ],
+    "secondarySubdimensions": [
+     "Resilience",
+     "Collaboration",
+     "Autonomy"
+    ],
+    "primaryPathwayFamilies": [
+     "Midwifery"
+    ],
+    "adjacentPathwayFamilies": [
+     "Nursing",
+     "Public Health Nursing & Health Visiting",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_nursing",
+    "title": "Nursing",
+    "careerWorldId": "cw_healthcare_medicine",
+    "careerWorld": "Healthcare & Medicine",
+    "archetypes": [
+     "Connector",
+     "Creator",
+     "Thinker",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Empathy",
+     "Mastery",
+     "Purpose & Impact"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Analytical Curiosity",
+     "Reliability",
+     "Resilience",
+     "Social Confidence",
+     "Precision",
+     "Data Curiosity",
+     "Achievement"
+    ],
+    "primaryPathwayFamilies": [
+     "Clinical Research Nursing",
+     "Mental Health & Behavioural Medicine",
+     "Nurse Education & Leadership",
+     "Nursing",
+     "Public Health Nursing & Health Visiting"
+    ],
+    "adjacentPathwayFamilies": [
+     "Acute, Emergency & Critical Care",
+     "Diagnostics, Imaging & Clinical Support",
+     "Healthcare Management & Service Improvement",
+     "Midwifery",
+     "Paramedic Practice & Emergency Care",
+     "Public Health & Health Improvement",
+     "Rehabilitation & Functional Independence",
+     "Higher Education & Academic Research",
+     "Clinical Trials & Translational Research",
+     "Emergency Planning & Ambulance Service Leadership"
+    ]
+   },
+   {
+    "id": "sub_occupational_therapy",
+    "title": "Occupational Therapy",
+    "careerWorldId": "cw_healthcare_medicine",
+    "careerWorld": "Healthcare & Medicine",
+    "archetypes": [
+     "Connector",
+     "Thinker",
+     "Creator",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Mastery",
+     "Analytical Curiosity",
+     "Purpose & Impact",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Achievement",
+     "Resilience",
+     "Originality",
+     "Social Confidence",
+     "Reliability",
+     "Empathy",
+     "Belonging"
+    ],
+    "primaryPathwayFamilies": [
+     "Rehabilitation & Functional Independence"
+    ],
+    "adjacentPathwayFamilies": [
+     "Healthcare Management & Service Improvement",
+     "Higher Education & Academic Research",
+     "SEND & Inclusion Support"
+    ]
+   },
+   {
+    "id": "sub_optometry",
+    "title": "Optometry",
+    "careerWorldId": "cw_healthcare_medicine",
+    "careerWorld": "Healthcare & Medicine",
+    "archetypes": [
+     "Thinker",
+     "Explorer",
+     "Creator",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Mastery",
+     "Technical Curiosity",
+     "Precision",
+     "Purpose & Impact"
+    ],
+    "secondarySubdimensions": [
+     "Data Curiosity",
+     "Autonomy",
+     "Reliability",
+     "Achievement",
+     "Collaboration",
+     "Social Confidence",
+     "Resilience",
+     "Helping & Caring"
+    ],
+    "primaryPathwayFamilies": [
+     "Diagnostic & Investigative Medicine"
+    ],
+    "adjacentPathwayFamilies": [
+     "Clinical Science & Laboratory Diagnostics",
+     "Diagnostics, Imaging & Clinical Support",
+     "Healthcare Management & Service Improvement",
+     "Rehabilitation & Functional Independence",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_paramedic_science",
+    "title": "Paramedic Science",
+    "careerWorldId": "cw_healthcare_medicine",
+    "careerWorld": "Healthcare & Medicine",
+    "archetypes": [
+     "Connector",
+     "Visionary",
+     "Achiever",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Pace",
+     "Resilience",
+     "Analytical Curiosity",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Achievement",
+     "Reliability",
+     "Variety",
+     "Purpose & Impact",
+     "Technical Curiosity",
+     "Structure",
+     "Data Curiosity"
+    ],
+    "primaryPathwayFamilies": [
+     "Paramedic Practice & Emergency Care",
+     "Emergency Planning & Ambulance Service Leadership"
+    ],
+    "adjacentPathwayFamilies": [
+     "Acute, Emergency & Critical Care",
+     "Diagnostics, Imaging & Clinical Support",
+     "Healthcare Management & Service Improvement",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_pharmacy",
+    "title": "Pharmacy",
+    "careerWorldId": "cw_healthcare_medicine",
+    "careerWorld": "Healthcare & Medicine",
+    "archetypes": [
+     "Thinker",
+     "Connector",
+     "Creator",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Mastery",
+     "Social Confidence",
+     "Achievement",
+     "Collaboration",
+     "Analytical Curiosity"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Reliability",
+     "Purpose & Impact",
+     "Structure",
+     "Data Curiosity",
+     "Autonomy",
+     "Originality",
+     "Independence"
+    ],
+    "primaryPathwayFamilies": [
+     "Clinical Pharmacy",
+     "Community Pharmacy",
+     "Medicines Policy & Public Health Pharmacy",
+     "Pharmaceutical Industry & Drug Development",
+     "Regulatory Affairs & Medicines Safety"
+    ],
+    "adjacentPathwayFamilies": [
+     "Healthcare Management & Service Improvement",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_physiotherapy",
+    "title": "Physiotherapy",
+    "careerWorldId": "cw_healthcare_medicine",
+    "careerWorld": "Healthcare & Medicine",
+    "archetypes": [
+     "Connector",
+     "Thinker",
+     "Creator",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Mastery",
+     "Analytical Curiosity",
+     "Purpose & Impact",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Achievement",
+     "Reliability",
+     "Resilience",
+     "Data Curiosity",
+     "Originality",
+     "Technical Curiosity",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "Rehabilitation & Functional Independence"
+    ],
+    "adjacentPathwayFamilies": [
+     "Diagnostic & Investigative Medicine",
+     "Diagnostics, Imaging & Clinical Support",
+     "Healthcare Management & Service Improvement",
+     "Higher Education & Academic Research",
+     "Biomedical & Clinical Research",
+     "Sport & Exercise Science"
+    ]
+   },
+   {
+    "id": "sub_sport_and_exercise_science",
+    "title": "Sport and Exercise Science",
+    "careerWorldId": "cw_healthcare_medicine",
+    "careerWorld": "Healthcare & Medicine",
+    "archetypes": [
+     "Connector",
+     "Thinker",
+     "Creator",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Mastery",
+     "Analytical Curiosity",
+     "Purpose & Impact",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Resilience",
+     "Achievement",
+     "Originality",
+     "Social Confidence",
+     "Autonomy",
+     "Data Curiosity",
+     "Reliability"
+    ],
+    "primaryPathwayFamilies": [
+     "Public Health & Health Improvement",
+     "Rehabilitation & Functional Independence",
+     "Sport & Exercise Science"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Biomedical & Clinical Research"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_care_support_work",
+  "careerWorld": "Care & Support Work",
+  "subjects": [
+   {
+    "id": "sub_social_work",
+    "title": "Social Work",
+    "careerWorldId": "cw_care_support_work",
+    "careerWorld": "Care & Support Work",
+    "archetypes": [
+     "Connector",
+     "Visionary",
+     "Achiever",
+     "Creator"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Purpose & Impact",
+     "Analytical Curiosity",
+     "Precision",
+     "Empathy"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Resilience",
+     "Autonomy",
+     "Social Confidence",
+     "Belonging",
+     "Adaptability",
+     "Creative Expression",
+     "Mastery"
+    ],
+    "primaryPathwayFamilies": [
+     "Social Work & Safeguarding"
+    ],
+    "adjacentPathwayFamilies": [
+     "Early Years & Family Support",
+     "Education Support, Outreach & Student Services",
+     "Higher Education & Academic Research",
+     "SEND & Inclusion Support",
+     "Teaching Assistant & Learning Support",
+     "Justice, Rehabilitation & Behaviour Change",
+     "Policy & Public Sector Analysis",
+     "Clinical Psychology & Mental Health Support",
+     "Counselling, Psychotherapy & Therapeutic Practice"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_business_management",
+  "careerWorld": "Business & Management",
+  "subjects": [
+   {
+    "id": "sub_behavioural_science",
+    "title": "Behavioural Science",
+    "careerWorldId": "cw_business_management",
+    "careerWorld": "Business & Management",
+    "archetypes": [
+     "Thinker",
+     "Connector",
+     "Explorer",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Helping & Caring",
+     "Data Curiosity",
+     "Originality",
+     "Social Confidence",
+     "Mastery"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Purpose & Impact",
+     "Autonomy",
+     "Precision",
+     "Technical Curiosity",
+     "Empathy",
+     "Resilience",
+     "Belonging"
+    ],
+    "primaryPathwayFamilies": [
+     "UX Research & Behavioural Insight",
+     "People Analytics & Workplace Behaviour",
+     "Occupational & Organisational Psychology"
+    ],
+    "adjacentPathwayFamilies": [
+     "Customer & Market Insight",
+     "HR, People & Organisations",
+     "Higher Education & Academic Research",
+     "Teaching Assistant & Learning Support",
+     "Market Research & Audience Insight"
+    ]
+   },
+   {
+    "id": "sub_business_analytics",
+    "title": "Business Analytics",
+    "careerWorldId": "cw_business_management",
+    "careerWorld": "Business & Management",
+    "archetypes": [
+     "Explorer",
+     "Thinker",
+     "Achiever",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Data Curiosity",
+     "Achievement",
+     "Variety"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Precision",
+     "Mastery",
+     "Adaptability",
+     "Collaboration",
+     "Autonomy",
+     "Social Confidence",
+     "Resilience"
+    ],
+    "primaryPathwayFamilies": [
+     "Business Intelligence & Reporting",
+     "Core Data Analysis & Business Insight",
+     "Customer & Market Insight",
+     "Product, Growth & Experimentation Analytics",
+     "Business Analysis",
+     "Consulting & Strategic Improvement",
+     "Operations & Supply Chain",
+     "People Analytics & Workplace Behaviour",
+     "Market Research & Audience Insight"
+    ],
+    "adjacentPathwayFamilies": [
+     "Data Engineering",
+     "Data Science & Advanced Modelling",
+     "Financial Analysis & FP&A",
+     "Fintech & Digital Finance",
+     "Risk & Quantitative Analysis",
+     "Generalist Business Programmes",
+     "Project, PMO & Transformation",
+     "Higher Education & Academic Research",
+     "Product Growth & Business Development in Start-ups",
+     "Performance Marketing & Growth"
+    ]
+   },
+   {
+    "id": "sub_business_management",
+    "title": "Business Management",
+    "careerWorldId": "cw_business_management",
+    "careerWorld": "Business & Management",
+    "archetypes": [
+     "Achiever",
+     "Thinker",
+     "Explorer",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Achievement",
+     "Social Confidence",
+     "Entrepreneurial Drive",
+     "Variety",
+     "Collaboration"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Precision",
+     "Mastery",
+     "Data Curiosity",
+     "Reliability",
+     "Pace",
+     "Adaptability",
+     "Autonomy"
+    ],
+    "primaryPathwayFamilies": [
+     "Healthcare Management & Service Improvement",
+     "Business Intelligence & Reporting",
+     "Banking Operations & Middle Office",
+     "Business Analysis",
+     "Business Development & Commercial Partnerships",
+     "Consulting & Strategic Improvement",
+     "Generalist Business Programmes",
+     "HR, People & Organisations",
+     "Operations & Supply Chain",
+     "Project, PMO & Transformation",
+     "Facilities & Property Management",
+     "Venture Building & Founder",
+     "Governance, Risk & Compliance"
+    ],
+    "adjacentPathwayFamilies": [
+     "Nurse Education & Leadership",
+     "Customer & Market Insight",
+     "Product, Growth & Experimentation Analytics",
+     "Accounting, Audit & Assurance",
+     "Asset & Wealth Management",
+     "Commercial & Corporate Banking",
+     "Equity Research & Investment Research",
+     "Financial Analysis & FP&A",
+     "Fintech & Digital Finance",
+     "Investment Banking & Corporate Finance",
+     "Private Equity & Venture Capital",
+     "Real Estate Investment & Finance",
+     "Risk, Compliance & Controls",
+     "Sustainable Finance & Impact Investing",
+     "Treasury & Liquidity",
+     "People Analytics & Workplace Behaviour",
+     "Construction Project Delivery",
+     "Property Development & Asset Management",
+     "Surveying, Valuation & Cost Consultancy",
+     "Higher Education & Academic Research",
+     "Training, Learning & Development",
+     "Manufacturing & Production Engineering",
+     "Product Growth & Business Development in Start-ups",
+     "Start-up Operations",
+     "Circular Economy & Sustainable Supply Chains",
+     "Net Zero, Climate & Sustainability Strategy",
+     "Sustainability & ESG Advisory",
+     "Legal Support & Paralegal Work",
+     "Solicitor Practice",
+     "Brand & Marketing Strategy",
+     "Performance Marketing & Growth",
+     "Occupational & Organisational Psychology",
+     "Events & Experience Management",
+     "Food & Beverage Operations",
+     "Hospitality & Hotel Management",
+     "Emergency Planning & Ambulance Service Leadership",
+     "Real Estate Agency & Brokerage",
+     "Travel & Tourism"
+    ]
+   },
+   {
+    "id": "sub_human_resource_management",
+    "title": "Human Resource Management",
+    "careerWorldId": "cw_business_management",
+    "careerWorld": "Business & Management",
+    "archetypes": [
+     "Achiever",
+     "Explorer",
+     "Connector",
+     "Creator"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Belonging",
+     "Analytical Curiosity",
+     "Achievement",
+     "Variety",
+     "Collaboration"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Mastery",
+     "Data Curiosity",
+     "Reliability",
+     "Precision",
+     "Autonomy",
+     "Purpose & Impact",
+     "Originality"
+    ],
+    "primaryPathwayFamilies": [
+     "HR, People & Organisations",
+     "People Analytics & Workplace Behaviour",
+     "Training, Learning & Development"
+    ],
+    "adjacentPathwayFamilies": [
+     "Business Analysis",
+     "Consulting & Strategic Improvement",
+     "Higher Education & Academic Research",
+     "Occupational & Organisational Psychology"
+    ]
+   },
+   {
+    "id": "sub_international_business",
+    "title": "International Business",
+    "careerWorldId": "cw_business_management",
+    "careerWorld": "Business & Management",
+    "archetypes": [
+     "Achiever",
+     "Connector",
+     "Explorer",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Social Confidence",
+     "Achievement",
+     "Entrepreneurial Drive",
+     "Adaptability",
+     "Analytical Curiosity",
+     "Data Curiosity"
+    ],
+    "secondarySubdimensions": [
+     "Variety",
+     "Resilience",
+     "Precision",
+     "Collaboration",
+     "Pace",
+     "Autonomy",
+     "Structure",
+     "Mastery"
+    ],
+    "primaryPathwayFamilies": [
+     "Business Development & Commercial Partnerships",
+     "Consulting & Strategic Improvement",
+     "Generalist Business Programmes"
+    ],
+    "adjacentPathwayFamilies": [
+     "Business Intelligence & Reporting",
+     "Commercial & Corporate Banking",
+     "Business Analysis",
+     "HR, People & Organisations",
+     "Operations & Supply Chain",
+     "Project, PMO & Transformation",
+     "Higher Education & Academic Research",
+     "International Relations, Policy & Geopolitical Analysis",
+     "Languages, Translation & Localisation",
+     "Brand & Marketing Strategy",
+     "Hospitality & Hotel Management"
+    ]
+   },
+   {
+    "id": "sub_operations_and_supply_chain_management",
+    "title": "Operations and Supply Chain Management",
+    "careerWorldId": "cw_business_management",
+    "careerWorld": "Business & Management",
+    "archetypes": [
+     "Achiever",
+     "Explorer",
+     "Organizer",
+     "Thinker"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Data Curiosity",
+     "Achievement",
+     "Collaboration",
+     "Pace"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Precision",
+     "Adaptability",
+     "Mastery",
+     "Reliability",
+     "Technical Curiosity"
+    ],
+    "primaryPathwayFamilies": [
+     "Business Analysis",
+     "Operations & Supply Chain",
+     "Project, PMO & Transformation"
+    ],
+    "adjacentPathwayFamilies": [
+     "Healthcare Management & Service Improvement",
+     "Business Intelligence & Reporting",
+     "Consulting & Strategic Improvement",
+     "Facilities & Property Management",
+     "Higher Education & Academic Research",
+     "Manufacturing & Production Engineering",
+     "Start-up Operations",
+     "Circular Economy & Sustainable Supply Chains",
+     "Food & Beverage Operations"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_psychology_human_behaviour",
+  "careerWorld": "Psychology & Human Behaviour",
+  "subjects": [
+   {
+    "id": "sub_counselling_and_psychotherapy",
+    "title": "Counselling and Psychotherapy",
+    "careerWorldId": "cw_psychology_human_behaviour",
+    "careerWorld": "Psychology & Human Behaviour",
+    "archetypes": [
+     "Connector",
+     "Achiever",
+     "Creator",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Empathy",
+     "Analytical Curiosity",
+     "Social Confidence",
+     "Mastery",
+     "Purpose & Impact"
+    ],
+    "secondarySubdimensions": [
+     "Resilience",
+     "Collaboration",
+     "Autonomy",
+     "Data Curiosity",
+     "Originality",
+     "Precision"
+    ],
+    "primaryPathwayFamilies": [
+     "Clinical Psychology & Mental Health Support",
+     "Counselling, Psychotherapy & Therapeutic Practice"
+    ],
+    "adjacentPathwayFamilies": [
+     "Mental Health & Behavioural Medicine",
+     "Higher Education & Academic Research",
+     "Teaching Assistant & Learning Support",
+     "Occupational & Organisational Psychology",
+     "Social Work & Safeguarding"
+    ]
+   },
+   {
+    "id": "sub_psychology",
+    "title": "Psychology",
+    "careerWorldId": "cw_psychology_human_behaviour",
+    "careerWorld": "Psychology & Human Behaviour",
+    "archetypes": [
+     "Connector",
+     "Explorer",
+     "Creator",
+     "Thinker"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Analytical Curiosity",
+     "Empathy",
+     "Mastery",
+     "Purpose & Impact"
+    ],
+    "secondarySubdimensions": [
+     "Autonomy",
+     "Collaboration",
+     "Resilience",
+     "Data Curiosity",
+     "Precision",
+     "Originality",
+     "Social Confidence",
+     "Independence"
+    ],
+    "primaryPathwayFamilies": [
+     "UX Research & Behavioural Insight",
+     "People Analytics & Workplace Behaviour",
+     "Clinical Psychology & Mental Health Support",
+     "Counselling, Psychotherapy & Therapeutic Practice",
+     "Occupational & Organisational Psychology"
+    ],
+    "adjacentPathwayFamilies": [
+     "Mental Health & Behavioural Medicine",
+     "Business Intelligence & Reporting",
+     "Customer & Market Insight",
+     "HR, People & Organisations",
+     "Early Years & Family Support",
+     "Education Support, Outreach & Student Services",
+     "Higher Education & Academic Research",
+     "Primary Teaching & Classroom Practice",
+     "SEND & Inclusion Support",
+     "Secondary Teaching",
+     "Teaching Assistant & Learning Support",
+     "Training, Learning & Development",
+     "Social Research & Cultural Analysis",
+     "Justice, Rehabilitation & Behaviour Change",
+     "Brand & Marketing Strategy",
+     "Market Research & Audience Insight",
+     "Social Work & Safeguarding"
+    ]
+   },
+   {
+    "id": "sub_psychology_with_neuroscience",
+    "title": "Psychology with Neuroscience",
+    "careerWorldId": "cw_psychology_human_behaviour",
+    "careerWorld": "Psychology & Human Behaviour",
+    "archetypes": [
+     "Connector",
+     "Creator",
+     "Thinker",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Empathy",
+     "Analytical Curiosity",
+     "Social Confidence",
+     "Mastery",
+     "Purpose & Impact"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Resilience",
+     "Autonomy",
+     "Data Curiosity",
+     "Precision",
+     "Originality",
+     "Technical Curiosity",
+     "Reliability"
+    ],
+    "primaryPathwayFamilies": [
+     "Clinical Psychology & Mental Health Support"
+    ],
+    "adjacentPathwayFamilies": [
+     "Mental Health & Behavioural Medicine",
+     "Higher Education & Academic Research",
+     "Teaching Assistant & Learning Support",
+     "Counselling, Psychotherapy & Therapeutic Practice",
+     "Biomedical & Clinical Research",
+     "R&D Science"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_law_justice_public_services",
+  "careerWorld": "Law, Justice & Public Services",
+  "subjects": [
+   {
+    "id": "sub_forensic_psychology",
+    "title": "Forensic Psychology",
+    "careerWorldId": "cw_law_justice_public_services",
+    "careerWorld": "Law, Justice & Public Services",
+    "archetypes": [
+     "Connector",
+     "Visionary",
+     "Achiever",
+     "Creator"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Purpose & Impact",
+     "Empathy",
+     "Analytical Curiosity",
+     "Mastery"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Resilience",
+     "Autonomy",
+     "Structure",
+     "Precision",
+     "Data Curiosity",
+     "Reliability",
+     "Achievement"
+    ],
+    "primaryPathwayFamilies": [
+     "Justice, Rehabilitation & Behaviour Change",
+     "Clinical Psychology & Mental Health Support"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Intelligence, Public Service & Security Analysis",
+     "Investigations & Financial Crime",
+     "Legal Support & Paralegal Work",
+     "Forensic Science",
+     "Social Work & Safeguarding"
+    ]
+   },
+   {
+    "id": "sub_criminology",
+    "title": "Criminology",
+    "careerWorldId": "cw_law_justice_public_services",
+    "careerWorld": "Law, Justice & Public Services",
+    "archetypes": [
+     "Thinker",
+     "Organizer",
+     "Achiever",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Reliability",
+     "Purpose & Impact",
+     "Security",
+     "Mastery",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Achievement",
+     "Data Curiosity",
+     "Resilience",
+     "Collaboration",
+     "Helping & Caring",
+     "Empathy",
+     "Autonomy"
+    ],
+    "primaryPathwayFamilies": [
+     "Investigations & Financial Crime",
+     "Justice, Rehabilitation & Behaviour Change",
+     "Legal Support & Paralegal Work"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Governance, Risk & Compliance",
+     "Intelligence, Public Service & Security Analysis",
+     "Solicitor Practice",
+     "Forensic Science",
+     "Social Work & Safeguarding"
+    ]
+   },
+   {
+    "id": "sub_law",
+    "title": "Law",
+    "careerWorldId": "cw_law_justice_public_services",
+    "careerWorld": "Law, Justice & Public Services",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Organizer",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Reliability",
+     "Mastery",
+     "Precision",
+     "Autonomy",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Achievement",
+     "Social Confidence",
+     "Data Curiosity",
+     "Collaboration",
+     "Independence",
+     "Purpose & Impact",
+     "Cultural & Global Curiosity"
+    ],
+    "primaryPathwayFamilies": [
+     "Barrister & Advocacy",
+     "Governance, Risk & Compliance",
+     "Legal Support & Paralegal Work",
+     "Solicitor Practice"
+    ],
+    "adjacentPathwayFamilies": [
+     "Risk, Compliance & Controls",
+     "Higher Education & Academic Research",
+     "Investigations & Financial Crime",
+     "Policy & Public Sector Analysis",
+     "Public Affairs & Advocacy",
+     "Regulatory Affairs & Medicines Safety"
+    ]
+   },
+   {
+    "id": "sub_law_with_criminology",
+    "title": "Law with Criminology",
+    "careerWorldId": "cw_law_justice_public_services",
+    "careerWorld": "Law, Justice & Public Services",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Organizer",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Mastery",
+     "Reliability",
+     "Purpose & Impact",
+     "Precision",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Structure",
+     "Achievement",
+     "Data Curiosity",
+     "Social Confidence",
+     "Resilience",
+     "Security",
+     "Collaboration",
+     "Helping & Caring"
+    ],
+    "primaryPathwayFamilies": [
+     "Barrister & Advocacy",
+     "Investigations & Financial Crime",
+     "Legal Support & Paralegal Work",
+     "Solicitor Practice"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Governance, Risk & Compliance",
+     "Justice, Rehabilitation & Behaviour Change"
+    ]
+   },
+   {
+    "id": "sub_philosophy_politics_and_economics_ppe",
+    "title": "Philosophy, Politics and Economics (PPE)",
+    "careerWorldId": "cw_law_justice_public_services",
+    "careerWorld": "Law, Justice & Public Services",
+    "archetypes": [
+     "Connector",
+     "Thinker",
+     "Visionary",
+     "Creator"
+    ],
+    "coreSubdimensions": [
+     "Purpose & Impact",
+     "Analytical Curiosity",
+     "Social Confidence",
+     "Originality",
+     "Security",
+     "Reliability"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Collaboration",
+     "Structure",
+     "Data Curiosity",
+     "Cultural & Global Curiosity",
+     "Precision",
+     "Achievement",
+     "Autonomy"
+    ],
+    "primaryPathwayFamilies": [
+     "Governance, Risk & Compliance",
+     "Policy & Public Sector Analysis",
+     "Public Affairs & Advocacy"
+    ],
+    "adjacentPathwayFamilies": [
+     "Investment Banking & Corporate Finance",
+     "Higher Education & Academic Research",
+     "International Relations, Policy & Geopolitical Analysis",
+     "Barrister & Advocacy"
+    ]
+   },
+   {
+    "id": "sub_politics",
+    "title": "Politics",
+    "careerWorldId": "cw_law_justice_public_services",
+    "careerWorld": "Law, Justice & Public Services",
+    "archetypes": [
+     "Thinker",
+     "Visionary",
+     "Connector",
+     "Creator"
+    ],
+    "coreSubdimensions": [
+     "Purpose & Impact",
+     "Analytical Curiosity",
+     "Social Confidence",
+     "Originality",
+     "Mastery",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Cultural & Global Curiosity",
+     "Data Curiosity",
+     "Collaboration",
+     "Structure",
+     "Variety",
+     "Adaptability",
+     "Resilience",
+     "Precision"
+    ],
+    "primaryPathwayFamilies": [
+     "International Relations, Policy & Geopolitical Analysis",
+     "Intelligence, Public Service & Security Analysis",
+     "Policy & Public Sector Analysis",
+     "Public Affairs & Advocacy"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Environmental Policy & Impact Assessment",
+     "International Development & NGO Programmes",
+     "Social Research & Cultural Analysis",
+     "Barrister & Advocacy",
+     "Governance, Risk & Compliance",
+     "Solicitor Practice",
+     "PR & Communications"
+    ]
+   },
+   {
+    "id": "sub_social_and_public_policy",
+    "title": "Social and Public Policy",
+    "careerWorldId": "cw_law_justice_public_services",
+    "careerWorld": "Law, Justice & Public Services",
+    "archetypes": [
+     "Thinker",
+     "Connector",
+     "Visionary",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Purpose & Impact",
+     "Analytical Curiosity",
+     "Social Confidence",
+     "Originality",
+     "Cultural & Global Curiosity",
+     "Mastery"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Autonomy",
+     "Structure",
+     "Variety",
+     "Data Curiosity",
+     "Adaptability",
+     "Resilience",
+     "Security"
+    ],
+    "primaryPathwayFamilies": [
+     "Public Health & Health Improvement",
+     "Social Research & Cultural Analysis",
+     "Policy & Public Sector Analysis",
+     "Public Affairs & Advocacy"
+    ],
+    "adjacentPathwayFamilies": [
+     "Healthcare Management & Service Improvement",
+     "Medicines Policy & Public Health Pharmacy",
+     "Oral Health Policy & Dental Public Health",
+     "Public Health Medicine, Epidemiology & Health Policy",
+     "Public Health Nursing & Health Visiting",
+     "Town Planning & Urban Development",
+     "Education Support, Outreach & Student Services",
+     "Higher Education & Academic Research",
+     "Environmental Policy & Impact Assessment",
+     "International Development & NGO Programmes",
+     "International Relations, Policy & Geopolitical Analysis",
+     "Governance, Risk & Compliance",
+     "Social Work & Safeguarding",
+     "Emergency Planning & Ambulance Service Leadership"
+    ]
+   },
+   {
+    "id": "sub_economics",
+    "title": "Economics",
+    "careerWorldId": "cw_law_justice_public_services",
+    "careerWorld": "Law, Justice & Public Services",
+    "archetypes": [
+     "Achiever",
+     "Explorer",
+     "Thinker",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Achievement",
+     "Entrepreneurial Drive",
+     "Data Curiosity",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Structure",
+     "Autonomy",
+     "Pace",
+     "Variety",
+     "Collaboration",
+     "Cultural & Global Curiosity",
+     "Resilience"
+    ],
+    "primaryPathwayFamilies": [
+     "Equity Research & Investment Research",
+     "Investment Banking & Corporate Finance",
+     "Markets & Trading",
+     "Private Equity & Venture Capital",
+     "Sustainable Finance & Impact Investing",
+     "Business Analysis",
+     "Consulting & Strategic Improvement",
+     "Policy & Public Sector Analysis"
+    ],
+    "adjacentPathwayFamilies": [
+     "Healthcare Management & Service Improvement",
+     "Core Data Analysis & Business Insight",
+     "Data Science & Advanced Modelling",
+     "Accounting, Audit & Assurance",
+     "Asset & Wealth Management",
+     "Banking Operations & Middle Office",
+     "Commercial & Corporate Banking",
+     "Financial Analysis & FP&A",
+     "Insurance & Actuarial",
+     "Real Estate Investment & Finance",
+     "Risk & Quantitative Analysis",
+     "Risk, Compliance & Controls",
+     "Treasury & Liquidity",
+     "Business Development & Commercial Partnerships",
+     "Generalist Business Programmes",
+     "Operations & Supply Chain",
+     "Higher Education & Academic Research",
+     "Venture Capital, Accelerators & Innovation Support",
+     "Sustainability & ESG Advisory",
+     "Governance, Risk & Compliance",
+     "Investigations & Financial Crime",
+     "Public Affairs & Advocacy"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_education_early_years",
+  "careerWorld": "Education & Early Years",
+  "subjects": [
+   {
+    "id": "sub_early_years_education_and_care",
+    "title": "Early Years Education and Care",
+    "careerWorldId": "cw_education_early_years",
+    "careerWorld": "Education & Early Years",
+    "archetypes": [
+     "Connector",
+     "Visionary",
+     "Creator",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Empathy",
+     "Purpose & Impact",
+     "Belonging",
+     "Social Confidence",
+     "Creative Expression"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Adaptability",
+     "Mastery",
+     "Resilience"
+    ],
+    "primaryPathwayFamilies": [
+     "Early Years & Family Support",
+     "SEND & Inclusion Support",
+     "Teaching Assistant & Learning Support"
+    ],
+    "adjacentPathwayFamilies": [
+     "Education Support, Outreach & Student Services",
+     "Higher Education & Academic Research",
+     "Primary Teaching & Classroom Practice"
+    ]
+   },
+   {
+    "id": "sub_education_studies",
+    "title": "Education Studies",
+    "careerWorldId": "cw_education_early_years",
+    "careerWorld": "Education & Early Years",
+    "archetypes": [
+     "Creator",
+     "Connector",
+     "Visionary",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Belonging",
+     "Empathy",
+     "Analytical Curiosity",
+     "Purpose & Impact",
+     "Social Confidence"
+    ],
+    "secondarySubdimensions": [
+     "Adaptability",
+     "Collaboration",
+     "Creative Expression",
+     "Mastery",
+     "Autonomy",
+     "Independence",
+     "Originality",
+     "Resilience"
+    ],
+    "primaryPathwayFamilies": [
+     "Early Years & Family Support",
+     "Education Support, Outreach & Student Services",
+     "Higher Education & Academic Research",
+     "Learning Design & Educational Technology",
+     "Primary Teaching & Classroom Practice",
+     "SEND & Inclusion Support",
+     "Secondary Teaching",
+     "Teaching Assistant & Learning Support",
+     "Training, Learning & Development"
+    ],
+    "adjacentPathwayFamilies": [
+     "Nurse Education & Leadership"
+    ]
+   },
+   {
+    "id": "sub_primary_education_qts",
+    "title": "Primary Education (QTS)",
+    "careerWorldId": "cw_education_early_years",
+    "careerWorld": "Education & Early Years",
+    "archetypes": [
+     "Connector",
+     "Creator",
+     "Visionary",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Empathy",
+     "Purpose & Impact",
+     "Belonging",
+     "Social Confidence",
+     "Creative Expression"
+    ],
+    "secondarySubdimensions": [
+     "Adaptability",
+     "Collaboration",
+     "Mastery",
+     "Originality",
+     "Analytical Curiosity",
+     "Autonomy",
+     "Resilience",
+     "Technical Curiosity"
+    ],
+    "primaryPathwayFamilies": [
+     "Primary Teaching & Classroom Practice",
+     "SEND & Inclusion Support"
+    ],
+    "adjacentPathwayFamilies": [
+     "Early Years & Family Support",
+     "Education Support, Outreach & Student Services",
+     "Higher Education & Academic Research",
+     "Learning Design & Educational Technology",
+     "Secondary Teaching",
+     "Teaching Assistant & Learning Support"
+    ]
+   },
+   {
+    "id": "sub_secondary_education_qts",
+    "title": "Secondary Education (QTS)",
+    "careerWorldId": "cw_education_early_years",
+    "careerWorld": "Education & Early Years",
+    "archetypes": [
+     "Creator",
+     "Connector",
+     "Visionary",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Empathy",
+     "Belonging",
+     "Purpose & Impact",
+     "Social Confidence",
+     "Creative Expression"
+    ],
+    "secondarySubdimensions": [
+     "Adaptability",
+     "Collaboration",
+     "Originality",
+     "Analytical Curiosity",
+     "Mastery",
+     "Autonomy",
+     "Resilience",
+     "Independence"
+    ],
+    "primaryPathwayFamilies": [
+     "SEND & Inclusion Support",
+     "Secondary Teaching"
+    ],
+    "adjacentPathwayFamilies": [
+     "Education Support, Outreach & Student Services",
+     "Higher Education & Academic Research",
+     "Learning Design & Educational Technology"
+    ]
+   },
+   {
+    "id": "sub_sports_coaching_and_development",
+    "title": "Sports Coaching and Development",
+    "careerWorldId": "cw_education_early_years",
+    "careerWorld": "Education & Early Years",
+    "archetypes": [
+     "Connector",
+     "Creator",
+     "Achiever",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Helping & Caring",
+     "Belonging",
+     "Empathy",
+     "Social Confidence",
+     "Purpose & Impact"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Achievement",
+     "Adaptability",
+     "Mastery",
+     "Analytical Curiosity",
+     "Structure",
+     "Reliability",
+     "Originality"
+    ],
+    "primaryPathwayFamilies": [],
+    "adjacentPathwayFamilies": [
+     "Public Health & Health Improvement",
+     "Rehabilitation & Functional Independence",
+     "Education Support, Outreach & Student Services",
+     "Higher Education & Academic Research",
+     "Training, Learning & Development",
+     "Sport & Exercise Science"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_hospitality_food_events",
+  "careerWorld": "Hospitality, Food & Events",
+  "subjects": [
+   {
+    "id": "sub_hospitality_tourism_and_events_management",
+    "title": "Hospitality, Tourism & Events Management",
+    "careerWorldId": "cw_hospitality_food_events",
+    "careerWorld": "Hospitality, Food & Events",
+    "archetypes": [
+     "Connector",
+     "Achiever",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Social Confidence",
+     "Achievement",
+     "Adaptability"
+    ],
+    "secondarySubdimensions": [
+     "Helping & Caring",
+     "Collaboration",
+     "Pace",
+     "Structure",
+     "Variety"
+    ],
+    "primaryPathwayFamilies": [
+     "Events & Experience Management",
+     "Food & Beverage Operations",
+     "Hospitality & Hotel Management",
+     "Travel & Tourism"
+    ],
+    "adjacentPathwayFamilies": [
+     "Customer & Market Insight",
+     "Business Development & Commercial Partnerships",
+     "Operations & Supply Chain",
+     "Project, PMO & Transformation",
+     "Higher Education & Academic Research",
+     "Venture Building & Founder",
+     "Brand & Marketing Strategy"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_media_marketing_content_communication",
+  "careerWorld": "Media, Marketing, Content & Communication",
+  "subjects": [
+   {
+    "id": "sub_advertising_and_brand_management",
+    "title": "Advertising and Brand Management",
+    "careerWorldId": "cw_media_marketing_content_communication",
+    "careerWorld": "Media, Marketing, Content & Communication",
+    "archetypes": [
+     "Visionary",
+     "Connector",
+     "Thinker",
+     "Creator"
+    ],
+    "coreSubdimensions": [
+     "Social Confidence",
+     "Analytical Curiosity",
+     "Originality",
+     "Purpose & Impact",
+     "Data Curiosity",
+     "Entrepreneurial Drive"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Collaboration",
+     "Achievement",
+     "Structure",
+     "Variety",
+     "Precision",
+     "Autonomy",
+     "Adaptability"
+    ],
+    "primaryPathwayFamilies": [
+     "Brand & Marketing Strategy",
+     "PR & Communications",
+     "Performance Marketing & Growth"
+    ],
+    "adjacentPathwayFamilies": [
+     "Customer & Market Insight",
+     "Business Development & Commercial Partnerships",
+     "Digital Design & Multimedia",
+     "Graphic Design & Visual Communication",
+     "Higher Education & Academic Research",
+     "Content & Social Media",
+     "Journalism, Publishing & Editorial",
+     "Market Research & Audience Insight"
+    ]
+   },
+   {
+    "id": "sub_digital_marketing_and_social_media",
+    "title": "Digital Marketing and Social Media",
+    "careerWorldId": "cw_media_marketing_content_communication",
+    "careerWorld": "Media, Marketing, Content & Communication",
+    "archetypes": [
+     "Thinker",
+     "Visionary",
+     "Connector",
+     "Creator"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Originality",
+     "Social Confidence",
+     "Data Curiosity",
+     "Entrepreneurial Drive"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Mastery",
+     "Achievement",
+     "Variety",
+     "Precision",
+     "Pace",
+     "Autonomy",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "Brand & Marketing Strategy",
+     "Content & Social Media",
+     "Performance Marketing & Growth"
+    ],
+    "adjacentPathwayFamilies": [
+     "Business Development & Commercial Partnerships",
+     "Graphic Design & Visual Communication",
+     "Higher Education & Academic Research",
+     "Market Research & Audience Insight"
+    ]
+   },
+   {
+    "id": "sub_digital_media_production_and_technology",
+    "title": "Digital Media Production and Technology",
+    "careerWorldId": "cw_media_marketing_content_communication",
+    "careerWorld": "Media, Marketing, Content & Communication",
+    "archetypes": [
+     "Visionary",
+     "Creator",
+     "Thinker",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Originality",
+     "Social Confidence",
+     "Creative Expression",
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Entrepreneurial Drive"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Autonomy",
+     "Variety",
+     "Collaboration",
+     "Pace",
+     "Precision",
+     "Purpose & Impact",
+     "Data Curiosity"
+    ],
+    "primaryPathwayFamilies": [
+     "Digital Design & Multimedia",
+     "Content & Social Media",
+     "Journalism, Publishing & Editorial"
+    ],
+    "adjacentPathwayFamilies": [
+     "UX/UI Design",
+     "Graphic Design & Visual Communication",
+     "Higher Education & Academic Research",
+     "Learning Design & Educational Technology",
+     "Brand & Marketing Strategy",
+     "PR & Communications"
+    ]
+   },
+   {
+    "id": "sub_journalism",
+    "title": "Journalism",
+    "careerWorldId": "cw_media_marketing_content_communication",
+    "careerWorld": "Media, Marketing, Content & Communication",
+    "archetypes": [
+     "Visionary",
+     "Creator",
+     "Connector",
+     "Thinker"
+    ],
+    "coreSubdimensions": [
+     "Originality",
+     "Analytical Curiosity",
+     "Social Confidence",
+     "Entrepreneurial Drive",
+     "Purpose & Impact"
+    ],
+    "secondarySubdimensions": [
+     "Variety",
+     "Collaboration",
+     "Mastery",
+     "Pace",
+     "Autonomy",
+     "Adaptability",
+     "Structure",
+     "Resilience"
+    ],
+    "primaryPathwayFamilies": [
+     "Content & Social Media",
+     "Journalism, Publishing & Editorial"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Public Affairs & Advocacy",
+     "PR & Communications"
+    ]
+   },
+   {
+    "id": "sub_marketing",
+    "title": "Marketing",
+    "careerWorldId": "cw_media_marketing_content_communication",
+    "careerWorld": "Media, Marketing, Content & Communication",
+    "archetypes": [
+     "Thinker",
+     "Visionary",
+     "Connector",
+     "Creator"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Originality",
+     "Social Confidence",
+     "Data Curiosity",
+     "Entrepreneurial Drive"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Mastery",
+     "Achievement",
+     "Variety",
+     "Precision",
+     "Autonomy",
+     "Pace",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "Customer & Market Insight",
+     "Brand & Marketing Strategy",
+     "Content & Social Media",
+     "Market Research & Audience Insight",
+     "PR & Communications",
+     "Performance Marketing & Growth"
+    ],
+    "adjacentPathwayFamilies": [
+     "Business Intelligence & Reporting",
+     "Product, Growth & Experimentation Analytics",
+     "UX Research & Behavioural Insight",
+     "Business Development & Commercial Partnerships",
+     "Generalist Business Programmes",
+     "Digital Design & Multimedia",
+     "Higher Education & Academic Research",
+     "Product Growth & Business Development in Start-ups",
+     "Events & Experience Management",
+     "Hospitality & Hotel Management",
+     "Real Estate Agency & Brokerage",
+     "Travel & Tourism"
+    ]
+   },
+   {
+    "id": "sub_media_studies",
+    "title": "Media Studies",
+    "careerWorldId": "cw_media_marketing_content_communication",
+    "careerWorld": "Media, Marketing, Content & Communication",
+    "archetypes": [
+     "Thinker",
+     "Visionary",
+     "Creator",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Originality",
+     "Social Confidence",
+     "Data Curiosity",
+     "Entrepreneurial Drive",
+     "Purpose & Impact"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Autonomy",
+     "Collaboration",
+     "Variety",
+     "Pace",
+     "Cultural & Global Curiosity",
+     "Precision",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "Content & Social Media",
+     "Journalism, Publishing & Editorial",
+     "Market Research & Audience Insight"
+    ],
+    "adjacentPathwayFamilies": [
+     "Digital Design & Multimedia",
+     "Higher Education & Academic Research",
+     "Social Research & Cultural Analysis",
+     "Brand & Marketing Strategy",
+     "PR & Communications"
+    ]
+   },
+   {
+    "id": "sub_public_relations_and_communications",
+    "title": "Public Relations and Communications",
+    "careerWorldId": "cw_media_marketing_content_communication",
+    "careerWorld": "Media, Marketing, Content & Communication",
+    "archetypes": [
+     "Visionary",
+     "Connector",
+     "Creator",
+     "Thinker"
+    ],
+    "coreSubdimensions": [
+     "Social Confidence",
+     "Purpose & Impact",
+     "Originality",
+     "Entrepreneurial Drive",
+     "Analytical Curiosity"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Mastery",
+     "Variety",
+     "Pace",
+     "Structure",
+     "Adaptability",
+     "Data Curiosity",
+     "Achievement"
+    ],
+    "primaryPathwayFamilies": [
+     "Public Affairs & Advocacy",
+     "Content & Social Media",
+     "PR & Communications"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Brand & Marketing Strategy",
+     "Journalism, Publishing & Editorial",
+     "Events & Experience Management"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_creative_arts_design",
+  "careerWorld": "Creative Arts & Design",
+  "subjects": [
+   {
+    "id": "sub_animation",
+    "title": "Animation",
+    "careerWorldId": "cw_creative_arts_design",
+    "careerWorld": "Creative Arts & Design",
+    "archetypes": [
+     "Creator",
+     "Visionary",
+     "Thinker",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Originality",
+     "Creative Expression",
+     "Technical Curiosity",
+     "Mastery",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Variety",
+     "Analytical Curiosity",
+     "Collaboration",
+     "Social Confidence",
+     "Pace",
+     "Entrepreneurial Drive"
+    ],
+    "primaryPathwayFamilies": [
+     "Animation & Motion Design",
+     "Digital Design & Multimedia"
+    ],
+    "adjacentPathwayFamilies": [
+     "Game Design & Development",
+     "Graphic Design & Visual Communication",
+     "Higher Education & Academic Research",
+     "Content & Social Media"
+    ]
+   },
+   {
+    "id": "sub_fashion_design",
+    "title": "Fashion Design",
+    "careerWorldId": "cw_creative_arts_design",
+    "careerWorld": "Creative Arts & Design",
+    "archetypes": [
+     "Creator",
+     "Visionary",
+     "Thinker",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Originality",
+     "Creative Expression",
+     "Technical Curiosity",
+     "Mastery",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Analytical Curiosity",
+     "Collaboration",
+     "Variety",
+     "Social Confidence",
+     "Entrepreneurial Drive",
+     "Data Curiosity",
+     "Achievement"
+    ],
+    "primaryPathwayFamilies": [],
+    "adjacentPathwayFamilies": [
+     "Graphic Design & Visual Communication",
+     "Product & Industrial Design",
+     "Higher Education & Academic Research",
+     "Brand & Marketing Strategy"
+    ]
+   },
+   {
+    "id": "sub_film_and_television_production",
+    "title": "Film and Television Production",
+    "careerWorldId": "cw_creative_arts_design",
+    "careerWorld": "Creative Arts & Design",
+    "archetypes": [
+     "Creator",
+     "Visionary",
+     "Thinker",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Originality",
+     "Creative Expression",
+     "Technical Curiosity",
+     "Mastery",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Analytical Curiosity",
+     "Variety",
+     "Social Confidence",
+     "Pace",
+     "Collaboration",
+     "Entrepreneurial Drive",
+     "Purpose & Impact"
+    ],
+    "primaryPathwayFamilies": [
+     "Animation & Motion Design"
+    ],
+    "adjacentPathwayFamilies": [
+     "Digital Design & Multimedia",
+     "Higher Education & Academic Research",
+     "Content & Social Media",
+     "Journalism, Publishing & Editorial",
+     "Sound & Audio Production"
+    ]
+   },
+   {
+    "id": "sub_fine_art",
+    "title": "Fine Art",
+    "careerWorldId": "cw_creative_arts_design",
+    "careerWorld": "Creative Arts & Design",
+    "archetypes": [
+     "Creator",
+     "Visionary",
+     "Thinker",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Originality",
+     "Creative Expression",
+     "Technical Curiosity",
+     "Mastery",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Variety",
+     "Analytical Curiosity",
+     "Collaboration",
+     "Social Confidence",
+     "Pace",
+     "Entrepreneurial Drive"
+    ],
+    "primaryPathwayFamilies": [
+     "Graphic Design & Visual Communication"
+    ],
+    "adjacentPathwayFamilies": [
+     "Animation & Motion Design",
+     "Product & Industrial Design",
+     "Higher Education & Academic Research",
+     "Content & Social Media"
+    ]
+   },
+   {
+    "id": "sub_game_design",
+    "title": "Game Design",
+    "careerWorldId": "cw_creative_arts_design",
+    "careerWorld": "Creative Arts & Design",
+    "archetypes": [
+     "Creator",
+     "Visionary",
+     "Thinker",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Originality",
+     "Creative Expression",
+     "Technical Curiosity",
+     "Mastery",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Analytical Curiosity",
+     "Independence",
+     "Structure",
+     "Data Curiosity"
+    ],
+    "primaryPathwayFamilies": [
+     "Game Design & Development",
+     "Animation & Motion Design"
+    ],
+    "adjacentPathwayFamilies": [
+     "Software Engineering",
+     "Digital Design & Multimedia",
+     "Product & Industrial Design",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_graphic_design",
+    "title": "Graphic Design",
+    "careerWorldId": "cw_creative_arts_design",
+    "careerWorld": "Creative Arts & Design",
+    "archetypes": [
+     "Creator",
+     "Visionary",
+     "Thinker",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Originality",
+     "Creative Expression",
+     "Technical Curiosity",
+     "Mastery",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Analytical Curiosity",
+     "Collaboration",
+     "Variety",
+     "Social Confidence",
+     "Entrepreneurial Drive",
+     "Data Curiosity",
+     "Empathy"
+    ],
+    "primaryPathwayFamilies": [
+     "UX/UI Design",
+     "Digital Design & Multimedia",
+     "Graphic Design & Visual Communication"
+    ],
+    "adjacentPathwayFamilies": [
+     "Frontend & Web Development",
+     "Animation & Motion Design",
+     "Product & Industrial Design",
+     "Higher Education & Academic Research",
+     "Brand & Marketing Strategy",
+     "Content & Social Media"
+    ]
+   },
+   {
+    "id": "sub_illustration",
+    "title": "Illustration",
+    "careerWorldId": "cw_creative_arts_design",
+    "careerWorld": "Creative Arts & Design",
+    "archetypes": [
+     "Creator",
+     "Visionary",
+     "Thinker",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Originality",
+     "Creative Expression",
+     "Technical Curiosity",
+     "Mastery",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Precision"
+    ],
+    "primaryPathwayFamilies": [
+     "Animation & Motion Design",
+     "Graphic Design & Visual Communication"
+    ],
+    "adjacentPathwayFamilies": [
+     "Digital Design & Multimedia",
+     "Product & Industrial Design",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_product_design",
+    "title": "Product Design",
+    "careerWorldId": "cw_creative_arts_design",
+    "careerWorld": "Creative Arts & Design",
+    "archetypes": [
+     "Creator",
+     "Visionary",
+     "Thinker",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Originality",
+     "Creative Expression",
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Mastery",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Precision",
+     "Empathy",
+     "Independence",
+     "Data Curiosity",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "UX/UI Design",
+     "Product & Industrial Design"
+    ],
+    "adjacentPathwayFamilies": [
+     "Architectural Technology & BIM",
+     "Digital Design & Multimedia",
+     "Graphic Design & Visual Communication",
+     "Higher Education & Academic Research",
+     "Mechanical Design & Development Engineering"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_environment_sustainability",
+  "careerWorld": "Environment & Sustainability",
+  "subjects": [
+   {
+    "id": "sub_climate_science_and_sustainability",
+    "title": "Climate Science and Sustainability",
+    "careerWorldId": "cw_environment_sustainability",
+    "careerWorld": "Environment & Sustainability",
+    "archetypes": [
+     "Visionary",
+     "Thinker",
+     "Creator",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Purpose & Impact",
+     "Analytical Curiosity",
+     "Originality",
+     "Entrepreneurial Drive",
+     "Technical Curiosity",
+     "Cultural & Global Curiosity"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Data Curiosity",
+     "Autonomy",
+     "Social Confidence",
+     "Precision",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "Environmental Policy & Impact Assessment",
+     "Net Zero, Climate & Sustainability Strategy"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Circular Economy & Sustainable Supply Chains",
+     "Environmental Science & Monitoring",
+     "Sustainability & ESG Advisory"
+    ]
+   },
+   {
+    "id": "sub_ecology_and_conservation_biology",
+    "title": "Ecology and Conservation Biology",
+    "careerWorldId": "cw_environment_sustainability",
+    "careerWorld": "Environment & Sustainability",
+    "archetypes": [
+     "Visionary",
+     "Creator",
+     "Thinker",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Purpose & Impact",
+     "Technical Curiosity",
+     "Analytical Curiosity"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Data Curiosity",
+     "Precision",
+     "Resilience",
+     "Collaboration",
+     "Structure",
+     "Autonomy",
+     "Originality"
+    ],
+    "primaryPathwayFamilies": [
+     "Conservation & Land Management",
+     "Environmental Science & Monitoring"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Environmental Policy & Impact Assessment",
+     "R&D Science",
+     "Agriculture, Forestry & Land Management"
+    ]
+   },
+   {
+    "id": "sub_environmental_management",
+    "title": "Environmental Management",
+    "careerWorldId": "cw_environment_sustainability",
+    "careerWorld": "Environment & Sustainability",
+    "archetypes": [
+     "Visionary",
+     "Thinker",
+     "Creator",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Purpose & Impact",
+     "Analytical Curiosity",
+     "Entrepreneurial Drive",
+     "Originality",
+     "Cultural & Global Curiosity",
+     "Technical Curiosity"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Data Curiosity",
+     "Autonomy",
+     "Precision",
+     "Social Confidence",
+     "Resilience",
+     "Collaboration",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "Circular Economy & Sustainable Supply Chains",
+     "Conservation & Land Management",
+     "Environmental Policy & Impact Assessment",
+     "Net Zero, Climate & Sustainability Strategy",
+     "Sustainability & ESG Advisory"
+    ],
+    "adjacentPathwayFamilies": [
+     "Sustainable Finance & Impact Investing",
+     "Operations & Supply Chain",
+     "Town Planning & Urban Development",
+     "Higher Education & Academic Research",
+     "Agriculture, Forestry & Land Management"
+    ]
+   },
+   {
+    "id": "sub_environmental_science",
+    "title": "Environmental Science",
+    "careerWorldId": "cw_environment_sustainability",
+    "careerWorld": "Environment & Sustainability",
+    "archetypes": [
+     "Visionary",
+     "Thinker",
+     "Creator",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Purpose & Impact",
+     "Technical Curiosity",
+     "Analytical Curiosity",
+     "Entrepreneurial Drive",
+     "Cultural & Global Curiosity",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Precision",
+     "Data Curiosity",
+     "Autonomy",
+     "Structure",
+     "Social Confidence",
+     "Resilience",
+     "Collaboration"
+    ],
+    "primaryPathwayFamilies": [
+     "Sustainability & Building Performance",
+     "Conservation & Land Management",
+     "Environmental Policy & Impact Assessment",
+     "Environmental Science & Monitoring",
+     "Sustainability & ESG Advisory"
+    ],
+    "adjacentPathwayFamilies": [
+     "Public Health & Health Improvement",
+     "Higher Education & Academic Research",
+     "Circular Economy & Sustainable Supply Chains",
+     "Net Zero, Climate & Sustainability Strategy"
+    ]
+   },
+   {
+    "id": "sub_geography",
+    "title": "Geography",
+    "careerWorldId": "cw_environment_sustainability",
+    "careerWorld": "Environment & Sustainability",
+    "archetypes": [
+     "Visionary",
+     "Thinker",
+     "Creator",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Purpose & Impact",
+     "Analytical Curiosity"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Data Curiosity",
+     "Precision",
+     "Structure",
+     "Collaboration",
+     "Autonomy",
+     "Resilience",
+     "Cultural & Global Curiosity"
+    ],
+    "primaryPathwayFamilies": [
+     "Conservation & Land Management",
+     "Environmental Policy & Impact Assessment",
+     "Environmental Science & Monitoring"
+    ],
+    "adjacentPathwayFamilies": [
+     "Town Planning & Urban Development",
+     "Higher Education & Academic Research",
+     "Civil & Structural Engineering",
+     "Net Zero, Climate & Sustainability Strategy",
+     "Sustainability & ESG Advisory",
+     "International Development & NGO Programmes",
+     "Agriculture, Forestry & Land Management",
+     "Travel & Tourism"
+    ]
+   },
+   {
+    "id": "sub_sustainable_development",
+    "title": "Sustainable Development",
+    "careerWorldId": "cw_environment_sustainability",
+    "careerWorld": "Environment & Sustainability",
+    "archetypes": [
+     "Visionary",
+     "Thinker",
+     "Explorer",
+     "Creator"
+    ],
+    "coreSubdimensions": [
+     "Purpose & Impact",
+     "Analytical Curiosity",
+     "Entrepreneurial Drive",
+     "Originality",
+     "Data Curiosity",
+     "Cultural & Global Curiosity"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Autonomy",
+     "Social Confidence",
+     "Collaboration",
+     "Precision",
+     "Structure",
+     "Adaptability",
+     "Variety"
+    ],
+    "primaryPathwayFamilies": [
+     "Circular Economy & Sustainable Supply Chains",
+     "Net Zero, Climate & Sustainability Strategy",
+     "Sustainability & ESG Advisory"
+    ],
+    "adjacentPathwayFamilies": [
+     "Sustainable Finance & Impact Investing",
+     "Sustainability & Building Performance",
+     "Higher Education & Academic Research",
+     "Environmental Policy & Impact Assessment",
+     "International Development & NGO Programmes",
+     "Policy & Public Sector Analysis"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_society_culture_languages",
+  "careerWorld": "Languages, Cultures & Global Affairs",
+  "subjects": [
+   {
+    "id": "sub_anthropology",
+    "title": "Anthropology",
+    "careerWorldId": "cw_society_culture_languages",
+    "careerWorld": "Society, Culture & Languages",
+    "archetypes": [
+     "Explorer",
+     "Thinker",
+     "Connector",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Cultural & Global Curiosity",
+     "Analytical Curiosity",
+     "Purpose & Impact",
+     "Collaboration",
+     "Mastery",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Originality",
+     "Variety",
+     "Adaptability",
+     "Structure",
+     "Data Curiosity",
+     "Technical Curiosity",
+     "Precision",
+     "Independence"
+    ],
+    "primaryPathwayFamilies": [
+     "International Development & NGO Programmes",
+     "Social Research & Cultural Analysis"
+    ],
+    "adjacentPathwayFamilies": [
+     "UX Research & Behavioural Insight",
+     "Higher Education & Academic Research",
+     "Environmental Policy & Impact Assessment",
+     "Heritage, Museums & Archives",
+     "Languages, Translation & Localisation"
+    ]
+   },
+   {
+    "id": "sub_global_development_studies",
+    "title": "Global Development Studies",
+    "careerWorldId": "cw_society_culture_languages",
+    "careerWorld": "Society, Culture & Languages",
+    "archetypes": [
+     "Explorer",
+     "Visionary",
+     "Connector",
+     "Thinker"
+    ],
+    "coreSubdimensions": [
+     "Cultural & Global Curiosity",
+     "Purpose & Impact",
+     "Collaboration",
+     "Analytical Curiosity",
+     "Mastery",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Adaptability",
+     "Variety",
+     "Data Curiosity",
+     "Precision",
+     "Structure",
+     "Originality",
+     "Social Confidence",
+     "Entrepreneurial Drive"
+    ],
+    "primaryPathwayFamilies": [
+     "International Development & NGO Programmes",
+     "International Relations, Policy & Geopolitical Analysis"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Sustainability & ESG Advisory",
+     "Social Research & Cultural Analysis"
+    ]
+   },
+   {
+    "id": "sub_heritage_and_museum_studies",
+    "title": "Heritage and Museum Studies",
+    "careerWorldId": "cw_society_culture_languages",
+    "careerWorld": "Society, Culture & Languages",
+    "archetypes": [
+     "Thinker",
+     "Creator",
+     "Connector",
+     "Organizer"
+    ],
+    "coreSubdimensions": [
+     "Cultural & Global Curiosity",
+     "Analytical Curiosity",
+     "Creative Expression",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Mastery",
+     "Purpose & Impact",
+     "Originality",
+     "Empathy",
+     "Reliability",
+     "Structure",
+     "Autonomy",
+     "Achievement"
+    ],
+    "primaryPathwayFamilies": [
+     "Heritage, Museums & Archives"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "International Development & NGO Programmes",
+     "Social Research & Cultural Analysis"
+    ]
+   },
+   {
+    "id": "sub_history",
+    "title": "History",
+    "careerWorldId": "cw_society_culture_languages",
+    "careerWorld": "Society, Culture & Languages",
+    "archetypes": [
+     "Explorer",
+     "Thinker",
+     "Connector",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Cultural & Global Curiosity",
+     "Mastery",
+     "Purpose & Impact",
+     "Autonomy",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Variety",
+     "Data Curiosity",
+     "Precision",
+     "Social Confidence",
+     "Collaboration",
+     "Adaptability",
+     "Resilience",
+     "Independence"
+    ],
+    "primaryPathwayFamilies": [
+     "Heritage, Museums & Archives",
+     "International Relations, Policy & Geopolitical Analysis",
+     "Social Research & Cultural Analysis",
+     "Intelligence, Public Service & Security Analysis",
+     "Policy & Public Sector Analysis",
+     "Journalism, Publishing & Editorial"
+    ],
+    "adjacentPathwayFamilies": [
+     "Consulting & Strategic Improvement",
+     "Higher Education & Academic Research",
+     "Secondary Teaching",
+     "International Development & NGO Programmes",
+     "Languages, Translation & Localisation",
+     "Barrister & Advocacy",
+     "Public Affairs & Advocacy",
+     "Solicitor Practice",
+     "PR & Communications"
+    ]
+   },
+   {
+    "id": "sub_international_relations",
+    "title": "International Relations",
+    "careerWorldId": "cw_society_culture_languages",
+    "careerWorld": "Society, Culture & Languages",
+    "archetypes": [
+     "Explorer",
+     "Thinker",
+     "Connector",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Cultural & Global Curiosity",
+     "Purpose & Impact",
+     "Collaboration",
+     "Mastery",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Data Curiosity",
+     "Adaptability",
+     "Structure",
+     "Precision",
+     "Variety",
+     "Social Confidence",
+     "Resilience",
+     "Independence"
+    ],
+    "primaryPathwayFamilies": [
+     "International Development & NGO Programmes",
+     "International Relations, Policy & Geopolitical Analysis",
+     "Intelligence, Public Service & Security Analysis",
+     "Policy & Public Sector Analysis"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Languages, Translation & Localisation",
+     "Public Affairs & Advocacy"
+    ]
+   },
+   {
+    "id": "sub_modern_languages",
+    "title": "Modern Languages",
+    "careerWorldId": "cw_society_culture_languages",
+    "careerWorld": "Society, Culture & Languages",
+    "archetypes": [
+     "Creator",
+     "Explorer",
+     "Thinker",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Mastery",
+     "Cultural & Global Curiosity",
+     "Analytical Curiosity",
+     "Autonomy",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Variety",
+     "Purpose & Impact",
+     "Social Confidence",
+     "Collaboration",
+     "Adaptability",
+     "Resilience",
+     "Precision",
+     "Structure"
+    ],
+    "primaryPathwayFamilies": [
+     "Languages, Translation & Localisation"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Secondary Teaching",
+     "Heritage, Museums & Archives",
+     "International Development & NGO Programmes",
+     "International Relations, Policy & Geopolitical Analysis",
+     "Public Affairs & Advocacy",
+     "Journalism, Publishing & Editorial",
+     "PR & Communications"
+    ]
+   },
+   {
+    "id": "sub_philosophy",
+    "title": "Philosophy",
+    "careerWorldId": "cw_society_culture_languages",
+    "careerWorld": "Society, Culture & Languages",
+    "archetypes": [
+     "Explorer",
+     "Thinker",
+     "Connector",
+     "Creator"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Cultural & Global Curiosity",
+     "Mastery",
+     "Purpose & Impact",
+     "Autonomy",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Variety",
+     "Data Curiosity",
+     "Collaboration",
+     "Independence",
+     "Structure",
+     "Precision"
+    ],
+    "primaryPathwayFamilies": [
+     "Social Research & Cultural Analysis"
+    ],
+    "adjacentPathwayFamilies": [
+     "Higher Education & Academic Research",
+     "Intelligence, Public Service & Security Analysis",
+     "Policy & Public Sector Analysis"
+    ]
+   },
+   {
+    "id": "sub_sociology",
+    "title": "Sociology",
+    "careerWorldId": "cw_society_culture_languages",
+    "careerWorld": "Society, Culture & Languages",
+    "archetypes": [
+     "Explorer",
+     "Thinker",
+     "Visionary",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Cultural & Global Curiosity",
+     "Analytical Curiosity",
+     "Purpose & Impact",
+     "Collaboration",
+     "Mastery",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Variety",
+     "Originality",
+     "Adaptability",
+     "Social Confidence",
+     "Structure",
+     "Resilience",
+     "Data Curiosity",
+     "Independence"
+    ],
+    "primaryPathwayFamilies": [
+     "International Development & NGO Programmes",
+     "Social Research & Cultural Analysis"
+    ],
+    "adjacentPathwayFamilies": [
+     "Public Health & Health Improvement",
+     "UX Research & Behavioural Insight",
+     "HR, People & Organisations",
+     "Early Years & Family Support",
+     "Higher Education & Academic Research",
+     "Secondary Teaching",
+     "Heritage, Museums & Archives",
+     "Intelligence, Public Service & Security Analysis",
+     "Justice, Rehabilitation & Behaviour Change",
+     "Policy & Public Sector Analysis",
+     "Public Affairs & Advocacy",
+     "Journalism, Publishing & Editorial",
+     "Occupational & Organisational Psychology",
+     "Social Work & Safeguarding"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_entrepreneurship_innovation_venture_building",
+  "careerWorld": "Entrepreneurship, Innovation & Venture Building",
+  "subjects": [
+   {
+    "id": "sub_business_management_with_entrepreneurship",
+    "title": "Business Management with Entrepreneurship",
+    "careerWorldId": "cw_business_management",
+    "careerWorld": "Business & Management",
+    "archetypes": [
+     "Thinker",
+     "Achiever",
+     "Visionary",
+     "Connector"
+    ],
+    "coreSubdimensions": [
+     "Achievement",
+     "Entrepreneurial Drive",
+     "Collaboration",
+     "Analytical Curiosity",
+     "Originality",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Pace",
+     "Adaptability",
+     "Data Curiosity",
+     "Variety",
+     "Resilience",
+     "Social Confidence",
+     "Structure",
+     "Precision"
+    ],
+    "primaryPathwayFamilies": [
+     "Product Growth & Business Development in Start-ups",
+     "Start-up Operations",
+     "Venture Building & Founder"
+    ],
+    "adjacentPathwayFamilies": [
+     "Business Intelligence & Reporting",
+     "Financial Analysis & FP&A",
+     "Fintech & Digital Finance",
+     "Business Development & Commercial Partnerships",
+     "Consulting & Strategic Improvement",
+     "Generalist Business Programmes",
+     "Higher Education & Academic Research",
+     "Venture Capital, Accelerators & Innovation Support",
+     "Brand & Marketing Strategy"
+    ]
+   },
+   {
+    "id": "sub_entrepreneurship_and_innovation",
+    "title": "Entrepreneurship and Innovation",
+    "careerWorldId": "cw_business_management",
+    "careerWorld": "Business & Management",
+    "archetypes": [
+     "Visionary",
+     "Thinker",
+     "Creator",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Entrepreneurial Drive",
+     "Achievement",
+     "Analytical Curiosity",
+     "Adaptability",
+     "Autonomy",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Pace",
+     "Data Curiosity",
+     "Variety",
+     "Social Confidence",
+     "Resilience",
+     "Precision",
+     "Structure",
+     "Purpose & Impact"
+    ],
+    "primaryPathwayFamilies": [
+     "Product Growth & Business Development in Start-ups",
+     "Start-up Operations",
+     "Venture Building & Founder",
+     "Venture Capital, Accelerators & Innovation Support"
+    ],
+    "adjacentPathwayFamilies": [
+     "Business Intelligence & Reporting",
+     "Product, Growth & Experimentation Analytics",
+     "Fintech & Digital Finance",
+     "Private Equity & Venture Capital",
+     "Business Development & Commercial Partnerships",
+     "Consulting & Strategic Improvement",
+     "Higher Education & Academic Research",
+     "Brand & Marketing Strategy",
+     "Performance Marketing & Growth"
+    ]
+   },
+   {
+    "id": "sub_innovation_and_technology_management",
+    "title": "Innovation and Technology Management",
+    "careerWorldId": "cw_business_management",
+    "careerWorld": "Business & Management",
+    "archetypes": [
+     "Thinker",
+     "Visionary",
+     "Explorer",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Analytical Curiosity",
+     "Entrepreneurial Drive",
+     "Achievement",
+     "Collaboration",
+     "Adaptability",
+     "Autonomy"
+    ],
+    "secondarySubdimensions": [
+     "Data Curiosity",
+     "Pace",
+     "Variety",
+     "Structure",
+     "Reliability",
+     "Precision",
+     "Mastery"
+    ],
+    "primaryPathwayFamilies": [
+     "Product Growth & Business Development in Start-ups",
+     "Start-up Operations",
+     "Venture Capital, Accelerators & Innovation Support"
+    ],
+    "adjacentPathwayFamilies": [
+     "Product, Growth & Experimentation Analytics",
+     "Software Engineering",
+     "Business Analysis",
+     "Business Development & Commercial Partnerships",
+     "Consulting & Strategic Improvement",
+     "Project, PMO & Transformation",
+     "Higher Education & Academic Research",
+     "Venture Building & Founder"
+    ]
+   },
+   {
+    "id": "sub_social_enterprise_and_community_development",
+    "title": "Social Enterprise and Community Development",
+    "careerWorldId": "cw_business_management",
+    "careerWorld": "Business & Management",
+    "archetypes": [
+     "Visionary",
+     "Creator",
+     "Thinker",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Entrepreneurial Drive",
+     "Originality",
+     "Autonomy",
+     "Achievement",
+     "Collaboration",
+     "Adaptability"
+    ],
+    "secondarySubdimensions": [
+     "Pace",
+     "Resilience",
+     "Purpose & Impact",
+     "Social Confidence",
+     "Structure",
+     "Precision",
+     "Reliability",
+     "Analytical Curiosity"
+    ],
+    "primaryPathwayFamilies": [
+     "Start-up Operations",
+     "Venture Building & Founder"
+    ],
+    "adjacentPathwayFamilies": [
+     "Consulting & Strategic Improvement",
+     "Higher Education & Academic Research",
+     "Net Zero, Climate & Sustainability Strategy",
+     "Sustainability & ESG Advisory",
+     "International Development & NGO Programmes",
+     "Public Affairs & Advocacy",
+     "Social Work & Safeguarding"
+    ]
+   }
+  ]
+ },
+ {
+  "careerWorldId": "cw_performing_arts_music",
+  "careerWorldTitle": "Performing Arts & Music",
+  "subjects": [
+   {
+    "id": "sub_music",
+    "title": "Music",
+    "careerWorldId": "cw_performing_arts_music",
+    "careerWorld": "Performing Arts & Music",
+    "description": "Study performance, composition, theory and the music industry, building the craft to perform, write, produce or teach music.",
+    "archetypes": [
+     "Creator",
+     "Visionary",
+     "Connector",
+     "Thinker"
+    ],
+    "coreSubdimensions": [
+     "Creative Expression",
+     "Originality",
+     "Mastery",
+     "Autonomy",
+     "Social Confidence"
+    ],
+    "secondarySubdimensions": [
+     "Technical Curiosity",
+     "Precision",
+     "Resilience",
+     "Collaboration",
+     "Variety",
+     "Pace",
+     "Purpose & Impact"
+    ],
+    "primaryPathwayFamilies": [
+     "Music Performance & Production"
+    ],
+    "adjacentPathwayFamilies": [
+     "Sound & Audio Production",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_drama_and_theatre_studies",
+    "title": "Drama & Theatre Studies",
+    "careerWorldId": "cw_performing_arts_music",
+    "careerWorld": "Performing Arts & Music",
+    "description": "Explore acting, directing, playwriting and stagecraft, developing performance skills and an understanding of how theatre is made.",
+    "archetypes": [
+     "Creator",
+     "Connector",
+     "Visionary",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Creative Expression",
+     "Social Confidence",
+     "Originality",
+     "Mastery",
+     "Resilience"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Empathy",
+     "Cultural & Global Curiosity",
+     "Adaptability",
+     "Variety",
+     "Autonomy",
+     "Purpose & Impact"
+    ],
+    "primaryPathwayFamilies": [
+     "Acting & Performance"
+    ],
+    "adjacentPathwayFamilies": [
+     "Theatre & Stage Production",
+     "Content & Social Media",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_dance",
+    "title": "Dance",
+    "careerWorldId": "cw_performing_arts_music",
+    "careerWorld": "Performing Arts & Music",
+    "description": "Train in technique, choreography and performance across dance styles, building the discipline and creativity to perform, choreograph or teach.",
+    "archetypes": [
+     "Creator",
+     "Achiever",
+     "Connector",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Creative Expression",
+     "Mastery",
+     "Resilience",
+     "Social Confidence",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Achievement",
+     "Pace",
+     "Adaptability",
+     "Autonomy",
+     "Variety",
+     "Precision"
+    ],
+    "primaryPathwayFamilies": [
+     "Dance & Choreography"
+    ],
+    "adjacentPathwayFamilies": [
+     "Acting & Performance",
+     "Higher Education & Academic Research"
+    ]
+   },
+   {
+    "id": "sub_musical_theatre",
+    "title": "Musical Theatre",
+    "careerWorldId": "cw_performing_arts_music",
+    "careerWorld": "Performing Arts & Music",
+    "description": "Combine acting, singing and dance to perform in musicals and stage shows, training as a versatile triple-threat performer.",
+    "archetypes": [
+     "Creator",
+     "Connector",
+     "Achiever",
+     "Visionary"
+    ],
+    "coreSubdimensions": [
+     "Creative Expression",
+     "Social Confidence",
+     "Mastery",
+     "Resilience",
+     "Originality"
+    ],
+    "secondarySubdimensions": [
+     "Collaboration",
+     "Achievement",
+     "Adaptability",
+     "Variety",
+     "Pace",
+     "Autonomy",
+     "Empathy"
+    ],
+    "primaryPathwayFamilies": [
+     "Acting & Performance"
+    ],
+    "adjacentPathwayFamilies": [
+     "Music Performance & Production",
+     "Dance & Choreography"
+    ]
+   },
+   {
+    "id": "sub_music_technology",
+    "title": "Music Technology",
+    "careerWorldId": "cw_performing_arts_music",
+    "careerWorld": "Performing Arts & Music",
+    "description": "Learn recording, mixing, sound design and production, blending musical creativity with the technology behind modern audio.",
+    "archetypes": [
+     "Creator",
+     "Thinker",
+     "Visionary",
+     "Explorer"
+    ],
+    "coreSubdimensions": [
+     "Technical Curiosity",
+     "Creative Expression",
+     "Originality",
+     "Mastery",
+     "Precision"
+    ],
+    "secondarySubdimensions": [
+     "Analytical Curiosity",
+     "Autonomy",
+     "Variety",
+     "Data Curiosity",
+     "Collaboration",
+     "Entrepreneurial Drive",
+     "Pace"
+    ],
+    "primaryPathwayFamilies": [
+     "Sound & Audio Production"
+    ],
+    "adjacentPathwayFamilies": [
+     "Music Performance & Production"
+    ]
+   },
+   {
+    "id": "sub_technical_theatre_and_stage_management",
+    "title": "Technical Theatre & Stage Management",
+    "careerWorldId": "cw_performing_arts_music",
+    "careerWorld": "Performing Arts & Music",
+    "description": "Master the craft behind live performance: lighting, sound, set, and running a show, keeping complex productions organised and on cue.",
+    "archetypes": [
+     "Organizer",
+     "Creator",
+     "Connector",
+     "Achiever"
+    ],
+    "coreSubdimensions": [
+     "Structure",
+     "Reliability",
+     "Collaboration",
+     "Precision",
+     "Creative Expression"
+    ],
+    "secondarySubdimensions": [
+     "Technical Curiosity",
+     "Adaptability",
+     "Resilience",
+     "Pace",
+     "Social Confidence",
+     "Mastery",
+     "Purpose & Impact"
+    ],
+    "primaryPathwayFamilies": [
+     "Theatre & Stage Production"
+    ],
+    "adjacentPathwayFamilies": [
+     "Sound & Audio Production"
+    ]
+   }
+  ]
+ }
+]

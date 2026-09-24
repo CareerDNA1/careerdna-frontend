@@ -1,0 +1,450 @@
+[
+ {
+  "id": "str_communication",
+  "title": "Communicating clearly",
+  "archetypes": [
+   "Connector",
+   "Organizer",
+   "Thinker",
+   "Visionary"
+  ],
+  "coreSubdimensions": [
+   "Social Confidence",
+   "Empathy",
+   "Precision"
+  ],
+  "secondarySubdimensions": [
+   "Purpose & Impact",
+   "Helping & Caring",
+   "Collaboration",
+   "Autonomy",
+   "Originality"
+  ]
+ },
+ {
+  "id": "str_collaboration",
+  "title": "Working well with others",
+  "archetypes": [
+   "Connector",
+   "Visionary",
+   "Organizer"
+  ],
+  "coreSubdimensions": [
+   "Collaboration",
+   "Empathy",
+   "Social Confidence"
+  ],
+  "secondarySubdimensions": [
+   "Belonging",
+   "Helping & Caring",
+   "Purpose & Impact",
+   "Adaptability",
+   "Resilience"
+  ]
+ },
+ {
+  "id": "str_influencing_and_leading",
+  "title": "Influencing and leading others",
+  "archetypes": [
+   "Visionary",
+   "Connector",
+   "Achiever"
+  ],
+  "coreSubdimensions": [
+   "Social Confidence",
+   "Purpose & Impact",
+   "Entrepreneurial Drive",
+   "Achievement"
+  ],
+  "secondarySubdimensions": [
+   "Resilience",
+   "Belonging",
+   "Originality",
+   "Collaboration",
+   "Adaptability"
+  ]
+ },
+ {
+  "id": "str_understanding_people_user_needs",
+  "title": "Understanding people and user needs",
+  "archetypes": [
+   "Connector",
+   "Thinker",
+   "Explorer"
+  ],
+  "coreSubdimensions": [
+   "Empathy",
+   "Analytical Curiosity",
+   "Helping & Caring"
+  ],
+  "secondarySubdimensions": [
+   "Social Confidence",
+   "Purpose & Impact",
+   "Cultural & Global Curiosity",
+   "Belonging",
+   "Originality"
+  ]
+ },
+ {
+  "id": "str_building_relationships",
+  "title": "Building relationships",
+  "archetypes": [
+   "Connector",
+   "Explorer",
+   "Visionary"
+  ],
+  "coreSubdimensions": [
+   "Social Confidence",
+   "Empathy",
+   "Adaptability"
+  ],
+  "secondarySubdimensions": [
+   "Belonging",
+   "Collaboration",
+   "Helping & Caring",
+   "Purpose & Impact",
+   "Resilience"
+  ]
+ },
+ {
+  "id": "str_global_cultural_thinking",
+  "title": "Thinking globally and across cultures",
+  "archetypes": [
+   "Explorer",
+   "Connector",
+   "Thinker"
+  ],
+  "coreSubdimensions": [
+   "Cultural & Global Curiosity",
+   "Adaptability",
+   "Empathy",
+   "Analytical Curiosity"
+  ],
+  "secondarySubdimensions": [
+   "Variety",
+   "Purpose & Impact",
+   "Collaboration",
+   "Originality",
+   "Social Confidence"
+  ]
+ },
+ {
+  "id": "str_planning_and_organisation",
+  "title": "Planning and organising work",
+  "archetypes": [
+   "Organizer",
+   "Achiever",
+   "Thinker"
+  ],
+  "coreSubdimensions": [
+   "Structure",
+   "Precision",
+   "Reliability"
+  ],
+  "secondarySubdimensions": [
+   "Analytical Curiosity",
+   "Data Curiosity",
+   "Achievement",
+   "Collaboration",
+   "Mastery"
+  ]
+ },
+ {
+  "id": "str_ownership_and_results",
+  "title": "Taking ownership and delivering results",
+  "archetypes": [
+   "Achiever",
+   "Organizer",
+   "Visionary"
+  ],
+  "coreSubdimensions": [
+   "Achievement",
+   "Reliability",
+   "Purpose & Impact"
+  ],
+  "secondarySubdimensions": [
+   "Resilience",
+   "Precision",
+   "Entrepreneurial Drive",
+   "Autonomy",
+   "Collaboration"
+  ]
+ },
+ {
+  "id": "str_initiative",
+  "title": "Showing initiative",
+  "archetypes": [
+   "Visionary",
+   "Achiever",
+   "Thinker",
+   "Creator"
+  ],
+  "coreSubdimensions": [
+   "Entrepreneurial Drive",
+   "Autonomy",
+   "Achievement"
+  ],
+  "secondarySubdimensions": [
+   "Originality",
+   "Resilience",
+   "Purpose & Impact",
+   "Adaptability",
+   "Social Confidence"
+  ]
+ },
+ {
+  "id": "str_resilience_under_pressure",
+  "title": "Staying resilient under pressure",
+  "archetypes": [
+   "Achiever",
+   "Visionary",
+   "Connector"
+  ],
+  "coreSubdimensions": [
+   "Achievement",
+   "Resilience",
+   "Purpose & Impact"
+  ],
+  "secondarySubdimensions": [
+   "Reliability",
+   "Pace",
+   "Autonomy",
+   "Analytical Curiosity",
+   "Belonging"
+  ]
+ },
+ {
+  "id": "str_learning_and_adapting",
+  "title": "Learning quickly and adapting to change",
+  "archetypes": [
+   "Explorer",
+   "Thinker",
+   "Creator"
+  ],
+  "coreSubdimensions": [
+   "Adaptability",
+   "Mastery",
+   "Variety"
+  ],
+  "secondarySubdimensions": [
+   "Analytical Curiosity",
+   "Autonomy",
+   "Originality",
+   "Independence",
+   "Resilience"
+  ]
+ },
+ {
+  "id": "str_curiosity_research",
+  "title": "Being curious and researching effectively",
+  "archetypes": [
+   "Thinker",
+   "Creator",
+   "Explorer"
+  ],
+  "coreSubdimensions": [
+   "Analytical Curiosity",
+   "Mastery",
+   "Independence"
+  ],
+  "secondarySubdimensions": [
+   "Data Curiosity",
+   "Autonomy",
+   "Originality",
+   "Technical Curiosity",
+   "Precision"
+  ]
+ },
+ {
+  "id": "str_analysis",
+  "title": "Analysing information",
+  "archetypes": [
+   "Thinker",
+   "Organizer",
+   "Explorer"
+  ],
+  "coreSubdimensions": [
+   "Analytical Curiosity",
+   "Data Curiosity",
+   "Precision"
+  ],
+  "secondarySubdimensions": [
+   "Mastery",
+   "Independence",
+   "Structure",
+   "Technical Curiosity",
+   "Autonomy"
+  ]
+ },
+ {
+  "id": "str_problem_solving",
+  "title": "Solving problems",
+  "archetypes": [
+   "Thinker",
+   "Creator",
+   "Visionary"
+  ],
+  "coreSubdimensions": [
+   "Analytical Curiosity",
+   "Originality",
+   "Technical Curiosity"
+  ],
+  "secondarySubdimensions": [
+   "Data Curiosity",
+   "Mastery",
+   "Adaptability",
+   "Autonomy",
+   "Independence"
+  ]
+ },
+ {
+  "id": "str_numeracy",
+  "title": "Working confidently with numbers",
+  "archetypes": [
+   "Thinker",
+   "Organizer",
+   "Explorer"
+  ],
+  "coreSubdimensions": [
+   "Data Curiosity",
+   "Precision",
+   "Analytical Curiosity"
+  ],
+  "secondarySubdimensions": [
+   "Mastery",
+   "Structure",
+   "Independence",
+   "Reliability",
+   "Technical Curiosity"
+  ]
+ },
+ {
+  "id": "str_attention_to_detail",
+  "title": "Paying attention to detail",
+  "archetypes": [
+   "Organizer",
+   "Achiever",
+   "Thinker"
+  ],
+  "coreSubdimensions": [
+   "Precision",
+   "Reliability",
+   "Structure"
+  ],
+  "secondarySubdimensions": [
+   "Data Curiosity",
+   "Analytical Curiosity",
+   "Mastery",
+   "Independence",
+   "Achievement"
+  ]
+ },
+ {
+  "id": "str_judgement_decision_making",
+  "title": "Making decisions and using sound judgement",
+  "archetypes": [
+   "Thinker",
+   "Organizer",
+   "Explorer",
+   "Creator"
+  ],
+  "coreSubdimensions": [
+   "Analytical Curiosity",
+   "Precision",
+   "Autonomy"
+  ],
+  "secondarySubdimensions": [
+   "Mastery",
+   "Data Curiosity",
+   "Independence",
+   "Achievement",
+   "Resilience"
+  ]
+ },
+ {
+  "id": "str_creativity_innovation",
+  "title": "Thinking creatively and innovating",
+  "archetypes": [
+   "Creator",
+   "Visionary",
+   "Thinker"
+  ],
+  "coreSubdimensions": [
+   "Originality",
+   "Creative Expression",
+   "Entrepreneurial Drive",
+   "Autonomy"
+  ],
+  "secondarySubdimensions": [
+   "Adaptability",
+   "Variety",
+   "Analytical Curiosity",
+   "Technical Curiosity",
+   "Independence"
+  ]
+ },
+ {
+  "id": "str_strategy_systems",
+  "title": "Thinking strategically and seeing the bigger system",
+  "archetypes": [
+   "Visionary",
+   "Thinker",
+   "Creator"
+  ],
+  "coreSubdimensions": [
+   "Entrepreneurial Drive",
+   "Analytical Curiosity",
+   "Originality",
+   "Autonomy"
+  ],
+  "secondarySubdimensions": [
+   "Purpose & Impact",
+   "Mastery",
+   "Independence",
+   "Adaptability",
+   "Data Curiosity"
+  ]
+ },
+ {
+  "id": "str_commercial_awareness",
+  "title": "Understanding the commercial picture",
+  "archetypes": [
+   "Achiever",
+   "Thinker",
+   "Visionary"
+  ],
+  "coreSubdimensions": [
+   "Achievement",
+   "Data Curiosity",
+   "Entrepreneurial Drive"
+  ],
+  "secondarySubdimensions": [
+   "Analytical Curiosity",
+   "Precision",
+   "Structure",
+   "Social Confidence",
+   "Mastery"
+  ]
+ },
+ {
+  "id": "str_tools_systems_confidence",
+  "title": "Using tools and systems confidently",
+  "archetypes": [
+   "Thinker",
+   "Creator",
+   "Organizer"
+  ],
+  "coreSubdimensions": [
+   "Technical Curiosity",
+   "Structure",
+   "Mastery"
+  ],
+  "secondarySubdimensions": [
+   "Precision",
+   "Reliability",
+   "Data Curiosity",
+   "Analytical Curiosity",
+   "Autonomy"
+  ]
+ }
+]

@@ -6,7 +6,8 @@
 .report-limit-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 90000;
+  /* Above favourites (96000) and rankings (97000): the Premium gate can open from inside both. */
+  z-index: 98000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -347,4 +348,38 @@
   .report-limit-modal__apply-btn {
     width: 100%;
   }
+}
+
+/* AI Advisor question packs */
+.report-limit-modal__packs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin: 14px 0 4px;
+}
+.report-limit-modal__pack-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 10px;
+  border: 1.5px solid #d7e0ee;
+  border-radius: 14px;
+  background: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.report-limit-modal__pack-btn:hover:not(:disabled) {
+  border-color: #2f6fed;
+  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.12);
+}
+.report-limit-modal__pack-btn:disabled { opacity: .6; cursor: default; }
+.report-limit-modal__pack-qty { font-weight: 700; color: #14233c; font-size: .98rem; }
+.report-limit-modal__pack-price { font-weight: 600; color: #2f6fed; font-size: .92rem; }
+.report-limit-modal__primary-btn--secondary {
+  background: #ffffff !important;
+  color: #2f6fed !important;
+  border: 1.5px solid #2f6fed !important;
+  box-shadow: none !important;
 }

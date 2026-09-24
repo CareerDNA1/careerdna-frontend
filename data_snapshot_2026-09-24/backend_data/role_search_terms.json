@@ -1,0 +1,2738 @@
+{
+ "Business Intelligence Analyst": [
+  "Business Intelligence Analyst",
+  "BI Analyst",
+  "BI Developer",
+  "Business Intelligence Developer",
+  "Power BI Analyst",
+  "Data Analyst",
+  "Analytics Analyst",
+  "Insight Analyst"
+ ],
+ "Reporting Analyst": [
+  "Reporting Analyst",
+  "MI Analyst",
+  "Management Information Analyst",
+  "BI Reporting Analyst",
+  "Data Reporting Analyst",
+  "Data Analyst",
+  "Finance Reporting Analyst",
+  "Regulatory Reporting Analyst"
+ ],
+ "Operational Research Analyst": [
+  "Operational Research Analyst",
+  "Operations Research Analyst",
+  "Decision Analyst",
+  "Operations Analyst",
+  "Modelling Analyst",
+  "Decision Scientist"
+ ],
+ "Customer Insight Analyst": [
+  "Customer Insight Analyst",
+  "Customer Insights Analyst",
+  "Customer Analytics Analyst",
+  "CRM Insight Analyst",
+  "Insight Analyst",
+  "Data Insight Analyst",
+  "Customer Analyst"
+ ],
+ "Insight Analyst": [
+  "Insight Analyst",
+  "Insights Analyst",
+  "Data Insight Analyst",
+  "Research Analyst",
+  "Customer Insight Analyst"
+ ],
+ "Data Scientist": [
+  "Data Scientist",
+  "Machine Learning Scientist",
+  "Applied Scientist",
+  "Junior Data Scientist",
+  "Data Science Graduate",
+  "Graduate Data Scientist"
+ ],
+ "Statistician": [
+  "Statistician",
+  "Biostatistician",
+  "Applied Statistician",
+  "Statistical Analyst",
+  "Data Analyst",
+  "Statistical Officer",
+  "Research Statistician"
+ ],
+ "Experimentation Analyst": [
+  "Experimentation Analyst",
+  "A/B Testing Analyst",
+  "Experimentation Specialist",
+  "Conversion Analyst",
+  "Data Analyst",
+  "Optimisation Analyst",
+  "CRO Analyst"
+ ],
+ "Growth Analyst": [
+  "Growth Analyst",
+  "Growth Marketing Analyst",
+  "Growth Data Analyst",
+  "Data Analyst",
+  "Marketing Analyst",
+  "Growth Executive"
+ ],
+ "Product Analyst": [
+  "Product Analyst",
+  "Product Data Analyst",
+  "Digital Product Analyst",
+  "Data Analyst",
+  "Product Insights Analyst",
+  "Digital Analyst"
+ ],
+ "Machine Learning / AI Engineer": [
+  "Machine Learning Engineer",
+  "ML Engineer",
+  "AI Engineer",
+  "Artificial Intelligence Engineer",
+  "MLOps Engineer",
+  "Machine Learning Developer",
+  "AI Developer",
+  "Data Scientist"
+ ],
+ "Applied AI Analyst": [
+  "Applied AI Analyst",
+  "AI Analyst",
+  "Artificial Intelligence Analyst",
+  "Machine Learning Analyst",
+  "AI Specialist",
+  "Data Scientist"
+ ],
+ "Backend Developer": [
+  "Backend Developer",
+  "Back End Developer",
+  "Backend Engineer",
+  "Backend Software Engineer",
+  "Java Developer",
+  "Python Developer",
+  "Software Developer",
+  "Software Engineer",
+  "Node Developer"
+ ],
+ "DevOps Engineer": [
+  "DevOps Engineer",
+  "Site Reliability Engineer",
+  "SRE",
+  "Platform Reliability Engineer",
+  "Cloud DevOps Engineer",
+  "Cloud Engineer",
+  "Infrastructure Engineer",
+  "Systems Engineer"
+ ],
+ "Platform Engineer": [
+  "Platform Engineer",
+  "Cloud Platform Engineer",
+  "Infrastructure Engineer",
+  "Cloud Engineer",
+  "DevOps Engineer",
+  "Site Reliability Engineer"
+ ],
+ "Cyber Security Analyst": [
+  "Cyber Security Analyst",
+  "Cybersecurity Analyst",
+  "Information Security Analyst",
+  "Security Analyst",
+  "InfoSec Analyst",
+  "SOC Analyst",
+  "IT Security Analyst"
+ ],
+ "SOC Analyst": [
+  "SOC Analyst",
+  "Security Operations Centre Analyst",
+  "Security Operations Analyst",
+  "Threat Analyst",
+  "Security Analyst",
+  "Cyber Security Analyst"
+ ],
+ "Data Engineer": [
+  "Data Engineer",
+  "Analytics Engineer",
+  "Big Data Engineer",
+  "ETL Developer",
+  "Software Engineer",
+  "Graduate Data Engineer"
+ ],
+ "Database Developer": [
+  "Database Developer",
+  "SQL Developer",
+  "Database Engineer",
+  "SQL Database Developer",
+  "Software Developer",
+  "Data Engineer",
+  "Database Administrator"
+ ],
+ "Frontend / Web Developer": [
+  "Frontend Developer",
+  "Front End Developer",
+  "Web Developer",
+  "React Developer",
+  "JavaScript Developer",
+  "UI Developer",
+  "Software Developer",
+  "Software Engineer"
+ ],
+ "Software Tester / QA Analyst": [
+  "Software Tester",
+  "QA Analyst",
+  "QA Engineer",
+  "Test Engineer",
+  "Quality Assurance Analyst",
+  "Test Analyst",
+  "Automation Tester",
+  "QA Tester",
+  "Software QA Engineer",
+  "Automation Test Engineer"
+ ],
+ "Software Engineer / Software Developer": [
+  "Software Engineer",
+  "Software Developer",
+  "Full Stack Developer",
+  "Full Stack Engineer",
+  "Applications Developer",
+  "Graduate Software Engineer",
+  "Java Developer",
+  "Python Developer"
+ ],
+ "Systems Analyst": [
+  "Systems Analyst",
+  "IT Systems Analyst",
+  "Business Systems Analyst",
+  "IT Analyst",
+  "Technical Analyst"
+ ],
+ "Behavioural Insight Analyst": [
+  "Behavioural Insight Analyst",
+  "Behavioural Analyst",
+  "Behavioural Science Analyst",
+  "Research Analyst",
+  "Insight Analyst"
+ ],
+ "UX Researcher": [
+  "UX Researcher",
+  "User Experience Researcher",
+  "User Researcher",
+  "Design Researcher",
+  "Product Researcher"
+ ],
+ "UI Designer": [
+  "UI Designer",
+  "User Interface Designer",
+  "UI/UX Designer",
+  "Visual UI Designer",
+  "Product Designer",
+  "Digital Designer",
+  "UX Designer"
+ ],
+ "UX Designer": [
+  "UX Designer",
+  "User Experience Designer",
+  "Product Designer",
+  "UX/UI Designer",
+  "Digital Product Designer",
+  "UX Consultant"
+ ],
+ "Game Designer": [
+  "Game Designer",
+  "Games Designer",
+  "Gameplay Designer",
+  "Narrative Designer"
+ ],
+ "Game Developer / Programmer": [
+  "Game Developer",
+  "Games Programmer",
+  "Gameplay Programmer",
+  "Unity Developer",
+  "Unreal Developer",
+  "Games Developer",
+  "Software Engineer Games"
+ ],
+ "Game Artist / Animator": [
+  "Game Artist",
+  "Games Artist",
+  "3D Game Artist",
+  "Game Animator",
+  "Environment Artist",
+  "3D Artist",
+  "Concept Artist"
+ ],
+ "Games QA Tester": [
+  "Games QA Tester",
+  "Game Tester",
+  "QA Games Tester",
+  "Games Test Analyst",
+  "QA Tester"
+ ],
+ "Aerospace Engineer": [
+  "Aerospace Engineer",
+  "Aeronautical Engineer",
+  "Aircraft Engineer",
+  "Avionics Engineer",
+  "Graduate Aerospace Engineer",
+  "Mechanical Engineer",
+  "Design Engineer Aerospace"
+ ],
+ "Structural Engineer": [
+  "Structural Engineer",
+  "Structures Engineer",
+  "Graduate Structural Engineer",
+  "Civil Structural Engineer",
+  "Design Engineer Structures"
+ ],
+ "Systems Engineer": [
+  "Systems Engineer",
+  "Systems Design Engineer",
+  "Requirements Engineer",
+  "Graduate Systems Engineer"
+ ],
+ "Chemical Engineer": [
+  "Chemical Engineer",
+  "Process Chemical Engineer",
+  "Graduate Chemical Engineer",
+  "Process Engineer",
+  "Production Engineer Chemical"
+ ],
+ "Process Engineer": [
+  "Process Engineer",
+  "Manufacturing Process Engineer",
+  "Chemical Process Engineer",
+  "Graduate Process Engineer",
+  "Manufacturing Engineer",
+  "Production Engineer"
+ ],
+ "Process Safety Engineer": [
+  "Process Safety Engineer",
+  "Safety Engineer",
+  "HAZOP Engineer",
+  "HSE Engineer",
+  "Process Engineer"
+ ],
+ "Civil Engineer": [
+  "Civil Engineer",
+  "Graduate Civil Engineer",
+  "Civil Design Engineer",
+  "Infrastructure Engineer",
+  "Structural Engineer"
+ ],
+ "Site Engineer": [
+  "Site Engineer",
+  "Setting Out Engineer",
+  "Graduate Site Engineer",
+  "Assistant Site Engineer"
+ ],
+ "Control Engineer": [
+  "Control Engineer",
+  "Control Systems Engineer",
+  "Controls Engineer",
+  "EC&I Engineer",
+  "Automation Engineer",
+  "Instrumentation Engineer"
+ ],
+ "Electrical Engineer": [
+  "Electrical Engineer",
+  "Electrical Design Engineer",
+  "Building Services Electrical Engineer",
+  "Graduate Electrical Engineer",
+  "Building Services Engineer"
+ ],
+ "Electronics Engineer": [
+  "Electronics Engineer",
+  "Electronic Engineer",
+  "Electronic Design Engineer",
+  "Hardware Engineer",
+  "PCB Design Engineer",
+  "Embedded Engineer",
+  "PCB Engineer"
+ ],
+ "Asset Engineer": [
+  "Asset Engineer",
+  "Asset Management Engineer",
+  "Infrastructure Asset Engineer",
+  "Maintenance Engineer",
+  "Infrastructure Engineer"
+ ],
+ "Maintenance Engineer": [
+  "Maintenance Engineer",
+  "Multiskilled Maintenance Engineer",
+  "Mechanical Maintenance Engineer",
+  "Electrical Maintenance Engineer",
+  "Multiskilled Engineer",
+  "Shift Engineer",
+  "Plant Engineer",
+  "Field Service Engineer"
+ ],
+ "Reliability Engineer": [
+  "Reliability Engineer",
+  "Asset Reliability Engineer",
+  "Maintenance Reliability Engineer",
+  "Maintenance Engineer",
+  "Asset Engineer",
+  "Plant Reliability Engineer"
+ ],
+ "Manufacturing Engineer": [
+  "Manufacturing Engineer",
+  "Production Manufacturing Engineer",
+  "Graduate Manufacturing Engineer",
+  "Production Engineer",
+  "Process Engineer"
+ ],
+ "Production Engineer": [
+  "Production Engineer",
+  "Production Support Engineer",
+  "Manufacturing Engineer",
+  "Process Engineer"
+ ],
+ "Quality Engineer": [
+  "Quality Engineer",
+  "Supplier Quality Engineer",
+  "Quality Assurance Engineer",
+  "QA Engineer"
+ ],
+ "Continuous Improvement Engineer": [
+  "Continuous Improvement Engineer",
+  "CI Engineer",
+  "Lean Engineer",
+  "Process Improvement Engineer"
+ ],
+ "Industrial Engineer": [
+  "Industrial Engineer",
+  "Manufacturing Systems Engineer",
+  "Manufacturing Engineer",
+  "Process Engineer",
+  "Production Engineer"
+ ],
+ "Design Engineer": [
+  "Design Engineer",
+  "Mechanical Design Engineer",
+  "CAD Design Engineer",
+  "Product Design Engineer",
+  "Graduate Design Engineer",
+  "CAD Engineer"
+ ],
+ "Mechanical Engineer": [
+  "Mechanical Engineer",
+  "Graduate Mechanical Engineer",
+  "Mechanical Design Engineer",
+  "Design Engineer"
+ ],
+ "Product Engineer": [
+  "Product Engineer",
+  "Product Development Engineer",
+  "New Product Introduction Engineer",
+  "Design Engineer",
+  "NPI Engineer"
+ ],
+ "Automation Engineer": [
+  "Automation Engineer",
+  "Controls and Automation Engineer",
+  "Industrial Automation Engineer",
+  "PLC Engineer",
+  "Controls Engineer",
+  "Robotics Engineer",
+  "Control Systems Engineer"
+ ],
+ "Robotics Engineer": [
+  "Robotics Engineer",
+  "Robotics Software Engineer",
+  "Automation and Robotics Engineer",
+  "Automation Engineer",
+  "Controls Engineer"
+ ],
+ "Integration Engineer": [
+  "Integration Engineer",
+  "Systems Integration Engineer",
+  "Test and Integration Engineer",
+  "Test Engineer",
+  "Systems Engineer"
+ ],
+ "Architectural Technician": [
+  "Architectural Technician",
+  "Architectural CAD Technician",
+  "Junior Architectural Technician",
+  "CAD Technician",
+  "Architectural Technologist"
+ ],
+ "Architectural Technologist": [
+  "Architectural Technologist",
+  "Chartered Architectural Technologist",
+  "Senior Architectural Technologist",
+  "Architectural Technician"
+ ],
+ "BIM Coordinator": [
+  "BIM Coordinator",
+  "BIM Manager",
+  "BIM Technician",
+  "Building Information Modelling Coordinator",
+  "Revit Technician"
+ ],
+ "Architect": [
+  "Architect",
+  "Registered Architect",
+  "Project Architect",
+  "RIBA Architect",
+  "Architectural Designer"
+ ],
+ "Architectural Assistant": [
+  "Architectural Assistant",
+  "Part 1 Architectural Assistant",
+  "Part 2 Architectural Assistant",
+  "Graduate Architectural Assistant",
+  "Architectural Designer"
+ ],
+ "Site Manager": [
+  "Site Manager",
+  "Assistant Site Manager",
+  "Construction Site Manager",
+  "Trainee Site Manager",
+  "Graduate Site Manager",
+  "Site Supervisor"
+ ],
+ "Building Surveyor": [
+  "Building Surveyor",
+  "Chartered Building Surveyor",
+  "Graduate Building Surveyor",
+  "Assistant Building Surveyor"
+ ],
+ "Estimator": [
+  "Estimator",
+  "Construction Estimator",
+  "Trainee Estimator",
+  "Cost Estimator",
+  "Assistant Estimator"
+ ],
+ "Quantity Surveyor": [
+  "Quantity Surveyor",
+  "Graduate Quantity Surveyor",
+  "Assistant Quantity Surveyor",
+  "Cost Manager",
+  "QS"
+ ],
+ "Commercial Valuation Surveyor / Valuer": [
+  "Valuation Surveyor",
+  "Valuer",
+  "Commercial Valuation Surveyor",
+  "Chartered Surveyor",
+  "RICS Surveyor",
+  "Chartered Surveyor Valuation",
+  "APC Surveyor"
+ ],
+ "Building Sustainability Consultant": [
+  "Building Sustainability Consultant",
+  "Sustainability Consultant",
+  "Building Performance Consultant",
+  "Energy Consultant",
+  "Energy Assessor"
+ ],
+ "Planning Consultant": [
+  "Planning Consultant",
+  "Town Planning Consultant",
+  "Development Planner",
+  "Town Planner",
+  "Development Management Planner"
+ ],
+ "Town Planner": [
+  "Town Planner",
+  "Urban Planner",
+  "Spatial Planner",
+  "Graduate Town Planner",
+  "Assistant Town Planner",
+  "Planning Officer"
+ ],
+ "Facilities Manager": [
+  "Facilities Manager",
+  "FM Manager",
+  "Facilities Coordinator",
+  "Assistant Facilities Manager",
+  "FM Coordinator"
+ ],
+ "Property Manager": [
+  "Property Manager",
+  "Block Manager",
+  "Residential Property Manager",
+  "Estate Manager",
+  "Assistant Property Manager",
+  "Lettings Manager"
+ ],
+ "Property Development Manager": [
+  "Property Development Manager",
+  "Development Manager",
+  "Real Estate Development Manager",
+  "Assistant Development Manager",
+  "Real Estate Development"
+ ],
+ "Real Estate Asset Manager": [
+  "Real Estate Asset Manager",
+  "Property Asset Manager",
+  "Asset Manager Real Estate",
+  "Asset Management Surveyor",
+  "Estates Surveyor"
+ ],
+ "Biomedical Scientist": [
+  "Biomedical Scientist",
+  "Trainee Biomedical Scientist",
+  "BMS",
+  "Associate Practitioner Biomedical"
+ ],
+ "Clinical Research Associate": [
+  "Clinical Research Associate",
+  "CRA",
+  "Clinical Trial Associate",
+  "Trainee Clinical Research Associate",
+  "Graduate Clinical Research Associate",
+  "Clinical Trial Coordinator",
+  "CTA",
+  "Clinical Trials Assistant"
+ ],
+ "Clinical Scientist": [
+  "Clinical Scientist",
+  "Trainee Clinical Scientist",
+  "Healthcare Scientist"
+ ],
+ "Clinical Data Manager": [
+  "Clinical Data Manager",
+  "Clinical Data Coordinator",
+  "Clinical Data Associate",
+  "Data Manager Clinical Trials"
+ ],
+ "Regulatory Affairs Scientist": [
+  "Regulatory Affairs Scientist",
+  "Regulatory Affairs Associate",
+  "Regulatory Affairs Officer",
+  "Regulatory Officer"
+ ],
+ "Crime Scene Investigator": [
+  "Crime Scene Investigator",
+  "CSI",
+  "Forensic Crime Scene Investigator",
+  "Scenes of Crime Officer",
+  "Forensic Investigator",
+  "Forensic Assistant"
+ ],
+ "Forensic Scientist": [
+  "Forensic Scientist",
+  "Forensic Analyst",
+  "Assistant Forensic Scientist",
+  "Forensic Laboratory Analyst"
+ ],
+ "Forensic Toxicologist": [
+  "Forensic Toxicologist",
+  "Toxicologist",
+  "Analytical Toxicologist",
+  "Analytical Scientist Toxicology"
+ ],
+ "Laboratory Technician": [
+  "Laboratory Technician",
+  "Lab Technician",
+  "Laboratory Assistant",
+  "Junior Laboratory Technician",
+  "QC Technician",
+  "Lab Analyst"
+ ],
+ "Research Assistant": [
+  "Research Assistant",
+  "Research Technician",
+  "Graduate Research Assistant",
+  "Laboratory Research Assistant"
+ ],
+ "Analytical Chemist": [
+  "Analytical Chemist",
+  "QC Chemist",
+  "Quality Control Chemist",
+  "Laboratory Chemist",
+  "Quality Control Analyst",
+  "Chemist"
+ ],
+ "Materials Scientist": [
+  "Materials Scientist",
+  "Materials Engineer",
+  "Materials Research Scientist",
+  "Materials Technologist",
+  "R&D Materials Scientist"
+ ],
+ "R&D Scientist": [
+  "R&D Scientist",
+  "Research and Development Scientist",
+  "R&D Chemist",
+  "Development Scientist",
+  "Research Scientist"
+ ],
+ "Research Scientist": [
+  "Research Scientist",
+  "Postdoctoral Research Scientist",
+  "Senior Research Scientist",
+  "Graduate Research Scientist",
+  "Research Associate"
+ ],
+ "Bioinformatics Scientist": [
+  "Bioinformatics Scientist",
+  "Bioinformatician",
+  "Computational Biologist",
+  "Bioinformatics Analyst"
+ ],
+ "Scientific Data Analyst": [
+  "Scientific Data Analyst",
+  "Scientific Analyst",
+  "Research Data Analyst",
+  "Data Analyst Scientific"
+ ],
+ "Drug Development Associate": [
+  "Drug Development Associate",
+  "Drug Development Scientist",
+  "Pharmaceutical Development Associate",
+  "Pharmaceutical Development Scientist",
+  "Formulation Scientist"
+ ],
+ "Medical Affairs Associate": [
+  "Medical Affairs Associate",
+  "Medical Science Liaison",
+  "Medical Affairs Officer",
+  "Medical Information Officer"
+ ],
+ "Pharmaceutical Scientist": [
+  "Pharmaceutical Scientist",
+  "Formulation Scientist",
+  "Pharma Scientist",
+  "Pharmaceutical Analyst",
+  "QC Scientist Pharma"
+ ],
+ "Medicines Safety Officer": [
+  "Medicines Safety Officer",
+  "Drug Safety Officer",
+  "Pharmacovigilance Officer",
+  "Drug Safety Associate"
+ ],
+ "Pharmacovigilance Associate": [
+  "Pharmacovigilance Associate",
+  "Drug Safety Associate",
+  "PV Associate",
+  "Pharmacovigilance Officer",
+  "Drug Safety Scientist"
+ ],
+ "Regulatory Affairs Associate": [
+  "Regulatory Affairs Associate",
+  "Regulatory Affairs Officer",
+  "Regulatory Affairs Specialist",
+  "Regulatory Officer"
+ ],
+ "Academic Doctor": [
+  "Academic Clinical Fellow",
+  "Academic Doctor",
+  "Clinical Academic",
+  "Academic Foundation Doctor"
+ ],
+ "Clinical Research Fellow": [
+  "Clinical Research Fellow",
+  "Research Fellow",
+  "Clinical Fellow"
+ ],
+ "Clinical Trials Doctor": [
+  "Clinical Trials Physician",
+  "Clinical Trials Doctor",
+  "Trial Physician"
+ ],
+ "Medical Educator": [
+  "Medical Educator",
+  "Clinical Educator",
+  "Medical Education Fellow"
+ ],
+ "Acute Medicine Doctor": [
+  "Acute Medicine Doctor",
+  "Acute Medical Unit Doctor",
+  "Acute Physician"
+ ],
+ "Anaesthetist": [
+  "Anaesthetist",
+  "Anaesthetics Registrar",
+  "Consultant Anaesthetist"
+ ],
+ "Emergency Medicine Doctor": [
+  "Emergency Medicine Doctor",
+  "Emergency Department Doctor",
+  "Emergency Medicine Registrar"
+ ],
+ "Intensive Care Doctor": [
+  "Intensive Care Doctor",
+  "ICU Doctor",
+  "Critical Care Doctor"
+ ],
+ "Consultant Physician": [
+  "Consultant Physician",
+  "Consultant in Medicine",
+  "Hospital Consultant"
+ ],
+ "Foundation Doctor": [
+  "Foundation Doctor",
+  "FY1 Doctor",
+  "FY2 Doctor",
+  "Foundation Year Doctor"
+ ],
+ "General Practitioner": [
+  "General Practitioner",
+  "GP",
+  "Salaried GP",
+  "GP Registrar"
+ ],
+ "Hospital Doctor": [
+  "Hospital Doctor",
+  "Senior House Officer",
+  "Specialty Doctor"
+ ],
+ "Clinical Pharmacist": [
+  "Clinical Pharmacist",
+  "Practice Pharmacist",
+  "Primary Care Pharmacist"
+ ],
+ "Hospital Pharmacist": [
+  "Hospital Pharmacist",
+  "Pre-registration Pharmacist",
+  "Rotational Pharmacist"
+ ],
+ "Pharmacist": [
+  "Pharmacist",
+  "Registered Pharmacist",
+  "Locum Pharmacist"
+ ],
+ "Clinical Research Nurse / Research Nurse": [
+  "Research Nurse",
+  "Clinical Research Nurse",
+  "Clinical Trials Nurse"
+ ],
+ "Clinical Diagnostic Scientist": [
+  "Clinical Diagnostic Scientist",
+  "Diagnostic Scientist",
+  "Clinical Laboratory Scientist"
+ ],
+ "Healthcare Scientist": [
+  "Healthcare Scientist",
+  "Clinical Scientist",
+  "Healthcare Science Practitioner",
+  "Trainee Healthcare Scientist"
+ ],
+ "Community Pharmacist": [
+  "Community Pharmacist",
+  "Retail Pharmacist",
+  "Pharmacy Pharmacist"
+ ],
+ "Pharmacy Manager": [
+  "Pharmacy Manager",
+  "Responsible Pharmacist",
+  "Pharmacy Branch Manager"
+ ],
+ "Academic Dentist": [
+  "Academic Dentist",
+  "Dental Academic",
+  "Clinical Lecturer in Dentistry"
+ ],
+ "Dental Researcher": [
+  "Dental Researcher",
+  "Dental Research Fellow",
+  "Oral Health Researcher"
+ ],
+ "Dentist": [
+  "Dentist",
+  "Associate Dentist",
+  "General Dental Practitioner",
+  "Foundation Dentist"
+ ],
+ "Clinical Geneticist": [
+  "Clinical Geneticist",
+  "Genetics Doctor",
+  "Consultant Geneticist"
+ ],
+ "Clinical Radiologist": [
+  "Radiologist",
+  "Clinical Radiologist",
+  "Radiology Registrar",
+  "Consultant Radiologist"
+ ],
+ "Medical Microbiologist": [
+  "Medical Microbiologist",
+  "Clinical Microbiologist",
+  "Consultant Microbiologist"
+ ],
+ "Pathologist": [
+  "Pathologist",
+  "Histopathologist",
+  "Consultant Pathologist"
+ ],
+ "Clinical Physiologist": [
+  "Clinical Physiologist",
+  "Cardiac Physiologist",
+  "Respiratory Physiologist",
+  "Healthcare Science Physiologist"
+ ],
+ "Diagnostic Radiographer": [
+  "Diagnostic Radiographer",
+  "Reporting Radiographer"
+ ],
+ "Medical Laboratory Scientist": [
+  "Medical Laboratory Scientist",
+  "Medical Laboratory Assistant",
+  "Biomedical Support Worker"
+ ],
+ "Clinical AI Advisor": [
+  "Clinical AI Advisor",
+  "Clinical Informatics Lead",
+  "Digital Clinical Advisor",
+  "Clinical Informatics Analyst",
+  "Digital Health Analyst",
+  "Health Informatics Specialist"
+ ],
+ "Digital Health Doctor": [
+  "Digital Health Doctor",
+  "Clinical Informatics Doctor",
+  "Digital Clinician"
+ ],
+ "Healthtech Founder": [
+  "Healthtech Founder",
+  "Health Tech Founder",
+  "Digital Health Founder"
+ ],
+ "Medical Innovation Lead": [
+  "Medical Innovation Lead",
+  "Clinical Innovation Lead",
+  "Healthcare Innovation Manager",
+  "Clinical Innovation Manager",
+  "Medtech Project Manager"
+ ],
+ "Clinical Leadership Fellow": [
+  "Clinical Leadership Fellow",
+  "Clinical Fellow in Leadership",
+  "Leadership Fellow"
+ ],
+ "Healthcare Strategy Consultant": [
+  "Healthcare Strategy Consultant",
+  "Healthcare Consultant",
+  "Health Strategy Consultant",
+  "NHS Management Consultant",
+  "Health Strategy Analyst",
+  "Healthcare Analyst"
+ ],
+ "Medical Manager": [
+  "Medical Manager",
+  "Clinical Services Manager",
+  "Medical Services Manager",
+  "Healthcare Manager",
+  "Service Manager NHS"
+ ],
+ "Quality Improvement Lead": [
+  "Quality Improvement Lead",
+  "QI Lead",
+  "Service Improvement Lead",
+  "Service Improvement Manager",
+  "Quality Improvement Manager",
+  "Transformation Lead"
+ ],
+ "Healthcare Management Associate": [
+  "Healthcare Management Associate",
+  "NHS Graduate Management Trainee",
+  "Healthcare Management Trainee",
+  "Graduate Management Trainee NHS"
+ ],
+ "Service Improvement Analyst": [
+  "Service Improvement Analyst",
+  "Improvement Analyst",
+  "Transformation Analyst",
+  "Business Improvement Analyst"
+ ],
+ "Medicines Policy Officer": [
+  "Medicines Policy Officer",
+  "Medicines Optimisation Pharmacist",
+  "Medicines Management Officer",
+  "Medicines Management Technician",
+  "Prescribing Adviser"
+ ],
+ "Public Health Pharmacist": [
+  "Public Health Pharmacist",
+  "Public Health Medicines Adviser"
+ ],
+ "Child & Adolescent Psychiatrist": [
+  "Child and Adolescent Psychiatrist",
+  "CAMHS Psychiatrist",
+  "Child Psychiatrist"
+ ],
+ "Forensic Psychiatrist": [
+  "Forensic Psychiatrist",
+  "Forensic Mental Health Doctor"
+ ],
+ "Psychiatrist": [
+  "Psychiatrist",
+  "Consultant Psychiatrist",
+  "Psychiatry Registrar"
+ ],
+ "Midwife": [
+  "Midwife",
+  "Registered Midwife",
+  "Community Midwife",
+  "Newly Qualified Midwife"
+ ],
+ "Advanced Clinical Practitioner": [
+  "Advanced Clinical Practitioner",
+  "Advanced Nurse Practitioner",
+  "ACP"
+ ],
+ "Nurse Educator": [
+  "Nurse Educator",
+  "Practice Educator",
+  "Clinical Nurse Educator"
+ ],
+ "Nurse Manager": [
+  "Nurse Manager",
+  "Ward Manager",
+  "Clinical Nurse Manager",
+  "Matron"
+ ],
+ "Adult Nurse": [
+  "Adult Nurse",
+  "Registered Adult Nurse",
+  "Staff Nurse",
+  "Newly Qualified Nurse"
+ ],
+ "Children’s Nurse": [
+  "Children's Nurse",
+  "Paediatric Nurse",
+  "Registered Children's Nurse"
+ ],
+ "Learning Disability Nurse": [
+  "Learning Disability Nurse",
+  "LD Nurse",
+  "Registered Learning Disability Nurse"
+ ],
+ "Mental Health Nurse": [
+  "Mental Health Nurse",
+  "RMN",
+  "Registered Mental Health Nurse",
+  "Psychiatric Nurse"
+ ],
+ "Dental Public Health Specialist": [
+  "Dental Public Health Specialist",
+  "Dental Public Health Consultant"
+ ],
+ "Oral Health Policy Lead": [
+  "Oral Health Policy Lead",
+  "Oral Health Promotion Lead",
+  "Oral Health Promotion Officer",
+  "Public Health Officer Dental"
+ ],
+ "Paramedic": [
+  "Paramedic",
+  "Newly Qualified Paramedic",
+  "Specialist Paramedic",
+  "Ambulance Paramedic"
+ ],
+ "Health Improvement Practitioner": [
+  "Health Improvement Practitioner",
+  "Health Improvement Officer",
+  "Wellbeing Practitioner",
+  "Public Health Practitioner",
+  "Wellbeing Officer"
+ ],
+ "Public Health Practitioner": [
+  "Public Health Practitioner",
+  "Public Health Officer",
+  "Public Health Project Officer",
+  "Health Improvement Practitioner"
+ ],
+ "Health Policy Doctor": [
+  "Health Policy Doctor",
+  "Public Health Registrar",
+  "Health Policy Adviser"
+ ],
+ "Health Protection Specialist": [
+  "Health Protection Specialist",
+  "Health Protection Practitioner",
+  "Health Protection Officer",
+  "Public Health Practitioner"
+ ],
+ "Public Health Doctor": [
+  "Public Health Doctor",
+  "Consultant in Public Health",
+  "Public Health Registrar"
+ ],
+ "Health Visitor": [
+  "Health Visitor",
+  "Specialist Community Public Health Nurse",
+  "Trainee Health Visitor"
+ ],
+ "Occupational Therapist": [
+  "Occupational Therapist",
+  "OT",
+  "Newly Qualified Occupational Therapist"
+ ],
+ "Physiotherapist": [
+  "Physiotherapist",
+  "Physio",
+  "Newly Qualified Physiotherapist",
+  "Musculoskeletal Physiotherapist"
+ ],
+ "Oral Surgeon": [
+  "Oral Surgeon",
+  "Oral and Maxillofacial Surgeon",
+  "Maxillofacial Surgeon"
+ ],
+ "Orthodontist": [
+  "Orthodontist",
+  "Specialist Orthodontist",
+  "Orthodontic Registrar"
+ ],
+ "Consultant Surgeon": [
+  "Consultant Surgeon",
+  "Surgical Consultant"
+ ],
+ "Surgeon": [
+  "Surgeon",
+  "Surgical Registrar",
+  "General Surgeon"
+ ],
+ "Surgical Trainee": [
+  "Surgical Trainee",
+  "Core Surgical Trainee",
+  "Surgical Registrar"
+ ],
+ "Ambulance Service Lead": [
+  "Ambulance Service Lead",
+  "Ambulance Operations Manager",
+  "Ambulance Team Leader"
+ ],
+ "Emergency Planning Officer": [
+  "Emergency Planning Officer",
+  "Resilience Officer",
+  "Emergency Preparedness Officer",
+  "Civil Contingencies Officer"
+ ],
+ "Safeguarding Officer": [
+  "Safeguarding Officer",
+  "Safeguarding Lead",
+  "Safeguarding Coordinator"
+ ],
+ "Social Worker": [
+  "Social Worker",
+  "Newly Qualified Social Worker",
+  "Children's Social Worker",
+  "Adult Social Worker"
+ ],
+ "Youth Worker": [
+  "Youth Worker",
+  "Youth Support Worker",
+  "Youth Development Worker"
+ ],
+ "Residential Childcare Worker": [
+  "Residential Childcare Worker",
+  "Residential Support Worker",
+  "Children's Residential Worker"
+ ],
+ "Family Support Worker": [
+  "Family Support Worker",
+  "Family Worker",
+  "Family Intervention Worker",
+  "Early Help Worker"
+ ],
+ "Care Worker": [
+  "Care Worker",
+  "Domiciliary Care Worker",
+  "Home Carer"
+ ],
+ "Support Worker": [
+  "Support Worker",
+  "Care Support Worker",
+  "Community Support Worker"
+ ],
+ "Senior Care Worker": [
+  "Senior Care Worker",
+  "Lead Care Worker"
+ ],
+ "Funeral Director": [
+  "Funeral Director",
+  "Funeral Home Manager"
+ ],
+ "Funeral Arranger": [
+  "Funeral Arranger",
+  "Funeral Administrator"
+ ],
+ "Funeral Service Operative": [
+  "Funeral Service Operative",
+  "Funeral Operative",
+  "Funeral Assistant"
+ ],
+ "Animal Scientist": [
+  "Animal Scientist",
+  "Animal Research Scientist",
+  "Animal Science Technician"
+ ],
+ "Animal Welfare Specialist": [
+  "Animal Welfare Officer",
+  "Animal Welfare Specialist",
+  "Animal Welfare Adviser"
+ ],
+ "Veterinary Researcher": [
+  "Veterinary Researcher",
+  "Veterinary Research Scientist",
+  "Veterinary Research Fellow"
+ ],
+ "Veterinary Surgeon": [
+  "Veterinary Surgeon",
+  "Small Animal Vet",
+  "Graduate Veterinary Surgeon"
+ ],
+ "Agronomist": [
+  "Agronomist",
+  "Crop Adviser",
+  "Agronomy Adviser",
+  "Trainee Agronomist"
+ ],
+ "Farm Manager": [
+  "Farm Manager",
+  "Assistant Farm Manager",
+  "Dairy Farm Manager"
+ ],
+ "Forester": [
+  "Forester",
+  "Forestry Officer",
+  "Woodland Officer"
+ ],
+ "Horticulturist": [
+  "Horticulturist",
+  "Horticultural Technician",
+  "Grower"
+ ],
+ "Land & Estate Manager": [
+  "Land Manager",
+  "Estate Manager",
+  "Rural Estate Manager",
+  "Land Agent"
+ ],
+ "Veterinary Nurse": [
+  "Veterinary Nurse",
+  "Registered Veterinary Nurse",
+  "RVN",
+  "Student Veterinary Nurse"
+ ],
+ "Veterinary Care Assistant": [
+  "Veterinary Care Assistant",
+  "Veterinary Assistant",
+  "Animal Care Assistant"
+ ],
+ "Animal Nursing Assistant": [
+  "Animal Nursing Assistant",
+  "Veterinary Nursing Assistant",
+  "ANA"
+ ],
+ "Exercise Physiologist": [
+  "Exercise Physiologist",
+  "Clinical Exercise Physiologist",
+  "Sport Physiologist"
+ ],
+ "Performance Analyst": [
+  "Performance Analyst",
+  "Sports Performance Analyst",
+  "Match Analyst",
+  "Video Analyst"
+ ],
+ "Sports Scientist": [
+  "Sports Scientist",
+  "Sport and Exercise Scientist",
+  "Sport Scientist"
+ ],
+ "Strength & Conditioning Coach": [
+  "Strength and Conditioning Coach",
+  "Strength and Conditioning Specialist"
+ ],
+ "Personal Trainer": [
+  "Personal Trainer",
+  "PT",
+  "Fitness Instructor",
+  "Gym Personal Trainer"
+ ],
+ "Gym Instructor": [
+  "Gym Instructor",
+  "Fitness Instructor",
+  "Gym Floor Instructor"
+ ],
+ "Fitness Coach": [
+  "Fitness Coach",
+  "Wellness Coach",
+  "Health and Fitness Coach"
+ ],
+ "Sports Coach": [
+  "Sports Coach",
+  "Multi Sports Coach",
+  "Community Sports Coach"
+ ],
+ "Community Sports Officer": [
+  "Community Sports Officer",
+  "Sports Development Officer",
+  "Community Sport Coordinator"
+ ],
+ "Academy Coach": [
+  "Academy Coach",
+  "Football Academy Coach",
+  "Youth Academy Coach"
+ ],
+ "Leisure Assistant": [
+  "Leisure Assistant",
+  "Lifeguard",
+  "Recreation Assistant"
+ ],
+ "Duty Manager": [
+  "Duty Manager",
+  "Leisure Duty Manager",
+  "Centre Duty Manager"
+ ],
+ "Assistant Psychologist": [
+  "Assistant Psychologist",
+  "Psychology Assistant",
+  "Trainee Psychologist",
+  "Graduate Assistant Psychologist",
+  "Research Assistant Psychology",
+  "Mental Health Support Worker"
+ ],
+ "Clinical Psychologist": [
+  "Clinical Psychologist",
+  "Trainee Clinical Psychologist",
+  "Qualified Clinical Psychologist"
+ ],
+ "Psychological Wellbeing Practitioner": [
+  "Psychological Wellbeing Practitioner",
+  "PWP",
+  "Trainee PWP",
+  "Wellbeing Practitioner",
+  "Mental Health Practitioner",
+  "IAPT Practitioner"
+ ],
+ "CBT Therapist": [
+  "CBT Therapist",
+  "Cognitive Behavioural Therapist",
+  "High Intensity CBT Therapist"
+ ],
+ "Counselling Psychologist": [
+  "Counselling Psychologist",
+  "Trainee Counselling Psychologist"
+ ],
+ "Counsellor": [
+  "Counsellor",
+  "Therapeutic Counsellor",
+  "Student Counsellor",
+  "Qualified Counsellor"
+ ],
+ "Psychotherapist": [
+  "Psychotherapist",
+  "Psychodynamic Psychotherapist",
+  "Integrative Psychotherapist"
+ ],
+ "Occupational Psychologist": [
+  "Occupational Psychologist",
+  "Business Psychologist",
+  "Organisational Psychologist"
+ ],
+ "People Scientist": [
+  "People Scientist",
+  "People Analytics Scientist",
+  "Workplace Scientist",
+  "People Analytics Analyst",
+  "Behavioural Scientist",
+  "Organisational Development Analyst"
+ ],
+ "Talent Assessment Consultant": [
+  "Talent Assessment Consultant",
+  "Assessment Consultant",
+  "Psychometric Consultant",
+  "Psychometrician",
+  "Talent Consultant"
+ ],
+ "Probation Officer": [
+  "Probation Officer",
+  "Probation Services Officer",
+  "Trainee Probation Officer",
+  "Community Payback Officer"
+ ],
+ "Barrister": [
+  "Barrister",
+  "Pupil Barrister",
+  "Junior Barrister"
+ ],
+ "Judicial Clerk": [
+  "Judicial Clerk",
+  "Judges' Clerk",
+  "Legal Clerk",
+  "Court Clerk",
+  "Judges Clerk"
+ ],
+ "Financial Crime Analyst": [
+  "Financial Crime Analyst",
+  "AML Analyst",
+  "Anti-Money Laundering Analyst",
+  "Fraud Analyst",
+  "KYC Analyst",
+  "Financial Crime Investigator"
+ ],
+ "Investigation Officer": [
+  "Investigation Officer",
+  "Investigator",
+  "Enforcement Officer",
+  "Compliance Investigator"
+ ],
+ "Paralegal": [
+  "Paralegal",
+  "Litigation Paralegal",
+  "Corporate Paralegal",
+  "Graduate Paralegal",
+  "Trainee Paralegal"
+ ],
+ "Legal Assistant": [
+  "Legal Assistant",
+  "Legal Administrator",
+  "Trainee Legal Assistant",
+  "Legal Secretary"
+ ],
+ "Conveyancing Assistant": [
+  "Conveyancing Assistant",
+  "Conveyancing Paralegal",
+  "Conveyancing Secretary",
+  "Property Legal Assistant"
+ ],
+ "Government Social Research Officer": [
+  "Government Social Research Officer",
+  "Social Research Officer",
+  "Research Officer Government",
+  "Social Researcher",
+  "Research Officer",
+  "Analyst Government"
+ ],
+ "Policy Officer": [
+  "Policy Officer",
+  "Policy Adviser",
+  "Policy and Research Officer",
+  "Policy and Public Affairs Officer",
+  "Research and Policy Officer"
+ ],
+ "Campaigns Officer": [
+  "Campaigns Officer",
+  "Campaign Officer",
+  "Advocacy Officer",
+  "Campaigns Assistant"
+ ],
+ "Public Affairs Officer": [
+  "Public Affairs Officer",
+  "Public Affairs Executive",
+  "Government Affairs Officer",
+  "Public Affairs Account Executive"
+ ],
+ "In-house Legal Counsel": [
+  "In-house Legal Counsel",
+  "Legal Counsel",
+  "In-house Solicitor",
+  "Commercial Counsel"
+ ],
+ "Solicitor": [
+  "Solicitor",
+  "Newly Qualified Solicitor",
+  "Associate Solicitor"
+ ],
+ "Trainee Solicitor": [
+  "Trainee Solicitor",
+  "Solicitor Apprentice",
+  "Graduate Solicitor"
+ ],
+ "Revenues & Benefits Officer": [
+  "Revenues and Benefits Officer",
+  "Benefits Officer",
+  "Council Tax Officer",
+  "Revenues Officer"
+ ],
+ "Customer Service Adviser": [
+  "Customer Service Adviser",
+  "Customer Service Advisor",
+  "Customer Service Representative",
+  "Customer Support Adviser"
+ ],
+ "Electoral Services Officer": [
+  "Electoral Services Officer",
+  "Elections Officer",
+  "Electoral Registration Officer",
+  "Electoral Services Assistant"
+ ],
+ "Intelligence Analyst": [
+  "Intelligence Analyst",
+  "Crime Intelligence Analyst",
+  "Security Intelligence Analyst",
+  "Crime Analyst",
+  "Security Analyst Intelligence",
+  "Insight Analyst Intelligence"
+ ],
+ "Early Years Teacher": [
+  "Early Years Teacher",
+  "Early Years Educator",
+  "Nursery Teacher"
+ ],
+ "Early Years Practitioner": [
+  "Early Years Practitioner",
+  "Early Years Educator",
+  "Nursery Practitioner",
+  "Room Leader"
+ ],
+ "Nursery Worker": [
+  "Nursery Worker",
+  "Nursery Assistant",
+  "Nursery Nurse",
+  "Early Years Assistant"
+ ],
+ "Childminder": [
+  "Childminder",
+  "Registered Childminder"
+ ],
+ "Student Services Officer": [
+  "Student Services Officer",
+  "Student Support Officer",
+  "Student Adviser",
+  "Student Experience Officer"
+ ],
+ "Postdoctoral Researcher": [
+  "Postdoctoral Researcher",
+  "Postdoctoral Research Associate",
+  "Research Fellow",
+  "Postdoc"
+ ],
+ "University Lecturer": [
+  "University Lecturer",
+  "Assistant Professor",
+  "Teaching Fellow"
+ ],
+ "EdTech Specialist": [
+  "EdTech Specialist",
+  "Education Technology Specialist",
+  "Digital Learning Specialist",
+  "Learning Technologist",
+  "E-Learning Specialist"
+ ],
+ "Learning Designer": [
+  "Learning Designer",
+  "Instructional Designer",
+  "Learning Experience Designer",
+  "Content Designer Learning"
+ ],
+ "Primary School Teacher": [
+  "Primary School Teacher",
+  "Primary Teacher",
+  "KS1 Teacher",
+  "KS2 Teacher",
+  "ECT Primary"
+ ],
+ "Secondary School Teacher": [
+  "Secondary School Teacher",
+  "Secondary Teacher",
+  "Subject Teacher",
+  "ECT Secondary"
+ ],
+ "SEN Teacher": [
+  "SEN Teacher",
+  "SEND Teacher",
+  "Special Educational Needs Teacher"
+ ],
+ "Learning Support Assistant": [
+  "Learning Support Assistant",
+  "LSA",
+  "SEN Learning Support Assistant"
+ ],
+ "Learning and Development Coordinator": [
+  "Learning and Development Coordinator",
+  "Training Coordinator"
+ ],
+ "Training and Development Officer": [
+  "Training and Development Officer",
+  "Training Officer",
+  "Learning and Development Adviser"
+ ],
+ "Teaching Assistant": [
+  "Teaching Assistant",
+  "TA",
+  "Classroom Assistant",
+  "Graduate Teaching Assistant",
+  "Cover Supervisor",
+  "Learning Support Assistant"
+ ],
+ "SEN Teaching Assistant": [
+  "SEN Teaching Assistant",
+  "SEND Teaching Assistant",
+  "Special Needs Teaching Assistant",
+  "1:1 Teaching Assistant"
+ ],
+ "Learning Mentor": [
+  "Learning Mentor",
+  "Pastoral Mentor",
+  "Student Mentor",
+  "Behaviour Mentor"
+ ],
+ "People Analyst": [
+  "People Analyst",
+  "HR Analyst",
+  "People Analytics Analyst",
+  "Workforce Analyst",
+  "Reward Analyst",
+  "HR Data Analyst",
+  "HR MI Analyst"
+ ],
+ "Business Analyst": [
+  "Business Analyst",
+  "Junior Business Analyst",
+  "IT Business Analyst",
+  "Graduate Business Analyst",
+  "Business Systems Analyst",
+  "Data Business Analyst"
+ ],
+ "Process Analyst": [
+  "Process Analyst",
+  "Business Process Analyst",
+  "Process Improvement Analyst",
+  "Business Analyst"
+ ],
+ "Account Executive": [
+  "Account Executive",
+  "Sales Account Executive",
+  "Client Account Executive",
+  "Junior Account Executive",
+  "Graduate Account Executive"
+ ],
+ "Business Development Executive": [
+  "Business Development Executive",
+  "BDE",
+  "Sales Development Representative",
+  "Business Development Representative",
+  "Graduate Business Development",
+  "Sales Executive"
+ ],
+ "Business Development Manager": [
+  "Business Development Manager",
+  "BDM",
+  "Sales Development Manager",
+  "Sales Manager",
+  "New Business Manager",
+  "Account Manager"
+ ],
+ "Partnerships Executive": [
+  "Partnerships Executive",
+  "Partnership Manager",
+  "Strategic Partnerships Executive",
+  "Partnerships Manager",
+  "Partnership Executive",
+  "Business Development Executive"
+ ],
+ "Management Consultant": [
+  "Management Consultant",
+  "Strategy Consultant",
+  "Graduate Management Consultant",
+  "Consulting Analyst",
+  "Associate Consultant"
+ ],
+ "Strategy Analyst": [
+  "Strategy Analyst",
+  "Corporate Strategy Analyst",
+  "Strategy and Operations Analyst",
+  "Commercial Analyst Strategy"
+ ],
+ "Quality Practitioner": [
+  "Quality Practitioner",
+  "Quality Officer",
+  "Quality Assurance Officer",
+  "Quality Coordinator"
+ ],
+ "Improvement Practitioner": [
+  "Improvement Practitioner",
+  "Continuous Improvement Practitioner",
+  "Process Improvement Practitioner",
+  "Continuous Improvement Analyst",
+  "Process Improvement Analyst",
+  "Business Improvement Officer"
+ ],
+ "Quality Technician": [
+  "Quality Technician",
+  "QC Technician",
+  "Quality Control Technician",
+  "Quality Inspector"
+ ],
+ "Business Operations Analyst": [
+  "Business Operations Analyst",
+  "Operations Analyst",
+  "Commercial Operations Analyst",
+  "Business Analyst",
+  "Operations Associate",
+  "Business Operations Associate"
+ ],
+ "Management Trainee": [
+  "Management Trainee",
+  "Graduate Management Trainee",
+  "Graduate Management Scheme",
+  "Management Graduate"
+ ],
+ "HR Officer": [
+  "HR Officer",
+  "Human Resources Officer",
+  "HR Adviser",
+  "People Officer",
+  "HR Advisor",
+  "HR Coordinator",
+  "HR Administrator",
+  "HR Assistant",
+  "People Advisor",
+  "People Coordinator",
+  "Graduate HR Advisor",
+  "Employee Relations Advisor"
+ ],
+ "People Operations Associate": [
+  "People Operations Associate",
+  "People Ops Associate",
+  "HR Operations Associate",
+  "People Operations Coordinator",
+  "People Operations Assistant",
+  "People Operations Analyst",
+  "HR Operations Coordinator",
+  "People Advisor",
+  "People Coordinator",
+  "HR Coordinator"
+ ],
+ "Operations Analyst": [
+  "Operations Analyst",
+  "Business Operations Analyst",
+  "Ops Analyst",
+  "Operations Associate",
+  "Operations Executive",
+  "Operations Coordinator"
+ ],
+ "Supply Chain Analyst": [
+  "Supply Chain Analyst",
+  "Supply Chain Planner",
+  "Logistics Analyst",
+  "Demand Planner",
+  "Supply Chain Coordinator"
+ ],
+ "Procurement Assistant": [
+  "Procurement Assistant",
+  "Procurement Administrator",
+  "Procurement Coordinator"
+ ],
+ "Buyer": [
+  "Buyer",
+  "Junior Buyer",
+  "Purchasing Buyer",
+  "Assistant Buyer",
+  "Purchasing Officer",
+  "Procurement Buyer"
+ ],
+ "Supply Chain Coordinator": [
+  "Supply Chain Coordinator",
+  "Logistics Coordinator",
+  "Supply Chain Administrator",
+  "Planning Coordinator"
+ ],
+ "PMO Analyst": [
+  "PMO Analyst",
+  "Project Management Office Analyst",
+  "Portfolio Analyst PMO",
+  "Project Analyst",
+  "Portfolio Analyst",
+  "Project Support Officer"
+ ],
+ "Project Coordinator": [
+  "Project Coordinator",
+  "Project Administrator",
+  "Junior Project Coordinator",
+  "Project Support Officer",
+  "Junior Project Manager",
+  "Assistant Project Manager"
+ ],
+ "Compliance Officer": [
+  "Compliance Officer",
+  "Regulatory Compliance Officer",
+  "Compliance Associate",
+  "Compliance Analyst",
+  "Compliance Administrator"
+ ],
+ "Governance Officer": [
+  "Governance Officer",
+  "Corporate Governance Officer",
+  "Governance and Compliance Officer",
+  "Company Secretarial Assistant"
+ ],
+ "Events Manager": [
+  "Events Manager",
+  "Event Manager",
+  "Conference and Events Manager",
+  "Events Coordinator",
+  "Events Executive",
+  "Conference and Events Coordinator",
+  "Assistant Events Manager"
+ ],
+ "Experience Producer": [
+  "Experience Producer",
+  "Event Producer",
+  "Brand Experience Producer",
+  "Brand Experience Executive",
+  "Events Executive"
+ ],
+ "Food & Beverage Manager": [
+  "Food and Beverage Manager",
+  "Food and Beverage Supervisor"
+ ],
+ "Restaurant Operations Manager": [
+  "Restaurant Operations Manager",
+  "Restaurant Manager",
+  "Restaurant General Manager",
+  "Assistant Restaurant Manager",
+  "Deputy Restaurant Manager"
+ ],
+ "Guest Experience Manager": [
+  "Guest Experience Manager",
+  "Guest Services Manager",
+  "Guest Relations Manager",
+  "Guest Relations Executive",
+  "Front Office Manager"
+ ],
+ "Hotel Manager": [
+  "Hotel Manager",
+  "Assistant Hotel Manager",
+  "Deputy Hotel Manager",
+  "Duty Manager Hotel",
+  "Front Office Manager"
+ ],
+ "Commis Chef": [
+  "Commis Chef"
+ ],
+ "Chef de Partie": [
+  "Chef de Partie",
+  "CDP",
+  "Section Chef"
+ ],
+ "Head Chef": [
+  "Head Chef",
+  "Executive Chef",
+  "Senior Head Chef"
+ ],
+ "Baker": [
+  "Baker",
+  "Craft Baker",
+  "Production Baker",
+  "Bakery Assistant"
+ ],
+ "Pastry Chef": [
+  "Pastry Chef",
+  "Patissier",
+  "Pastry Commis Chef"
+ ],
+ "Food Production Operative": [
+  "Food Production Operative",
+  "Food Factory Operative",
+  "Production Operative Food"
+ ],
+ "Butcher": [
+  "Butcher",
+  "Trainee Butcher",
+  "Retail Butcher"
+ ],
+ "Fishmonger": [
+  "Fishmonger",
+  "Fish Monger",
+  "Fresh Fish Assistant"
+ ],
+ "Meat & Fish Counter Specialist": [
+  "Meat and Fish Counter Assistant",
+  "Counter Specialist",
+  "Fresh Counter Assistant"
+ ],
+ "Commercial Real Estate Agent / Broker": [
+  "Commercial Real Estate Agent",
+  "Commercial Property Agent",
+  "Commercial Real Estate Broker",
+  "Commercial Surveyor",
+  "Investment Agent",
+  "Graduate Surveyor Commercial"
+ ],
+ "Retail Assistant": [
+  "Retail Assistant",
+  "Retail Sales Assistant"
+ ],
+ "Retail Team Leader": [
+  "Retail Team Leader",
+  "Retail Supervisor",
+  "Shift Supervisor Retail",
+  "Shift Supervisor",
+  "Team Leader Retail"
+ ],
+ "Store Manager": [
+  "Store Manager",
+  "Retail Store Manager",
+  "Branch Manager",
+  "Assistant Store Manager",
+  "Deputy Store Manager",
+  "Retail Manager"
+ ],
+ "Property Fund Analyst": [
+  "Property Fund Analyst",
+  "Real Estate Fund Analyst",
+  "Property Investment Analyst",
+  "Fund Analyst Real Estate"
+ ],
+ "Real Estate Finance Associate": [
+  "Real Estate Finance Associate",
+  "Real Estate Finance Analyst",
+  "Property Finance Associate",
+  "Property Finance Analyst",
+  "Debt Finance Analyst"
+ ],
+ "Real Estate Investment Analyst": [
+  "Real Estate Investment Analyst",
+  "Property Investment Analyst",
+  "Real Estate Analyst",
+  "Investment Analyst Real Estate"
+ ],
+ "Assistant Accountant": [
+  "Assistant Accountant",
+  "Trainee Accountant",
+  "Graduate Accountant",
+  "Assistant Management Accountant"
+ ],
+ "Portfolio Analyst": [
+  "Portfolio Analyst",
+  "Investment Portfolio Analyst",
+  "Fund Analyst",
+  "Investment Analyst",
+  "Investment Operations Analyst"
+ ],
+ "Wealth Management Associate": [
+  "Wealth Management Associate",
+  "Wealth Analyst",
+  "Private Wealth Associate",
+  "Paraplanner",
+  "Investment Associate",
+  "Financial Planning Assistant"
+ ],
+ "Banking Operations Officer": [
+  "Banking Operations Officer",
+  "Banking Operations Analyst",
+  "Bank Operations Officer",
+  "Operations Analyst Banking",
+  "Bank Operations Administrator"
+ ],
+ "Middle Office Analyst": [
+  "Middle Office Analyst",
+  "Middle Office Associate",
+  "Trade Support Analyst",
+  "Investment Operations Analyst"
+ ],
+ "Payments Administrator": [
+  "Payments Administrator",
+  "Payments Officer",
+  "Payments Analyst",
+  "Payments Assistant"
+ ],
+ "Financial Services Administrator": [
+  "Financial Services Administrator",
+  "Financial Administrator",
+  "IFA Administrator",
+  "Financial Planning Administrator"
+ ],
+ "Commercial Banking Associate": [
+  "Commercial Banking Associate",
+  "Commercial Banking Analyst",
+  "Business Banking Associate",
+  "Relationship Manager Commercial"
+ ],
+ "Corporate Banking Analyst": [
+  "Corporate Banking Analyst",
+  "Corporate Banking Associate",
+  "Corporate Relationship Analyst"
+ ],
+ "Equity Research Analyst": [
+  "Equity Research Analyst",
+  "Equity Analyst",
+  "Research Analyst Equities",
+  "Investment Research Analyst"
+ ],
+ "Investment Analyst": [
+  "Investment Analyst",
+  "Graduate Investment Analyst",
+  "Investment Research Analyst",
+  "Investment Associate"
+ ],
+ "Corporate Finance Analyst": [
+  "Corporate Finance Analyst",
+  "Corporate Finance Associate",
+  "Transaction Services Analyst"
+ ],
+ "Financial Analyst": [
+  "Financial Analyst",
+  "Finance Analyst",
+  "Graduate Financial Analyst",
+  "Graduate Finance Analyst",
+  "Commercial Finance Analyst"
+ ],
+ "FP&A Analyst": [
+  "FP&A Analyst",
+  "Financial Planning and Analysis Analyst",
+  "FP and A Analyst",
+  "Finance Analyst FP&A",
+  "Commercial Finance Analyst"
+ ],
+ "Digital Payments Analyst": [
+  "Digital Payments Analyst",
+  "Payments Product Analyst",
+  "Payments Analyst",
+  "Fintech Analyst"
+ ],
+ "Fintech Analyst": [
+  "Fintech Analyst",
+  "Financial Technology Analyst",
+  "Fintech Business Analyst",
+  "Product Analyst Fintech"
+ ],
+ "Product Manager": [
+  "Product Manager",
+  "Fintech Product Manager",
+  "Digital Product Manager",
+  "Associate Product Manager",
+  "Junior Product Manager",
+  "Product Owner",
+  "Graduate Product Manager",
+  "Product Analyst"
+ ],
+ "Actuarial Analyst": [
+  "Actuarial Analyst",
+  "Trainee Actuary",
+  "Actuarial Trainee",
+  "Graduate Actuary",
+  "Actuarial Assistant"
+ ],
+ "Claims Analyst": [
+  "Claims Analyst",
+  "Insurance Claims Analyst",
+  "Claims Officer",
+  "Claims Handler",
+  "Claims Adjuster"
+ ],
+ "Underwriter": [
+  "Underwriter",
+  "Trainee Underwriter",
+  "Commercial Underwriter",
+  "Assistant Underwriter",
+  "Underwriting Assistant"
+ ],
+ "Insurance Broker": [
+  "Insurance Broker",
+  "Trainee Insurance Broker",
+  "Commercial Insurance Broker",
+  "Account Handler Insurance"
+ ],
+ "Claims Handler": [
+  "Claims Handler",
+  "Insurance Claims Handler",
+  "Motor Claims Handler",
+  "Claims Advisor"
+ ],
+ "Investment Banking Analyst": [
+  "Investment Banking Analyst",
+  "IBD Analyst",
+  "Investment Banking Associate",
+  "Corporate Finance Analyst"
+ ],
+ "Sales & Trading Analyst": [
+  "Sales and Trading Analyst",
+  "Markets Analyst",
+  "Global Markets Analyst"
+ ],
+ "Trading Analyst": [
+  "Trading Analyst",
+  "Junior Trader",
+  "Trading Associate",
+  "Markets Analyst"
+ ],
+ "Private Equity Analyst": [
+  "Private Equity Analyst",
+  "PE Analyst",
+  "Private Equity Associate",
+  "Investment Analyst Private Equity"
+ ],
+ "Venture Capital Analyst": [
+  "Venture Capital Analyst",
+  "VC Analyst",
+  "Venture Capital Associate",
+  "Investment Analyst Venture"
+ ],
+ "Pricing Analyst": [
+  "Pricing Analyst",
+  "Insurance Pricing Analyst",
+  "Actuarial Pricing Analyst",
+  "Commercial Pricing Analyst"
+ ],
+ "Quantitative Risk Analyst": [
+  "Quantitative Risk Analyst",
+  "Quant Risk Analyst",
+  "Quantitative Analyst",
+  "Quant Analyst",
+  "Risk Analyst Quantitative"
+ ],
+ "Compliance Analyst": [
+  "Compliance Analyst",
+  "Regulatory Compliance Analyst",
+  "Compliance Monitoring Analyst",
+  "Compliance Officer"
+ ],
+ "Risk Analyst": [
+  "Risk Analyst",
+  "Operational Risk Analyst",
+  "Credit Risk Analyst",
+  "Enterprise Risk Analyst"
+ ],
+ "ESG Analyst": [
+  "ESG Analyst",
+  "Sustainability Analyst ESG",
+  "Responsible Investment Analyst",
+  "Sustainability Analyst",
+  "ESG Research Analyst"
+ ],
+ "Impact Investment Analyst": [
+  "Impact Investment Analyst",
+  "Impact Investing Analyst",
+  "Social Investment Analyst",
+  "Impact Analyst",
+  "Sustainable Investment Analyst"
+ ],
+ "Liquidity Analyst": [
+  "Liquidity Analyst",
+  "Liquidity Risk Analyst",
+  "Treasury Liquidity Analyst",
+  "Treasury Analyst"
+ ],
+ "Treasury Analyst": [
+  "Treasury Analyst",
+  "Corporate Treasury Analyst",
+  "Treasury Assistant",
+  "Treasury Dealer"
+ ],
+ "Economic Analyst": [
+  "Economic Analyst",
+  "Economics Analyst",
+  "Economic Research Analyst"
+ ],
+ "Economic Consultant": [
+  "Economic Consultant",
+  "Economics Consultant",
+  "Graduate Economic Consultant",
+  "Economic Analyst"
+ ],
+ "Economist": [
+  "Economist",
+  "Graduate Economist",
+  "Applied Economist",
+  "Assistant Economist",
+  "Economic Adviser"
+ ],
+ "Policy Economist": [
+  "Policy Economist",
+  "Government Economist",
+  "Economic Policy Adviser",
+  "Economic Adviser",
+  "Economist Policy"
+ ],
+ "Warehouse Operative": [
+  "Warehouse Operative",
+  "Warehouse Assistant",
+  "Warehouse Picker",
+  "Warehouse Worker",
+  "Pick Packer"
+ ],
+ "Logistics Coordinator": [
+  "Logistics Coordinator",
+  "Transport Coordinator",
+  "Logistics Administrator",
+  "Supply Chain Coordinator"
+ ],
+ "Warehouse Team Leader": [
+  "Warehouse Team Leader",
+  "Warehouse Supervisor",
+  "Warehouse Shift Leader",
+  "Shift Leader Warehouse",
+  "Warehouse Shift Manager"
+ ],
+ "Travel Consultant": [
+  "Travel Consultant",
+  "Travel Agent",
+  "Business Travel Consultant",
+  "Reservations Consultant"
+ ],
+ "Tour Guide": [
+  "Tour Guide",
+  "Tourist Guide",
+  "Heritage Tour Guide",
+  "Visitor Guide",
+  "Heritage Guide"
+ ],
+ "Tourism Officer": [
+  "Tourism Officer",
+  "Tourism Development Officer",
+  "Visitor Services Officer",
+  "Destination Officer"
+ ],
+ "Destination Manager": [
+  "Destination Manager",
+  "Destination Marketing Manager",
+  "Tourism Destination Manager",
+  "Tourism Manager",
+  "Visitor Economy Manager"
+ ],
+ "Tourism Development Officer": [
+  "Tourism Development Officer",
+  "Tourism Officer",
+  "Visitor Economy Officer",
+  "Destination Development Officer"
+ ],
+ "Business Administrator": [
+  "Business Administrator",
+  "Office Administrator",
+  "Business Support Administrator",
+  "Business Support Officer"
+ ],
+ "Personal Assistant": [
+  "Personal Assistant",
+  "PA",
+  "Executive PA",
+  "Office Manager"
+ ],
+ "Receptionist": [
+  "Receptionist",
+  "Front of House Receptionist",
+  "Corporate Receptionist",
+  "Front of House",
+  "Front Desk Receptionist"
+ ],
+ "HR Assistant": [
+  "HR Assistant",
+  "Human Resources Assistant",
+  "HR Administrator",
+  "HR Coordinator",
+  "People Coordinator",
+  "Recruitment Coordinator",
+  "Talent Coordinator"
+ ],
+ "Recruitment Consultant": [
+  "Recruitment Consultant",
+  "Trainee Recruitment Consultant",
+  "Graduate Recruitment Consultant",
+  "Talent Acquisition Consultant"
+ ],
+ "Recruitment Resourcer": [
+  "Recruitment Resourcer",
+  "Resourcer",
+  "Talent Resourcer",
+  "Recruitment Administrator",
+  "Sourcing Specialist"
+ ],
+ "Brand Executive": [
+  "Brand Executive",
+  "Brand Marketing Executive",
+  "Junior Brand Manager",
+  "Assistant Brand Manager"
+ ],
+ "Marketing Executive": [
+  "Marketing Executive",
+  "Digital Marketing Executive",
+  "Graduate Marketing Executive",
+  "Marketing Coordinator"
+ ],
+ "Content Creator": [
+  "Content Creator",
+  "Content Executive",
+  "Content Producer",
+  "Content Marketing Executive"
+ ],
+ "Social Media Executive": [
+  "Social Media Executive",
+  "Social Media Manager",
+  "Social Media Assistant",
+  "Social Media Coordinator",
+  "Community Manager"
+ ],
+ "Editorial Assistant": [
+  "Editorial Assistant",
+  "Editorial Administrator",
+  "Publishing Assistant"
+ ],
+ "Journalist": [
+  "Journalist",
+  "News Journalist",
+  "Trainee Journalist",
+  "Multimedia Journalist",
+  "Content Journalist"
+ ],
+ "Reporter": [
+  "Reporter",
+  "News Reporter",
+  "Local Democracy Reporter",
+  "Trainee Reporter"
+ ],
+ "Audience Insight Analyst": [
+  "Audience Insight Analyst",
+  "Audience Analyst",
+  "Audience Research Analyst",
+  "Insight Analyst",
+  "Data Analyst Audience"
+ ],
+ "Market Research Analyst": [
+  "Market Research Analyst",
+  "Research Analyst Market",
+  "Quantitative Research Analyst",
+  "Research Analyst",
+  "Insight Analyst",
+  "Quantitative Research Executive",
+  "Research Executive"
+ ],
+ "CRM Executive": [
+  "CRM Executive",
+  "CRM Marketing Executive",
+  "CRM Assistant",
+  "Email Marketing Executive"
+ ],
+ "Performance Marketing Executive": [
+  "Performance Marketing Executive",
+  "Paid Media Executive",
+  "PPC Executive",
+  "Digital Performance Executive",
+  "Paid Search Executive",
+  "Digital Marketing Executive"
+ ],
+ "Communications Officer": [
+  "Communications Officer",
+  "Comms Officer",
+  "Internal Communications Officer",
+  "Communications Assistant",
+  "Communications Executive"
+ ],
+ "PR Executive": [
+  "PR Executive",
+  "Public Relations Executive",
+  "PR Account Executive",
+  "PR Assistant",
+  "Communications Executive"
+ ],
+ "Camera Operator": [
+  "Camera Operator",
+  "Cameraman",
+  "Camera Assistant",
+  "Junior Camera Operator"
+ ],
+ "Director": [
+  "Film Director",
+  "Director Film",
+  "TV Director",
+  "Assistant Director",
+  "Video Director"
+ ],
+ "Film & TV Editor": [
+  "Film Editor",
+  "Video Editor",
+  "TV Editor",
+  "Post Production Editor"
+ ],
+ "Producer": [
+  "Producer",
+  "TV Producer",
+  "Film Producer",
+  "Content Producer",
+  "Assistant Producer",
+  "Junior Producer",
+  "Production Coordinator"
+ ],
+ "Production Manager": [
+  "Production Manager",
+  "Film Production Manager",
+  "TV Production Manager",
+  "Production Coordinator",
+  "Assistant Production Manager",
+  "Line Producer"
+ ],
+ "Animator": [
+  "Animator",
+  "2D Animator",
+  "3D Animator",
+  "Motion Graphics Animator",
+  "Junior Animator",
+  "Motion Designer"
+ ],
+ "Motion Designer": [
+  "Motion Designer",
+  "Motion Graphics Designer",
+  "Motion Graphics Artist",
+  "Junior Motion Designer"
+ ],
+ "Multimedia / Digital Designer": [
+  "Digital Designer",
+  "Multimedia Designer",
+  "Digital Content Designer",
+  "Creative Designer",
+  "Web Designer"
+ ],
+ "Visual Designer": [
+  "Visual Designer",
+  "Graphic Designer",
+  "Brand Designer",
+  "Junior Graphic Designer",
+  "Midweight Designer"
+ ],
+ "Industrial Designer": [
+  "Industrial Designer",
+  "Product Design Engineer",
+  "Design Engineer Industrial",
+  "Product Designer",
+  "Design Engineer",
+  "Junior Industrial Designer"
+ ],
+ "Product Designer": [
+  "Product Designer",
+  "Industrial Product Designer",
+  "Consumer Product Designer",
+  "Junior Product Designer",
+  "Industrial Designer",
+  "Design Engineer"
+ ],
+ "Photographer": [
+  "Photographer",
+  "Commercial Photographer",
+  "Studio Photographer",
+  "Junior Photographer",
+  "Content Photographer"
+ ],
+ "Photographic Assistant": [
+  "Photographic Assistant",
+  "Photography Assistant",
+  "Studio Assistant Photography",
+  "Studio Assistant"
+ ],
+ "Photo Editor": [
+  "Photo Editor",
+  "Photographic Editor",
+  "Image Editor",
+  "Retoucher",
+  "Photo Retoucher"
+ ],
+ "Circular Economy Analyst": [
+  "Circular Economy Analyst",
+  "Circular Economy Officer",
+  "Resource Efficiency Analyst",
+  "Sustainability Analyst",
+  "Resource Efficiency Officer"
+ ],
+ "Supply Chain Sustainability Analyst": [
+  "Supply Chain Sustainability Analyst",
+  "Sustainable Supply Chain Analyst",
+  "Sustainability Supply Chain Officer",
+  "Sustainability Analyst",
+  "Sustainable Procurement Officer",
+  "ESG Supply Chain Analyst"
+ ],
+ "Conservation Officer": [
+  "Conservation Officer",
+  "Nature Conservation Officer",
+  "Wildlife Conservation Officer",
+  "Conservation Assistant",
+  "Nature Recovery Officer",
+  "Reserves Officer",
+  "Wildlife Officer"
+ ],
+ "Countryside Officer": [
+  "Countryside Officer",
+  "Countryside Ranger",
+  "Countryside Warden",
+  "Ranger"
+ ],
+ "Ecologist": [
+  "Ecologist",
+  "Graduate Ecologist",
+  "Field Ecologist",
+  "Assistant Ecologist",
+  "Ecological Consultant"
+ ],
+ "Environmental Impact Assessment Consultant": [
+  "Environmental Impact Assessment Consultant",
+  "EIA Consultant",
+  "Environmental Assessment Consultant",
+  "Environmental Consultant",
+  "Environmental Planner"
+ ],
+ "Environmental Policy Officer": [
+  "Environmental Policy Officer",
+  "Environment Policy Adviser",
+  "Environmental Policy Analyst",
+  "Environmental Policy Adviser",
+  "Environment Officer Policy",
+  "Sustainability Policy Officer"
+ ],
+ "Environmental Consultant": [
+  "Environmental Consultant",
+  "Graduate Environmental Consultant",
+  "Environmental Scientist Consultant",
+  "Environmental Scientist",
+  "Contaminated Land Consultant"
+ ],
+ "Environmental Monitoring Officer": [
+  "Environmental Monitoring Officer",
+  "Environmental Officer",
+  "Environmental Monitoring Technician",
+  "Environmental Technician",
+  "Environmental Compliance Officer"
+ ],
+ "Climate Strategy Analyst": [
+  "Climate Strategy Analyst",
+  "Climate Analyst",
+  "Decarbonisation Analyst",
+  "Carbon Analyst",
+  "Net Zero Analyst",
+  "Sustainability Analyst"
+ ],
+ "Net Zero Consultant": [
+  "Net Zero Consultant",
+  "Carbon Consultant",
+  "Decarbonisation Consultant",
+  "Sustainability Consultant"
+ ],
+ "Sustainability Consultant": [
+  "Sustainability Consultant",
+  "Graduate Sustainability Consultant",
+  "ESG Consultant",
+  "Sustainability Analyst"
+ ],
+ "Sustainability Reporting Analyst": [
+  "Sustainability Reporting Analyst",
+  "ESG Reporting Analyst",
+  "Sustainability Data Analyst",
+  "Sustainability Analyst",
+  "ESG Analyst"
+ ],
+ "International Development Officer": [
+  "International Development Officer",
+  "Development Officer International",
+  "Programme Officer Development",
+  "Programme Officer",
+  "Development Officer",
+  "Project Officer International"
+ ],
+ "Programme Officer": [
+  "Programme Officer",
+  "Program Officer",
+  "Project Officer NGO",
+  "Project Officer",
+  "Programme Coordinator",
+  "Programme Assistant"
+ ],
+ "Policy Analyst": [
+  "Policy Analyst",
+  "Public Policy Analyst",
+  "Policy and Research Analyst",
+  "Policy Adviser",
+  "Policy Officer",
+  "Research Analyst Policy"
+ ],
+ "Political Risk Analyst": [
+  "Political Risk Analyst",
+  "Geopolitical Risk Analyst",
+  "Country Risk Analyst",
+  "Geopolitical Analyst",
+  "Political Analyst"
+ ],
+ "Translator": [
+  "Translator",
+  "Freelance Translator",
+  "Localisation Translator",
+  "Translator Localisation",
+  "In-house Translator",
+  "Localisation Specialist"
+ ],
+ "Cultural Researcher": [
+  "Cultural Researcher",
+  "Cultural Research Officer",
+  "Heritage Researcher",
+  "Researcher Culture"
+ ],
+ "Social Researcher": [
+  "Social Researcher",
+  "Social Research Officer",
+  "Qualitative Researcher",
+  "Research Officer"
+ ],
+ "Archivist": [
+  "Archivist",
+  "Assistant Archivist",
+  "Records Archivist",
+  "Records Officer",
+  "Digital Archivist"
+ ],
+ "Conservator": [
+  "Conservator",
+  "Museum Conservator",
+  "Art Conservator",
+  "Assistant Conservator",
+  "Conservation Technician"
+ ],
+ "Curator": [
+  "Curator",
+  "Assistant Curator",
+  "Museum Curator",
+  "Exhibitions Curator",
+  "Curatorial Assistant",
+  "Exhibitions Officer"
+ ],
+ "Heritage Manager": [
+  "Heritage Manager",
+  "Heritage Officer",
+  "Heritage Site Manager",
+  "Heritage Engagement Officer",
+  "Museum Manager"
+ ],
+ "Actor": [
+  "Actor",
+  "Actress",
+  "Stage Actor",
+  "Screen Actor"
+ ],
+ "Voice Actor": [
+  "Voice Actor",
+  "Voiceover Artist",
+  "Voice Over Artist"
+ ],
+ "Presenter": [
+  "Presenter",
+  "TV Presenter",
+  "Radio Presenter"
+ ],
+ "Musician": [
+  "Musician",
+  "Session Musician",
+  "Instrumentalist"
+ ],
+ "Music Producer": [
+  "Music Producer",
+  "Record Producer",
+  "Music Production Engineer",
+  "Audio Producer"
+ ],
+ "Singer-Songwriter": [
+  "Singer-Songwriter",
+  "Songwriter",
+  "Vocalist"
+ ],
+ "Dancer": [
+  "Dancer",
+  "Professional Dancer",
+  "Commercial Dancer"
+ ],
+ "Choreographer": [
+  "Choreographer",
+  "Dance Choreographer",
+  "Movement Director"
+ ],
+ "Dance Teacher": [
+  "Dance Teacher",
+  "Dance Instructor",
+  "Dance Tutor"
+ ],
+ "Stage Manager": [
+  "Stage Manager",
+  "Deputy Stage Manager",
+  "Assistant Stage Manager",
+  "Technical Stage Manager"
+ ],
+ "Set Designer": [
+  "Set Designer",
+  "Scenic Designer",
+  "Production Designer Theatre",
+  "Production Designer",
+  "Assistant Set Designer"
+ ],
+ "Theatre Technician": [
+  "Theatre Technician",
+  "Stage Technician",
+  "Technical Theatre Technician",
+  "Lighting Technician"
+ ],
+ "Sound Engineer": [
+  "Sound Engineer",
+  "Audio Engineer",
+  "Recording Engineer",
+  "Junior Sound Engineer"
+ ],
+ "Audio Producer": [
+  "Audio Producer",
+  "Podcast Producer",
+  "Radio Producer",
+  "Audio Content Producer"
+ ],
+ "Live Sound Technician": [
+  "Live Sound Technician",
+  "Sound Technician",
+  "PA Technician",
+  "Audio Technician Live"
+ ],
+ "Hairdresser": [
+  "Hairdresser",
+  "Hair Stylist",
+  "Senior Stylist",
+  "Junior Stylist"
+ ],
+ "Barber": [
+  "Barber",
+  "Gents Barber",
+  "Barber Stylist"
+ ],
+ "Salon Owner": [
+  "Salon Owner",
+  "Salon Manager",
+  "Salon Director"
+ ],
+ "Beauty Therapist": [
+  "Beauty Therapist",
+  "Spa Therapist"
+ ],
+ "Nail Technician": [
+  "Nail Technician",
+  "Nail Artist",
+  "Nail Stylist"
+ ],
+ "Makeup Artist": [
+  "Makeup Artist",
+  "Make Up Artist",
+  "MUA"
+ ],
+ "Aesthetic Practitioner": [
+  "Aesthetic Practitioner",
+  "Aesthetics Practitioner",
+  "Medical Aesthetics Practitioner"
+ ],
+ "Holistic Therapist": [
+  "Holistic Therapist",
+  "Complementary Therapist",
+  "Wellbeing Therapist"
+ ],
+ "Massage Therapist": [
+  "Massage Therapist",
+  "Sports Massage Therapist",
+  "Spa Massage Therapist"
+ ],
+ "Growth Executive": [
+  "Growth Executive",
+  "Growth Marketing Executive",
+  "Growth Associate",
+  "Marketing Executive Growth"
+ ],
+ "Operations Associate": [
+  "Operations Associate",
+  "Business Operations Associate",
+  "Startup Operations Associate",
+  "Operations Analyst",
+  "Operations Coordinator"
+ ],
+ "Founder": [
+  "Founder",
+  "Co-Founder",
+  "Startup Founder"
+ ]
+}

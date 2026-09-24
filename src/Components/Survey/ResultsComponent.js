@@ -226,10 +226,18 @@ function getFirstName(raw) {
 }
 
 function normalizeHeading(value) {
-  return String(value || '')
+  // Headings are shown as "Your strengths" / "Your work styles" but every
+  // section lookup (icons, pills, definitions, tabs) is keyed without the
+  // "Your" prefix, so strip it here. Without this the rich card rendering
+  // silently falls back to a plain numbered list.
+  const key = String(value || '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '')
+    .replace(/^your(?=.)/, '')
     .trim();
+  // The Summary section is displayed under the heading "Overview of your results".
+  if (key === 'overviewofyourresults') return 'summary';
+  return key;
 }
 
 function normalizeSignalTitle(value) {
@@ -1101,17 +1109,70 @@ const ANALYSIS_TAB_BASE_DEFS = [
 
 // One line describing what each analysis tab unlocks. Used on the locked tabs so
 // someone who hasn't generated their report yet can see what they're missing.
-const ANALYSIS_TAB_TEASERS = {
-  summary: 'A clear written summary of your CareerDNA that brings your scores together into one story about what drives you.',
-  strengths: 'Your standout strengths explained, with where each one shows up in real work.',
-  environments: 'The work environments and ways of working where you are most likely to thrive.',
-  careerworlds: 'Your best matched career worlds, each with a personalised fit narrative.',
-  pathways: 'The university subjects and pathways that fit you, with entry requirements and your chances.',
-  discovermore: 'Career pathways matched to you, with the routes into each one.',
-  furtherstudy: 'Degrees and universities matched to you, with live rankings and course search.',
-  nonuni: 'Apprenticeships, training and work routes matched to you, with live openings.',
-  roleexplorer: 'Specific job roles matched to you, with live openings in each one.',
-  advisor: 'A personal AI careers advisor that answers your questions using your results.',
+// Locked (pre-report) preview for each analysis tab: the same heading the real
+// section uses, then a short teaser that says exactly what the student will get
+// when it opens. Written from what each section actually contains.
+const LOCKED_TAB_PREVIEW = {
+  summary: {
+    title: 'Overview of your results',
+    intro: [
+      'A written summary of your results. It brings your scores together, explains how your main traits combine, and sets out the patterns that matter most for your study and career choices.',
+    ],
+  },
+  strengths: {
+    title: 'Your strengths',
+    intro: [
+      'Your strongest traits, ranked from your answers. Each one is explained with how it shows in practice and the types of work where it is most useful.',
+    ],
+  },
+  environments: {
+    title: 'Your work styles',
+    intro: [
+      'The working conditions that suit you: pace, structure, level of contact with people and degree of independence. Each is explained against your profile so you can judge how well a role or course would fit.',
+    ],
+  },
+  careerworlds: {
+    title: 'Your career worlds',
+    intro: [
+      'The broad areas of work that match your profile, rated Top, Strong or Good. Each world explains why it fits and which of your traits drive the match. You can mark the ones you want to explore further.',
+    ],
+  },
+  discovermore: {
+    title: 'Explore career pathways',
+    intro: [
+      'The specific pathways within each career world you selected: groups of related jobs that share skills and training. Each pathway shows its match strength and the routes in, both university degrees and apprenticeships.',
+    ],
+  },
+  pathways: {
+    title: 'Explore career pathways',
+    intro: [
+      'The career pathways and graduate roles most closely aligned with your selections. Each shows its match strength and the routes in, including graduate schemes and direct entry.',
+    ],
+  },
+  furtherstudy: {
+    title: 'Your university routes',
+    intro: [
+      'The degrees that lead into the career worlds you selected, ranked by fit. For each degree: the universities that offer it, how they rank, graduate outcomes, and, once you add your grades, your likelihood of an offer.',
+    ],
+  },
+  nonuni: {
+    title: 'Your training & work routes',
+    intro: [
+      'Routes into work that do not require a degree. Apprenticeships, T Levels and training routes for the career worlds you selected, with the level, the qualification gained, the entry requirements and current openings.',
+    ],
+  },
+  roleexplorer: {
+    title: 'Role Explorer',
+    intro: [
+      'The individual roles within the pathways you selected. Each role sets out what the work involves, how it fits your profile, and current graduate jobs and internships.',
+    ],
+  },
+  advisor: {
+    title: 'CareerDNA AI Advisor',
+    intro: [
+      'An AI adviser with access to your results. Use it to understand why options were recommended, compare alternatives, plan next steps, or draft wording for applications and interviews.',
+    ],
+  },
 };
 
 function normalizeViewerStatus(raw = '') {
@@ -1124,11 +1185,17 @@ function normalizeViewerStatus(raw = '') {
 function normaliseAnalysisSectionHeading(markdown = '', title = '') {
   const key = normalizeHeading(title);
   let out = String(markdown || '');
+  // One heading convention across the report: "Your ..." (matches "Your
+  // CareerDNA type", "Your traits", "Your career worlds").
+  if (key === 'strengths') {
+    out = out.replace(/^##\s+(Your\s+)?Strengths\s*$/mi, '## Your strengths');
+  }
   if (key === 'idealenvironments' || key === 'environments') {
     out = out
-      .replace(/^##\s+Ideal Environments\s*$/m, '## Work Styles')
-      .replace(/^##\s+Environments\s*$/m, '## Work Styles')
-      .replace(/^##\s+Work Environments\s*$/m, '## Work Styles');
+      .replace(/^##\s+Ideal Environments\s*$/m, '## Your work styles')
+      .replace(/^##\s+Environments\s*$/m, '## Your work styles')
+      .replace(/^##\s+Work Environments\s*$/m, '## Your work styles')
+      .replace(/^##\s+Work Styles\s*$/m, '## Your work styles');
   }
   if (key === 'summary') {
     // The Summary section is presented under the "Overview" tab, so give it a
@@ -3026,13 +3093,12 @@ export default function ResultsComponent({
                           <div ref={analysisRef} className="analysis-tab-inner">
                     {hasResults && !computedSummary && !loadingSummary && !upgradePrompt && (
                       <section className="results-cta results-cta--inside results-locked">
-                        {lockedPreviewTab && ANALYSIS_TAB_TEASERS[lockedPreviewTab] ? (
+                        {lockedPreviewTab && LOCKED_TAB_PREVIEW[lockedPreviewTab] ? (
                           <>
-                            <h2>{(lockedAnalysisTabs.find((t) => t.key === lockedPreviewTab) || {}).label || 'Your full analysis'}</h2>
-                            <p className="results-locked__teaser">{ANALYSIS_TAB_TEASERS[lockedPreviewTab]}</p>
-                            <p className="results-locked__note">
-                              This is part of your full CareerDNA analysis. Generate it to unlock this and every other section in the menu.
-                            </p>
+                            <h2>{LOCKED_TAB_PREVIEW[lockedPreviewTab].title}</h2>
+                            {LOCKED_TAB_PREVIEW[lockedPreviewTab].intro.map((line, i) => (
+                              <p className="results-locked__intro" key={i}>{line}</p>
+                            ))}
                           </>
                         ) : (
                           <>
@@ -3074,10 +3140,26 @@ export default function ResultsComponent({
                         ) : isFreeViewer ? (
                           <div className="results-actions">
                             <Button type="primary" onClick={() => setUpgradePrompt({ mode: 'starter' })}>
+                              <img
+                                src={dnaWhiteLogo}
+                                alt=""
+                                aria-hidden="true"
+                                style={{
+                                  width: 16,
+                                  height: 16,
+                                  objectFit: 'contain',
+                                  marginRight: 8,
+                                  display: 'inline-block',
+                                  verticalAlign: 'middle',
+                                  flexShrink: 0,
+                                  opacity: 0.6,
+                                  transform: 'translateY(-1px)',
+                                }}
+                              />
                               Unlock your full analysis
                             </Button>
                             <p className="results-locked__reports-left">
-                              Your free profile is a starting point. Unlock the full analysis to open every section above.
+                              One CareerDNA report unlocks every section above.
                             </p>
                           </div>
                         ) : (
@@ -3086,7 +3168,7 @@ export default function ResultsComponent({
                               Check your plans
                             </Button>
                             <p className="results-locked__reports-left">
-                              You have used all of your reports this month. Buy another report or explore your plan to continue.
+                              You have used all of your reports for this year. Upgrade your plan to continue.
                             </p>
                           </div>
                         )}

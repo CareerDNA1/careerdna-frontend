@@ -114,8 +114,47 @@ export function dueVisitFor(visitCount, answered) {
 export async function getSatisfactionPrompt(userId, runId) {
   const visitCount = await recordVisitAndCount(userId, runId);
   const answered = await getAnsweredPulseVisits(userId);
+  for (let n = 1; n <= visitCount; n += 1) if (wasDismissedLocally(userId, n)) answered.add(n);
   const dueVisit = dueVisitFor(visitCount, answered);
   return { visitCount, dueVisit };
+}
+
+// Closing the prompt without answering counts as done for that visit, so it
+// does not come back on every page load. Stored as a pulse row with no rating
+// (comment 'dismissed'), plus a browser fallback in case the write fails.
+export function dismissedKey(userId, visit) {
+  return `cdna_sat_dismissed_${userId}_${visit}`;
+}
+export function wasDismissedLocally(userId, visit) {
+  try { return localStorage.getItem(dismissedKey(userId, visit)) === '1'; } catch (_) { return false; }
+}
+export async function dismissSatisfactionPulse(userId, runId, visit) {
+  if (!userId || !visit) return;
+  try { localStorage.setItem(dismissedKey(userId, visit), '1'); } catch (_) { /* ignore */ }
+  try {
+    const itemId = `pulse:visit:${visit}`;
+    const { data: existing } = await supabase
+      .from('result_feedback')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('feedback_scope', 'item_reaction')
+      .eq('item_type', PULSE_TYPE)
+      .eq('item_id', itemId)
+      .maybeSingle();
+    if (!existing?.id) {
+      await supabase.from('result_feedback').insert({
+        user_id: userId,
+        assessment_run_id: runId || null,
+        feedback_scope: 'item_reaction',
+        item_type: PULSE_TYPE,
+        item_id: itemId,
+        item_title: null,
+        reaction: null,
+        rating: null,
+        comment: 'dismissed',
+      });
+    }
+  } catch (_) { /* local fallback already set */ }
 }
 
 // Save one pulse answer as a timestamped history row, keyed by the visit number

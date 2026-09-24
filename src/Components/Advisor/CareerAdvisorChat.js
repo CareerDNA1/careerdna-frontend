@@ -244,6 +244,9 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
     <section className={`career-advisor-shell ${embedded ? 'is-embedded' : ''}`} aria-label="CareerDNA AI Advisor">
       {showLimitModal && (
         <ReportLimitModal
+          mode="advisor"
+          currentPlan={entitlement?.plan || 'free'}
+          entitlement={entitlement}
           onClose={() => setShowLimitModal(false)}
           onReturnToProfile={() => { window.location.href = '/profile'; }}
           onApplyCoupon={handleApplyCoupon}
@@ -251,6 +254,9 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
       )}
       <div className="career-advisor-header">
         <div className="career-advisor-title-row">
+          <span className="career-advisor-avatar career-advisor-avatar--title" aria-hidden="true">
+            <AdvisorAiIcon />
+          </span>
           <h2>CareerDNA AI Advisor</h2>
         </div>
         <p>
@@ -309,7 +315,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
                     </span>
                     <span>CareerDNA AI Advisor</span>
                   </div>
-                  <div className="career-advisor-message-content muted">Thinking...</div>
+                  <div className="career-advisor-message-content muted career-advisor-thinking"><span className="cdna-load-spinner" aria-hidden="true" /><span>Thinking…</span></div>
                 </div>
               ) : null}
               <div ref={bottomRef} />

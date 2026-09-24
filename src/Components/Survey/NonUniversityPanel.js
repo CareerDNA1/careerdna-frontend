@@ -501,6 +501,7 @@ function StandardRow({ route, liveVacancies, showTitle, reaction = '', onReact }
                       <button
                         type="button"
                         className="nu-openings-toggle"
+                        data-premium-feature="apprenticeships"
                         onClick={() => setOpeningsOpen((o) => !o)}
                         aria-expanded={openingsOpen}
                       >

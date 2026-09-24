@@ -41,6 +41,20 @@ export async function saveAssessmentRun({
 
   if (error) throw error;
 
+  // A fresh assessment becomes the current report. A rerun (same answers, new
+  // output) only takes over if the run it came from was the current one.
+  try {
+    const parentId = resultsJson?.rerunOf || null;
+    if (!parentId) {
+      await setCurrentRunId(data.id);
+    } else {
+      const pinned = await getCurrentRunId();
+      if (!pinned || pinned === parentId) await setCurrentRunId(data.id);
+    }
+  } catch (e) {
+    console.warn('Current run update failed:', e?.message || e);
+  }
+
   // Best-effort: persist locked identity + progression to the profile.
   // DOB/country are only set if not already present (they are locked), while
   // education level / course start year are progression fields and update.
@@ -57,6 +71,93 @@ export async function saveAssessmentRun({
   }
 
   return data;
+}
+
+// Find a run this user already saved for the SAME survey, so re-opening the
+// results (new browser session, after upgrading, weeks later) updates that run
+// instead of inserting a second copy. Matches on the survey nonce stamped into
+// results_json, and falls back to identical survey answers for older runs.
+export async function findExistingRunForSurvey({ nonce = '', surveyAnswers = null } = {}) {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+  if (userError) throw userError;
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('assessment_runs')
+    .select('id, created_at, results_json, survey_answers_json')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(10);
+  if (error) throw error;
+  const rows = Array.isArray(data) ? data : [];
+
+  const cleanNonce = String(nonce || '').trim();
+  if (cleanNonce && cleanNonce !== 'no-nonce') {
+    const byNonce = rows.find((r) => String(r?.results_json?.surveyNonce || '') === cleanNonce);
+    if (byNonce) return byNonce;
+  }
+
+  const answerKey = (obj) => {
+    if (!obj || typeof obj !== 'object') return '';
+    const keys = Object.keys(obj).sort();
+    if (!keys.length) return '';
+    return keys.map((k) => `${k}=${String(obj[k])}`).join('|');
+  };
+  const wanted = answerKey(surveyAnswers);
+  if (!wanted) return null;
+  return rows.find((r) => answerKey(r?.survey_answers_json) === wanted) || null;
+}
+
+// ---- Current report ----
+// The profile page follows one "current" run: journey card, favourites, tiles
+// and the advisor's grounding. profiles.current_run_id holds a pinned choice;
+// NULL means "the newest run".
+export async function setCurrentRunId(runId) {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+  if (userError) throw userError;
+  if (!user) throw new Error('User not authenticated.');
+  const { error } = await supabase
+    .from('profiles')
+    .update({ current_run_id: runId || null })
+    .eq('id', user.id);
+  if (error) throw error;
+  return true;
+}
+
+export async function getCurrentRunId() {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+  if (userError) throw userError;
+  if (!user) return null;
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('current_run_id')
+    .eq('id', user.id)
+    .maybeSingle();
+  if (error) throw error;
+  return data?.current_run_id || null;
+}
+
+// The run the profile should follow: the pinned one if it still exists,
+// otherwise the newest.
+export async function getCurrentAssessmentRun(pinnedId = undefined) {
+  let id = pinnedId;
+  if (id === undefined) {
+    try { id = await getCurrentRunId(); } catch (_) { id = null; }
+  }
+  if (id) {
+    const run = await getAssessmentRunById(id);
+    if (run) return run;
+  }
+  return getLatestAssessmentRun();
 }
 
 export async function getLatestAssessmentRun() {
@@ -120,6 +221,35 @@ export async function getAssessmentRunCount() {
 
   if (error) throw error;
   return Number(count) || 0;
+}
+
+// Number of distinct surveys the user has completed. A report can be re-run
+// (same answers, new output), so distinct surveys are counted by the survey
+// nonce stamped into results_json, falling back to a hash of the answers for
+// runs saved before the nonce existed.
+export async function getDistinctSurveyCount() {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+  if (userError) throw userError;
+  if (!user) return 0;
+  const { data, error } = await supabase
+    .from('assessment_runs')
+    .select('id, survey_answers_json')
+    .eq('user_id', user.id)
+    .limit(1000);
+  if (error) throw error;
+  const keys = new Set();
+  (data || []).forEach((r) => {
+    const a = r?.survey_answers_json;
+    if (a && typeof a === 'object' && Object.keys(a).length) {
+      keys.add('a:' + Object.keys(a).sort().map((k) => `${k}=${String(a[k])}`).join('|'));
+    } else {
+      keys.add(`id:${r?.id}`);
+    }
+  });
+  return keys.size;
 }
 
 export async function getAssessmentRunById(runId) {
@@ -226,6 +356,7 @@ export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswe
       subdimensionRows,
       claritySummary,
       profileQualityGate,
+      rerunOf: run.id || null,
     },
     summaryMarkdown: '',
   });

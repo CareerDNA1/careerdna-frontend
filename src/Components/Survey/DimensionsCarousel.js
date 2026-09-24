@@ -251,6 +251,20 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
   const [isPhone, setIsPhone] = useState(false);
   const trackRef = useRef(null);
   const touch = useRef({ x: 0, dragging: false });
+  // Chart.js measures label widths at first draw. On phones that can happen
+  // before the Geist web font has loaded, so the reserved label column is too
+  // narrow once the real font arrives and long labels get clipped. Re-layout
+  // once fonts are ready.
+  const [fontsReady, setFontsReady] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => { if (!cancelled) setFontsReady(true); });
+    } else {
+      setFontsReady(true);
+    }
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     const onResize = () => {
@@ -369,13 +383,20 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
             y: {
               grid: { display: false },
               border: { display: false },
+              // On phones, guarantee the label column a share of the chart so a
+              // late font load or a long name can never clip the label.
+              afterFit: (scale) => {
+                if (!isMobile) return;
+                const w = scale.chart && scale.chart.width ? scale.chart.width : 0;
+                if (w) scale.width = Math.max(scale.width, Math.round(w * 0.44));
+              },
               ticks: {
                 color: "#334155",
                 padding: 10,
                 font: { size: isMobile ? 12 : 14, weight: "700" },
                 callback: function (v) {
                   const label = this.getLabelForValue ? this.getLabelForValue(v) : String(v);
-                  return truncate(label, isMobile ? 24 : 30);
+                  return truncate(label, isMobile ? 22 : 30);
                 },
               },
             },
@@ -383,7 +404,7 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
         },
       };
     });
-  }, [dims, scores, isMobile, maxPerDimension]);
+  }, [dims, scores, isMobile, maxPerDimension, fontsReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const slideWidthPct = 100 / (slides.length || 1);
   const go = useCallback(

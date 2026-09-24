@@ -1281,6 +1281,8 @@ function GradJobsLine({ title, advisory = null }) {
     : 'Real graduate roles being advertised right now for this job. We gather the most relevant openings from LinkedIn, Indeed, Reed, Adzuna, Glassdoor and other UK job boards, and refresh them daily.';
   const noun = isAdvisory ? 'in this field' : 'in the UK';
   const gradWord = isAdvisory ? '' : 'graduate ';
+  // Premium gate: only the Premium-badged (non-advisory) box is gated.
+  const premiumGateAttr = isAdvisory ? {} : { 'data-premium-feature': 'jobs' };
   // Always have a working search link, even when the backend returned no URL
   // (empty result / failed lookup), so the empty state is never a dead end.
   const searchUrl = gradUrl || (title
@@ -1324,16 +1326,16 @@ function GradJobsLine({ title, advisory = null }) {
                   {countText} live {gradWord}{count === 1 ? 'job' : 'jobs'} {noun}
                 </span>
                 {hasList ? (
-                  <button type="button" className="role-jobs__go" onClick={() => setModalOpen(true)}>See live roles <span aria-hidden="true">→</span></button>
+                  <button type="button" className="role-jobs__go" {...premiumGateAttr} onClick={() => setModalOpen(true)}>See live roles <span aria-hidden="true">→</span></button>
                 ) : searchUrl ? (
-                  <a className="role-jobs__go" href={searchUrl} target="_blank" rel="noopener noreferrer">See jobs <span aria-hidden="true">→</span></a>
+                  <a className="role-jobs__go" {...premiumGateAttr} href={searchUrl} target="_blank" rel="noopener noreferrer">See jobs <span aria-hidden="true">→</span></a>
                 ) : null}
               </div>
             ) : (
               <div className="role-jobs__foot-row">
                 <span className="role-jobs__stat role-jobs__stat--muted">{isAdvisory ? 'No live roles advertised right now.' : 'No graduate jobs advertised right now.'}</span>
                 {searchUrl ? (
-                  <a className="role-jobs__go" href={searchUrl} target="_blank" rel="noopener noreferrer">Check jobs <span aria-hidden="true">→</span></a>
+                  <a className="role-jobs__go" {...premiumGateAttr} href={searchUrl} target="_blank" rel="noopener noreferrer">Check jobs <span aria-hidden="true">→</span></a>
                 ) : null}
               </div>
             )}
@@ -1433,7 +1435,7 @@ export function PathwayJobsLine({ title, pathwayTitle = '' }) {
               {iCountText} live {iCount === 1 ? 'internship' : 'internships'} in the UK
             </span>
             {iJobs.length ? (
-              <button type="button" className="role-jobs__go" onClick={() => setInternOpen(true)}>See internships <span aria-hidden="true">→</span></button>
+              <button type="button" className="role-jobs__go" data-premium-feature="jobs" onClick={() => setInternOpen(true)}>See internships <span aria-hidden="true">→</span></button>
             ) : null}
           </div>
         ) : (
@@ -1451,7 +1453,7 @@ export function PathwayJobsLine({ title, pathwayTitle = '' }) {
               <span className="role-jobs__dot" aria-hidden="true" />
               {sCount.toLocaleString('en-GB')} live now
             </span>
-            <button type="button" className="role-jobs__go" onClick={() => setSchemeOpen(true)}>See schemes <span aria-hidden="true">→</span></button>
+            <button type="button" className="role-jobs__go" data-premium-feature="jobs" onClick={() => setSchemeOpen(true)}>See schemes <span aria-hidden="true">→</span></button>
           </div>
         ) : null}
         <p className="role-jobs__schemes-note">

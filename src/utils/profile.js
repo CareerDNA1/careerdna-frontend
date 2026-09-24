@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient';
+import { setCurrentPlan } from './premiumGate';
 
 function splitFullName(fullName = '') {
   const parts = String(fullName || '').trim().split(/\s+/).filter(Boolean);
@@ -100,6 +101,8 @@ export async function getMyProfile() {
     .maybeSingle();
 
   if (error) throw error;
+  // Keep the global Premium gate in step with the latest known plan.
+  setCurrentPlan(data?.plan || 'free');
   return data;
 }
 

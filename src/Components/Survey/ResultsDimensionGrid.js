@@ -129,6 +129,15 @@ export default function ResultsDimensionGrid({
   layout = "grid",
 }) {
   const [isMobile, setIsMobile] = useState(false);
+  // Re-layout once web fonts are ready so label columns are measured with the
+  // real font (see DimensionsCarousel for the phone clipping this prevents).
+  const [fontsReady, setFontsReady] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!cancelled) setFontsReady(true); });
+    else setFontsReady(true);
+    return () => { cancelled = true; };
+  }, []);
   const [isPhone, setIsPhone] = useState(false);
   const [index, setIndex] = useState(0); // for carousel
   const trackRef = useRef(null);
@@ -241,6 +250,11 @@ export default function ResultsDimensionGrid({
           },
           y: {
             grid: { display: false },
+            afterFit: (scale) => {
+              if (!isMobile) return;
+              const w = scale.chart && scale.chart.width ? scale.chart.width : 0;
+              if (w) scale.width = Math.max(scale.width, Math.round(w * 0.44));
+            },
             ticks: {
               color: "#353535",
               font: { size: isMobile ? 10 : 11, weight: "600" },
@@ -257,7 +271,7 @@ export default function ResultsDimensionGrid({
 
       return { dimKey: dim.key, dimLabel: dim.label, data, options };
     });
-  }, [dims, scores, isMobile, definitions, maxPerDimension, layout]);
+  }, [dims, scores, isMobile, definitions, maxPerDimension, layout, fontsReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* ------------------ Carousel handlers ------------------ */
   const go = useCallback(

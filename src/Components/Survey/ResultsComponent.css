@@ -869,19 +869,34 @@ body:has(#results-root),
   flex-wrap: wrap;
 }
 
-/* Pre-report locked / teaser state. A short teaser line for the tapped tab,
-   then a plan-aware action (generate, unlock, or check plans). */
-.results-locked__teaser {
-  font-size: 1.02rem;
-  color: #2f3e4d;
-  font-weight: 600;
-  margin: 4px 0 6px;
+/* Pre-report locked state. Mirrors the real section exactly: the section's own
+   heading, its own intro paragraph(s) styled like the live intros, then a
+   plan-aware action (generate, unlock, or check plans). */
+/* Heading matches the real section headings (markdown h2 and panel intro h2
+   are both 1.05rem / 700 / blue), not the larger call-to-action heading. */
+#results-root .results-cta--inside.results-locked h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2f6fed;
+  letter-spacing: -0.01em;
+  margin: 0 0 10px;
+}
+.results-locked__intro {
+  max-width: 760px;
+  margin: 0 0 10px;
+  color: #4b5c6b;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.68;
 }
 
-.results-locked__note {
-  color: #5b6b7a;
+/* Locked-section action: the standard primary button, centred, with clear
+   space above it, and the reports-left note centred beneath. */
+#results-root .results-cta--inside.results-locked .results-actions {
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 72px;
 }
-
 #results-root .results-cta--inside .results-locked__reports-left {
   flex-basis: 100%;
   width: 100%;

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './ReportLimitModal.css';
-import PricingModal from './PricingModal';
+import PricingModal, { PAYMENTS_TEMPORARILY_PAUSED } from './PricingModal';
+import { fetchAdvisorPacks, createAdvisorPackCheckout, formatPackPrice } from '../../utils/stripeCheckout';
 
 function AccessCodeIcon() {
   return (
@@ -22,6 +23,7 @@ export default function ReportLimitModal({
   mode = 'starter',
   currentPlan = 'free',
   entitlement = null,
+  featureLabel = '',
 }) {
   const [couponCode, setCouponCode] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
@@ -34,7 +36,57 @@ export default function ReportLimitModal({
     mode === 'reports-exhausted' ||
     mode === 'limit-reached';
 
-  const modalCopy = isExhausted
+  const isPremiumFeature = mode === 'premium';
+  const isAdvisor = mode === 'advisor';
+
+  const planKey = String(currentPlan || 'free').toLowerCase();
+  const isPaidPlan = ['explore', 'premium', 'premium_school', 'premium_university', 'dev'].includes(planKey);
+  const canUpgradeToPremium = planKey === 'explore';
+
+  // AI Advisor question packs (loaded only for the advisor mode, paid plans).
+  const [packs, setPacks] = useState([]);
+  const [packLoading, setPackLoading] = useState('');
+  const [packError, setPackError] = useState('');
+  useEffect(() => {
+    if (!isAdvisor || !isPaidPlan || PAYMENTS_TEMPORARILY_PAUSED) return undefined;
+    let cancelled = false;
+    fetchAdvisorPacks().then((rows) => { if (!cancelled) setPacks(rows); });
+    return () => { cancelled = true; };
+  }, [isAdvisor, isPaidPlan]);
+
+  const buyPack = async (pack) => {
+    setPackError('');
+    setPackLoading(pack.key);
+    try {
+      const data = await createAdvisorPackCheckout(pack.key);
+      window.location.href = data.url;
+    } catch (err) {
+      setPackError(err?.message || 'Could not start checkout.');
+      setPackLoading('');
+    }
+  };
+
+  const modalCopy = isAdvisor
+    ? {
+        title: 'Continue your CareerDNA journey',
+        subtitle: !isPaidPlan
+          ? 'AI Advisor questions are included with CareerDNA Explorer and Premium. Choose a plan to start asking questions about your results.'
+          : canUpgradeToPremium
+          ? (packs.length
+              ? 'You have used all of your AI Advisor questions for this year. Add a question pack, or upgrade to Premium for 20 questions a year plus rankings, live jobs and openings.'
+              : 'You have used all of your AI Advisor questions for this year. Upgrade to Premium for 20 questions a year plus rankings, live jobs and openings.')
+          : (packs.length
+              ? 'You have used all of your AI Advisor questions for this year. Add a question pack to keep asking.'
+              : 'You have used all of your AI Advisor questions for this year. More questions will be available with your next billing year, or enter an access code if you have one.'),
+      }
+    : isPremiumFeature
+    ? {
+        title: 'Continue your CareerDNA journey',
+        subtitle: featureLabel
+          ? `${featureLabel} is part of CareerDNA Premium. Upgrade your plan to open it, or enter an access code if you have one.`
+          : 'This is a CareerDNA Premium feature. Upgrade your plan to open it, or enter an access code if you have one.',
+      }
+    : isExhausted
     ? {
         title: 'Continue your CareerDNA journey',
         subtitle:
@@ -157,21 +209,44 @@ export default function ReportLimitModal({
               ) : null}
             </div>
 
+            {isAdvisor && isPaidPlan && packs.length ? (
+              <div className="report-limit-modal__packs">
+                {packs.map((pack) => (
+                  <button
+                    key={pack.key}
+                    type="button"
+                    className="report-limit-modal__pack-btn"
+                    onClick={() => buyPack(pack)}
+                    disabled={Boolean(packLoading)}
+                  >
+                    <span className="report-limit-modal__pack-qty">{pack.questions} questions</span>
+                    <span className="report-limit-modal__pack-price">{packLoading === pack.key ? 'Opening checkout…' : formatPackPrice(pack)}</span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            {packError ? (
+              <p className="report-limit-modal__message report-limit-modal__message--error">{packError}</p>
+            ) : null}
+
             <div className="report-limit-modal__actions">
-              <button
-                type="button"
-                className="report-limit-modal__primary-btn"
-                onClick={handleSeePackages}
-              >
-                Explore plans
-              </button>
+              {/* Premium is the top plan: no plans button, only the pack. */}
+              {isAdvisor && isPaidPlan && !canUpgradeToPremium ? null : (
+                <button
+                  type="button"
+                  className={`report-limit-modal__primary-btn${isAdvisor && isPaidPlan && packs.length ? ' report-limit-modal__primary-btn--secondary' : ''}`}
+                  onClick={handleSeePackages}
+                >
+                  {isAdvisor && canUpgradeToPremium ? 'Upgrade to Premium' : 'Explore plans'}
+                </button>
+              )}
 
               <button
                 type="button"
                 className="report-limit-modal__secondary-link"
                 onClick={onClose}
               >
-                Continue with free profile
+                {isPremiumFeature || isAdvisor ? 'Not now' : 'Continue with free profile'}
               </button>
             </div>
           </div>

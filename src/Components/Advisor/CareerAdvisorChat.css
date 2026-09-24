@@ -1457,3 +1457,21 @@
     font-size: 0.9rem !important;
   }
 }
+
+/* v23: advisor icon in the page title, not only inside answer bubbles */
+.career-advisor-title-row {
+  gap: 10px !important;
+}
+.career-advisor-title-row .career-advisor-avatar--title {
+  margin: 0 !important;
+}
+.career-advisor-shell.is-embedded .career-advisor-header .career-advisor-title-row h2 {
+  margin: 0 !important;
+}
+
+/* v24: thinking state uses the standard spinner */
+.career-advisor-thinking {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}

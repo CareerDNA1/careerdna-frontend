@@ -190,6 +190,7 @@ export function RouteItem({ route, open = false, onToggle, reaction = '', onReac
                 className="fs-degree-section fs-rank-cell"
                 data-rankings-subject={route.id || ''}
                 data-rankings-title={route.title || ''}
+                data-premium-feature="rankings"
                 key="fs-rank-cell"
               >
                 <span className="fs-degree-section__label fs-rank-cell__label">
