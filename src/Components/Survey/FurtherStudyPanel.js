@@ -519,7 +519,7 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
                               open={openRouteKey === rk}
                               onToggle={() => setOpenRouteKey((prev) => (prev === rk ? '' : rk))}
                               reaction={savedReactions[r.id || r.title] || ''}
-                              onReact={(next) => handleRouteReact(r, next, g.pathwayTitle)}
+                              onReact={(next) => handleRouteReact(r, next, (Array.isArray(r.leadsTo) && r.leadsTo[0]) || active?.title || '')}
                               hasRankings={subjectHasRankings(r)}
                               rankCount={subjectRankCount(r)}
                             />
