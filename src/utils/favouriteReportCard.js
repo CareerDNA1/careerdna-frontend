@@ -183,10 +183,16 @@ export async function assembleFavouriteRole(item, ctx = {}) {
 export async function assembleFavouriteDegree(item, ctx = {}) {
   if (!item || item.type !== 'subject') return null;
   if (!ctx.archetypes || !Object.keys(ctx.archetypes).length) return null;
-  const likedWorlds = Array.isArray(ctx.likedWorlds) ? ctx.likedWorlds : [];
+  const likedWorlds = (Array.isArray(ctx.likedWorlds) ? ctx.likedWorlds : []).slice();
   const likedPathwayTitles = (Array.isArray(ctx.likedPathways) ? ctx.likedPathways : []).map((p) => p.title).filter(Boolean);
+  // The pathway and world the degree was liked in (stored with the favourite)
+  // come first, so the card rebuilds even if neither is liked any more.
   const ownPathway = item?.meta?.pathwayTitle || '';
   if (ownPathway && !likedPathwayTitles.some((t) => norm(t) === norm(ownPathway))) likedPathwayTitles.unshift(ownPathway);
+  const ownWorldId = item?.meta?.careerWorldId || '';
+  if (ownWorldId && !likedWorlds.some((w) => (w.careerWorldId || w.id) === ownWorldId)) {
+    likedWorlds.unshift({ id: ownWorldId, careerWorldId: ownWorldId, title: item?.meta?.careerWorldTitle || '' });
+  }
   if (!likedWorlds.length && !likedPathwayTitles.length) return null;
   try {
     const data = await fetchFurtherStudy({
@@ -244,6 +250,8 @@ export async function assembleFavouriteTraining(item, ctx = {}) {
     const routes = arr.filter((r) => norm(r.pathway) === norm(pathwayName));
     if (!routes.length) return null;
     return { pathway: pathwayName, routes };
-  } catch (_) { /* fall through to null */ }
+  } catch (err) {
+    console.warn('Favourite training card could not load:', err?.message || err);
+  }
   return null;
 }

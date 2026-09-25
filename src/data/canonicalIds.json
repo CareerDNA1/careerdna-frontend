@@ -1,0 +1,1383 @@
+{
+  "generatedAt": "2026-09-25T14:19:39.231Z",
+  "pathways": {
+    "businessintelligenceandreporting": "rf_data_analytics_and_quantitative_insight_business_intelligence_and_reporting",
+    "coredataanalysisandbusinessinsight": "rf_data_analytics_and_quantitative_insight_core_data_analysis_and_business_insight",
+    "customerandmarketinsight": "rf_data_analytics_and_quantitative_insight_customer_and_market_insight",
+    "datascienceandadvancedmodelling": "rf_data_analytics_and_quantitative_insight_data_science_and_advanced_modelling",
+    "productgrowthandexperimentationanalytics": "rf_data_analytics_and_quantitative_insight_product_growth_and_experimentation_analytics",
+    "aiandmachinelearning": "rf_software_ai_and_digital_systems_ai_and_machine_learning_engineering",
+    "backendandplatformengineering": "rf_software_ai_and_digital_systems_backend_and_platform_engineering",
+    "cybersecurity": "rf_software_ai_and_digital_systems_cyber_security",
+    "dataengineering": "rf_software_ai_and_digital_systems_data_engineering",
+    "frontendandwebdevelopment": "rf_software_ai_and_digital_systems_frontend_and_web_development",
+    "qualityassuranceandtestengineering": "rf_software_ai_and_digital_systems_quality_assurance_and_test_engineering",
+    "softwareengineering": "rf_software_ai_and_digital_systems_software_engineering",
+    "digitalproductandux": "rf_software_ai_and_digital_systems_digital_product_and_ux",
+    "itsupportandnetworks": "rf_software_ai_and_digital_systems_it_support_and_networks",
+    "uxresearchandbehaviouralinsight": "rf_psychology_behaviour_and_human_insight_ux_research_and_behavioural_insight",
+    "uxuidesign": "rf_creative_arts_design_and_experience_ux_ui_design",
+    "gamedesignanddevelopment": "rf_technology_and_digital_game_design_and_development",
+    "aerospaceanddefenceengineering": "rf_engineering_manufacturing_and_infrastructure_aerospace_and_defence_engineering",
+    "chemicalandprocessengineering": "rf_engineering_manufacturing_and_infrastructure_chemical_and_process_engineering",
+    "civilandstructuralengineering": "rf_engineering_manufacturing_and_infrastructure_civil_and_structural_engineering",
+    "electricalandelectronicengineering": "rf_engineering_manufacturing_and_infrastructure_electrical_and_electronic_engineering",
+    "infrastructuremaintenanceandassetengineering": "rf_engineering_manufacturing_and_infrastructure_infrastructure_maintenance_and_asset_engineering",
+    "manufacturingandproductionengineering": "rf_engineering_manufacturing_and_infrastructure_manufacturing_and_production_engineering",
+    "mechanicaldesignanddevelopmentengineering": "rf_engineering_manufacturing_and_infrastructure_mechanical_design_and_development_engineering",
+    "roboticsandautomationengineering": "rf_engineering_manufacturing_and_infrastructure_robotics_and_automation_engineering",
+    "systemsengineering": "rf_engineering_manufacturing_and_infrastructure_systems_engineering",
+    "manufacturingandprocesstechnology": "rf_engineering_manufacturing_and_infrastructure_manufacturing_and_process_technology",
+    "motorvehicleandbodywork": "rf_engineering_and_manufacturing_motor_vehicle_and_bodywork",
+    "architecturaltechnologyandbim": "rf_architecture_built_environment_and_spatial_design_architectural_technology_and_bim",
+    "architecture": "rf_architecture_built_environment_and_spatial_design_architecture",
+    "constructionprojectdelivery": "rf_architecture_built_environment_and_spatial_design_construction_project_delivery",
+    "surveyingvaluationandcostconsultancy": "rf_architecture_built_environment_and_spatial_design_surveying_and_cost_consultancy",
+    "sustainabilityandbuildingperformance": "rf_architecture_built_environment_and_spatial_design_sustainability_and_building_performance",
+    "townplanningandurbandevelopment": "rf_architecture_built_environment_and_spatial_design_town_planning_and_urban_development",
+    "civilengineeringtechnicians": "rf_architecture_built_environment_and_spatial_design_civil_engineering_technicians",
+    "facilitiesandpropertymanagement": "rf_business_strategy_commercial_and_leadership_property_and_facilities_management",
+    "propertydevelopmentandassetmanagement": "rf_business_strategy_commercial_and_leadership_property_development_and_asset_management",
+    "bricklayingcarpentryandfinishingtrades": "rf_skilled_trades_and_construction_bricklaying_carpentry_and_finishing_trades",
+    "electricalinstallationandbuildingservices": "rf_skilled_trades_and_construction_electrical_installation_and_building_services",
+    "fireandbuildingsafety": "rf_skilled_trades_and_construction_fire_and_building_safety",
+    "groundworkssteelandfabrication": "rf_skilled_trades_and_construction_groundworks_steel_and_fabrication",
+    "plumbingheatingandgas": "rf_skilled_trades_and_construction_plumbing_heating_and_gas",
+    "surveyinggeospatialandland": "rf_skilled_trades_and_construction_surveying_geospatial_and_land",
+    "telecomsandnetworkinfrastructure": "rf_skilled_trades_and_construction_telecoms_and_network_infrastructure",
+    "biomedicalandclinicalresearch": "rf_scientific_discovery_and_innovation_biomedical_and_clinical_research",
+    "clinicaltrialsandtranslationalresearch": "rf_scientific_discovery_and_innovation_clinical_trials_and_translational_research",
+    "forensicscience": "rf_scientific_discovery_and_innovation_forensic_science",
+    "laboratoryscience": "rf_scientific_discovery_and_innovation_laboratory_science",
+    "materialsandchemicalanalysis": "rf_scientific_discovery_and_innovation_materials_and_chemical_analysis",
+    "randdscience": "rf_scientific_discovery_and_innovation_randd_science",
+    "scientificdataandbioinformatics": "rf_scientific_discovery_and_innovation_scientific_data_and_bioinformatics",
+    "pharmaceuticalindustryanddrugdevelopment": "rf_health_care_and_clinical_practice_pharmaceutical_industry_and_drug_development",
+    "regulatoryaffairsandmedicinessafety": "rf_health_care_and_clinical_practice_regulatory_affairs_and_medicines_safety",
+    "academicmedicineandclinicalresearch": "rf_health_care_and_clinical_practice_academic_medicine_and_clinical_research",
+    "acuteemergencyandcriticalcare": "rf_health_care_and_clinical_practice_acute_emergency_and_critical_care",
+    "clinicalmedicinedoctor": "rf_health_care_and_clinical_practice_clinical_medicine_doctor",
+    "clinicalpharmacy": "rf_health_care_and_clinical_practice_clinical_pharmacy",
+    "clinicalresearchnursing": "rf_health_care_and_clinical_practice_clinical_research_nursing",
+    "clinicalscienceandlaboratorydiagnostics": "rf_health_care_and_clinical_practice_clinical_science_and_laboratory_diagnostics",
+    "communitypharmacy": "rf_health_care_and_clinical_practice_community_pharmacy",
+    "dentalresearchandacademicdentistry": "rf_health_care_and_clinical_practice_dental_research_and_academic_dentistry",
+    "dentistrydentist": "rf_health_care_and_clinical_practice_dentistry_dentist",
+    "diagnosticandinvestigativemedicine": "rf_health_care_and_clinical_practice_diagnostic_and_investigative_medicine",
+    "diagnosticsimagingandclinicalsupport": "rf_health_care_and_clinical_practice_diagnostics_imaging_and_clinical_support",
+    "digitalhealthhealthtechandmedicalinnovation": "rf_health_care_and_clinical_practice_digital_health_healthtech_and_medical_innovation",
+    "healthcaremanagementandserviceimprovement": "rf_health_care_and_clinical_practice_healthcare_leadership_and_service_improvement",
+    "medicinespolicyandpublichealthpharmacy": "rf_health_care_and_clinical_practice_medicines_policy_and_public_health_pharmacy",
+    "mentalhealthandbehaviouralmedicine": "rf_health_care_and_clinical_practice_mental_health_and_behavioural_medicine",
+    "midwifery": "rf_health_care_and_clinical_practice_midwifery",
+    "nurseeducationandleadership": "rf_health_care_and_clinical_practice_nurse_education_and_leadership",
+    "nursing": "rf_health_care_and_clinical_practice_nursing",
+    "oralhealthpolicyanddentalpublichealth": "rf_health_care_and_clinical_practice_oral_health_policy_and_dental_public_health",
+    "paramedicpracticeandemergencycare": "rf_health_care_and_clinical_practice_paramedic_practice_and_emergency_care",
+    "publichealthandhealthimprovement": "rf_health_care_and_clinical_practice_public_health_and_health_improvement",
+    "publichealthmedicineepidemiologyandhealthpolicy": "rf_health_care_and_clinical_practice_public_health_medicine_epidemiology_and_health_policy",
+    "publichealthnursingandhealthvisiting": "rf_health_care_and_clinical_practice_public_health_nursing_and_health_visiting",
+    "rehabilitationandfunctionalindependence": "rf_health_care_and_clinical_practice_rehabilitation_and_functional_independence",
+    "specialistdentistry": "rf_health_care_and_clinical_practice_specialist_dentistry",
+    "surgeryandproceduralmedicine": "rf_health_care_and_clinical_practice_surgery_and_procedural_medicine",
+    "dentalnursingandoralhealth": "rf_health_care_and_clinical_practice_dental_nursing_and_oral_health",
+    "dieteticsandnutrition": "rf_health_care_and_clinical_practice_dietetics_and_nutrition",
+    "opticalandeyecare": "rf_health_care_and_clinical_practice_optical_and_eye_care",
+    "perioperativeandsurgicalcare": "rf_health_care_and_clinical_practice_perioperative_and_surgical_care",
+    "podiatryandfoothealth": "rf_health_care_and_clinical_practice_podiatry_and_foot_health",
+    "emergencyplanningandambulanceserviceleadership": "rf_health_care_and_clinical_practice_emergency_planning_and_ambulance_service_leadership",
+    "armedforcesarmyroyalnavyraf": "rf_protective_and_emergency_services_armed_forces_army_royal_navy_raf",
+    "communitysafetyandjustice": "rf_protective_and_emergency_services_community_safety_and_justice",
+    "fireandrescue": "rf_protective_and_emergency_services_fire_and_rescue",
+    "police": "rf_protective_and_emergency_services_police",
+    "prisonsandcustodialservices": "rf_protective_and_emergency_services_prisons_and_custodial_services",
+    "securityfraudandresilience": "rf_protective_and_emergency_services_security_fraud_and_resilience",
+    "socialworkandsafeguarding": "rf_health_care_and_clinical_practice_social_work_and_safeguarding",
+    "childrenyoungpeopleandfamilies": "rf_care_and_community_support_children_young_people_and_families",
+    "faithandcommunityleadership": "rf_care_and_community_support_faith_and_community_leadership",
+    "adultcarework": "rf_care_support_work_adult_care_work",
+    "funeralandbereavementservices": "rf_care_support_work_funeral_bereavement_services",
+    "veterinaryandanimalscience": "rf_health_care_and_clinical_practice_veterinary_and_animal_science",
+    "agricultureforestryandlandmanagement": "rf_environment_sustainability_and_planetary_futures_agriculture_forestry_and_land_management",
+    "animalcareandveterinarysupport": "rf_land_animals_and_the_outdoors_animal_care_and_veterinary_support",
+    "farmingandcropproduction": "rf_land_animals_and_the_outdoors_farming_and_crop_production",
+    "forestryandarboriculture": "rf_land_animals_and_the_outdoors_forestry_and_arboriculture",
+    "horticulturelandscapingandturf": "rf_land_animals_and_the_outdoors_horticulture_landscaping_and_turf",
+    "veterinarynursing": "rf_animals_land_the_outdoors_veterinary_nursing",
+    "sportandexercisescience": "rf_health_care_and_clinical_practice_sport_and_exercise_science",
+    "sportfitnessandoutdoorinstruction": "rf_health_care_and_clinical_practice_sport_fitness_and_outdoor_instruction",
+    "personaltrainingandfitness": "rf_sport_fitness_leisure_personal_training_fitness",
+    "sportscoaching": "rf_sport_fitness_leisure_sports_coaching",
+    "leisureandfacilitiesmanagement": "rf_sport_fitness_leisure_leisure_facilities_management",
+    "clinicalpsychologyandmentalhealthsupport": "rf_psychology_behaviour_and_human_insight_clinical_psychology_and_mental_health_support",
+    "counsellingpsychotherapyandtherapeuticpractice": "rf_psychology_behaviour_and_human_insight_counselling_psychotherapy_and_therapeutic_practice",
+    "occupationalandorganisationalpsychology": "rf_psychology_behaviour_and_human_insight_occupational_and_organisational_psychology",
+    "justicerehabilitationandbehaviourchange": "rf_psychology_behaviour_and_human_insight_justice_rehabilitation_and_behaviour_change",
+    "barristerandadvocacy": "rf_law_governance_and_public_impact_barrister_and_advocacy",
+    "investigationsandfinancialcrime": "rf_law_governance_and_public_impact_investigations_and_financial_crime",
+    "legalsupportandparalegalwork": "rf_law_governance_and_public_impact_legal_support_and_casework",
+    "policyandpublicsectoranalysis": "rf_law_governance_and_public_impact_policy_and_public_sector_analysis",
+    "publicaffairsandadvocacy": "rf_law_governance_and_public_impact_public_affairs_and_advocacy",
+    "solicitorpractice": "rf_law_governance_and_public_impact_solicitor_practice",
+    "publicserviceandpolicydelivery": "rf_business_strategy_commercial_and_leadership_public_service_and_policy_delivery",
+    "intelligencepublicserviceandsecurityanalysis": "rf_society_culture_languages_and_global_affairs_intelligence_public_service_and_security_analysis",
+    "earlyyearsandfamilysupport": "rf_education_coaching_and_people_development_early_years_and_family_support",
+    "educationsupportoutreachandstudentservices": "rf_education_coaching_and_people_development_education_support_outreach_and_student_services",
+    "highereducationandacademicresearch": "rf_education_coaching_and_people_development_higher_education_and_academic_research",
+    "learningdesignandeducationaltechnology": "rf_education_coaching_and_people_development_learning_design_and_educational_technology",
+    "primaryteachingandclassroompractice": "rf_education_coaching_and_people_development_primary_teaching_and_classroom_practice",
+    "secondaryteaching": "rf_education_coaching_and_people_development_secondary_teaching",
+    "sendandinclusionsupport": "rf_education_coaching_and_people_development_send_and_inclusion_support",
+    "traininglearninganddevelopment": "rf_education_coaching_and_people_development_training_learning_and_development",
+    "youthandcommunitywork": "rf_education_coaching_and_people_development_youth_and_community_work",
+    "teachingassistantandlearningsupport": "rf_education_early_years_teaching_assistant_learning_support",
+    "peopleanalyticsandworkplacebehaviour": "rf_psychology_behaviour_and_human_insight_people_analytics_and_workplace_behaviour",
+    "businessanalysis": "rf_business_strategy_commercial_and_leadership_business_analysis",
+    "businessdevelopmentandcommercialpartnerships": "rf_business_strategy_commercial_and_leadership_business_development_and_commercial_partnerships",
+    "consultingandstrategicimprovement": "rf_business_strategy_commercial_and_leadership_consulting_and_strategic_improvement",
+    "generalistbusinessprogrammes": "rf_business_strategy_commercial_and_leadership_generalist_business_programmes",
+    "hrpeopleandorganisations": "rf_business_strategy_commercial_and_leadership_hr_people_and_organisations",
+    "operationsandsupplychain": "rf_business_strategy_commercial_and_leadership_operations_and_supply_chain",
+    "projectpmoandtransformation": "rf_business_strategy_commercial_and_leadership_project_pmo_and_transformation",
+    "governancecomplianceandquality": "rf_business_strategy_commercial_and_leadership_governance_compliance_and_quality",
+    "leadershipandmanagement": "rf_business_strategy_commercial_and_leadership_leadership_and_management",
+    "governanceriskandcompliance": "rf_law_governance_and_public_impact_governance_risk_and_compliance",
+    "eventsandexperiencemanagement": "rf_business_strategy_commercial_and_leadership_events_and_experience_management",
+    "foodandbeverageoperations": "rf_business_strategy_commercial_and_leadership_food_and_beverage_operations",
+    "hospitalityandhotelmanagement": "rf_business_strategy_commercial_and_leadership_hospitality_and_hotel_management",
+    "professionalchefandculinaryarts": "rf_hospitality_food_and_events_professional_chef_and_culinary_arts",
+    "bakingandfoodproduction": "rf_hospitality_food_events_baking_food_production",
+    "butcheryandfishmongery": "rf_hospitality_food_events_butchery_fishmongery",
+    "realestateagencyandbrokerage": "rf_business_strategy_commercial_and_leadership_real_estate_agency_and_brokerage",
+    "buyingmerchandisingandsales": "rf_business_strategy_commercial_and_leadership_buying_merchandising_and_sales",
+    "customerserviceandclientdelivery": "rf_business_strategy_commercial_and_leadership_customer_service_and_client_delivery",
+    "retailandshopwork": "rf_retail_sales_customer_service_retail_shop_work",
+    "realestateinvestmentandfinance": "rf_business_strategy_commercial_and_leadership_real_estate_investment_and_finance",
+    "accountingauditandassurance": "rf_finance_economics_and_investment_accounting_audit_and_assurance",
+    "assetandwealthmanagement": "rf_finance_economics_and_investment_asset_and_wealth_management",
+    "bankingoperationsandmiddleoffice": "rf_finance_economics_and_investment_banking_operations_and_middle_office",
+    "commercialandcorporatebanking": "rf_finance_economics_and_investment_commercial_and_corporate_banking",
+    "equityresearchandinvestmentresearch": "rf_finance_economics_and_investment_equity_research_and_investment_research",
+    "financialanalysisandfpanda": "rf_finance_economics_and_investment_financial_analysis_and_fpanda",
+    "fintechanddigitalfinance": "rf_finance_economics_and_investment_fintech_and_digital_finance",
+    "insuranceandactuarial": "rf_finance_economics_and_investment_insurance_and_actuarial",
+    "investmentbankingandcorporatefinance": "rf_finance_economics_and_investment_investment_banking_and_corporate_finance",
+    "marketsandtrading": "rf_finance_economics_and_investment_markets_and_trading",
+    "privateequityandventurecapital": "rf_finance_economics_and_investment_private_equity_and_venture_capital",
+    "riskandquantitativeanalysis": "rf_finance_economics_and_investment_risk_and_quantitative_analysis",
+    "riskcomplianceandcontrols": "rf_finance_economics_and_investment_risk_compliance_and_controls",
+    "sustainablefinanceandimpactinvesting": "rf_finance_economics_and_investment_sustainable_finance_and_impact_investing",
+    "treasuryandliquidity": "rf_finance_economics_and_investment_treasury_and_liquidity",
+    "economics": "rf_finance_economics_and_investment_economics",
+    "airtrafficcontrol": "rf_transport_aviation_and_maritime_air_traffic_control",
+    "airlinepilot": "rf_transport_aviation_and_maritime_airline_pilot",
+    "aviationoperations": "rf_transport_aviation_and_maritime_aviation_operations",
+    "logisticsandsupplychain": "rf_transport_aviation_and_maritime_logistics_and_supply_chain",
+    "maritimeoperations": "rf_transport_aviation_and_maritime_maritime_operations",
+    "merchantnavyandmaritimeofficer": "rf_transport_aviation_and_maritime_merchant_navy_and_maritime_officer",
+    "railandpassengertransportoperations": "rf_transport_aviation_and_maritime_rail_and_passenger_transport_operations",
+    "railandtraindriving": "rf_transport_aviation_and_maritime_rail_and_train_driving",
+    "warehousingandlogisticsoperations": "rf_transport_travel_logistics_warehousing_logistics_operations",
+    "travelandtourism": "rf_transport_travel_logistics_travel_tourism",
+    "informationandknowledgemanagement": "rf_business_strategy_commercial_and_leadership_information_and_knowledge_management",
+    "businessadministrationandofficesupport": "rf_admin_office_support_business_administration_office_support",
+    "hrandrecruitmentsupport": "rf_admin_office_support_hr_recruitment_support",
+    "brandandmarketingstrategy": "rf_marketing_media_and_communication_brand_and_marketing_strategy",
+    "contentandsocialmedia": "rf_marketing_media_and_communication_content_and_social_media",
+    "journalismpublishingandeditorial": "rf_marketing_media_and_communication_journalism_and_editorial",
+    "marketresearchandaudienceinsight": "rf_marketing_media_and_communication_market_research_and_audience_insight",
+    "performancemarketingandgrowth": "rf_marketing_media_and_communication_performance_marketing_and_growth",
+    "prandcommunications": "rf_marketing_media_and_communication_pr_and_communications",
+    "filmtvandmediaproduction": "rf_creative_arts_design_and_experience_film_tv_and_media_production",
+    "animationandmotiondesign": "rf_creative_arts_design_and_experience_animation_and_motion_design",
+    "digitaldesignandmultimedia": "rf_creative_arts_design_and_experience_digital_design_and_multimedia",
+    "graphicdesignandvisualcommunication": "rf_creative_arts_design_and_experience_graphic_design_and_visual_communication",
+    "productandindustrialdesign": "rf_creative_arts_design_and_experience_product_and_industrial_design",
+    "fashionandtextiles": "rf_making_craft_and_repair_bespoke_textiles_and_tailoring",
+    "finecraftandmaking": "rf_making_craft_and_repair_fine_craft_and_making",
+    "furnituremakingandrestoration": "rf_making_craft_and_repair_furniture_making_and_restoration",
+    "photography": "rf_creative_arts_design_photography",
+    "circulareconomyandsustainablesupplychains": "rf_environment_sustainability_and_planetary_futures_circular_economy_and_sustainable_supply_chains",
+    "conservationandlandmanagement": "rf_environment_sustainability_and_planetary_futures_conservation_and_land_management",
+    "environmentalpolicyandimpactassessment": "rf_environment_sustainability_and_planetary_futures_environmental_policy_and_impact_assessment",
+    "environmentalscienceandmonitoring": "rf_environment_sustainability_and_planetary_futures_environmental_science_and_monitoring",
+    "netzeroclimateandsustainabilitystrategy": "rf_environment_sustainability_and_planetary_futures_net_zero_climate_and_sustainability_strategy",
+    "sustainabilityandesgadvisory": "rf_environment_sustainability_and_planetary_futures_sustainability_and_esg_advisory",
+    "environmentandwatermanagement": "rf_land_animals_and_the_outdoors_environment_and_water_management",
+    "internationaldevelopmentandngoprogrammes": "rf_society_culture_languages_and_global_affairs_international_development_and_ngo_programmes",
+    "internationalrelationspolicyandgeopoliticalanalysis": "rf_society_culture_languages_and_global_affairs_international_relations_policy_and_geopolitical_analysis",
+    "languagestranslationandlocalisation": "rf_society_culture_languages_and_global_affairs_languages_translation_and_localisation",
+    "socialresearchandculturalanalysis": "rf_society_culture_languages_and_global_affairs_social_research_and_cultural_analysis",
+    "heritagemuseumsandarchives": "rf_society_culture_languages_and_global_affairs_heritage_museums_and_archives",
+    "actingandperformance": "rf_performing_arts_music_acting_performance",
+    "musicperformanceandproduction": "rf_performing_arts_music_music_performance_production",
+    "danceandchoreography": "rf_performing_arts_music_dance_choreography",
+    "theatreandstageproduction": "rf_performing_arts_music_theatre_stage_production",
+    "soundandaudioproduction": "rf_performing_arts_music_sound_audio_production",
+    "hairdressingandbarbering": "rf_hair_beauty_personal_care_hairdressing_barbering",
+    "beautytherapyandnails": "rf_hair_beauty_personal_care_beauty_therapy_nails",
+    "aestheticsandholistictherapy": "rf_hair_beauty_personal_care_aesthetics_holistic_therapy",
+    "productgrowthandbusinessdevelopmentinstartups": "rf_entrepreneurship_innovation_and_venture_building_product_growth_and_business_development_in_start_ups",
+    "startupoperations": "rf_entrepreneurship_innovation_and_venture_building_start_up_operations",
+    "venturebuildingandfounder": "rf_entrepreneurship_innovation_and_venture_building_venture_building_and_founder",
+    "venturecapitalacceleratorsandinnovationsupport": "rf_entrepreneurship_innovation_and_venture_building_venture_capital_accelerators_and_innovation_support"
+  },
+  "worlds": {
+    "healthcareandmedicine": "cw_healthcare_medicine",
+    "careandsupportwork": "cw_care_support_work",
+    "scienceandresearch": "cw_science_research",
+    "technologyanddigital": "cw_technology_digital",
+    "engineeringandmanufacturing": "cw_engineering_manufacturing",
+    "constructionandthebuiltenvironment": "cw_construction_the_built_environment",
+    "adminandofficesupport": "cw_admin_office_support",
+    "businessandmanagement": "cw_business_management",
+    "retailsalesandcustomerservice": "cw_retail_sales_customer_service",
+    "mediamarketingcontentandcommunication": "cw_media_marketing_content_communication",
+    "moneyfinanceandaccounting": "cw_money_finance_accounting",
+    "lawjusticeandpublicservices": "cw_law_justice_public_services",
+    "protectiveandemergencyservices": "cw_protective_emergency_services",
+    "creativeartsanddesign": "cw_creative_arts_design",
+    "educationandearlyyears": "cw_education_early_years",
+    "animalslandandtheoutdoors": "cw_animals_land_the_outdoors",
+    "environmentandsustainability": "cw_environment_sustainability",
+    "transporttravelandlogistics": "cw_transport_travel_logistics",
+    "hospitalityfoodandevents": "cw_hospitality_food_events",
+    "hairbeautyandpersonalcare": "cw_hair_beauty_personal_care",
+    "sportfitnessandleisure": "cw_sport_fitness_leisure",
+    "psychologyandhumanbehaviour": "cw_psychology_human_behaviour",
+    "languagesculturesandglobalaffairs": "cw_society_culture_languages",
+    "performingartsandmusic": "cw_performing_arts_music",
+    "entrepreneurshipinnovationandventurebuilding": "cw_entrepreneurship_innovation_venture_building"
+  },
+  "pathwayIds": [
+    "rf_data_analytics_and_quantitative_insight_business_intelligence_and_reporting",
+    "rf_data_analytics_and_quantitative_insight_core_data_analysis_and_business_insight",
+    "rf_data_analytics_and_quantitative_insight_customer_and_market_insight",
+    "rf_data_analytics_and_quantitative_insight_data_science_and_advanced_modelling",
+    "rf_data_analytics_and_quantitative_insight_product_growth_and_experimentation_analytics",
+    "rf_software_ai_and_digital_systems_ai_and_machine_learning_engineering",
+    "rf_software_ai_and_digital_systems_backend_and_platform_engineering",
+    "rf_software_ai_and_digital_systems_cyber_security",
+    "rf_software_ai_and_digital_systems_data_engineering",
+    "rf_software_ai_and_digital_systems_frontend_and_web_development",
+    "rf_software_ai_and_digital_systems_quality_assurance_and_test_engineering",
+    "rf_software_ai_and_digital_systems_software_engineering",
+    "rf_software_ai_and_digital_systems_digital_product_and_ux",
+    "rf_software_ai_and_digital_systems_it_support_and_networks",
+    "rf_psychology_behaviour_and_human_insight_ux_research_and_behavioural_insight",
+    "rf_creative_arts_design_and_experience_ux_ui_design",
+    "rf_technology_and_digital_game_design_and_development",
+    "rf_engineering_manufacturing_and_infrastructure_aerospace_and_defence_engineering",
+    "rf_engineering_manufacturing_and_infrastructure_chemical_and_process_engineering",
+    "rf_engineering_manufacturing_and_infrastructure_civil_and_structural_engineering",
+    "rf_engineering_manufacturing_and_infrastructure_electrical_and_electronic_engineering",
+    "rf_engineering_manufacturing_and_infrastructure_infrastructure_maintenance_and_asset_engineering",
+    "rf_engineering_manufacturing_and_infrastructure_manufacturing_and_production_engineering",
+    "rf_engineering_manufacturing_and_infrastructure_mechanical_design_and_development_engineering",
+    "rf_engineering_manufacturing_and_infrastructure_robotics_and_automation_engineering",
+    "rf_engineering_manufacturing_and_infrastructure_systems_engineering",
+    "rf_engineering_manufacturing_and_infrastructure_manufacturing_and_process_technology",
+    "rf_engineering_and_manufacturing_motor_vehicle_and_bodywork",
+    "rf_architecture_built_environment_and_spatial_design_architectural_technology_and_bim",
+    "rf_architecture_built_environment_and_spatial_design_architecture",
+    "rf_architecture_built_environment_and_spatial_design_construction_project_delivery",
+    "rf_architecture_built_environment_and_spatial_design_surveying_and_cost_consultancy",
+    "rf_architecture_built_environment_and_spatial_design_sustainability_and_building_performance",
+    "rf_architecture_built_environment_and_spatial_design_town_planning_and_urban_development",
+    "rf_architecture_built_environment_and_spatial_design_civil_engineering_technicians",
+    "rf_business_strategy_commercial_and_leadership_property_and_facilities_management",
+    "rf_business_strategy_commercial_and_leadership_property_development_and_asset_management",
+    "rf_skilled_trades_and_construction_bricklaying_carpentry_and_finishing_trades",
+    "rf_skilled_trades_and_construction_electrical_installation_and_building_services",
+    "rf_skilled_trades_and_construction_fire_and_building_safety",
+    "rf_skilled_trades_and_construction_groundworks_steel_and_fabrication",
+    "rf_skilled_trades_and_construction_plumbing_heating_and_gas",
+    "rf_skilled_trades_and_construction_surveying_geospatial_and_land",
+    "rf_skilled_trades_and_construction_telecoms_and_network_infrastructure",
+    "rf_scientific_discovery_and_innovation_biomedical_and_clinical_research",
+    "rf_scientific_discovery_and_innovation_clinical_trials_and_translational_research",
+    "rf_scientific_discovery_and_innovation_forensic_science",
+    "rf_scientific_discovery_and_innovation_laboratory_science",
+    "rf_scientific_discovery_and_innovation_materials_and_chemical_analysis",
+    "rf_scientific_discovery_and_innovation_randd_science",
+    "rf_scientific_discovery_and_innovation_scientific_data_and_bioinformatics",
+    "rf_health_care_and_clinical_practice_pharmaceutical_industry_and_drug_development",
+    "rf_health_care_and_clinical_practice_regulatory_affairs_and_medicines_safety",
+    "rf_health_care_and_clinical_practice_academic_medicine_and_clinical_research",
+    "rf_health_care_and_clinical_practice_acute_emergency_and_critical_care",
+    "rf_health_care_and_clinical_practice_clinical_medicine_doctor",
+    "rf_health_care_and_clinical_practice_clinical_pharmacy",
+    "rf_health_care_and_clinical_practice_clinical_research_nursing",
+    "rf_health_care_and_clinical_practice_clinical_science_and_laboratory_diagnostics",
+    "rf_health_care_and_clinical_practice_community_pharmacy",
+    "rf_health_care_and_clinical_practice_dental_research_and_academic_dentistry",
+    "rf_health_care_and_clinical_practice_dentistry_dentist",
+    "rf_health_care_and_clinical_practice_diagnostic_and_investigative_medicine",
+    "rf_health_care_and_clinical_practice_diagnostics_imaging_and_clinical_support",
+    "rf_health_care_and_clinical_practice_digital_health_healthtech_and_medical_innovation",
+    "rf_health_care_and_clinical_practice_healthcare_leadership_and_service_improvement",
+    "rf_health_care_and_clinical_practice_medicines_policy_and_public_health_pharmacy",
+    "rf_health_care_and_clinical_practice_mental_health_and_behavioural_medicine",
+    "rf_health_care_and_clinical_practice_midwifery",
+    "rf_health_care_and_clinical_practice_nurse_education_and_leadership",
+    "rf_health_care_and_clinical_practice_nursing",
+    "rf_health_care_and_clinical_practice_oral_health_policy_and_dental_public_health",
+    "rf_health_care_and_clinical_practice_paramedic_practice_and_emergency_care",
+    "rf_health_care_and_clinical_practice_public_health_and_health_improvement",
+    "rf_health_care_and_clinical_practice_public_health_medicine_epidemiology_and_health_policy",
+    "rf_health_care_and_clinical_practice_public_health_nursing_and_health_visiting",
+    "rf_health_care_and_clinical_practice_rehabilitation_and_functional_independence",
+    "rf_health_care_and_clinical_practice_specialist_dentistry",
+    "rf_health_care_and_clinical_practice_surgery_and_procedural_medicine",
+    "rf_health_care_and_clinical_practice_dental_nursing_and_oral_health",
+    "rf_health_care_and_clinical_practice_dietetics_and_nutrition",
+    "rf_health_care_and_clinical_practice_optical_and_eye_care",
+    "rf_health_care_and_clinical_practice_perioperative_and_surgical_care",
+    "rf_health_care_and_clinical_practice_podiatry_and_foot_health",
+    "rf_health_care_and_clinical_practice_emergency_planning_and_ambulance_service_leadership",
+    "rf_protective_and_emergency_services_armed_forces_army_royal_navy_raf",
+    "rf_protective_and_emergency_services_community_safety_and_justice",
+    "rf_protective_and_emergency_services_fire_and_rescue",
+    "rf_protective_and_emergency_services_police",
+    "rf_protective_and_emergency_services_prisons_and_custodial_services",
+    "rf_protective_and_emergency_services_security_fraud_and_resilience",
+    "rf_health_care_and_clinical_practice_social_work_and_safeguarding",
+    "rf_care_and_community_support_children_young_people_and_families",
+    "rf_care_and_community_support_faith_and_community_leadership",
+    "rf_care_support_work_adult_care_work",
+    "rf_care_support_work_funeral_bereavement_services",
+    "rf_health_care_and_clinical_practice_veterinary_and_animal_science",
+    "rf_environment_sustainability_and_planetary_futures_agriculture_forestry_and_land_management",
+    "rf_land_animals_and_the_outdoors_animal_care_and_veterinary_support",
+    "rf_land_animals_and_the_outdoors_farming_and_crop_production",
+    "rf_land_animals_and_the_outdoors_forestry_and_arboriculture",
+    "rf_land_animals_and_the_outdoors_horticulture_landscaping_and_turf",
+    "rf_animals_land_the_outdoors_veterinary_nursing",
+    "rf_health_care_and_clinical_practice_sport_and_exercise_science",
+    "rf_health_care_and_clinical_practice_sport_fitness_and_outdoor_instruction",
+    "rf_sport_fitness_leisure_personal_training_fitness",
+    "rf_sport_fitness_leisure_sports_coaching",
+    "rf_sport_fitness_leisure_leisure_facilities_management",
+    "rf_psychology_behaviour_and_human_insight_clinical_psychology_and_mental_health_support",
+    "rf_psychology_behaviour_and_human_insight_counselling_psychotherapy_and_therapeutic_practice",
+    "rf_psychology_behaviour_and_human_insight_occupational_and_organisational_psychology",
+    "rf_psychology_behaviour_and_human_insight_justice_rehabilitation_and_behaviour_change",
+    "rf_law_governance_and_public_impact_barrister_and_advocacy",
+    "rf_law_governance_and_public_impact_investigations_and_financial_crime",
+    "rf_law_governance_and_public_impact_legal_support_and_casework",
+    "rf_law_governance_and_public_impact_policy_and_public_sector_analysis",
+    "rf_law_governance_and_public_impact_public_affairs_and_advocacy",
+    "rf_law_governance_and_public_impact_solicitor_practice",
+    "rf_business_strategy_commercial_and_leadership_public_service_and_policy_delivery",
+    "rf_society_culture_languages_and_global_affairs_intelligence_public_service_and_security_analysis",
+    "rf_education_coaching_and_people_development_early_years_and_family_support",
+    "rf_education_coaching_and_people_development_education_support_outreach_and_student_services",
+    "rf_education_coaching_and_people_development_higher_education_and_academic_research",
+    "rf_education_coaching_and_people_development_learning_design_and_educational_technology",
+    "rf_education_coaching_and_people_development_primary_teaching_and_classroom_practice",
+    "rf_education_coaching_and_people_development_secondary_teaching",
+    "rf_education_coaching_and_people_development_send_and_inclusion_support",
+    "rf_education_coaching_and_people_development_training_learning_and_development",
+    "rf_education_coaching_and_people_development_youth_and_community_work",
+    "rf_education_early_years_teaching_assistant_learning_support",
+    "rf_psychology_behaviour_and_human_insight_people_analytics_and_workplace_behaviour",
+    "rf_business_strategy_commercial_and_leadership_business_analysis",
+    "rf_business_strategy_commercial_and_leadership_business_development_and_commercial_partnerships",
+    "rf_business_strategy_commercial_and_leadership_consulting_and_strategic_improvement",
+    "rf_business_strategy_commercial_and_leadership_generalist_business_programmes",
+    "rf_business_strategy_commercial_and_leadership_hr_people_and_organisations",
+    "rf_business_strategy_commercial_and_leadership_operations_and_supply_chain",
+    "rf_business_strategy_commercial_and_leadership_project_pmo_and_transformation",
+    "rf_business_strategy_commercial_and_leadership_governance_compliance_and_quality",
+    "rf_business_strategy_commercial_and_leadership_leadership_and_management",
+    "rf_law_governance_and_public_impact_governance_risk_and_compliance",
+    "rf_business_strategy_commercial_and_leadership_events_and_experience_management",
+    "rf_business_strategy_commercial_and_leadership_food_and_beverage_operations",
+    "rf_business_strategy_commercial_and_leadership_hospitality_and_hotel_management",
+    "rf_hospitality_food_and_events_professional_chef_and_culinary_arts",
+    "rf_hospitality_food_events_baking_food_production",
+    "rf_hospitality_food_events_butchery_fishmongery",
+    "rf_business_strategy_commercial_and_leadership_real_estate_agency_and_brokerage",
+    "rf_business_strategy_commercial_and_leadership_buying_merchandising_and_sales",
+    "rf_business_strategy_commercial_and_leadership_customer_service_and_client_delivery",
+    "rf_retail_sales_customer_service_retail_shop_work",
+    "rf_business_strategy_commercial_and_leadership_real_estate_investment_and_finance",
+    "rf_finance_economics_and_investment_accounting_audit_and_assurance",
+    "rf_finance_economics_and_investment_asset_and_wealth_management",
+    "rf_finance_economics_and_investment_banking_operations_and_middle_office",
+    "rf_finance_economics_and_investment_commercial_and_corporate_banking",
+    "rf_finance_economics_and_investment_equity_research_and_investment_research",
+    "rf_finance_economics_and_investment_financial_analysis_and_fpanda",
+    "rf_finance_economics_and_investment_fintech_and_digital_finance",
+    "rf_finance_economics_and_investment_insurance_and_actuarial",
+    "rf_finance_economics_and_investment_investment_banking_and_corporate_finance",
+    "rf_finance_economics_and_investment_markets_and_trading",
+    "rf_finance_economics_and_investment_private_equity_and_venture_capital",
+    "rf_finance_economics_and_investment_risk_and_quantitative_analysis",
+    "rf_finance_economics_and_investment_risk_compliance_and_controls",
+    "rf_finance_economics_and_investment_sustainable_finance_and_impact_investing",
+    "rf_finance_economics_and_investment_treasury_and_liquidity",
+    "rf_finance_economics_and_investment_economics",
+    "rf_transport_aviation_and_maritime_air_traffic_control",
+    "rf_transport_aviation_and_maritime_airline_pilot",
+    "rf_transport_aviation_and_maritime_aviation_operations",
+    "rf_transport_aviation_and_maritime_logistics_and_supply_chain",
+    "rf_transport_aviation_and_maritime_maritime_operations",
+    "rf_transport_aviation_and_maritime_merchant_navy_and_maritime_officer",
+    "rf_transport_aviation_and_maritime_rail_and_passenger_transport_operations",
+    "rf_transport_aviation_and_maritime_rail_and_train_driving",
+    "rf_transport_travel_logistics_warehousing_logistics_operations",
+    "rf_transport_travel_logistics_travel_tourism",
+    "rf_business_strategy_commercial_and_leadership_information_and_knowledge_management",
+    "rf_admin_office_support_business_administration_office_support",
+    "rf_admin_office_support_hr_recruitment_support",
+    "rf_marketing_media_and_communication_brand_and_marketing_strategy",
+    "rf_marketing_media_and_communication_content_and_social_media",
+    "rf_marketing_media_and_communication_journalism_and_editorial",
+    "rf_marketing_media_and_communication_market_research_and_audience_insight",
+    "rf_marketing_media_and_communication_performance_marketing_and_growth",
+    "rf_marketing_media_and_communication_pr_and_communications",
+    "rf_creative_arts_design_and_experience_film_tv_and_media_production",
+    "rf_creative_arts_design_and_experience_animation_and_motion_design",
+    "rf_creative_arts_design_and_experience_digital_design_and_multimedia",
+    "rf_creative_arts_design_and_experience_graphic_design_and_visual_communication",
+    "rf_creative_arts_design_and_experience_product_and_industrial_design",
+    "rf_making_craft_and_repair_bespoke_textiles_and_tailoring",
+    "rf_making_craft_and_repair_fine_craft_and_making",
+    "rf_making_craft_and_repair_furniture_making_and_restoration",
+    "rf_creative_arts_design_photography",
+    "rf_environment_sustainability_and_planetary_futures_circular_economy_and_sustainable_supply_chains",
+    "rf_environment_sustainability_and_planetary_futures_conservation_and_land_management",
+    "rf_environment_sustainability_and_planetary_futures_environmental_policy_and_impact_assessment",
+    "rf_environment_sustainability_and_planetary_futures_environmental_science_and_monitoring",
+    "rf_environment_sustainability_and_planetary_futures_net_zero_climate_and_sustainability_strategy",
+    "rf_environment_sustainability_and_planetary_futures_sustainability_and_esg_advisory",
+    "rf_land_animals_and_the_outdoors_environment_and_water_management",
+    "rf_society_culture_languages_and_global_affairs_international_development_and_ngo_programmes",
+    "rf_society_culture_languages_and_global_affairs_international_relations_policy_and_geopolitical_analysis",
+    "rf_society_culture_languages_and_global_affairs_languages_translation_and_localisation",
+    "rf_society_culture_languages_and_global_affairs_social_research_and_cultural_analysis",
+    "rf_society_culture_languages_and_global_affairs_heritage_museums_and_archives",
+    "rf_performing_arts_music_acting_performance",
+    "rf_performing_arts_music_music_performance_production",
+    "rf_performing_arts_music_dance_choreography",
+    "rf_performing_arts_music_theatre_stage_production",
+    "rf_performing_arts_music_sound_audio_production",
+    "rf_hair_beauty_personal_care_hairdressing_barbering",
+    "rf_hair_beauty_personal_care_beauty_therapy_nails",
+    "rf_hair_beauty_personal_care_aesthetics_holistic_therapy",
+    "rf_entrepreneurship_innovation_and_venture_building_product_growth_and_business_development_in_start_ups",
+    "rf_entrepreneurship_innovation_and_venture_building_start_up_operations",
+    "rf_entrepreneurship_innovation_and_venture_building_venture_building_and_founder",
+    "rf_entrepreneurship_innovation_and_venture_building_venture_capital_accelerators_and_innovation_support"
+  ],
+  "worldIds": [
+    "cw_healthcare_medicine",
+    "cw_care_support_work",
+    "cw_science_research",
+    "cw_technology_digital",
+    "cw_engineering_manufacturing",
+    "cw_construction_the_built_environment",
+    "cw_admin_office_support",
+    "cw_business_management",
+    "cw_retail_sales_customer_service",
+    "cw_media_marketing_content_communication",
+    "cw_money_finance_accounting",
+    "cw_law_justice_public_services",
+    "cw_protective_emergency_services",
+    "cw_creative_arts_design",
+    "cw_education_early_years",
+    "cw_animals_land_the_outdoors",
+    "cw_environment_sustainability",
+    "cw_transport_travel_logistics",
+    "cw_hospitality_food_events",
+    "cw_hair_beauty_personal_care",
+    "cw_sport_fitness_leisure",
+    "cw_psychology_human_behaviour",
+    "cw_society_culture_languages",
+    "cw_performing_arts_music",
+    "cw_entrepreneurship_innovation_venture_building"
+  ],
+  "pathwayWorld": {
+    "rf_data_analytics_and_quantitative_insight_business_intelligence_and_reporting": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_data_analytics_and_quantitative_insight_core_data_analysis_and_business_insight": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_data_analytics_and_quantitative_insight_customer_and_market_insight": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_data_analytics_and_quantitative_insight_data_science_and_advanced_modelling": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_data_analytics_and_quantitative_insight_product_growth_and_experimentation_analytics": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_software_ai_and_digital_systems_ai_and_machine_learning_engineering": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_software_ai_and_digital_systems_backend_and_platform_engineering": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_software_ai_and_digital_systems_cyber_security": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_software_ai_and_digital_systems_data_engineering": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_software_ai_and_digital_systems_frontend_and_web_development": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_software_ai_and_digital_systems_quality_assurance_and_test_engineering": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_software_ai_and_digital_systems_software_engineering": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_software_ai_and_digital_systems_digital_product_and_ux": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_software_ai_and_digital_systems_it_support_and_networks": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_psychology_behaviour_and_human_insight_ux_research_and_behavioural_insight": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_creative_arts_design_and_experience_ux_ui_design": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_technology_and_digital_game_design_and_development": {
+      "careerWorldId": "cw_technology_digital",
+      "careerWorldTitle": "Technology & Digital"
+    },
+    "rf_engineering_manufacturing_and_infrastructure_aerospace_and_defence_engineering": {
+      "careerWorldId": "cw_engineering_manufacturing",
+      "careerWorldTitle": "Engineering & Manufacturing"
+    },
+    "rf_engineering_manufacturing_and_infrastructure_chemical_and_process_engineering": {
+      "careerWorldId": "cw_engineering_manufacturing",
+      "careerWorldTitle": "Engineering & Manufacturing"
+    },
+    "rf_engineering_manufacturing_and_infrastructure_civil_and_structural_engineering": {
+      "careerWorldId": "cw_engineering_manufacturing",
+      "careerWorldTitle": "Engineering & Manufacturing"
+    },
+    "rf_engineering_manufacturing_and_infrastructure_electrical_and_electronic_engineering": {
+      "careerWorldId": "cw_engineering_manufacturing",
+      "careerWorldTitle": "Engineering & Manufacturing"
+    },
+    "rf_engineering_manufacturing_and_infrastructure_infrastructure_maintenance_and_asset_engineering": {
+      "careerWorldId": "cw_engineering_manufacturing",
+      "careerWorldTitle": "Engineering & Manufacturing"
+    },
+    "rf_engineering_manufacturing_and_infrastructure_manufacturing_and_production_engineering": {
+      "careerWorldId": "cw_engineering_manufacturing",
+      "careerWorldTitle": "Engineering & Manufacturing"
+    },
+    "rf_engineering_manufacturing_and_infrastructure_mechanical_design_and_development_engineering": {
+      "careerWorldId": "cw_engineering_manufacturing",
+      "careerWorldTitle": "Engineering & Manufacturing"
+    },
+    "rf_engineering_manufacturing_and_infrastructure_robotics_and_automation_engineering": {
+      "careerWorldId": "cw_engineering_manufacturing",
+      "careerWorldTitle": "Engineering & Manufacturing"
+    },
+    "rf_engineering_manufacturing_and_infrastructure_systems_engineering": {
+      "careerWorldId": "cw_engineering_manufacturing",
+      "careerWorldTitle": "Engineering & Manufacturing"
+    },
+    "rf_engineering_manufacturing_and_infrastructure_manufacturing_and_process_technology": {
+      "careerWorldId": "cw_engineering_manufacturing",
+      "careerWorldTitle": "Engineering & Manufacturing"
+    },
+    "rf_engineering_and_manufacturing_motor_vehicle_and_bodywork": {
+      "careerWorldId": "cw_engineering_manufacturing",
+      "careerWorldTitle": "Engineering & Manufacturing"
+    },
+    "rf_architecture_built_environment_and_spatial_design_architectural_technology_and_bim": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_architecture_built_environment_and_spatial_design_architecture": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_architecture_built_environment_and_spatial_design_construction_project_delivery": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_architecture_built_environment_and_spatial_design_surveying_and_cost_consultancy": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_architecture_built_environment_and_spatial_design_sustainability_and_building_performance": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_architecture_built_environment_and_spatial_design_town_planning_and_urban_development": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_architecture_built_environment_and_spatial_design_civil_engineering_technicians": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_business_strategy_commercial_and_leadership_property_and_facilities_management": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_business_strategy_commercial_and_leadership_property_development_and_asset_management": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_skilled_trades_and_construction_bricklaying_carpentry_and_finishing_trades": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_skilled_trades_and_construction_electrical_installation_and_building_services": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_skilled_trades_and_construction_fire_and_building_safety": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_skilled_trades_and_construction_groundworks_steel_and_fabrication": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_skilled_trades_and_construction_plumbing_heating_and_gas": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_skilled_trades_and_construction_surveying_geospatial_and_land": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_skilled_trades_and_construction_telecoms_and_network_infrastructure": {
+      "careerWorldId": "cw_construction_the_built_environment",
+      "careerWorldTitle": "Construction & the Built Environment"
+    },
+    "rf_scientific_discovery_and_innovation_biomedical_and_clinical_research": {
+      "careerWorldId": "cw_science_research",
+      "careerWorldTitle": "Science & Research"
+    },
+    "rf_scientific_discovery_and_innovation_clinical_trials_and_translational_research": {
+      "careerWorldId": "cw_science_research",
+      "careerWorldTitle": "Science & Research"
+    },
+    "rf_scientific_discovery_and_innovation_forensic_science": {
+      "careerWorldId": "cw_science_research",
+      "careerWorldTitle": "Science & Research"
+    },
+    "rf_scientific_discovery_and_innovation_laboratory_science": {
+      "careerWorldId": "cw_science_research",
+      "careerWorldTitle": "Science & Research"
+    },
+    "rf_scientific_discovery_and_innovation_materials_and_chemical_analysis": {
+      "careerWorldId": "cw_science_research",
+      "careerWorldTitle": "Science & Research"
+    },
+    "rf_scientific_discovery_and_innovation_randd_science": {
+      "careerWorldId": "cw_science_research",
+      "careerWorldTitle": "Science & Research"
+    },
+    "rf_scientific_discovery_and_innovation_scientific_data_and_bioinformatics": {
+      "careerWorldId": "cw_science_research",
+      "careerWorldTitle": "Science & Research"
+    },
+    "rf_health_care_and_clinical_practice_pharmaceutical_industry_and_drug_development": {
+      "careerWorldId": "cw_science_research",
+      "careerWorldTitle": "Science & Research"
+    },
+    "rf_health_care_and_clinical_practice_regulatory_affairs_and_medicines_safety": {
+      "careerWorldId": "cw_science_research",
+      "careerWorldTitle": "Science & Research"
+    },
+    "rf_health_care_and_clinical_practice_academic_medicine_and_clinical_research": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_acute_emergency_and_critical_care": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_clinical_medicine_doctor": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_clinical_pharmacy": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_clinical_research_nursing": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_clinical_science_and_laboratory_diagnostics": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_community_pharmacy": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_dental_research_and_academic_dentistry": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_dentistry_dentist": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_diagnostic_and_investigative_medicine": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_diagnostics_imaging_and_clinical_support": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_digital_health_healthtech_and_medical_innovation": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_healthcare_leadership_and_service_improvement": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_medicines_policy_and_public_health_pharmacy": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_mental_health_and_behavioural_medicine": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_midwifery": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_nurse_education_and_leadership": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_nursing": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_oral_health_policy_and_dental_public_health": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_paramedic_practice_and_emergency_care": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_public_health_and_health_improvement": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_public_health_medicine_epidemiology_and_health_policy": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_public_health_nursing_and_health_visiting": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_rehabilitation_and_functional_independence": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_specialist_dentistry": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_surgery_and_procedural_medicine": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_dental_nursing_and_oral_health": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_dietetics_and_nutrition": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_optical_and_eye_care": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_perioperative_and_surgical_care": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_podiatry_and_foot_health": {
+      "careerWorldId": "cw_healthcare_medicine",
+      "careerWorldTitle": "Healthcare & Medicine"
+    },
+    "rf_health_care_and_clinical_practice_emergency_planning_and_ambulance_service_leadership": {
+      "careerWorldId": "cw_protective_emergency_services",
+      "careerWorldTitle": "Protective & Emergency Services"
+    },
+    "rf_protective_and_emergency_services_armed_forces_army_royal_navy_raf": {
+      "careerWorldId": "cw_protective_emergency_services",
+      "careerWorldTitle": "Protective & Emergency Services"
+    },
+    "rf_protective_and_emergency_services_community_safety_and_justice": {
+      "careerWorldId": "cw_protective_emergency_services",
+      "careerWorldTitle": "Protective & Emergency Services"
+    },
+    "rf_protective_and_emergency_services_fire_and_rescue": {
+      "careerWorldId": "cw_protective_emergency_services",
+      "careerWorldTitle": "Protective & Emergency Services"
+    },
+    "rf_protective_and_emergency_services_police": {
+      "careerWorldId": "cw_protective_emergency_services",
+      "careerWorldTitle": "Protective & Emergency Services"
+    },
+    "rf_protective_and_emergency_services_prisons_and_custodial_services": {
+      "careerWorldId": "cw_protective_emergency_services",
+      "careerWorldTitle": "Protective & Emergency Services"
+    },
+    "rf_protective_and_emergency_services_security_fraud_and_resilience": {
+      "careerWorldId": "cw_protective_emergency_services",
+      "careerWorldTitle": "Protective & Emergency Services"
+    },
+    "rf_health_care_and_clinical_practice_social_work_and_safeguarding": {
+      "careerWorldId": "cw_care_support_work",
+      "careerWorldTitle": "Care & Support Work"
+    },
+    "rf_care_and_community_support_children_young_people_and_families": {
+      "careerWorldId": "cw_care_support_work",
+      "careerWorldTitle": "Care & Support Work"
+    },
+    "rf_care_and_community_support_faith_and_community_leadership": {
+      "careerWorldId": "cw_care_support_work",
+      "careerWorldTitle": "Care & Support Work"
+    },
+    "rf_care_support_work_adult_care_work": {
+      "careerWorldId": "cw_care_support_work",
+      "careerWorldTitle": "Care & Support Work"
+    },
+    "rf_care_support_work_funeral_bereavement_services": {
+      "careerWorldId": "cw_care_support_work",
+      "careerWorldTitle": "Care & Support Work"
+    },
+    "rf_health_care_and_clinical_practice_veterinary_and_animal_science": {
+      "careerWorldId": "cw_animals_land_the_outdoors",
+      "careerWorldTitle": "Animals, Land & the Outdoors"
+    },
+    "rf_environment_sustainability_and_planetary_futures_agriculture_forestry_and_land_management": {
+      "careerWorldId": "cw_animals_land_the_outdoors",
+      "careerWorldTitle": "Animals, Land & the Outdoors"
+    },
+    "rf_land_animals_and_the_outdoors_animal_care_and_veterinary_support": {
+      "careerWorldId": "cw_animals_land_the_outdoors",
+      "careerWorldTitle": "Animals, Land & the Outdoors"
+    },
+    "rf_land_animals_and_the_outdoors_farming_and_crop_production": {
+      "careerWorldId": "cw_animals_land_the_outdoors",
+      "careerWorldTitle": "Animals, Land & the Outdoors"
+    },
+    "rf_land_animals_and_the_outdoors_forestry_and_arboriculture": {
+      "careerWorldId": "cw_animals_land_the_outdoors",
+      "careerWorldTitle": "Animals, Land & the Outdoors"
+    },
+    "rf_land_animals_and_the_outdoors_horticulture_landscaping_and_turf": {
+      "careerWorldId": "cw_animals_land_the_outdoors",
+      "careerWorldTitle": "Animals, Land & the Outdoors"
+    },
+    "rf_animals_land_the_outdoors_veterinary_nursing": {
+      "careerWorldId": "cw_animals_land_the_outdoors",
+      "careerWorldTitle": "Animals, Land & the Outdoors"
+    },
+    "rf_health_care_and_clinical_practice_sport_and_exercise_science": {
+      "careerWorldId": "cw_sport_fitness_leisure",
+      "careerWorldTitle": "Sport, Fitness & Leisure"
+    },
+    "rf_health_care_and_clinical_practice_sport_fitness_and_outdoor_instruction": {
+      "careerWorldId": "cw_sport_fitness_leisure",
+      "careerWorldTitle": "Sport, Fitness & Leisure"
+    },
+    "rf_sport_fitness_leisure_personal_training_fitness": {
+      "careerWorldId": "cw_sport_fitness_leisure",
+      "careerWorldTitle": "Sport, Fitness & Leisure"
+    },
+    "rf_sport_fitness_leisure_sports_coaching": {
+      "careerWorldId": "cw_sport_fitness_leisure",
+      "careerWorldTitle": "Sport, Fitness & Leisure"
+    },
+    "rf_sport_fitness_leisure_leisure_facilities_management": {
+      "careerWorldId": "cw_sport_fitness_leisure",
+      "careerWorldTitle": "Sport, Fitness & Leisure"
+    },
+    "rf_psychology_behaviour_and_human_insight_clinical_psychology_and_mental_health_support": {
+      "careerWorldId": "cw_psychology_human_behaviour",
+      "careerWorldTitle": "Psychology & Human Behaviour"
+    },
+    "rf_psychology_behaviour_and_human_insight_counselling_psychotherapy_and_therapeutic_practice": {
+      "careerWorldId": "cw_psychology_human_behaviour",
+      "careerWorldTitle": "Psychology & Human Behaviour"
+    },
+    "rf_psychology_behaviour_and_human_insight_occupational_and_organisational_psychology": {
+      "careerWorldId": "cw_psychology_human_behaviour",
+      "careerWorldTitle": "Psychology & Human Behaviour"
+    },
+    "rf_psychology_behaviour_and_human_insight_justice_rehabilitation_and_behaviour_change": {
+      "careerWorldId": "cw_law_justice_public_services",
+      "careerWorldTitle": "Law, Justice & Public Services"
+    },
+    "rf_law_governance_and_public_impact_barrister_and_advocacy": {
+      "careerWorldId": "cw_law_justice_public_services",
+      "careerWorldTitle": "Law, Justice & Public Services"
+    },
+    "rf_law_governance_and_public_impact_investigations_and_financial_crime": {
+      "careerWorldId": "cw_law_justice_public_services",
+      "careerWorldTitle": "Law, Justice & Public Services"
+    },
+    "rf_law_governance_and_public_impact_legal_support_and_casework": {
+      "careerWorldId": "cw_law_justice_public_services",
+      "careerWorldTitle": "Law, Justice & Public Services"
+    },
+    "rf_law_governance_and_public_impact_policy_and_public_sector_analysis": {
+      "careerWorldId": "cw_law_justice_public_services",
+      "careerWorldTitle": "Law, Justice & Public Services"
+    },
+    "rf_law_governance_and_public_impact_public_affairs_and_advocacy": {
+      "careerWorldId": "cw_law_justice_public_services",
+      "careerWorldTitle": "Law, Justice & Public Services"
+    },
+    "rf_law_governance_and_public_impact_solicitor_practice": {
+      "careerWorldId": "cw_law_justice_public_services",
+      "careerWorldTitle": "Law, Justice & Public Services"
+    },
+    "rf_business_strategy_commercial_and_leadership_public_service_and_policy_delivery": {
+      "careerWorldId": "cw_law_justice_public_services",
+      "careerWorldTitle": "Law, Justice & Public Services"
+    },
+    "rf_society_culture_languages_and_global_affairs_intelligence_public_service_and_security_analysis": {
+      "careerWorldId": "cw_law_justice_public_services",
+      "careerWorldTitle": "Law, Justice & Public Services"
+    },
+    "rf_education_coaching_and_people_development_early_years_and_family_support": {
+      "careerWorldId": "cw_education_early_years",
+      "careerWorldTitle": "Education & Early Years"
+    },
+    "rf_education_coaching_and_people_development_education_support_outreach_and_student_services": {
+      "careerWorldId": "cw_education_early_years",
+      "careerWorldTitle": "Education & Early Years"
+    },
+    "rf_education_coaching_and_people_development_higher_education_and_academic_research": {
+      "careerWorldId": "cw_education_early_years",
+      "careerWorldTitle": "Education & Early Years"
+    },
+    "rf_education_coaching_and_people_development_learning_design_and_educational_technology": {
+      "careerWorldId": "cw_education_early_years",
+      "careerWorldTitle": "Education & Early Years"
+    },
+    "rf_education_coaching_and_people_development_primary_teaching_and_classroom_practice": {
+      "careerWorldId": "cw_education_early_years",
+      "careerWorldTitle": "Education & Early Years"
+    },
+    "rf_education_coaching_and_people_development_secondary_teaching": {
+      "careerWorldId": "cw_education_early_years",
+      "careerWorldTitle": "Education & Early Years"
+    },
+    "rf_education_coaching_and_people_development_send_and_inclusion_support": {
+      "careerWorldId": "cw_education_early_years",
+      "careerWorldTitle": "Education & Early Years"
+    },
+    "rf_education_coaching_and_people_development_training_learning_and_development": {
+      "careerWorldId": "cw_education_early_years",
+      "careerWorldTitle": "Education & Early Years"
+    },
+    "rf_education_coaching_and_people_development_youth_and_community_work": {
+      "careerWorldId": "cw_education_early_years",
+      "careerWorldTitle": "Education & Early Years"
+    },
+    "rf_education_early_years_teaching_assistant_learning_support": {
+      "careerWorldId": "cw_education_early_years",
+      "careerWorldTitle": "Education & Early Years"
+    },
+    "rf_psychology_behaviour_and_human_insight_people_analytics_and_workplace_behaviour": {
+      "careerWorldId": "cw_business_management",
+      "careerWorldTitle": "Business & Management"
+    },
+    "rf_business_strategy_commercial_and_leadership_business_analysis": {
+      "careerWorldId": "cw_business_management",
+      "careerWorldTitle": "Business & Management"
+    },
+    "rf_business_strategy_commercial_and_leadership_business_development_and_commercial_partnerships": {
+      "careerWorldId": "cw_business_management",
+      "careerWorldTitle": "Business & Management"
+    },
+    "rf_business_strategy_commercial_and_leadership_consulting_and_strategic_improvement": {
+      "careerWorldId": "cw_business_management",
+      "careerWorldTitle": "Business & Management"
+    },
+    "rf_business_strategy_commercial_and_leadership_generalist_business_programmes": {
+      "careerWorldId": "cw_business_management",
+      "careerWorldTitle": "Business & Management"
+    },
+    "rf_business_strategy_commercial_and_leadership_hr_people_and_organisations": {
+      "careerWorldId": "cw_business_management",
+      "careerWorldTitle": "Business & Management"
+    },
+    "rf_business_strategy_commercial_and_leadership_operations_and_supply_chain": {
+      "careerWorldId": "cw_business_management",
+      "careerWorldTitle": "Business & Management"
+    },
+    "rf_business_strategy_commercial_and_leadership_project_pmo_and_transformation": {
+      "careerWorldId": "cw_business_management",
+      "careerWorldTitle": "Business & Management"
+    },
+    "rf_business_strategy_commercial_and_leadership_governance_compliance_and_quality": {
+      "careerWorldId": "cw_business_management",
+      "careerWorldTitle": "Business & Management"
+    },
+    "rf_business_strategy_commercial_and_leadership_leadership_and_management": {
+      "careerWorldId": "cw_business_management",
+      "careerWorldTitle": "Business & Management"
+    },
+    "rf_law_governance_and_public_impact_governance_risk_and_compliance": {
+      "careerWorldId": "cw_business_management",
+      "careerWorldTitle": "Business & Management"
+    },
+    "rf_business_strategy_commercial_and_leadership_events_and_experience_management": {
+      "careerWorldId": "cw_hospitality_food_events",
+      "careerWorldTitle": "Hospitality, Food & Events"
+    },
+    "rf_business_strategy_commercial_and_leadership_food_and_beverage_operations": {
+      "careerWorldId": "cw_hospitality_food_events",
+      "careerWorldTitle": "Hospitality, Food & Events"
+    },
+    "rf_business_strategy_commercial_and_leadership_hospitality_and_hotel_management": {
+      "careerWorldId": "cw_hospitality_food_events",
+      "careerWorldTitle": "Hospitality, Food & Events"
+    },
+    "rf_hospitality_food_and_events_professional_chef_and_culinary_arts": {
+      "careerWorldId": "cw_hospitality_food_events",
+      "careerWorldTitle": "Hospitality, Food & Events"
+    },
+    "rf_hospitality_food_events_baking_food_production": {
+      "careerWorldId": "cw_hospitality_food_events",
+      "careerWorldTitle": "Hospitality, Food & Events"
+    },
+    "rf_hospitality_food_events_butchery_fishmongery": {
+      "careerWorldId": "cw_hospitality_food_events",
+      "careerWorldTitle": "Hospitality, Food & Events"
+    },
+    "rf_business_strategy_commercial_and_leadership_real_estate_agency_and_brokerage": {
+      "careerWorldId": "cw_retail_sales_customer_service",
+      "careerWorldTitle": "Retail, Sales & Customer Service"
+    },
+    "rf_business_strategy_commercial_and_leadership_buying_merchandising_and_sales": {
+      "careerWorldId": "cw_retail_sales_customer_service",
+      "careerWorldTitle": "Retail, Sales & Customer Service"
+    },
+    "rf_business_strategy_commercial_and_leadership_customer_service_and_client_delivery": {
+      "careerWorldId": "cw_retail_sales_customer_service",
+      "careerWorldTitle": "Retail, Sales & Customer Service"
+    },
+    "rf_retail_sales_customer_service_retail_shop_work": {
+      "careerWorldId": "cw_retail_sales_customer_service",
+      "careerWorldTitle": "Retail, Sales & Customer Service"
+    },
+    "rf_business_strategy_commercial_and_leadership_real_estate_investment_and_finance": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_accounting_audit_and_assurance": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_asset_and_wealth_management": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_banking_operations_and_middle_office": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_commercial_and_corporate_banking": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_equity_research_and_investment_research": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_financial_analysis_and_fpanda": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_fintech_and_digital_finance": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_insurance_and_actuarial": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_investment_banking_and_corporate_finance": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_markets_and_trading": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_private_equity_and_venture_capital": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_risk_and_quantitative_analysis": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_risk_compliance_and_controls": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_sustainable_finance_and_impact_investing": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_treasury_and_liquidity": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_finance_economics_and_investment_economics": {
+      "careerWorldId": "cw_money_finance_accounting",
+      "careerWorldTitle": "Money, Finance & Accounting"
+    },
+    "rf_transport_aviation_and_maritime_air_traffic_control": {
+      "careerWorldId": "cw_transport_travel_logistics",
+      "careerWorldTitle": "Transport, Travel & Logistics"
+    },
+    "rf_transport_aviation_and_maritime_airline_pilot": {
+      "careerWorldId": "cw_transport_travel_logistics",
+      "careerWorldTitle": "Transport, Travel & Logistics"
+    },
+    "rf_transport_aviation_and_maritime_aviation_operations": {
+      "careerWorldId": "cw_transport_travel_logistics",
+      "careerWorldTitle": "Transport, Travel & Logistics"
+    },
+    "rf_transport_aviation_and_maritime_logistics_and_supply_chain": {
+      "careerWorldId": "cw_transport_travel_logistics",
+      "careerWorldTitle": "Transport, Travel & Logistics"
+    },
+    "rf_transport_aviation_and_maritime_maritime_operations": {
+      "careerWorldId": "cw_transport_travel_logistics",
+      "careerWorldTitle": "Transport, Travel & Logistics"
+    },
+    "rf_transport_aviation_and_maritime_merchant_navy_and_maritime_officer": {
+      "careerWorldId": "cw_transport_travel_logistics",
+      "careerWorldTitle": "Transport, Travel & Logistics"
+    },
+    "rf_transport_aviation_and_maritime_rail_and_passenger_transport_operations": {
+      "careerWorldId": "cw_transport_travel_logistics",
+      "careerWorldTitle": "Transport, Travel & Logistics"
+    },
+    "rf_transport_aviation_and_maritime_rail_and_train_driving": {
+      "careerWorldId": "cw_transport_travel_logistics",
+      "careerWorldTitle": "Transport, Travel & Logistics"
+    },
+    "rf_transport_travel_logistics_warehousing_logistics_operations": {
+      "careerWorldId": "cw_transport_travel_logistics",
+      "careerWorldTitle": "Transport, Travel & Logistics"
+    },
+    "rf_transport_travel_logistics_travel_tourism": {
+      "careerWorldId": "cw_transport_travel_logistics",
+      "careerWorldTitle": "Transport, Travel & Logistics"
+    },
+    "rf_business_strategy_commercial_and_leadership_information_and_knowledge_management": {
+      "careerWorldId": "cw_admin_office_support",
+      "careerWorldTitle": "Admin & Office Support"
+    },
+    "rf_admin_office_support_business_administration_office_support": {
+      "careerWorldId": "cw_admin_office_support",
+      "careerWorldTitle": "Admin & Office Support"
+    },
+    "rf_admin_office_support_hr_recruitment_support": {
+      "careerWorldId": "cw_admin_office_support",
+      "careerWorldTitle": "Admin & Office Support"
+    },
+    "rf_marketing_media_and_communication_brand_and_marketing_strategy": {
+      "careerWorldId": "cw_media_marketing_content_communication",
+      "careerWorldTitle": "Media, Marketing, Content & Communication"
+    },
+    "rf_marketing_media_and_communication_content_and_social_media": {
+      "careerWorldId": "cw_media_marketing_content_communication",
+      "careerWorldTitle": "Media, Marketing, Content & Communication"
+    },
+    "rf_marketing_media_and_communication_journalism_and_editorial": {
+      "careerWorldId": "cw_media_marketing_content_communication",
+      "careerWorldTitle": "Media, Marketing, Content & Communication"
+    },
+    "rf_marketing_media_and_communication_market_research_and_audience_insight": {
+      "careerWorldId": "cw_media_marketing_content_communication",
+      "careerWorldTitle": "Media, Marketing, Content & Communication"
+    },
+    "rf_marketing_media_and_communication_performance_marketing_and_growth": {
+      "careerWorldId": "cw_media_marketing_content_communication",
+      "careerWorldTitle": "Media, Marketing, Content & Communication"
+    },
+    "rf_marketing_media_and_communication_pr_and_communications": {
+      "careerWorldId": "cw_media_marketing_content_communication",
+      "careerWorldTitle": "Media, Marketing, Content & Communication"
+    },
+    "rf_creative_arts_design_and_experience_film_tv_and_media_production": {
+      "careerWorldId": "cw_media_marketing_content_communication",
+      "careerWorldTitle": "Media, Marketing, Content & Communication"
+    },
+    "rf_creative_arts_design_and_experience_animation_and_motion_design": {
+      "careerWorldId": "cw_creative_arts_design",
+      "careerWorldTitle": "Creative Arts & Design"
+    },
+    "rf_creative_arts_design_and_experience_digital_design_and_multimedia": {
+      "careerWorldId": "cw_creative_arts_design",
+      "careerWorldTitle": "Creative Arts & Design"
+    },
+    "rf_creative_arts_design_and_experience_graphic_design_and_visual_communication": {
+      "careerWorldId": "cw_creative_arts_design",
+      "careerWorldTitle": "Creative Arts & Design"
+    },
+    "rf_creative_arts_design_and_experience_product_and_industrial_design": {
+      "careerWorldId": "cw_creative_arts_design",
+      "careerWorldTitle": "Creative Arts & Design"
+    },
+    "rf_making_craft_and_repair_bespoke_textiles_and_tailoring": {
+      "careerWorldId": "cw_creative_arts_design",
+      "careerWorldTitle": "Creative Arts & Design"
+    },
+    "rf_making_craft_and_repair_fine_craft_and_making": {
+      "careerWorldId": "cw_creative_arts_design",
+      "careerWorldTitle": "Creative Arts & Design"
+    },
+    "rf_making_craft_and_repair_furniture_making_and_restoration": {
+      "careerWorldId": "cw_creative_arts_design",
+      "careerWorldTitle": "Creative Arts & Design"
+    },
+    "rf_creative_arts_design_photography": {
+      "careerWorldId": "cw_creative_arts_design",
+      "careerWorldTitle": "Creative Arts & Design"
+    },
+    "rf_environment_sustainability_and_planetary_futures_circular_economy_and_sustainable_supply_chains": {
+      "careerWorldId": "cw_environment_sustainability",
+      "careerWorldTitle": "Environment & Sustainability"
+    },
+    "rf_environment_sustainability_and_planetary_futures_conservation_and_land_management": {
+      "careerWorldId": "cw_environment_sustainability",
+      "careerWorldTitle": "Environment & Sustainability"
+    },
+    "rf_environment_sustainability_and_planetary_futures_environmental_policy_and_impact_assessment": {
+      "careerWorldId": "cw_environment_sustainability",
+      "careerWorldTitle": "Environment & Sustainability"
+    },
+    "rf_environment_sustainability_and_planetary_futures_environmental_science_and_monitoring": {
+      "careerWorldId": "cw_environment_sustainability",
+      "careerWorldTitle": "Environment & Sustainability"
+    },
+    "rf_environment_sustainability_and_planetary_futures_net_zero_climate_and_sustainability_strategy": {
+      "careerWorldId": "cw_environment_sustainability",
+      "careerWorldTitle": "Environment & Sustainability"
+    },
+    "rf_environment_sustainability_and_planetary_futures_sustainability_and_esg_advisory": {
+      "careerWorldId": "cw_environment_sustainability",
+      "careerWorldTitle": "Environment & Sustainability"
+    },
+    "rf_land_animals_and_the_outdoors_environment_and_water_management": {
+      "careerWorldId": "cw_environment_sustainability",
+      "careerWorldTitle": "Environment & Sustainability"
+    },
+    "rf_society_culture_languages_and_global_affairs_international_development_and_ngo_programmes": {
+      "careerWorldId": "cw_society_culture_languages",
+      "careerWorldTitle": "Languages, Cultures & Global Affairs"
+    },
+    "rf_society_culture_languages_and_global_affairs_international_relations_policy_and_geopolitical_analysis": {
+      "careerWorldId": "cw_society_culture_languages",
+      "careerWorldTitle": "Languages, Cultures & Global Affairs"
+    },
+    "rf_society_culture_languages_and_global_affairs_languages_translation_and_localisation": {
+      "careerWorldId": "cw_society_culture_languages",
+      "careerWorldTitle": "Languages, Cultures & Global Affairs"
+    },
+    "rf_society_culture_languages_and_global_affairs_social_research_and_cultural_analysis": {
+      "careerWorldId": "cw_society_culture_languages",
+      "careerWorldTitle": "Languages, Cultures & Global Affairs"
+    },
+    "rf_society_culture_languages_and_global_affairs_heritage_museums_and_archives": {
+      "careerWorldId": "cw_society_culture_languages",
+      "careerWorldTitle": "Languages, Cultures & Global Affairs"
+    },
+    "rf_performing_arts_music_acting_performance": {
+      "careerWorldId": "cw_performing_arts_music",
+      "careerWorldTitle": "Performing Arts & Music"
+    },
+    "rf_performing_arts_music_music_performance_production": {
+      "careerWorldId": "cw_performing_arts_music",
+      "careerWorldTitle": "Performing Arts & Music"
+    },
+    "rf_performing_arts_music_dance_choreography": {
+      "careerWorldId": "cw_performing_arts_music",
+      "careerWorldTitle": "Performing Arts & Music"
+    },
+    "rf_performing_arts_music_theatre_stage_production": {
+      "careerWorldId": "cw_performing_arts_music",
+      "careerWorldTitle": "Performing Arts & Music"
+    },
+    "rf_performing_arts_music_sound_audio_production": {
+      "careerWorldId": "cw_performing_arts_music",
+      "careerWorldTitle": "Performing Arts & Music"
+    },
+    "rf_hair_beauty_personal_care_hairdressing_barbering": {
+      "careerWorldId": "cw_hair_beauty_personal_care",
+      "careerWorldTitle": "Hair, Beauty & Personal Care"
+    },
+    "rf_hair_beauty_personal_care_beauty_therapy_nails": {
+      "careerWorldId": "cw_hair_beauty_personal_care",
+      "careerWorldTitle": "Hair, Beauty & Personal Care"
+    },
+    "rf_hair_beauty_personal_care_aesthetics_holistic_therapy": {
+      "careerWorldId": "cw_hair_beauty_personal_care",
+      "careerWorldTitle": "Hair, Beauty & Personal Care"
+    },
+    "rf_entrepreneurship_innovation_and_venture_building_product_growth_and_business_development_in_start_ups": {
+      "careerWorldId": "cw_entrepreneurship_innovation_venture_building",
+      "careerWorldTitle": "Entrepreneurship, Innovation & Venture Building"
+    },
+    "rf_entrepreneurship_innovation_and_venture_building_start_up_operations": {
+      "careerWorldId": "cw_entrepreneurship_innovation_venture_building",
+      "careerWorldTitle": "Entrepreneurship, Innovation & Venture Building"
+    },
+    "rf_entrepreneurship_innovation_and_venture_building_venture_building_and_founder": {
+      "careerWorldId": "cw_entrepreneurship_innovation_venture_building",
+      "careerWorldTitle": "Entrepreneurship, Innovation & Venture Building"
+    },
+    "rf_entrepreneurship_innovation_and_venture_building_venture_capital_accelerators_and_innovation_support": {
+      "careerWorldId": "cw_entrepreneurship_innovation_venture_building",
+      "careerWorldTitle": "Entrepreneurship, Innovation & Venture Building"
+    }
+  }
+}

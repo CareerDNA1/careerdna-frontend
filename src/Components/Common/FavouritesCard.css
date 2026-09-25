@@ -302,3 +302,7 @@
    them to one size so the boxes look uniform. */
 .fav-prev-ic svg { width: 16px; height: 16px; }
 .fav-item-ic svg { width: 17px; height: 17px; }
+
+/* Kept orphan note: parent world/pathway no longer liked, so this item shows
+   here but not in the report tabs. */
+.fav-note { color: #a77b12; }

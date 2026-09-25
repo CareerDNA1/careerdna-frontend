@@ -1,4 +1,14 @@
 import { supabase } from './supabaseClient';
+import { canonicalItem, pathwayWorld, canonicalWorldId } from './canonicalIds';
+
+// The insights engine labels pathway families as type "role" in the university
+// flow, so a liked PATHWAY can be stored with item_type 'role'. Recognise those
+// (by canonical title/id) and treat them as pathways.
+export function normaliseFavouriteType(itemType, itemId, itemTitle) {
+  const t = String(itemType || 'other');
+  if (t !== 'role') return t;
+  return canonicalItem(t, itemId, itemTitle).type;
+}
 
 // Favourites are the items the student liked on a SINGLE assessment run (their
 // latest one). Backed by the result_feedback table (feedback_scope 'item_reaction',
@@ -10,8 +20,12 @@ export const FAV_CATEGORIES = [
   { type: 'role', label: 'Roles' },
   { type: 'apprenticeship', label: 'Apprenticeships' },
   { type: 'nonuni_pathway', label: 'Training & work pathways' },
+  // Live apprenticeship adverts saved from the Training & Work tab. Stored as
+  // item_type 'job' (same card, same link/expiry handling) but grouped here,
+  // next to the other training items, not under jobs.
+  { type: 'job', key: 'apprenticeship_advert', label: 'Training & work adverts' },
   { type: 'course', label: 'University courses' },
-  { type: 'job', label: 'Saved jobs' },
+  { type: 'job', key: 'job', label: 'Saved jobs' },
   { type: 'strength', label: 'Strengths' },
   { type: 'environment', label: 'Ideal environments' },
 ];
@@ -52,7 +66,7 @@ export async function getFavouritesByCategory(runId) {
   const rows = (data || []).filter((r) => r.item_id && r.item_title);
   const byType = new Map();
   rows.forEach((r) => {
-    const t = String(r.item_type || 'other');
+    const t = normaliseFavouriteType(r.item_type, r.item_id, r.item_title);
     const meta = (r.item_meta && typeof r.item_meta === 'object') ? r.item_meta : {};
     const rawId = String(r.item_id || '');
     // Recover the university and link from the id when the item_meta snapshot is
@@ -75,6 +89,7 @@ export async function getFavouritesByCategory(runId) {
       id: r.item_id,
       title: r.item_title,
       type: t,
+      storedType: String(r.item_type || 'other'),
       url: meta.url || idUrl || '',
       subtitle: meta.university || meta.employer || idUni || '',
       subject: meta.subject || '',
@@ -87,20 +102,60 @@ export async function getFavouritesByCategory(runId) {
       const d = new Date(meta.closingDate);
       if (!Number.isNaN(d.getTime()) && d < today) item.expired = true;
     }
-    if (!byType.has(t)) byType.set(t, []);
-    byType.get(t).push(item);
+    // Group key: apprenticeship adverts are jobs by type but sit with the
+    // Training & Work favourites.
+    const isApprenticeshipAd = t === 'job' && (meta.kind === 'apprenticeship' || /apprentice/i.test(String(meta.source || '')));
+    const gk = t === 'job' ? (isApprenticeshipAd ? 'apprenticeship_advert' : 'job') : t;
+    if (!byType.has(gk)) byType.set(gk, []);
+    byType.get(gk).push(item);
+  });
+
+  // Kept orphans: a favourite whose parent world or pathway is no longer liked
+  // still lives here but is no longer shown in the report tabs. Mark it with a
+  // short note so the student knows why it is only on the profile.
+  const nkey = (v) => String(v || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  const likedWorlds = new Set();
+  const likedPathways = new Set();
+  byType.forEach((items, type) => {
+    items.forEach((it) => {
+      if (type === 'career_world') { likedWorlds.add(nkey(it.title)); likedWorlds.add(canonicalWorldId(it.id, it.title)); }
+      if (type === 'pathway') likedPathways.add(nkey(it.title));
+    });
+  });
+  const worldLiked = (id, title) => (id && likedWorlds.has(canonicalWorldId(id, title))) || (title && likedWorlds.has(nkey(title)));
+  byType.forEach((items, type) => {
+    items.forEach((it) => {
+      const m = it.meta || {};
+      if (type === 'pathway') {
+        const w = pathwayWorld(it.id, it.title);
+        if (w && !worldLiked(w.careerWorldId, w.careerWorldTitle)) it.note = `Kept from ${w.careerWorldTitle}`;
+        return;
+      }
+      if (!['subject', 'role', 'nonuni_pathway', 'apprenticeship'].includes(type)) return;
+      const pathwayTitle = m.pathwayTitle || (type === 'nonuni_pathway' ? it.title : '');
+      const w = (m.careerWorldId || m.careerWorldTitle)
+        ? { careerWorldId: m.careerWorldId || '', careerWorldTitle: m.careerWorldTitle || '' }
+        : (pathwayTitle ? pathwayWorld('', pathwayTitle) : null);
+      const pathwayStillLiked = pathwayTitle && likedPathways.has(nkey(pathwayTitle));
+      const worldStillLiked = w && worldLiked(w.careerWorldId, w.careerWorldTitle);
+      if (!pathwayStillLiked && !worldStillLiked && (pathwayTitle || (w && w.careerWorldTitle))) {
+        const from = (pathwayTitle && pathwayTitle !== it.title) ? pathwayTitle : (w && w.careerWorldTitle) || pathwayTitle;
+        if (from) it.note = `Kept from ${from}`;
+      }
+    });
   });
 
   const groups = [];
   FAV_CATEGORIES.forEach((c) => {
-    if (byType.has(c.type)) { groups.push({ type: c.type, label: c.label, items: byType.get(c.type) }); byType.delete(c.type); }
+    const k = c.key || c.type;
+    if (byType.has(k)) { groups.push({ type: c.type, key: k, label: c.label, items: byType.get(k) }); byType.delete(k); }
   });
-  byType.forEach((items, type) => groups.push({ type, label: 'Other', items }));
+  byType.forEach((items, type) => groups.push({ type, key: type, label: 'Other', items }));
   return groups;
 }
 
 // Remove one favourite (delete that like row for this run).
-export async function removeFavourite(runId, itemId, itemType) {
+export async function removeFavourite(runId, itemId, itemType, storedType = '') {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('You need to be logged in.');
   const { error } = await supabase
@@ -109,7 +164,7 @@ export async function removeFavourite(runId, itemId, itemType) {
     .eq('user_id', user.id)
     .eq('assessment_run_id', runId)
     .eq('feedback_scope', 'item_reaction')
-    .eq('item_type', itemType)
+    .eq('item_type', storedType || itemType)
     .eq('item_id', itemId);
   if (error) throw error;
 }

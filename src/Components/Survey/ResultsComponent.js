@@ -29,6 +29,10 @@ import { getStrengthIcon, getEnvironmentIcon, getCareerWorldIcon, getPathwayIcon
 import { ThumbsUp, ThumbsDown } from 'phosphor-react';
 import { getProfileQualityGateMessage } from '../../utils/profileQualityGate';
 import { setActiveRunId } from '../../utils/savedItems';
+import { findChildFavourites, deleteFavouriteRows, pathwayParentMeta } from '../../utils/favouriteCascade';
+import { normaliseFavouriteType } from '../../utils/favourites';
+import { canonicalItem } from '../../utils/canonicalIds';
+import CascadeRemoveModal from '../Common/CascadeRemoveModal';
 
 // Per-section contextual advisor config: which analysis tabs get an inline
 // "ask the advisor" panel, the section tag used to store/filter its own thread,
@@ -437,23 +441,38 @@ async function saveResultFeedbackRow(payload = {}) {
     comment = null,
     remove = false,
     itemMeta = null,
+    // Superseded ids/types this item may already be stored under (older rows),
+    // so an update or removal finds the existing row instead of adding a twin.
+    itemIdAliases = [],
+    itemTypeAliases = [],
   } = payload;
 
   if (!userId || !assessmentRunId || !feedbackScope) return { skipped: true };
 
-  const baseQuery = () => {
-    let query = supabase
+  const baseQuery = async () => {
+    const start = () => supabase
       .from('result_feedback')
       .select('id')
       .eq('user_id', userId)
       .eq('assessment_run_id', assessmentRunId)
       .eq('feedback_scope', feedbackScope);
 
-    if (feedbackScope === 'item_reaction') {
-      query = query.eq('item_type', itemType).eq('item_id', itemId);
-    }
+    if (feedbackScope !== 'item_reaction') return start().maybeSingle();
 
-    return query.maybeSingle();
+    const ids = Array.from(new Set([itemId, ...(itemIdAliases || [])].filter(Boolean)));
+    const types = Array.from(new Set([itemType, ...(itemTypeAliases || [])].filter(Boolean)));
+    const byId = await start().in('item_type', types).in('item_id', ids).order('updated_at', { ascending: false }).limit(1).maybeSingle();
+    if (byId.error || byId.data?.id) return byId;
+    // Not found under any known id: an older row may sit under a superseded id
+    // we cannot predict. For worlds and pathways the title is the stable key.
+    if (itemTitle && ['career_world', 'pathway', 'role'].includes(itemType)) {
+      const byTitle = await start()
+        .in('item_type', Array.from(new Set([...types, 'pathway', 'role'])))
+        .eq('item_title', itemTitle)
+        .order('updated_at', { ascending: false }).limit(1).maybeSingle();
+      if (!byTitle.error && byTitle.data?.id) return byTitle;
+    }
+    return byId;
   };
 
   if (remove && feedbackScope === 'item_reaction') {
@@ -562,13 +581,19 @@ function extractSelectableItems(analysisMeta) {
 
       const canonicalSignal = extractCanonicalSignalFromItem(row);
 
+      // One canonical id per pathway/world regardless of when the report was
+      // generated (older reports carry older id schemes, or none).
+      const rawType = config.type || row?.type;
+      const canon = canonicalItem(rawType, row?.id || makeSelectableItemId(sectionKey, title), title);
       out.push({
-        id: row?.id || makeSelectableItemId(sectionKey, title),
+        id: canon.id,
+        rawId: String(row?.id || ''),
+        rawType: rawType || '',
         title,
         // Prefer the section config type — for undergraduates the backend labels
         // pathway cards as 'role', but here they must be 'pathway' (roles are the
         // deeper level shown inside Discover More).
-        type: config.type || row?.type,
+        type: canon.type,
         sourceSection: sectionKey,
         signalLabel: canonicalSignal.signalLabel,
         signalBlocks: canonicalSignal.signalBlocks,
@@ -1548,6 +1573,44 @@ export default function ResultsComponent({
   const profileTabsListRef = useRef(null);
   const markdownContentRef = useRef(null);
   const [itemReactions, setItemReactions] = useState({});
+  // True once the likes for THIS run have been read from the database (or, for
+  // an anonymous viewer, from the browser). Tabs built from likes wait for it,
+  // so they never render from a stale set and then jump.
+  const [reactionsLoaded, setReactionsLoaded] = useState(false);
+  // Unliking a world/pathway that still has favourites saved under it opens a
+  // prompt: { parent, children }. See utils/favouriteCascade.js.
+  const [cascadePrompt, setCascadePrompt] = useState(null);
+  const [cascadeBusy, setCascadeBusy] = useState(false);
+  const maybeOfferCascade = async (parent) => {
+    if (!profileUserId || !effectiveAssessmentRunId || !parent) return;
+    if (!['career_world', 'pathway', 'subject'].includes(parent.type)) return;
+    try {
+      const children = await findChildFavourites({ userId: profileUserId, runId: effectiveAssessmentRunId, parent });
+      if (children.length) { hideFeedbackTooltip(); setCascadePrompt({ parent, children }); }
+    } catch (_) { /* never block the unlike itself */ }
+  };
+  const runCascadeRemove = async () => {
+    if (!cascadePrompt) return;
+    setCascadeBusy(true);
+    try {
+      await deleteFavouriteRows(cascadePrompt.children.map((c) => c.id));
+      // Clear their local reaction state too, so pills and lists update at once.
+      const gone = new Set(cascadePrompt.children.map((c) => c.item_title));
+      setItemReactions((prev) => {
+        const next = { ...prev };
+        Object.keys(next).forEach((k) => {
+          const meta = itemReactionMeta[k];
+          if (meta && gone.has(meta.title) && ['pathway', 'subject', 'role', 'nonuni_pathway', 'apprenticeship', 'course'].includes(meta.type)) delete next[k];
+        });
+        return next;
+      });
+    } catch (err) {
+      console.warn('Could not remove saved items:', err?.message || err);
+    } finally {
+      setCascadeBusy(false);
+      setCascadePrompt(null);
+    }
+  };
   // One shared filter for the uni Career Pathways tab (drives both the matched
   // and adjacent pathway groups). Uni students don't get the "Ways in" group.
   const [pathwayTabFilter, setPathwayTabFilter] = useState(emptyResultsFilter());
@@ -1674,11 +1737,65 @@ export default function ResultsComponent({
     });
     return map;
   }, [analysisMeta]);
+  // Reactions resolved by TITLE as well as id. The same pathway can carry a
+  // different id depending on where it was rendered (precomputed insight rows,
+  // live insight items, the university families list), so a like saved under
+  // one id must still show as a bookmark when the item appears under another.
+  //
+  // Two stages on purpose. The base map (report items only) drives which
+  // insights get fetched; the full map also covers the fetched insight rows.
+  // If the fetched rows fed back into what gets fetched, every load would
+  // trigger another load (an infinite update loop).
+  const reactionsByTitle = useMemo(() => {
+    const keyOf = (t) => String(t || '').toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '');
+    const byTitle = new Map();
+    Object.entries(itemReactions).forEach(([id, r]) => {
+      const m = itemReactionMeta[id];
+      const k = keyOf(m?.title);
+      if (k && r && !byTitle.has(k)) byTitle.set(k, r);
+    });
+    return { keyOf, byTitle };
+  }, [itemReactions, itemReactionMeta]);
+
+  const baseResolvedItemReactions = useMemo(() => {
+    const out = { ...itemReactions };
+    const { keyOf, byTitle } = reactionsByTitle;
+    if (!byTitle.size) return out;
+    const alias = (item) => {
+      if (!item || !item.id || out[item.id]) return;
+      const r = byTitle.get(keyOf(item.title));
+      if (r) out[item.id] = r;
+    };
+    selectableMaps.byId.forEach((item) => alias(item));
+    VOCATIONAL_WORLD_ITEMS_BY_ID.forEach((item) => alias(item));
+    return out;
+  }, [itemReactions, reactionsByTitle, selectableMaps]);
+
+  const resolvedItemReactions = useMemo(() => {
+    const { keyOf, byTitle } = reactionsByTitle;
+    if (!byTitle.size || !(selectionInsights || []).length) return baseResolvedItemReactions;
+    const out = { ...baseResolvedItemReactions };
+    const alias = (item) => {
+      if (!item || !item.id || out[item.id]) return;
+      const r = byTitle.get(keyOf(item.title));
+      if (r) out[item.id] = r;
+    };
+    (selectionInsights || []).forEach((ins) => {
+      alias(ins);
+      (Array.isArray(ins?.pathways) ? ins.pathways : []).forEach((pw) => {
+        alias(pw);
+        (Array.isArray(pw?.roles) ? pw.roles : []).forEach(alias);
+      });
+      (Array.isArray(ins?.roles) ? ins.roles : []).forEach(alias);
+    });
+    return out;
+  }, [baseResolvedItemReactions, reactionsByTitle, selectionInsights]);
+
   const likedInsightItemIds = useMemo(
-    () => Object.entries(itemReactions)
+    () => Object.entries(baseResolvedItemReactions)
       .filter(([, reaction]) => reaction === 'like')
       .map(([id]) => id),
-    [itemReactions]
+    [baseResolvedItemReactions]
   );
 
   const selectedInsightItems = useMemo(
@@ -1688,7 +1805,9 @@ export default function ResultsComponent({
       // as a career_world item, letting their scored pathways load in the Pathway
       // Explorer just like the academic worlds.
       .map((id) => selectableMaps.byId.get(id) || VOCATIONAL_WORLD_ITEMS_BY_ID.get(id))
-      .filter((item) => item?.insightEnabled !== false && (item?.type === 'career_world' || item?.type === 'pathway' || item?.type === 'role')),
+      .filter((item) => item?.insightEnabled !== false && (item?.type === 'career_world' || item?.type === 'pathway' || item?.type === 'role'))
+      // The title aliasing above can make one item liked under two ids; keep one.
+      .filter((item, i, arr) => arr.findIndex((o) => String(o?.title || '').toLowerCase() === String(item?.title || '').toLowerCase()) === i),
     [likedInsightItemIds, selectableMaps]
   );
 
@@ -1829,9 +1948,9 @@ export default function ResultsComponent({
   // for exploration but do not drive this list.)
   const likedWorldItems = useMemo(
     () => [...(careerWorldAccordionItems || []), ...(careerWorldLowerAccordionItems || [])]
-      .filter((w) => itemReactions[w.id] === 'like')
+      .filter((w) => resolvedItemReactions[w.id] === 'like')
       .map((w) => ({ id: w.id, title: w.title, careerWorldId: w.careerWorldId || '', type: 'career_world', signalLabel: w.signalLabel || '' })),
-    [careerWorldAccordionItems, careerWorldLowerAccordionItems, itemReactions]
+    [careerWorldAccordionItems, careerWorldLowerAccordionItems, resolvedItemReactions]
   );
 
   // Non-University Routes also covers the 7 vocational worlds, which aren't in the
@@ -1843,10 +1962,15 @@ export default function ResultsComponent({
   // Titles of the pathways the student liked (kept in the reaction meta). Used to
   // highlight the most relevant degrees within each world in Further Study.
   const likedPathwayTitles = useMemo(
-    () => Object.entries(itemReactions)
-      .filter(([id, r]) => r === 'like' && itemReactionMeta[id]?.type === 'pathway')
+    () => Array.from(new Set(Object.entries(itemReactions)
+      .filter(([id, r]) => {
+        if (r !== 'like') return false;
+        const m = itemReactionMeta[id];
+        // The university flow stores pathway families with type 'role'.
+        return normaliseFavouriteType(m?.type, id, m?.title) === 'pathway';
+      })
       .map(([id]) => itemReactionMeta[id]?.title)
-      .filter(Boolean),
+      .filter(Boolean))),
     [itemReactions, itemReactionMeta]
   );
 
@@ -2070,6 +2194,10 @@ export default function ResultsComponent({
     skipNextReactionPersistRef.current = true;
 
     async function loadSavedReactions() {
+      // Wait until we know whether there is a signed-in user; otherwise we
+      // would briefly show the anonymous browser copy to a signed-in student.
+      if (!reportInfoLoaded) return;
+
       let fallback = {};
       try {
         const stored = window.localStorage.getItem(reactionsStorageKey);
@@ -2079,7 +2207,9 @@ export default function ResultsComponent({
       }
 
       if (!profileUserId || !effectiveAssessmentRunId) {
-        if (!cancelled) setItemReactions(fallback);
+        // Anonymous results view (report not saved yet): the browser copy is
+        // the only place likes can live.
+        if (!cancelled) { setItemReactions(fallback); setReactionsLoaded(true); }
         return;
       }
 
@@ -2097,31 +2227,36 @@ export default function ResultsComponent({
         const metaFromDatabase = {};
         (Array.isArray(data) ? data : []).forEach((row) => {
           if (row?.item_id && row?.reaction) {
-            fromDatabase[row.item_id] = row.reaction;
-            metaFromDatabase[row.item_id] = { title: row.item_title || '', type: row.item_type || '' };
+            // Older rows may carry a superseded id: key them by the canonical one.
+            const canon = canonicalItem(row.item_type, row.item_id, row.item_title);
+            fromDatabase[canon.id] = row.reaction;
+            metaFromDatabase[canon.id] = { title: row.item_title || '', type: canon.type || row.item_type || '' };
           }
         });
 
         if (!cancelled) {
-          // With a real user + run, the database is the source of truth for THIS
-          // run. An empty result means no reactions yet, so do not fall back to
-          // the localStorage copy (its key degrades to a shared "latest" and
-          // would otherwise carry a previous run's likes into a new run).
+          // Signed in: the database is the ONLY source of truth for this run.
+          // Never mix in the browser copy (its key can degrade to a shared
+          // "latest" and carry another report's likes in).
           setItemReactions(fromDatabase);
           setItemReactionMeta(metaFromDatabase);
+          setReactionsLoaded(true);
+          try { window.localStorage.removeItem(reactionsStorageKey); } catch { /* ignore */ }
         }
       } catch (err) {
         console.warn('Could not load saved item feedback:', err?.message || err);
-        if (!cancelled) setItemReactions(fallback);
+        // Database unreachable: show nothing rather than a stale copy.
+        if (!cancelled) { setItemReactions({}); setReactionsLoaded(true); }
       }
     }
 
+    setReactionsLoaded(false);
     loadSavedReactions();
 
     return () => {
       cancelled = true;
     };
-  }, [reactionsStorageKey, profileUserId, effectiveAssessmentRunId]);
+  }, [reactionsStorageKey, profileUserId, effectiveAssessmentRunId, reportInfoLoaded]);
 
   useEffect(() => {
     if (skipNextReactionPersistRef.current) {
@@ -2129,16 +2264,20 @@ export default function ResultsComponent({
       return;
     }
 
-    try {
-      window.localStorage.setItem(reactionsStorageKey, JSON.stringify(itemReactions));
-    } catch {
-      // Ignore storage errors.
+    // Only an anonymous viewer keeps likes in the browser; a signed-in
+    // student's likes live in the database (see loadSavedReactions).
+    if (!profileUserId) {
+      try {
+        window.localStorage.setItem(reactionsStorageKey, JSON.stringify(itemReactions));
+      } catch {
+        // Ignore storage errors.
+      }
     }
 
     if (typeof onItemReactionsChange === 'function') {
       onItemReactionsChange(itemReactions);
     }
-  }, [itemReactions, reactionsStorageKey, onItemReactionsChange]);
+  }, [itemReactions, reactionsStorageKey, onItemReactionsChange, profileUserId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -2234,7 +2373,15 @@ export default function ResultsComponent({
         itemTitle: item.title || '',
         reaction: remove ? null : reaction,
         remove,
+        itemMeta: item.type === 'pathway' ? (pathwayParentMeta(item.id, item.title) || null) : null,
+        itemIdAliases: item.rawId && item.rawId !== item.id ? [item.rawId] : [],
+        itemTypeAliases: item.rawType && item.rawType !== item.type ? [item.rawType] : [],
       });
+      // A like on a world/pathway being withdrawn (removed or turned into a
+      // dislike): offer to clear what was saved under it.
+      if (remove || reaction !== 'like') {
+        maybeOfferCascade({ type: item.type, id: item.id, title: item.title || '' });
+      }
     } catch (err) {
       console.warn('Could not save item feedback:', err?.message || err);
     }
@@ -2270,8 +2417,23 @@ export default function ResultsComponent({
     }
   };
 
-  const handleNestedItemReaction = async ({ itemType, itemId, itemTitle, reaction, remove = false, itemMeta = null }) => {
-    if (!profileUserId || !effectiveAssessmentRunId || !itemType || !itemId) return;
+  // Record the visit whenever the Strengths or Environments tab is the one on
+  // screen, however it was reached (a click, a swipe, or arriving from the
+  // profile's "Next step" link, which sets the tab directly).
+  useEffect(() => {
+    if (openTopSection !== 'analysis') return;
+    if (activeAnalysisTab === 'strengths') persistSectionVisit('strength');
+    else if (activeAnalysisTab === 'environments') persistSectionVisit('environment');
+  }, [openTopSection, activeAnalysisTab, profileUserId, effectiveAssessmentRunId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleNestedItemReaction = async ({ itemType: rawItemType, itemId: rawItemId, itemTitle, reaction, remove = false, itemMeta = null }) => {
+    if (!profileUserId || !effectiveAssessmentRunId || !rawItemType || !rawItemId) return;
+    // Save under the canonical id and type, whatever the component used.
+    const canon = canonicalItem(rawItemType, rawItemId, itemTitle);
+    const itemType = canon.type;
+    const itemId = canon.id;
+    const itemIdAliases = rawItemId !== itemId ? [rawItemId] : [];
+    const itemTypeAliases = rawItemType !== itemType ? [rawItemType] : [];
 
     // Keep local reaction state in sync so nested pills (e.g. Discover More
     // pathways) persist across tab switches, not just after a full reload.
@@ -2288,6 +2450,14 @@ export default function ResultsComponent({
       return next;
     });
 
+    // A pathway like carries the world it belongs to, so unliking that world
+    // can offer to clear the pathway too.
+    let metaToSave = itemMeta;
+    if (itemType === 'pathway' && !(itemMeta && itemMeta.careerWorldId)) {
+      const w = pathwayParentMeta(itemId, itemTitle);
+      if (w) metaToSave = { ...(itemMeta || {}), ...w };
+    }
+
     try {
       await saveResultFeedbackRow({
         userId: profileUserId,
@@ -2298,8 +2468,13 @@ export default function ResultsComponent({
         itemTitle,
         reaction: remove ? null : reaction,
         remove,
-        itemMeta,
+        itemMeta: metaToSave,
+        itemIdAliases,
+        itemTypeAliases,
       });
+      if (['career_world', 'pathway', 'subject'].includes(itemType) && (remove || reaction !== 'like')) {
+        maybeOfferCascade({ type: itemType, id: itemId, title: itemTitle || '' });
+      }
     } catch (err) {
       console.warn('Could not save nested item feedback:', err?.message || err);
     }
@@ -2320,7 +2495,7 @@ export default function ResultsComponent({
   useEffect(() => {
     if (!activeTab?.markdown || !markdownContentRef.current) return;
     const frame = window.requestAnimationFrame(() => {
-      decorateAnalysisSignals(markdownContentRef.current, analysisMeta, itemReactions, scoresForChart);
+      decorateAnalysisSignals(markdownContentRef.current, analysisMeta, resolvedItemReactions, scoresForChart);
   });
     return () => window.cancelAnimationFrame(frame);
   });
@@ -2349,7 +2524,7 @@ export default function ResultsComponent({
       const reaction = button.dataset.reaction;
       if (!itemId || !reaction) return;
 
-      const shouldRemove = (itemReactions[itemId] || '') === reaction;
+      const shouldRemove = (resolvedItemReactions[itemId] || itemReactions[itemId] || '') === reaction;
       setItemReactions((prev) => {
         if (shouldRemove) {
           const next = { ...prev };
@@ -2403,19 +2578,11 @@ export default function ResultsComponent({
       window.removeEventListener('scroll', hideFeedbackTooltip);
       hideFeedbackTooltip();
     };
-  }, [activeTab?.markdown, selectableMaps, profileUserId, effectiveAssessmentRunId, itemReactions]);
+  }, [activeTab?.markdown, selectableMaps, profileUserId, effectiveAssessmentRunId, resolvedItemReactions]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    setItemReactions((prev) => {
-      const next = {};
-      Object.entries(prev).forEach(([id, reaction]) => {
-        // Keep reactions for main selectable items and for vocational worlds
-        // (which live outside the main selectable map).
-        if (selectableMaps.byId.has(id) || VOCATIONAL_WORLD_ITEMS_BY_ID.has(id)) next[id] = reaction;
-      });
-      return next;
-    });
-  }, [selectableMaps]);
+  // (Reactions are never pruned against the selectable map: likes on roles,
+  // degrees, routes, courses and jobs live outside it and must survive a
+  // re-render of the report sections.)
 
   useEffect(() => {
     if (selectedInsightItems.length > 0) return;
@@ -2683,10 +2850,10 @@ export default function ResultsComponent({
   // world header, exactly like University and Career Pathways.
   const likedWorldItemsWithVocational = useMemo(() => {
     const voc = vocationalWorldItems
-      .filter((w) => itemReactions[w.id] === 'like')
+      .filter((w) => resolvedItemReactions[w.id] === 'like')
       .map((w) => ({ id: w.id, title: w.title, careerWorldId: w.careerWorldId || w.id, type: 'career_world', signalLabel: w.signalLabel || '' }));
     return [...likedWorldItems, ...voc];
-  }, [likedWorldItems, vocationalWorldItems, itemReactions]);
+  }, [likedWorldItems, vocationalWorldItems, resolvedItemReactions]);
 
   const registerTopSectionRef = (key) => (node) => {
     if (node) topSectionRefs.current[key] = node;
@@ -2844,6 +3011,18 @@ export default function ResultsComponent({
 
   const renderAnalysisSection = (tab, isActive = true) => {
     if (!tab) return null;
+    // These tabs are built from the student's likes. Until the likes for this
+    // run have loaded, show a brief placeholder instead of a stale list.
+    const likeDriven = ['furtherstudy', 'nonuni', 'roleexplorer'].includes(tab.key);
+    if (likeDriven && !reactionsLoaded) {
+      return (
+        <div className="analysis-tab-body">
+          <div className="analysis-tabs-panel analysis-tabs-panel--full">
+            <p className="fs-none" aria-busy="true">Loading your favourites&hellip;</p>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="analysis-tab-body">
         <div className="analysis-tabs-panel analysis-tabs-panel--full">
@@ -2854,7 +3033,7 @@ export default function ResultsComponent({
                 loading={selectionInsightsLoading}
                 error={selectionInsightsError}
                 onItemReaction={handleNestedItemReaction}
-                savedReactions={itemReactions}
+                savedReactions={resolvedItemReactions}
               />
               {renderNextStep('discovermore')}
             </>
@@ -2865,7 +3044,7 @@ export default function ResultsComponent({
                 likedPathwayTitles={likedPathwayTitles}
                 archetypes={computedResults}
                 subdimensions={Array.isArray(subdimensionRows) ? subdimensionRows : []}
-                savedReactions={itemReactions}
+                savedReactions={resolvedItemReactions}
                 onItemReaction={handleNestedItemReaction}
               />
               {renderNextStep('furtherstudy')}
@@ -2875,7 +3054,7 @@ export default function ResultsComponent({
               <NonUniversityPanel
                 likedWorlds={likedWorldItemsWithVocational}
                 likedPathwayTitles={likedPathwayTitles}
-                savedReactions={itemReactions}
+                savedReactions={resolvedItemReactions}
                 onItemReaction={handleNestedItemReaction}
                 pathwayBands={(selectionInsights || []).reduce((m, i) => {
                   if (i && i.title && i.signalLabel && !m[i.title]) m[i.title] = i.signalLabel;
@@ -2891,7 +3070,7 @@ export default function ResultsComponent({
                   (i) => (i?.type === 'pathway' || i?.type === 'role' || i?.isPathway)
                     && Array.isArray(i?.roles) && i.roles.length
                 )}
-                savedReactions={itemReactions}
+                savedReactions={resolvedItemReactions}
                 onItemReaction={handleNestedItemReaction}
               />
               {renderNextStep('roleexplorer')}
@@ -2903,7 +3082,7 @@ export default function ResultsComponent({
                 <h2 className="cw-accordion-group__heading">Your career worlds</h2>
                 <CareerWorldsAccordion
                   worlds={allCw}
-                  savedReactions={itemReactions}
+                  savedReactions={resolvedItemReactions}
                   onItemReaction={handleNestedItemReaction}
                   introText={[
                     'Career worlds are broad areas of work that may suit how you naturally think, learn and engage. Open each one to see what it is, why it fits you, and how your traits line up, then like the ones you are drawn to.',
@@ -2934,7 +3113,7 @@ export default function ResultsComponent({
                   ) : null}
                   <CareerWorldsAccordion
                     worlds={group.items}
-                    savedReactions={itemReactions}
+                    savedReactions={resolvedItemReactions}
                     onItemReaction={handleNestedItemReaction}
                     itemType="pathway"
                     iconFor={getPathwayIcon}
@@ -3026,6 +3205,15 @@ export default function ResultsComponent({
 
   return (
     <div id="results-root">
+      {cascadePrompt ? (
+        <CascadeRemoveModal
+          parent={cascadePrompt.parent}
+          items={cascadePrompt.children}
+          busy={cascadeBusy}
+          onRemove={runCascadeRemove}
+          onKeep={() => setCascadePrompt(null)}
+        />
+      ) : null}
       {upgradePrompt && (
         <ReportLimitModal
           mode={upgradePrompt.mode || (isFreeViewer ? 'starter' : 'exhausted')}

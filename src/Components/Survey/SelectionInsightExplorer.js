@@ -10,7 +10,7 @@ import { fetchNonUniRoutes, peekNonUniRoutes } from '../../utils/fetchNonUniRout
 import { fetchGradJobs } from '../../utils/fetchGradJobs';
 import { entryRouteForCard } from '../../utils/entryRouteModes';
 import { ThumbsUp, ThumbsDown, Smiley, SmileyMeh, BookmarkSimple, Info, Briefcase, Signpost, UsersThree, TrendUp, MapPin, GraduationCap, CalendarBlank, CurrencyGbp, Rocket } from 'phosphor-react';
-import { getSavedIds, setItemReaction } from '../../utils/savedItems';
+import { getReactions, setItemReaction } from '../../utils/savedItems';
 import {
   FaBrain,
   FaBullseye,
@@ -1110,7 +1110,13 @@ export function JobsModal({ open, onClose, title, heading, lead, data, kindNoun,
   useEffect(() => {
     if (!open) return undefined;
     let cancelled = false;
-    getSavedIds('job').then((s) => { if (!cancelled) setSavedJobs(s); }).catch(() => {});
+    // Both likes and "not for me" come back, so a dislike survives reopening.
+    getReactions('job').then((m) => {
+      if (cancelled) return;
+      const liked = new Set(); const disliked = new Set();
+      m.forEach((r, id) => { if (r === 'like') liked.add(id); else if (r === 'dislike') disliked.add(id); });
+      setSavedJobs(liked); setDislikedJobs(disliked);
+    }).catch(() => {});
     return () => { cancelled = true; };
   }, [open]);
   const reactionFor = (id) => (savedJobs.has(id) ? 'like' : dislikedJobs.has(id) ? 'dislike' : '');

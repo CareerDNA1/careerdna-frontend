@@ -287,17 +287,27 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
   const mainRef = useRef(null);
   const rootRef = useRef(null);
 
-  const handleRouteReact = (route, next, pathwayTitle = '') => {
+  const handleRouteReact = (route, next, pathwayTitle = '', world = null) => {
     const id = route?.id || route?.title;
     if (!id || typeof onItemReaction !== 'function') return;
     const current = savedReactions[id] || '';
+    // Store where the degree was liked (pathway + world) so the favourite can
+    // be rebuilt later whether or not those are still liked.
+    const itemMeta = {};
+    if (pathwayTitle) itemMeta.pathwayTitle = pathwayTitle;
+    // The group object carries the career world in its pathwayId/pathwayTitle
+    // slots (see the further-study endpoint).
+    const worldId = world?.careerWorldId || world?.pathwayId || world?.id || '';
+    const worldTitle = world?.careerWorldTitle || world?.pathwayTitle || world?.title || '';
+    if (worldId) itemMeta.careerWorldId = worldId;
+    if (worldTitle) itemMeta.careerWorldTitle = worldTitle;
     onItemReaction({
       itemType: 'subject',
       itemId: id,
       itemTitle: route.title,
       reaction: next,
       remove: current === next,
-      itemMeta: pathwayTitle ? { pathwayTitle } : null,
+      itemMeta: Object.keys(itemMeta).length ? itemMeta : null,
     });
   };
 
@@ -519,7 +529,7 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
                               open={openRouteKey === rk}
                               onToggle={() => setOpenRouteKey((prev) => (prev === rk ? '' : rk))}
                               reaction={savedReactions[r.id || r.title] || ''}
-                              onReact={(next) => handleRouteReact(r, next, (Array.isArray(r.leadsTo) && r.leadsTo[0]) || active?.title || '')}
+                              onReact={(next) => handleRouteReact(r, next, (Array.isArray(r.leadsTo) && r.leadsTo[0]) || '', active)}
                               hasRankings={subjectHasRankings(r)}
                               rankCount={subjectRankCount(r)}
                             />

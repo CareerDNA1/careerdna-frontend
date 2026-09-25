@@ -19,7 +19,7 @@ import IntroQuestions from '../Components/Survey/IntroQuestions';
 import PricingModal from '../Components/Common/PricingModal';
 import SatisfactionCard from '../Components/Common/SatisfactionCard';
 import { getSatisfactionPrompt, dismissSatisfactionPulse } from '../utils/satisfaction';
-import { getFavouritesByCategory } from '../utils/favourites';
+import { normaliseFavouriteType, getFavouritesByCategory } from '../utils/favourites';
 import AcademicProfileCard from '../Components/Common/AcademicProfileCard';
 import FavouritesCard from '../Components/Common/FavouritesCard';
 import { getMyAcademicProfile, hasAcademicData } from '../utils/academicProfile';
@@ -479,21 +479,22 @@ export default function ProfilePage() {
       try {
         const { data, error } = await supabase
           .from('result_feedback')
-          .select('item_type, reaction')
+          .select('item_type, item_id, item_title, reaction')
           .eq('user_id', uid)
           .eq('assessment_run_id', runId)
           .eq('feedback_scope', 'item_reaction');
         if (error) throw error;
         if (cancelled) return;
         const rows = Array.isArray(data) ? data : [];
-        const set = new Set(
-          rows.map((r) => String(r?.item_type || '').trim().toLowerCase()).filter(Boolean)
-        );
+        // Canonical types: a pathway family the university flow stored as
+        // 'role' is a pathway for the journey steps.
+        const typeOf = (r) => normaliseFavouriteType(String(r?.item_type || '').trim().toLowerCase(), r?.item_id, r?.item_title);
+        const set = new Set(rows.map(typeOf).filter(Boolean));
         // Types the student has actually SAVED (liked), for steps whose point is
         // a shortlist rather than a judgement either way.
         rows.forEach((r) => {
           if (String(r?.reaction || '').toLowerCase() === 'like') {
-            const t = String(r?.item_type || '').trim().toLowerCase();
+            const t = typeOf(r);
             if (t) set.add(`liked:${t}`);
           }
         });
@@ -1340,7 +1341,9 @@ export default function ProfilePage() {
     // least one SAVED degree, course, training pathway or apprenticeship.
     exploreuni: ['subject', 'course', 'nonuni_pathway', 'apprenticeship'].some((t) => engagedTypes.has(`liked:${t}`)),
     grades: academicHasData,
-    advisor: engagedTypes.has('advisor'),
+    // Nothing writes an 'advisor' reaction row; the profile's question counter is
+    // the reliable signal that the student has used the advisor.
+    advisor: engagedTypes.has('advisor') || Number(profile?.advisor_questions_used || 0) > 0,
     apply: false, // terminal, real-world step — never auto-completed
   };
   // Students (school) get extra steps: explore university/training, enter grades,

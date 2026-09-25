@@ -75,6 +75,27 @@ export async function getSavedIds(itemType) {
   }
 }
 
+// Both reactions for one item type on the active run: Map item_id -> 'like' | 'dislike'.
+export async function getReactions(itemType) {
+  const { userId, runId } = await getContext();
+  if (!userId || !runId || !itemType) return new Map();
+  try {
+    const { data } = await supabase
+      .from('result_feedback')
+      .select('item_id, reaction')
+      .eq('user_id', userId)
+      .eq('assessment_run_id', runId)
+      .eq('feedback_scope', 'item_reaction')
+      .eq('item_type', itemType)
+      .in('reaction', ['like', 'dislike']);
+    const out = new Map();
+    (data || []).forEach((r) => { if (r.item_id && r.reaction) out.set(r.item_id, r.reaction); });
+    return out;
+  } catch (_) {
+    return new Map();
+  }
+}
+
 // Save / unsave (or mark "not for me") a live item. reaction is 'like' or
 // 'dislike'; pass remove:true to clear it. Returns the reaction now stored
 // ('like' | 'dislike' | '') so the caller can update its UI.

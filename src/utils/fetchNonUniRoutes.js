@@ -10,6 +10,10 @@ async function getJson(path) {
     try {
       const res = await fetch(url, { method: 'GET' });
       if (res.status === 404) { lastError = new Error('404'); lastError.status = 404; continue; }
+      // A relative path on the dev server (or a SPA host) answers 200 with the
+      // app's HTML, not JSON. Treat that as "not this candidate".
+      const ctype = String(res.headers.get('content-type') || '');
+      if (res.ok && !/json/i.test(ctype)) { lastError = new Error('Not JSON'); continue; }
       let data = null;
       try { data = await res.json(); } catch (_) { data = null; }
       if (!res.ok) {
@@ -31,11 +35,11 @@ let routesCache = null;
 export async function fetchNonUniRoutes() {
   if (routesCache) return routesCache;
   const data = await getJson('/api/nonuni/routes');
-  routesCache = {
-    routes: Array.isArray(data?.routes) ? data.routes : [],
-    liveVacancies: !!data?.liveVacancies,
-  };
-  return routesCache;
+  const routes = Array.isArray(data?.routes) ? data.routes : [];
+  const result = { routes, liveVacancies: !!data?.liveVacancies };
+  // Only cache a real answer; an empty list would otherwise stick for the session.
+  if (routes.length) routesCache = result;
+  return result;
 }
 
 export function peekNonUniRoutes() {

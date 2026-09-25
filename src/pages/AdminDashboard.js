@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { supabase } from '../utils/supabaseClient';
 import { buildApiCandidates } from '../utils/config';
 import AccountNavbar from '../Components/Common/AccountNavbar';
+import { canonicalItem } from '../utils/canonicalIds';
 import './AdminDashboard.css';
 
 const ARCHETYPES = ['Explorer', 'Organizer', 'Visionary', 'Creator', 'Connector', 'Thinker', 'Achiever'];
@@ -165,7 +166,8 @@ function normaliseItemType(value) {
   if (!raw) return 'other';
   if (raw === 'careerworld' || raw === 'career_worlds' || raw === 'career-world') return 'career_world';
   if (raw === 'subjects' || raw === 'university_subject' || raw === 'degree_subject') return 'subject';
-  if (raw === 'roles' || raw === 'job_role' || raw === 'job') return 'role';
+  if (raw === 'roles' || raw === 'job_role') return 'role';
+  if (raw === 'jobs' || raw === 'saved_job') return 'job';
   if (raw === 'pathways' || raw === 'career_pathway' || raw === 'career_pathways') return 'pathway';
   if (raw === 'strengths') return 'strength';
   if (raw === 'environments') return 'environment';
@@ -520,10 +522,12 @@ function AdminDashboard() {
 
     const feedbackBuckets = {};
     reactionRows.forEach((row) => {
-      const type = normaliseItemType(row.item_type || row.feedback_scope || 'other');
       const title = String(row.item_title || '').trim();
-      const id = String(row.item_id || '').trim();
-      const key = `${type}::${id || normaliseName(title)}`;
+      // Canonical type (a pathway family stored as 'role' counts as a pathway)
+      // and one bucket per title, so the same item saved under two ids over
+      // time is counted once.
+      const type = canonicalItem(normaliseItemType(row.item_type || row.feedback_scope || 'other'), row.item_id, title).type;
+      const key = `${type}::${normaliseName(title)}`;
       if (!feedbackBuckets[key]) {
         feedbackBuckets[key] = { key, type, title, likes: 0, dislikes: 0 };
       }

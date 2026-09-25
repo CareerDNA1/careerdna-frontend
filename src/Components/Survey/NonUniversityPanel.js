@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './FurtherStudyPanel.css';
 import './NonUniversityPanel.css';
-import { Info, Compass, Briefcase, BookmarkSimple, GraduationCap, BookOpen, UsersThree, CaretDown, CaretRight, Signpost, MapPin, CalendarBlank, CurrencyGbp, ArrowUpRight } from 'phosphor-react';
+import { Info, Compass, Briefcase, BookmarkSimple, GraduationCap, BookOpen, UsersThree, CaretDown, CaretRight, Signpost } from 'phosphor-react';
 import { fetchNonUniRoutes, peekNonUniRoutes, fetchRouteVacancies } from '../../utils/fetchNonUniRoutes';
 import { PATHWAY_DEFINITIONS } from '../../utils/selectionDefinitions';
-import { OptionDropdown, showSelectionTooltip, hideSelectionTooltip, PathwayReactionRow, SignalBadge, SelectionTitle } from './SelectionInsightExplorer';
+import { OptionDropdown, showSelectionTooltip, hideSelectionTooltip, PathwayReactionRow, SignalBadge, SelectionTitle, JobCard, JobDetailModal } from './SelectionInsightExplorer';
+import { getReactions, setItemReaction } from '../../utils/savedItems';
 import { getSubjectIcon, getPathwayIcon } from '../../utils/iconMap';
 import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank } from './ResultsFilter';
 
@@ -93,26 +94,18 @@ function apprenticeshipToJob(v) {
     location: cleanVacLocation(v.location),
     salary: wage,
     deadline: formatClosingDate(v.closingDate),
+    closingDate: v.closingDate || null,
     url: v.url || null,
+    // Shared job card fields: apprenticeship adverts have no experience line.
+    noExperience: true,
+    source: 'Find an Apprenticeship',
+    kind: 'apprenticeship',
   };
 }
-
-// A single live apprenticeship advert card (opens the advert on Find an
-// Apprenticeship). Calm blue title, employer, and icon-led location/closes/salary
-// pills, with a corner arrow to signal it opens externally.
-function ApprenticeshipCard({ job }) {
-  return (
-    <a className="nu-advert" href={job.url || undefined} target="_blank" rel="noopener noreferrer">
-      <ArrowUpRight size={15} weight="bold" className="nu-advert__ext" aria-hidden="true" />
-      <div className="nu-advert__title">{job.title}</div>
-      {job.employer ? <div className="nu-advert__employer">{job.employer}</div> : null}
-      <div className="nu-advert__pills">
-        {job.location ? <span className="nu-advert__pill"><MapPin size={13} weight="bold" aria-hidden="true" />{job.location}</span> : null}
-        {job.deadline ? <span className="nu-advert__pill"><CalendarBlank size={13} weight="bold" aria-hidden="true" />Closes {job.deadline}</span> : null}
-        {job.salary ? <span className="nu-advert__pill"><CurrencyGbp size={13} weight="bold" aria-hidden="true" />{job.salary}</span> : null}
-      </div>
-    </a>
-  );
+// Same id scheme as saved job adverts (see SelectionInsightExplorer jobKey), so
+// a saved apprenticeship advert sits in the profile's Saved jobs with the rest.
+function advertKey(job) {
+  return `job:${job.url || `${job.title || ''}|${job.employer || ''}`}`;
 }
 
 // College / T Level / course routes rarely map to a single provider link, so we
@@ -324,6 +317,60 @@ function StandardRow({ route, liveVacancies, showTitle, reaction = '', onReact }
   const [modalOpen, setModalOpen] = useState(false);
   const [showAllVac, setShowAllVac] = useState(false);
   const [openingsOpen, setOpeningsOpen] = useState(false);
+  // Live adverts: save (bookmark) and like/dislike, exactly like job adverts.
+  const [savedAds, setSavedAds] = useState(() => new Set());
+  const [dislikedAds, setDislikedAds] = useState(() => new Set());
+  const [detailAd, setDetailAd] = useState(null);
+  useEffect(() => {
+    if (!openingsOpen) return undefined;
+    let cancelled = false;
+    getReactions('job').then((m) => {
+      if (cancelled) return;
+      const liked = new Set(); const disliked = new Set();
+      m.forEach((r, id) => { if (r === 'like') liked.add(id); else if (r === 'dislike') disliked.add(id); });
+      setSavedAds(liked); setDislikedAds(disliked);
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [openingsOpen]);
+  const persistAdReaction = async (job, reaction, remove) => {
+    await setItemReaction({
+      itemType: 'job',
+      itemId: advertKey(job),
+      itemTitle: job.title || 'Apprenticeship',
+      itemMeta: {
+        employer: job.employer || '',
+        location: job.location || '',
+        url: job.url || '',
+        deadline: job.deadline || '',
+        closingDate: job.closingDate || null,
+        source: job.source || 'Find an Apprenticeship',
+        salary: job.salary || '',
+        noExperience: true,
+        kind: 'apprenticeship',
+        // Parent links, so unliking the pathway or world offers to clear this too.
+        pathwayTitle: route.pathway || '',
+        careerWorldTitle: route.careerWorld || '',
+      },
+      reaction,
+      remove,
+    });
+  };
+  const adReactionFor = (id) => (savedAds.has(id) ? 'like' : dislikedAds.has(id) ? 'dislike' : '');
+  const handleAdToggleSave = async (job) => {
+    const id = advertKey(job);
+    const isSaved = savedAds.has(id);
+    setSavedAds((prev) => { const n = new Set(prev); if (isSaved) n.delete(id); else n.add(id); return n; });
+    if (!isSaved) setDislikedAds((prev) => { const n = new Set(prev); n.delete(id); return n; });
+    await persistAdReaction(job, 'like', isSaved);
+  };
+  const handleAdReact = async (job, next) => {
+    const id = advertKey(job);
+    const current = adReactionFor(id);
+    const remove = current === next;
+    setSavedAds((prev) => { const n = new Set(prev); if (!remove && next === 'like') n.add(id); else n.delete(id); return n; });
+    setDislikedAds((prev) => { const n = new Set(prev); if (!remove && next === 'dislike') n.add(id); else n.delete(id); return n; });
+    await persistAdReaction(job, next, remove);
+  };
   // T Levels and college diplomas are courses you apply to, not apprenticeship
   // adverts, so they never show "live openings" and link to a provider finder.
   const isCourse = !!route.isCourseRoute;
@@ -513,9 +560,26 @@ function StandardRow({ route, liveVacancies, showTitle, reaction = '', onReact }
                       </button>
                       {openingsOpen ? (
                         <div className="nu-adverts">
-                          {(showAllVac ? vac.data.vacancies : vac.data.vacancies.slice(0, 15)).map((v, i) => (
-                            <ApprenticeshipCard key={`${v.reference || v.title}-${i}`} job={apprenticeshipToJob(v)} />
-                          ))}
+                          {(showAllVac ? vac.data.vacancies : vac.data.vacancies.slice(0, 15)).map((v, i) => {
+                            const job = apprenticeshipToJob(v);
+                            return (
+                              <JobCard
+                                key={`${v.reference || v.title}-${i}`}
+                                job={job}
+                                saved={savedAds.has(advertKey(job))}
+                                onToggleSave={handleAdToggleSave}
+                                onOpen={setDetailAd}
+                              />
+                            );
+                          })}
+                          {detailAd ? (
+                            <JobDetailModal
+                              job={detailAd}
+                              reaction={adReactionFor(advertKey(detailAd))}
+                              onReact={(next) => handleAdReact(detailAd, next)}
+                              onClose={() => setDetailAd(null)}
+                            />
+                          ) : null}
                           <div className="nu-adverts__foot">
                             {!showAllVac && vac.data.vacancies.length > 15 ? (
                               <button type="button" className="nu-adverts__showall" onClick={() => setShowAllVac(true)}>
@@ -905,7 +969,13 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
     const id = `nonuni:${pathway}`;
     if (!pathway || typeof onItemReaction !== 'function') return;
     const current = savedReactions[id] || '';
-    onItemReaction({ itemType: 'nonuni_pathway', itemId: id, itemTitle: pathway, reaction: next, remove: current === next });
+    // Store the pathway (and its world) with the like, so unliking either
+    // offers to clear this route too.
+    const world = (data?.routes || []).find((r) => r.pathway === pathway)?.careerWorld || '';
+    onItemReaction({
+      itemType: 'nonuni_pathway', itemId: id, itemTitle: pathway, reaction: next, remove: current === next,
+      itemMeta: { pathwayTitle: pathway, ...(world ? { careerWorldTitle: world } : {}) },
+    });
   };
 
   // Save/unsave a single apprenticeship standard (one "way in") to favourites.
@@ -918,7 +988,10 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
     const id = `apprenticeship:${key}`;
     const title = route.standardName || route.occupation || route.route || route.pathway || 'Apprenticeship';
     const current = savedReactions[id] || '';
-    onItemReaction({ itemType: 'apprenticeship', itemId: id, itemTitle: title, reaction: next, remove: current === next });
+    onItemReaction({
+      itemType: 'apprenticeship', itemId: id, itemTitle: title, reaction: next, remove: current === next,
+      itemMeta: { pathwayTitle: route.pathway || '', ...(route.careerWorld ? { careerWorldTitle: route.careerWorld } : {}) },
+    });
   };
 
   const activeWorld = allWorlds.includes(activeKey) ? activeKey : allWorlds[0] || '';

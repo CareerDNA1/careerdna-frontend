@@ -5,7 +5,7 @@ import { loadSubjectRanking } from '../../utils/rankings';
 import { getMyAcademicProfile } from '../../utils/academicProfile';
 import { studentTop3Tariff, gradedAlevelCount, gradeBand, checkPrerequisites } from '../../utils/matchBand';
 import { showSelectionTooltip, hideSelectionTooltip } from '../Survey/SelectionInsightExplorer';
-import { getSavedIds, setItemReaction } from '../../utils/savedItems';
+import { getReactions, setItemReaction } from '../../utils/savedItems';
 import './RankingsModal.css';
 
 // Stable id for a saved course (prefer its provider URL; fall back to uni+title).
@@ -69,11 +69,18 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
   // Courses the student has saved (liked), and the course currently open in the
   // save card. Saving is optional and never blocks browsing the rankings.
   const [savedCourses, setSavedCourses] = useState(() => new Set());
+  const [dislikedCourses, setDislikedCourses] = useState(() => new Set());
   const [courseCard, setCourseCard] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
-    getSavedIds('course').then((s) => { if (!cancelled) setSavedCourses(s); }).catch(() => {});
+    // Both likes and "not for me" come back, so a dislike survives reopening.
+    getReactions('course').then((m) => {
+      if (cancelled) return;
+      const liked = new Set(); const disliked = new Set();
+      m.forEach((r, id) => { if (r === 'like') liked.add(id); else if (r === 'dislike') disliked.add(id); });
+      setSavedCourses(liked); setDislikedCourses(disliked);
+    }).catch(() => {});
     return () => { cancelled = true; };
   }, []);
 
@@ -89,10 +96,13 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
         if (remove) n.delete(cc.id); else n.add(cc.id);
         return n;
       });
+      setDislikedCourses((prev) => { const n = new Set(prev); n.delete(cc.id); return n; });
       await setItemReaction({ itemType: 'course', itemId: cc.id, itemTitle: cc.title, itemMeta: meta, reaction: 'like', remove });
     } else {
+      const remove = dislikedCourses.has(cc.id);
       setSavedCourses((prev) => { const n = new Set(prev); n.delete(cc.id); return n; });
-      await setItemReaction({ itemType: 'course', itemId: cc.id, itemTitle: cc.title, itemMeta: meta, reaction: 'dislike' });
+      setDislikedCourses((prev) => { const n = new Set(prev); if (remove) n.delete(cc.id); else n.add(cc.id); return n; });
+      await setItemReaction({ itemType: 'course', itemId: cc.id, itemTitle: cc.title, itemMeta: meta, reaction: 'dislike', remove });
       setCourseCard(null);
     }
   };
@@ -372,7 +382,7 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
               ) : null}
               <div className="rk-course-react">
                 <PathwayReactionRow
-                  reaction={savedCourses.has(courseCard.id) ? 'like' : ''}
+                  reaction={savedCourses.has(courseCard.id) ? 'like' : dislikedCourses.has(courseCard.id) ? 'dislike' : ''}
                   onReact={(r) => handleCourseReact(r)}
                   label="Course feedback"
                 />

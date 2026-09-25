@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Heart, X, Briefcase, Compass, GraduationCap, BookOpen, FileText, Signpost, Sparkle, MapPin, CaretRight, ArrowSquareOut, ArrowLeft, CalendarBlank, CurrencyGbp, IdentificationBadge } from 'phosphor-react';
 import { getCareerWorldIcon, getPathwayIcon, getSubjectIcon, getStrengthIcon, getEnvironmentIcon } from '../../utils/iconMap';
 import { getFavouritesByCategory, removeFavourite } from '../../utils/favourites';
+import { findChildFavourites, deleteFavouriteRows } from '../../utils/favouriteCascade';
+import { supabase } from '../../utils/supabaseClient';
+import CascadeRemoveModal from './CascadeRemoveModal';
 import { loadSubjectRanking } from '../../utils/rankings';
 import { assembleFavouriteWorld, assembleFavouriteRole, assembleFavouriteDegree, assembleFavouriteTraining } from '../../utils/favouriteReportCard';
 import { WorldCard } from '../Survey/CareerWorldsAccordion';
@@ -42,6 +45,9 @@ function favRowIcon(item, size = 16) {
 }
 
 // Icon + short label per favourite type, for the preview + list rows.
+const isApprenticeshipAd = (item) => item?.type === 'job' && (item?.meta?.kind === 'apprenticeship' || /apprentice/i.test(String(item?.meta?.source || '')));
+const favTypeMeta = (item) => (isApprenticeshipAd(item) ? FAV_TYPE.apprenticeship_advert : FAV_TYPE[item?.type]) || { Icon: Heart, label: '' };
+
 const FAV_TYPE = {
   career_world: { Icon: Briefcase, label: 'Career world', tint: '#e6f1fb', fg: '#185fa5' },
   pathway: { Icon: Compass, label: 'Pathway', tint: '#eeedfe', fg: '#3c3489' },
@@ -51,6 +57,7 @@ const FAV_TYPE = {
   nonuni_pathway: { Icon: Signpost, label: 'Training route', tint: '#faeeda', fg: '#854f0b' },
   course: { Icon: BookOpen, label: 'Course', tint: '#e1f5ee', fg: '#0f6e56' },
   job: { Icon: Briefcase, label: 'Job', tint: '#e6f1fb', fg: '#185fa5' },
+  apprenticeship_advert: { Icon: Briefcase, label: 'Apprenticeship advert', tint: '#faeeda', fg: '#854f0b' },
   strength: { Icon: Sparkle, label: 'Strength', tint: '#fbeaf0', fg: '#993556' },
   environment: { Icon: MapPin, label: 'Environment', tint: '#e1f5ee', fg: '#0f6e56' },
 };
@@ -76,6 +83,9 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
   const [cardLoading, setCardLoading] = useState(false);
   const [linkStats, setLinkStats] = useState(null); // stats fetched live for a saved course
   const [removingId, setRemovingId] = useState('');
+  // Removing a world/pathway that still has favourites under it: { parent, children }.
+  const [cascadePrompt, setCascadePrompt] = useState(null);
+  const [cascadeBusy, setCascadeBusy] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -100,23 +110,28 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
   }, [open]);
 
   // Assemble the exact report card when a world/pathway/role favourite is opened.
+  // insightCtx is a fresh object on every parent render, so it is read through a
+  // ref: the card is built once per opened favourite, not once per render.
+  const insightCtxRef = useRef(insightCtx);
+  insightCtxRef.current = insightCtx;
   useEffect(() => {
     if (!detail || !INPLACE_TYPES.has(detail.type)) { setCardData(null); setCardLoading(false); return undefined; }
     let cancelled = false;
+    const ctx = insightCtxRef.current || {};
     setCardData(null);
     setCardLoading(true);
     const p = detail.type === 'role'
-      ? assembleFavouriteRole(detail, insightCtx || {}).then((r) => (r ? { kind: 'role', ...r } : null))
+      ? assembleFavouriteRole(detail, ctx).then((r) => (r ? { kind: 'role', ...r } : null))
       : detail.type === 'subject'
-        ? assembleFavouriteDegree(detail, insightCtx || {}).then((d) => (d ? { kind: 'degree', ...d } : null))
+        ? assembleFavouriteDegree(detail, ctx).then((d) => (d ? { kind: 'degree', ...d } : null))
         : (detail.type === 'nonuni_pathway' || detail.type === 'apprenticeship')
-          ? assembleFavouriteTraining(detail, insightCtx || {}).then((t) => (t ? { kind: 'training', ...t } : null))
-          : assembleFavouriteWorld(detail, insightCtx || {}).then((w) => (w ? { kind: 'world', ...w } : null));
+          ? assembleFavouriteTraining(detail, ctx).then((t) => (t ? { kind: 'training', ...t } : null))
+          : assembleFavouriteWorld(detail, ctx).then((w) => (w ? { kind: 'world', ...w } : null));
     p.then((d) => { if (!cancelled) setCardData(d); })
-      .catch(() => { if (!cancelled) setCardData(null); })
+      .catch((err) => { console.warn('Favourite card could not load:', err?.message || err); if (!cancelled) setCardData(null); })
       .finally(() => { if (!cancelled) setCardLoading(false); });
     return () => { cancelled = true; };
-  }, [detail, insightCtx]);
+  }, [detail]);
 
   // Saved courses keep a stats snapshot in their meta, but older saves (and any
   // saved before we captured stats) won't have one. When a course opens without
@@ -179,11 +194,19 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
     try {
       setRemovingId(item.id);
       setError('');
-      await removeFavourite(runId, item.id, item.type);
+      await removeFavourite(runId, item.id, item.type, item.storedType);
       setGroups((prev) => (prev || [])
         .map((g) => (g.type === item.type ? { ...g, items: g.items.filter((it) => it.id !== item.id) } : g))
         .filter((g) => g.items.length > 0));
       setDetail((d) => (d && d.id === item.id && d.type === item.type ? null : d));
+      // Offer to clear the degrees/roles/routes saved under a removed world or pathway.
+      if (['career_world', 'pathway', 'subject'].includes(item.type)) {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          const children = user ? await findChildFavourites({ userId: user.id, runId, parent: { type: item.type, id: item.id, title: item.title } }) : [];
+          if (children.length) setCascadePrompt({ parent: item, children });
+        } catch (_) { /* the removal itself succeeded */ }
+      }
     } catch (err) {
       setError(err?.message || 'Could not remove that favourite.');
     } finally {
@@ -191,10 +214,36 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
     }
   };
 
+  const runCascadeRemove = async () => {
+    if (!cascadePrompt) return;
+    setCascadeBusy(true);
+    try {
+      await deleteFavouriteRows(cascadePrompt.children.map((c) => c.id));
+      const goneTitles = new Set(cascadePrompt.children.map((c) => `${c.item_type}|${c.item_title}`));
+      setGroups((prev) => (prev || [])
+        .map((g) => ({ ...g, items: g.items.filter((it) => !goneTitles.has(`${it.type}|${it.title}`)) }))
+        .filter((g) => g.items.length > 0));
+    } catch (err) {
+      setError(err?.message || 'Could not remove those favourites.');
+    } finally {
+      setCascadeBusy(false);
+      setCascadePrompt(null);
+    }
+  };
+
   if (loading) return null;
 
   return (
     <section className="fav-card">
+      {cascadePrompt ? (
+        <CascadeRemoveModal
+          parent={cascadePrompt.parent}
+          items={cascadePrompt.children}
+          busy={cascadeBusy}
+          onRemove={runCascadeRemove}
+          onKeep={() => setCascadePrompt(null)}
+        />
+      ) : null}
       <div className="fav-head">
         <span className="fav-title">
           <Heart size={18} weight="fill" aria-hidden="true" />
@@ -205,13 +254,14 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
       {total > 0 ? (
         <div className="fav-preview">
           {previewItems.map((item) => {
-            const meta = FAV_TYPE[item.type] || { Icon: Heart, label: '' };
+            const meta = favTypeMeta(item);
             return (
               <div className="fav-prev" key={`${item.type}-${item.id}`}>
                 <span className="fav-prev-ic" style={{ background: meta.tint || '#eaf1fe', color: meta.fg || '#2f6fed' }} aria-hidden="true">{favRowIcon(item, 16)}</span>
                 <span className="fav-prev-main">
                   <span className="fav-prev-title">{item.title}</span>
                   {item.subtitle ? <span className="fav-prev-sub">{item.subtitle}</span> : null}
+                  {item.note ? <span className="fav-prev-sub fav-note">{item.note}</span> : null}
                 </span>
                 {item.expired ? <span className="fav-prev-closed">Closed</span> : <span className="fav-prev-type">{meta.label}</span>}
               </div>
@@ -397,14 +447,14 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
 
             <div className="fav-groups">
               {(groups || []).map((g) => (
-                <div className="fav-group" key={g.type}>
+                <div className="fav-group" key={g.key || g.type}>
                   <div className="fav-group-head">
                     <span className="fav-group-label">{g.label}</span>
                     <span className="fav-group-count">{g.items.length}</span>
                   </div>
                   <div className="fav-items">
                     {g.items.map((item) => {
-                      const meta = FAV_TYPE[item.type] || { Icon: Heart, label: '' };
+                      const meta = favTypeMeta(item);
                       const isExternal = Boolean(item.url);
                       const opensInModal = INPLACE_TYPES.has(item.type) || LINK_TYPES.has(item.type);
                       const canOpen = isExternal || opensInModal || REPORT_TYPES.has(item.type);
@@ -425,6 +475,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                           <span className="fav-item-main">
                             <span className="fav-item-title">{item.title}</span>
                             {item.subtitle ? <span className="fav-item-sub">{item.subtitle}</span> : null}
+                            {item.note ? <span className="fav-item-sub fav-note">{item.note}</span> : null}
                           </span>
                           {item.expired ? <span className="fav-item-expired">Closed</span> : null}
                           {canOpen ? (
