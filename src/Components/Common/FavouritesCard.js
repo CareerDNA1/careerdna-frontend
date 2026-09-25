@@ -289,7 +289,14 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                     pilotDefinition={cardData.pilotDefinition}
                   />
                 ) : (
-                  <p className="fav-empty">We could not load this card right now. Open it in your report to see the full detail.</p>
+                  <div className="fav-empty">
+                    <p style={{ margin: '0 0 12px' }}>We could not load this card right now. You can open it in your report instead.</p>
+                    {onExplore && REPORT_TYPES.has(detail.type) ? (
+                      <button type="button" className="fav-btn fav-btn--primary" onClick={() => { onExplore(detail.type, detail.title); setOpen(false); }}>
+                        Open in your report
+                      </button>
+                    ) : null}
+                  </div>
                 )}
               </div>
             ) : detail && detail.type === 'job' ? (

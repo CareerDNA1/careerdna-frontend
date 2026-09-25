@@ -148,7 +148,15 @@ export async function assembleFavouriteWorld(item, ctx = {}) {
 export async function assembleFavouriteRole(item, ctx = {}) {
   if (!item || item.type !== 'role') return null;
   if (!ctx.archetypes || !Object.keys(ctx.archetypes).length) return null;
-  const likedPathways = Array.isArray(ctx.likedPathways) ? ctx.likedPathways : [];
+  // The pathway the role was liked in (stored with the favourite) comes first,
+  // then any other liked pathways. Without it, a role whose pathway the student
+  // never liked, or unliked since, could not be rebuilt.
+  const likedPathways = (Array.isArray(ctx.likedPathways) ? ctx.likedPathways : []).slice();
+  const ownPathway = item?.meta?.pathwayTitle || '';
+  if (ownPathway && !likedPathways.some((p) => norm(p.title) === norm(ownPathway))) {
+    const def = resolvePathwayDef(ownPathway, '', '');
+    likedPathways.unshift({ id: def?.id || ownPathway, title: def?.title || ownPathway });
+  }
   if (!likedPathways.length) return null;
   try {
     const data = await fetchSelectionInsights({
@@ -177,6 +185,8 @@ export async function assembleFavouriteDegree(item, ctx = {}) {
   if (!ctx.archetypes || !Object.keys(ctx.archetypes).length) return null;
   const likedWorlds = Array.isArray(ctx.likedWorlds) ? ctx.likedWorlds : [];
   const likedPathwayTitles = (Array.isArray(ctx.likedPathways) ? ctx.likedPathways : []).map((p) => p.title).filter(Boolean);
+  const ownPathway = item?.meta?.pathwayTitle || '';
+  if (ownPathway && !likedPathwayTitles.some((t) => norm(t) === norm(ownPathway))) likedPathwayTitles.unshift(ownPathway);
   if (!likedWorlds.length && !likedPathwayTitles.length) return null;
   try {
     const data = await fetchFurtherStudy({

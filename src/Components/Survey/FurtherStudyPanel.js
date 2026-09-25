@@ -287,7 +287,7 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
   const mainRef = useRef(null);
   const rootRef = useRef(null);
 
-  const handleRouteReact = (route, next) => {
+  const handleRouteReact = (route, next, pathwayTitle = '') => {
     const id = route?.id || route?.title;
     if (!id || typeof onItemReaction !== 'function') return;
     const current = savedReactions[id] || '';
@@ -297,6 +297,7 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
       itemTitle: route.title,
       reaction: next,
       remove: current === next,
+      itemMeta: pathwayTitle ? { pathwayTitle } : null,
     });
   };
 
@@ -518,7 +519,7 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
                               open={openRouteKey === rk}
                               onToggle={() => setOpenRouteKey((prev) => (prev === rk ? '' : rk))}
                               reaction={savedReactions[r.id || r.title] || ''}
-                              onReact={(next) => handleRouteReact(r, next)}
+                              onReact={(next) => handleRouteReact(r, next, g.pathwayTitle)}
                               hasRankings={subjectHasRankings(r)}
                               rankCount={subjectRankCount(r)}
                             />

@@ -436,6 +436,7 @@ async function saveResultFeedbackRow(payload = {}) {
     rating = null,
     comment = null,
     remove = false,
+    itemMeta = null,
   } = payload;
 
   if (!userId || !assessmentRunId || !feedbackScope) return { skipped: true };
@@ -481,25 +482,26 @@ async function saveResultFeedbackRow(payload = {}) {
     comment,
     updated_at: new Date().toISOString(),
   };
+  // Small context snapshot (e.g. the pathway a role sits in) so the favourite
+  // can be rebuilt later without depending on what else the student liked.
+  if (itemMeta && typeof itemMeta === 'object') row.item_meta = itemMeta;
 
   const existing = await baseQuery();
   if (existing.error) throw existing.error;
 
-  if (existing.data?.id) {
-    const { error } = await supabase
-      .from('result_feedback')
-      .update(row)
-      .eq('id', existing.data.id);
-    if (error) throw error;
-    return { updated: true };
+  const write = async (payload) => (existing.data?.id
+    ? supabase.from('result_feedback').update(payload).eq('id', existing.data.id)
+    : supabase.from('result_feedback').insert(payload));
+
+  let { error } = await write(row);
+  if (error && row.item_meta) {
+    // item_meta column missing (migration not run): save without it.
+    const bare = { ...row };
+    delete bare.item_meta;
+    ({ error } = await write(bare));
   }
-
-  const { error } = await supabase
-    .from('result_feedback')
-    .insert(row);
-
   if (error) throw error;
-  return { inserted: true };
+  return existing.data?.id ? { updated: true } : { inserted: true };
 }
 
 function extractCanonicalSignalFromItem(item = {}) {
@@ -2268,7 +2270,7 @@ export default function ResultsComponent({
     }
   };
 
-  const handleNestedItemReaction = async ({ itemType, itemId, itemTitle, reaction, remove = false }) => {
+  const handleNestedItemReaction = async ({ itemType, itemId, itemTitle, reaction, remove = false, itemMeta = null }) => {
     if (!profileUserId || !effectiveAssessmentRunId || !itemType || !itemId) return;
 
     // Keep local reaction state in sync so nested pills (e.g. Discover More
@@ -2295,7 +2297,8 @@ export default function ResultsComponent({
         itemId,
         itemTitle,
         reaction: remove ? null : reaction,
-        remove
+        remove,
+        itemMeta,
       });
     } catch (err) {
       console.warn('Could not save nested item feedback:', err?.message || err);

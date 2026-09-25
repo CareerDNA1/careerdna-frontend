@@ -1540,6 +1540,7 @@ export function RoleAccordionItem({ item, onItemReaction, savedReactions = {}, s
         itemTitle: item.title,
         reaction: nextReaction,
         remove: isSame,
+        itemMeta: pathwayTitle ? { pathwayTitle } : null,
       });
     }
   };
@@ -2050,6 +2051,7 @@ function DetailPanel({ item, onItemReaction, savedReactions = {}, nonUniByTitle 
                   item={role}
                   onItemReaction={onItemReaction}
                   savedReactions={savedReactions}
+                  pathwayTitle={item?.title || ''}
                   isOpen={openRoleKey === roleKey}
                   onToggle={() => setOpenRoleKey((prev) => (prev === roleKey ? '' : roleKey))}
                 />
