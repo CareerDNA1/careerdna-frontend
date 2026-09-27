@@ -103,7 +103,7 @@ function apprenticeshipToJob(v) {
   };
 }
 // Same id scheme as saved job adverts (see SelectionInsightExplorer jobKey), so
-// a saved apprenticeship advert sits in the profile's Saved jobs with the rest.
+// a saved apprenticeship advert sits in the profile's Apprenticeship adverts group.
 function advertKey(job) {
   return `job:${job.url || `${job.title || ''}|${job.employer || ''}`}`;
 }

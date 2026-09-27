@@ -121,6 +121,9 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
           <GraduationCap size={18} weight="bold" aria-hidden="true" />
           Your grades
         </span>
+        <button type="button" className="acad-btn acad-btn--primary acad-btn--head" onClick={startEdit}>
+          {filled ? 'Edit grades' : 'Add grades'}
+        </button>
       </div>
 
       {notice ? <p className="acad-notice">{notice}</p> : null}
@@ -143,18 +146,13 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
               ))}
             </span>
           </div>
-          <p className="acad-foot">Your grades unlock personalised university matches, showing which are a safe bet, a match, or a stretch for you. Private to you, always.</p>
+          <p className="acad-foot">Your grades unlock personalised university matches. Open a degree in the University section of your report and choose Explore courses and rankings to see which universities are a safe bet, a match, or a stretch for you.</p>
         </div>
       ) : (
         <div className="acad-empty">
           <p>Add your GCSEs and predicted A-levels to unlock personalised university matches on the rankings and course cards.</p>
         </div>
       )}
-      <div className="acad-cardfoot">
-        <button type="button" className="acad-btn acad-btn--primary" onClick={startEdit}>
-          {filled ? 'Edit grades' : 'Add grades'}
-        </button>
-      </div>
       </section>
 
       {editing && draft ? (

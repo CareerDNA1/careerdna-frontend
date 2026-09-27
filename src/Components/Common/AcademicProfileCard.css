@@ -171,3 +171,6 @@
   .acad-view-key { min-width: 0; flex-basis: 100%; }
   .acad-select { flex-basis: 84px; }
 }
+
+/* Header action: same slim pill as Open Report on the reports list. */
+.acad-btn--head { padding: 4px 12px; min-height: 26px; font-size: 0.72rem; box-shadow: 0 2px 8px rgba(47, 111, 237, 0.15); }

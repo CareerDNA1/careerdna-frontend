@@ -46,7 +46,12 @@ function favRowIcon(item, size = 16) {
 
 // Icon + short label per favourite type, for the preview + list rows.
 const isApprenticeshipAd = (item) => item?.type === 'job' && (item?.meta?.kind === 'apprenticeship' || /apprentice/i.test(String(item?.meta?.source || '')));
-const favTypeMeta = (item) => (isApprenticeshipAd(item) ? FAV_TYPE.apprenticeship_advert : FAV_TYPE[item?.type]) || { Icon: Heart, label: '' };
+const favTypeMeta = (item) => {
+  if (isApprenticeshipAd(item)) return FAV_TYPE.apprenticeship_advert;
+  if (item?.type === 'job' && item?.meta?.kind === 'internship') return FAV_TYPE.internship_advert;
+  if (item?.type === 'job' && item?.meta?.kind === 'scheme') return FAV_TYPE.scheme_advert;
+  return FAV_TYPE[item?.type] || { Icon: Heart, label: '' };
+};
 
 const FAV_TYPE = {
   career_world: { Icon: Briefcase, label: 'Career world', tint: '#e6f1fb', fg: '#185fa5' },
@@ -56,8 +61,10 @@ const FAV_TYPE = {
   apprenticeship: { Icon: FileText, label: 'Apprenticeship', tint: '#faeeda', fg: '#854f0b' },
   nonuni_pathway: { Icon: Signpost, label: 'Training route', tint: '#faeeda', fg: '#854f0b' },
   course: { Icon: BookOpen, label: 'Course', tint: '#e1f5ee', fg: '#0f6e56' },
-  job: { Icon: Briefcase, label: 'Job', tint: '#e6f1fb', fg: '#185fa5' },
-  apprenticeship_advert: { Icon: Briefcase, label: 'Apprenticeship advert', tint: '#faeeda', fg: '#854f0b' },
+  job: { Icon: Briefcase, label: 'Job ad', tint: '#e6f1fb', fg: '#185fa5' },
+  internship_advert: { Icon: Briefcase, label: 'Internship ad', tint: '#e6f1fb', fg: '#185fa5' },
+  scheme_advert: { Icon: Briefcase, label: 'Graduate scheme ad', tint: '#e6f1fb', fg: '#185fa5' },
+  apprenticeship_advert: { Icon: Briefcase, label: 'Apprenticeship ad', tint: '#faeeda', fg: '#854f0b' },
   strength: { Icon: Sparkle, label: 'Strength', tint: '#fbeaf0', fg: '#993556' },
   environment: { Icon: MapPin, label: 'Environment', tint: '#e1f5ee', fg: '#0f6e56' },
 };
@@ -83,6 +90,8 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
   const [cardLoading, setCardLoading] = useState(false);
   const [linkStats, setLinkStats] = useState(null); // stats fetched live for a saved course
   const [removingId, setRemovingId] = useState('');
+  // Row whose inline "Remove X from your favourites?" confirm is showing.
+  const [confirmId, setConfirmId] = useState('');
   // Removing a world/pathway that still has favourites under it: { parent, children }.
   const [cascadePrompt, setCascadePrompt] = useState(null);
   const [cascadeBusy, setCascadeBusy] = useState(false);
@@ -100,9 +109,12 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
     return () => { cancelled = true; };
   }, [runId, initialGroups]);
 
+  // Escape closes the innermost thing: inline confirm, then opened card, then popup.
+  const escRef = useRef(() => {});
+  escRef.current = () => { if (confirmId) setConfirmId(''); else if (detail) setDetail(null); else setOpen(false); };
   useEffect(() => {
     if (!open) return undefined;
-    const onKey = (e) => { if (e.key === 'Escape') { if (detail) setDetail(null); else setOpen(false); } };
+    const onKey = (e) => { if (e.key === 'Escape') escRef.current(); };
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', onKey);
@@ -249,6 +261,11 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
           <Heart size={18} weight="fill" aria-hidden="true" />
           Your favourites
         </span>
+        {total > 0 ? (
+          <button type="button" className="fav-btn fav-btn--primary fav-btn--head" onClick={() => setOpen(true)}>
+            View all {total}
+          </button>
+        ) : null}
       </div>
 
       {total > 0 ? (
@@ -271,13 +288,6 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
       ) : (
         <p className="fav-empty">Like a career world, pathway, degree or role in your results and it saves here.</p>
       )}
-      {total > 0 ? (
-        <div className="fav-cardfoot">
-          <button type="button" className="fav-btn fav-btn--primary" onClick={() => setOpen(true)}>
-            View all {total}
-          </button>
-        </div>
-      ) : null}
 
       {open ? (
         <div className="fav-overlay" role="dialog" aria-modal="true" aria-label="Your favourites"
@@ -355,7 +365,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                 const m = detail.meta || {};
                 const pills = [
                   m.location ? { Icon: MapPin, text: m.location } : null,
-                  m.deadline ? { Icon: CalendarBlank, text: `Closes ${m.deadline}` } : null,
+                  m.deadline ? { Icon: CalendarBlank, text: `Closes ${m.deadline}` } : { Icon: CalendarBlank, text: 'No closing date listed, check the link' },
                   m.noExperience ? null : { Icon: Briefcase, text: m.experience || 'Graduate / entry-level' },
                   m.salary ? { Icon: CurrencyGbp, text: m.salary } : null,
                 ].filter(Boolean);
@@ -375,7 +385,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                       </div>
                     </div>
                     <div className="fav-job-body">
-                      {detail.expired ? <div className="job-detail-closed">This advert has closed, so it may no longer be accepting applications.</div> : null}
+                      {detail.expired ? <div className="job-detail-closed">This ad has closed, so it may no longer be accepting applications.</div> : null}
                       {pills.length ? (
                         <div className="role-jobcard__facts job-detail-facts">
                           {pills.map(({ Icon, text }, i) => (
@@ -427,7 +437,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                   })() : null}
                   {detail.url ? (
                     <a className="rk-course-modal__link" href={detail.url} target="_blank" rel="noopener noreferrer">
-                      {detail.type === 'job' ? 'View advert' : 'View course'} <span aria-hidden="true">↗</span>
+                      {detail.type === 'job' ? 'View ad' : 'View course'} <span aria-hidden="true">↗</span>
                     </a>
                   ) : null}
                   <div className="rk-course-react">
@@ -458,6 +468,22 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                       const isExternal = Boolean(item.url);
                       const opensInModal = INPLACE_TYPES.has(item.type) || LINK_TYPES.has(item.type);
                       const canOpen = isExternal || opensInModal || REPORT_TYPES.has(item.type);
+                      if (confirmId === item.id) {
+                        return (
+                          <div className="fav-item fav-item--confirm" key={item.id} role="group" aria-label={`Remove ${item.title} from your favourites?`}>
+                            <span className="fav-item-main">
+                              <span className="fav-item-title">Remove <strong>{item.title}</strong> from your favourites?</span>
+                            </span>
+                            <span className="fav-confirm-actions">
+                              <button type="button" className="fav-btn fav-btn--danger" disabled={removingId === item.id}
+                                onClick={() => { setConfirmId(''); handleRemove(item); }}>
+                                {removingId === item.id ? 'Removing…' : 'Remove'}
+                              </button>
+                              <button type="button" className="fav-btn fav-btn--ghost" onClick={() => setConfirmId('')}>Cancel</button>
+                            </span>
+                          </div>
+                        );
+                      }
                       return (
                         <div
                           className={`fav-item${canOpen ? ' fav-item--tappable' : ''}${removingId === item.id ? ' is-removing' : ''}${item.expired ? ' is-expired' : ''}`}
@@ -483,6 +509,16 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                               ? <ArrowSquareOut size={15} weight="bold" className="fav-item-chev" aria-hidden="true" />
                               : <CaretRight size={16} weight="bold" className="fav-item-chev" aria-hidden="true" />
                           ) : null}
+                          <button
+                            type="button"
+                            className="fav-item-x"
+                            aria-label={`Remove ${item.title} from favourites`}
+                            data-tip="Remove from favourites"
+                            onClick={(e) => { e.stopPropagation(); setConfirmId(item.id); }}
+                            onKeyDown={(e) => e.stopPropagation()}
+                          >
+                            <X size={13} weight="bold" aria-hidden="true" />
+                          </button>
                         </div>
                       );
                     })}

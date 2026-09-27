@@ -1077,7 +1077,7 @@ export function JobDetailModal({ job, reaction = '', onReact, onClose }) {
           <button type="button" className="cw-def-modal__close" aria-label="Close" onClick={onClose}>×</button>
         </div>
         <div className="cw-def-modal__body">
-          {closed ? <div className="job-detail-closed">This advert has closed, so it may no longer be accepting applications.</div> : null}
+          {closed ? <div className="job-detail-closed">This ad has closed, so it may no longer be accepting applications.</div> : null}
           {pills.length ? (
             <div className="role-jobcard__facts job-detail-facts">
               {pills.map(({ Icon, text }, i) => (
@@ -1135,6 +1135,9 @@ export function JobsModal({ open, onClose, title, heading, lead, data, kindNoun,
         experience: job.experience || '',
         noExperience: Boolean(job.noExperience),
         salary: job.salary || '',
+        // Which list it came from: 'grad' job, 'internship' or graduate 'scheme'.
+        // Favourites group adverts by this.
+        kind: kindNoun || 'grad',
       },
       reaction,
       remove,

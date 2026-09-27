@@ -1491,7 +1491,7 @@ export default function ProfilePage() {
 
   const JOURNEY_SHORT = {
     survey: 'Survey',
-    profile: 'Your CareerDNA',
+    profile: 'My CareerDNA',
     strengths: 'Strengths',
     environments: 'Work styles',
     careerworlds: isUniversity ? 'Pathways' : 'Career worlds',
@@ -1528,10 +1528,6 @@ export default function ProfilePage() {
               </div>
             </div>
             <div className="profile-hero-actions">
-              <button type="button" className="profile-hero-btn profile-hero-btn--primary" onClick={handleRetake}>
-                <PlayIcon />
-                New assessment
-              </button>
               <button type="button" className="profile-hero-btn" onClick={openProfileEditor}>
                 <SettingsIcon />
                 Manage account
@@ -1684,6 +1680,10 @@ export default function ProfilePage() {
                   : `${totalRuns} total`}
               </span>
             </div>
+            <button type="button" className="profile-btn-hover-primary" style={btnPrimarySm} onClick={handleRetake}>
+              <PlayIcon />
+              New assessment
+            </button>
           </div>
 
           {loadingRuns ? (

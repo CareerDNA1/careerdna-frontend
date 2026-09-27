@@ -23,9 +23,11 @@ export const FAV_CATEGORIES = [
   // Live apprenticeship adverts saved from the Training & Work tab. Stored as
   // item_type 'job' (same card, same link/expiry handling) but grouped here,
   // next to the other training items, not under jobs.
-  { type: 'job', key: 'apprenticeship_advert', label: 'Training & work adverts' },
+  { type: 'job', key: 'apprenticeship_advert', label: 'Apprenticeship ads' },
   { type: 'course', label: 'University courses' },
-  { type: 'job', key: 'job', label: 'Saved jobs' },
+  { type: 'job', key: 'job', label: 'Job ads' },
+  { type: 'job', key: 'internship', label: 'Internship ads' },
+  { type: 'job', key: 'scheme', label: 'Graduate scheme ads' },
   { type: 'strength', label: 'Strengths' },
   { type: 'environment', label: 'Ideal environments' },
 ];
@@ -85,6 +87,9 @@ export async function getFavouritesByCategory(runId) {
     } else {
       idUrl = (rawId.match(/^job:(https?:\/\/.+)$/) || [])[1] || '';
     }
+    // Adverts saved before the kind was stored: read it off the title.
+    const guessedKind = /intern|placement/i.test(String(r.item_title || '')) ? 'internship'
+      : /graduate (scheme|programme|program)/i.test(String(r.item_title || '')) ? 'scheme' : '';
     const item = {
       id: r.item_id,
       title: r.item_title,
@@ -94,7 +99,7 @@ export async function getFavouritesByCategory(runId) {
       subtitle: meta.university || meta.employer || idUni || '',
       subject: meta.subject || '',
       stats: (meta.stats && typeof meta.stats === 'object') ? meta.stats : null,
-      meta,
+      meta: (t === 'job' && !meta.kind && guessedKind) ? { ...meta, kind: guessedKind } : meta,
     };
     // Saved jobs can close: flag ones whose closing date has passed so the
     // student can clear them out. Other saved types never expire.
@@ -105,7 +110,9 @@ export async function getFavouritesByCategory(runId) {
     // Group key: apprenticeship adverts are jobs by type but sit with the
     // Training & Work favourites.
     const isApprenticeshipAd = t === 'job' && (meta.kind === 'apprenticeship' || /apprentice/i.test(String(meta.source || '')));
-    const gk = t === 'job' ? (isApprenticeshipAd ? 'apprenticeship_advert' : 'job') : t;
+    const kind = meta.kind || guessedKind;
+    const jobKind = isApprenticeshipAd ? 'apprenticeship_advert' : (kind === 'internship' || kind === 'scheme') ? kind : 'job';
+    const gk = t === 'job' ? jobKind : t;
     if (!byType.has(gk)) byType.set(gk, []);
     byType.get(gk).push(item);
   });
@@ -123,10 +130,15 @@ export async function getFavouritesByCategory(runId) {
     });
   });
   const worldLiked = (id, title) => (id && likedWorlds.has(canonicalWorldId(id, title))) || (title && likedWorlds.has(nkey(title)));
+  // The university flow has no career world likes at all (students go straight
+  // to pathways), so a missing world only counts as "unliked" on runs where
+  // worlds are liked in the first place.
+  const worldsInPlay = likedWorlds.size > 0;
   byType.forEach((items, type) => {
     items.forEach((it) => {
       const m = it.meta || {};
       if (type === 'pathway') {
+        if (!worldsInPlay) return;
         const w = pathwayWorld(it.id, it.title);
         if (w && !worldLiked(w.careerWorldId, w.careerWorldTitle)) it.note = `Kept from ${w.careerWorldTitle}`;
         return;
@@ -137,7 +149,8 @@ export async function getFavouritesByCategory(runId) {
         ? { careerWorldId: m.careerWorldId || '', careerWorldTitle: m.careerWorldTitle || '' }
         : (pathwayTitle ? pathwayWorld('', pathwayTitle) : null);
       const pathwayStillLiked = pathwayTitle && likedPathways.has(nkey(pathwayTitle));
-      const worldStillLiked = w && worldLiked(w.careerWorldId, w.careerWorldTitle);
+      // Without a pathway to check, fall back to the world only when worlds are liked on this run.
+      const worldStillLiked = w && (worldLiked(w.careerWorldId, w.careerWorldTitle) || (!pathwayTitle && !worldsInPlay));
       if (!pathwayStillLiked && !worldStillLiked && (pathwayTitle || (w && w.careerWorldTitle))) {
         const from = (pathwayTitle && pathwayTitle !== it.title) ? pathwayTitle : (w && w.careerWorldTitle) || pathwayTitle;
         if (from) it.note = `Kept from ${from}`;

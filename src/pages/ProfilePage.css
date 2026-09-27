@@ -3374,14 +3374,14 @@
   background: #fff;
   border: 1px solid #e6ebf3;
   border-radius: 16px;
-  padding: 18px 22px 18px;
+  padding: 20px 24px 22px;
   margin-bottom: 18px;
 }
 .profile-jcard-head {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 18px;
+  margin-bottom: 26px;
 }
 .profile-jcard-headtext { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; }
 .profile-jcard-title { display: flex; align-items: center; gap: 10px; font-size: 1.05rem; font-weight: 700; color: #14233c; }
@@ -3404,7 +3404,7 @@
 .profile-jcard-go:hover svg { transform: translateX(3px); }
 .profile-jrail {
   list-style: none;
-  margin: 0; padding: 0;
+  margin: 0; padding: 6px 0 2px;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
@@ -3414,28 +3414,28 @@
 .profile-jrail-btn {
   width: 100%;
   border: 0; background: transparent; padding: 0;
-  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
   cursor: pointer; font-family: inherit;
 }
 .profile-jrail-dot {
   position: relative; z-index: 1;
-  width: 22px; height: 22px; border-radius: 50%;
+  width: 28px; height: 28px; border-radius: 50%;
   border: 1.5px solid #d3dbe8; background: #fff; color: #a4afc0;
   display: inline-flex; align-items: center; justify-content: center;
   transition: transform .15s ease, border-color .15s ease;
 }
-.profile-jrail-dot svg { width: 11px; height: 11px; }
+.profile-jrail-dot svg { width: 13px; height: 13px; }
 .profile-jrail-btn:hover .profile-jrail-dot { transform: scale(1.1); border-color: #2f6fed; }
-.profile-jrail-lbl { font-size: 0.72rem; font-weight: 500; color: #7a8798; text-align: center; line-height: 1.2; }
+.profile-jrail-lbl { font-size: 0.8rem; font-weight: 500; color: #7a8798; text-align: center; line-height: 1.25; }
 .profile-jrail-btn:hover .profile-jrail-lbl { color: #2f6fed; }
 /* connector line: sits at the centre of the small dots */
 .profile-jrail-step + .profile-jrail-step::before {
   content: "";
   position: absolute;
-  top: 11px;
+  top: 14px;
   right: 50%;
   width: 100%;
-  height: 1.5px;
+  height: 2px;
   background: #e3e9f2;
   transform: translateY(-50%);
 }
@@ -3443,11 +3443,11 @@
 .profile-jrail-step.is-done .profile-jrail-dot { background: #dfe9fc; border-color: #dfe9fc; color: #2f6fed; }
 .profile-jrail-step.is-done .profile-jrail-lbl { color: #4b5c6b; }
 .profile-jrail-step.is-current .profile-jrail-dot {
-  width: 34px; height: 34px; margin: -6px 0;
+  width: 40px; height: 40px; margin: -6px 0;
   background: #2f6fed; border-color: #2f6fed; color: #fff;
   box-shadow: 0 0 0 4px rgba(47,111,237,0.14);
 }
-.profile-jrail-step.is-current .profile-jrail-dot svg { width: 15px; height: 15px; }
+.profile-jrail-step.is-current .profile-jrail-dot svg { width: 17px; height: 17px; }
 .profile-jrail-step.is-current .profile-jrail-lbl { color: #2f6fed; font-weight: 700; }
 .profile-jrail-wrap { position: relative; }
 .profile-jrail-arrow { display: none; }

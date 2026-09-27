@@ -306,3 +306,44 @@
 /* Kept orphan note: parent world/pathway no longer liked, so this item shows
    here but not in the report tabs. */
 .fav-note { color: #a77b12; }
+
+/* Header action: same slim pill as Open Report on the reports list. */
+.fav-btn--head { padding: 4px 12px; min-height: 26px; font-size: 0.72rem; box-shadow: 0 2px 8px rgba(47, 111, 237, 0.15); }
+
+/* Per-row remove: a quiet x that becomes an inline confirm (no extra popup). */
+.fav-item-x {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; margin-left: 2px;
+  border: 1px solid transparent; border-radius: 50%;
+  background: transparent; color: #b4bfd0; cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+.fav-item-x:hover, .fav-item-x:focus-visible { color: #b42318; background: #fdecea; border-color: #f6cfca; outline: none; }
+/* Tooltip in the app's own white style (not the browser's native title box). */
+.fav-item-x { position: relative; }
+.fav-item-x::after {
+  content: attr(data-tip);
+  position: absolute; right: 0; bottom: calc(100% + 8px);
+  z-index: 5; pointer-events: none;
+  background: #fff; color: #1f2a37;
+  border: 1px solid #e2e8f0; border-radius: 10px;
+  padding: 7px 10px; white-space: nowrap;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+  font: 600 12px/1.3 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  opacity: 0; transform: translateY(3px);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+.fav-item-x:hover::after, .fav-item-x:focus-visible::after { opacity: 1; transform: none; }
+@media (hover: none) { .fav-item-x::after { display: none; } }
+.fav-item--confirm { background: #fff8f7; border-color: #f6cfca; cursor: default; }
+.fav-item--confirm .fav-item-title { font-weight: 500; color: #4b5c6b; white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.35; }
+.fav-item--confirm .fav-item-title strong { font-weight: 700; color: #12233c; }
+.fav-confirm-actions { display: inline-flex; gap: 8px; flex: 0 0 auto; }
+.fav-btn--danger { background: #b42318; color: #fff; }
+.fav-btn--danger:hover { background: #9b1e14; }
+.fav-btn--danger:disabled { opacity: 0.6; cursor: default; }
+@media (max-width: 560px) {
+  .fav-item--confirm { flex-wrap: wrap; }
+  .fav-confirm-actions { width: 100%; justify-content: flex-end; }
+}
