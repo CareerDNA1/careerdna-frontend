@@ -6,6 +6,7 @@ import './CareerAdvisorChat.css';
 import ReportLimitModal from '../Common/ReportLimitModal';
 import { applyCouponCode } from '../../utils/applyCoupon';
 import { loadAdvisorConversation, sendAdvisorMessage } from '../../utils/careerAdvisor';
+import { clearAdvisorPrefill } from '../../utils/advisorPanel';
 
 const FALLBACK_STARTER_PROMPTS = [
   'How did you decide which career worlds are better matches for me?',
@@ -55,7 +56,11 @@ function renderPlainText(content = '') {
   ));
 }
 
-export default function CareerAdvisorChat({ assessmentRunId, embedded = false }) {
+// variant: 'page' (full) or 'drawer' (compact, inside Your Advisor drawer).
+// context: { section, title, questions } for what the student is looking at;
+// its questions lead the suggestions and tag the messages sent from there.
+// prefill / prefillSend: a question handed over by an "Ask your advisor" button.
+export default function CareerAdvisorChat({ assessmentRunId, embedded = false, variant = 'page', context = null, prefill = '', prefillSend = false }) {
   const [conversation, setConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [starterPrompts, setStarterPrompts] = useState(FALLBACK_STARTER_PROMPTS);
@@ -71,8 +76,12 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
   const latestAssistantRef = useRef(null);
   const bottomRef = useRef(null);
   const shouldScrollAfterSendRef = useRef(false);
+  const textareaRef = useRef(null);
+  const handleSendRef = useRef(null);
 
   const hasMessages = messages.length > 0;
+  const isDrawer = variant === 'drawer';
+  const section = context?.section || '';
 
   useEffect(() => {
     let cancelled = false;
@@ -113,6 +122,21 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
     };
   }, [assessmentRunId]);
 
+  // A question handed over from a section button: send it, or place it in the
+  // box, once the conversation has loaded.
+  useEffect(() => {
+    if (loading || !prefill) return;
+    if (prefillSend) {
+      clearAdvisorPrefill();
+      if (handleSendRef.current) handleSendRef.current(prefill);
+    } else {
+      setInput(prefill);
+      clearAdvisorPrefill();
+      textareaRef.current?.focus();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, prefill, prefillSend]);
+
   useEffect(() => {
     if (!messagesRef.current) return;
 
@@ -129,8 +153,8 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
 
   const placeholder = useMemo(() => {
     if (sending) return 'Thinking…';
-    return 'Ask the AI Advisor a question…';
-  }, [sending]);
+    return context?.title ? `Ask about ${context.title}…` : 'Ask your advisor a question…';
+  }, [sending, context?.title]);
 
   const markStarterPromptUsed = (prompt = '') => {
     const cleanPrompt = String(prompt || '').trim();
@@ -169,6 +193,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
         assessmentRunId,
         conversationId: conversation?.id || '',
         message: text,
+        section: section || undefined,
       });
 
       const returnedMessages = Array.isArray(data?.messages) ? data.messages : [];
@@ -190,7 +215,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
         return [...withoutOptimistic, ...returnedMessages];
       });
     } catch (err) {
-      const isAdvisorLimit = err?.code === 'ADVISOR_LIMIT_REACHED' || err?.error === 'ADVISOR_LIMIT_REACHED' || /AI Advisor questions/i.test(err?.message || '');
+      const isAdvisorLimit = err?.code === 'ADVISOR_LIMIT_REACHED' || err?.error === 'ADVISOR_LIMIT_REACHED' || /advisor questions/i.test(err?.message || '');
       if (err?.entitlement) setEntitlement(err.entitlement);
       if (isAdvisorLimit) {
         setLimitReached(true);
@@ -206,6 +231,8 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
       setSending(false);
     }
   };
+
+  handleSendRef.current = handleSend;
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -229,19 +256,26 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
   const advisorUnlimited = Boolean(entitlement?.advisorUnlimited);
   const advisorRemaining = entitlement?.advisorQuestionsRemaining;
   const hasAdvisorRemaining = advisorUnlimited || Number(advisorRemaining || 0) > 0;
-  const visiblePrompts = starterPrompts
-    .filter((prompt) => !usedStarterPromptKeys.has(normalizePromptText(prompt).toLowerCase()))
-    .slice(0, hasMessages ? 3 : 5);
+  const askedKeys = useMemo(
+    () => new Set(messages.filter((m) => m.role === 'user').map((m) => normalizePromptText(m.content).toLowerCase())),
+    [messages]
+  );
+  const contextPrompts = (Array.isArray(context?.questions) ? context.questions : [])
+    .filter((q) => q && !askedKeys.has(normalizePromptText(q).toLowerCase()));
+  const generalPrompts = starterPrompts
+    .filter((prompt) => !usedStarterPromptKeys.has(normalizePromptText(prompt).toLowerCase()) && !askedKeys.has(normalizePromptText(prompt).toLowerCase()));
+  const promptLimit = isDrawer ? (hasMessages ? 2 : 4) : (hasMessages ? 3 : 5);
+  const visiblePrompts = [...contextPrompts, ...generalPrompts.filter((p) => !contextPrompts.includes(p))].slice(0, promptLimit);
   const disableAdvisorInput = sending;
   const sendTooltip = sending
-    ? 'CareerDNA AI Advisor is thinking'
+    ? 'Your advisor is thinking'
     : limitReached || !hasAdvisorRemaining
-      ? 'Get more AI Advisor questions'
+      ? 'Get more advisor questions'
       : 'Send message';
   const disableSendButton = sending;
 
   return (
-    <section className={`career-advisor-shell ${embedded ? 'is-embedded' : ''}`} aria-label="CareerDNA AI Advisor">
+    <section className={`career-advisor-shell ${embedded ? 'is-embedded' : ''} ${isDrawer ? 'is-drawer' : ''}`} aria-label="Your Advisor">
       {showLimitModal && (
         <ReportLimitModal
           mode="advisor"
@@ -257,7 +291,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
           <span className="career-advisor-avatar career-advisor-avatar--title" aria-hidden="true">
             <AdvisorAiIcon />
           </span>
-          <h2>CareerDNA AI Advisor</h2>
+          <h2>Your Advisor</h2>
         </div>
         <p>
           Explore why certain options were recommended, compare alternatives, plan next steps, or turn your profile into language you can use with parents, applications, or interviews.
@@ -289,7 +323,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
                           <span className="career-advisor-avatar" aria-hidden="true">
                             <AdvisorAiIcon />
                           </span>
-                          <span>CareerDNA AI Advisor</span>
+                          <span>Your Advisor</span>
                         </>
                       ) : 'You'}
                     </div>
@@ -313,7 +347,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
                     <span className="career-advisor-avatar" aria-hidden="true">
                       <AdvisorAiIcon />
                     </span>
-                    <span>CareerDNA AI Advisor</span>
+                    <span>Your Advisor</span>
                   </div>
                   <div className="career-advisor-message-content muted career-advisor-thinking"><span className="cdna-load-spinner" aria-hidden="true" /><span>Thinking…</span></div>
                 </div>
@@ -323,7 +357,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
 
             {visiblePrompts.length > 0 ? (
               <div className="career-advisor-suggestions">
-                <div className="career-advisor-prompt-intro">Choose one of these questions or ask your own.</div>
+                <div className="career-advisor-prompt-intro">{context?.title ? `About ${context.title}, or ask your own.` : 'Choose one of these questions or ask your own.'}</div>
                 <div className="career-advisor-prompts" aria-label="Suggested questions">
                   {visiblePrompts.map((prompt) => (
                     <button
@@ -342,8 +376,8 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
             {entitlement ? (
               <div className={`career-advisor-credit-note ${limitReached || !hasAdvisorRemaining ? 'is-empty' : ''}`}>
                 {advisorUnlimited
-                  ? 'Unlimited AI Advisor questions available'
-                  : `${Math.max(0, Number(advisorRemaining || 0))} AI Advisor question${Math.max(0, Number(advisorRemaining || 0)) === 1 ? '' : 's'} remaining`}
+                  ? 'Unlimited advisor questions'
+                  : `${Math.max(0, Number(advisorRemaining || 0))} advisor question${Math.max(0, Number(advisorRemaining || 0)) === 1 ? '' : 's'} remaining`}
               </div>
             ) : null}
 
@@ -351,6 +385,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false })
 
             <div className="career-advisor-input-row">
               <textarea
+                ref={textareaRef}
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 onKeyDown={handleKeyDown}

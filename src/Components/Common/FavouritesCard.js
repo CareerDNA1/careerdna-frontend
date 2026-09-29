@@ -214,7 +214,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
           || rows.find((r) => want && norm(r.institution).includes(want));
         if (!u) return;
         setLinkStats({
-          score: u.score, medianSalary: u.medianSalary, employment: u.employment,
+          score: u.score, ranked: u.ranked, graduateJobs: u.graduateJobs, medianSalary: u.medianSalary, employment: u.employment,
           meaningfulWork: u.meaningfulWork, satisfaction: u.satisfaction,
           continuation: u.continuation, typicalGrades: u.typicalGrades,
           offerRate: u.offerRate, tef: u.tef,
@@ -539,9 +539,10 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                     const s = detail.stats || linkStats;
                     return (
                       <div className="rk-course-stats">
-                        {s.score != null ? <span className="rk-course-stat"><b>{Math.round(s.score)}</b> CareerDNA rank</span> : null}
+                        {s.score != null && s.ranked !== false ? <span className="rk-course-stat"><b>{Math.round(s.score)}</b> CareerDNA Ranking score</span> : null}
                         {s.medianSalary ? <span className="rk-course-stat"><b>£{Math.round(s.medianSalary / 1000)}k</b> median salary</span> : null}
-                        {s.employment != null ? <span className="rk-course-stat"><b>{s.employment}%</b> employed</span> : null}
+                        {s.graduateJobs != null ? <span className="rk-course-stat"><b>{s.graduateJobs}%</b> graduate jobs</span> : null}
+                        {s.employment != null ? <span className="rk-course-stat"><b>{s.employment}%</b> in work or study</span> : null}
                         {s.satisfaction != null ? <span className="rk-course-stat"><b>{s.satisfaction}%</b> satisfaction</span> : null}
                         {s.typicalGrades ? <span className="rk-course-stat"><b>{s.typicalGrades}</b> typical offer</span> : null}
                         {s.offerRate != null ? <span className="rk-course-stat"><b>{Math.round(s.offerRate * 100)}%</b> offer rate</span> : null}

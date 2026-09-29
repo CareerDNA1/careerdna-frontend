@@ -216,7 +216,7 @@ export async function cancelScheduledDowngrade() {
   throw lastError || new Error('Could not cancel the scheduled downgrade right now.');
 }
 
-// AI Advisor question packs (one-off purchases on top of the plan allowance).
+// Advisor question packs (one-off purchases on top of the plan allowance).
 async function getAccessTokenOrThrow() {
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
   if (sessionError) throw new Error(sessionError.message || 'Could not verify your login session.');

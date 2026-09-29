@@ -13,7 +13,7 @@ const planRank = {
 };
 
 // Feature lists differ between school and university students. Explorer and
-// Premium are both yearly subscriptions. AI advisor questions are top-up-able
+// Premium are both yearly subscriptions. advisor questions are top-up-able
 // (extra packs at £3.99). CareerDNA is an unregistered mark, hence ™ not ®.
 const plans = [
   {
@@ -242,7 +242,7 @@ function buildConfirmationCopy({ variant, checkoutPlanKey, status, effectivePlan
         'You keep your current access until the end of your billing year and nothing more is charged.',
       bullets: [
         'At the end of your billing year, your account will return to the free CareerDNA Starter plan.',
-        'You will lose access to full CareerDNA reports, AI advisor questions and any premium tools.',
+        'You will lose access to full CareerDNA reports, Your Advisor and any premium tools.',
         'Your account will still include your basic CareerDNA profile, and you can change your mind at any time before then.',
       ],
       confirmLabel: 'Cancel my plan',
@@ -257,7 +257,7 @@ function buildConfirmationCopy({ variant, checkoutPlanKey, status, effectivePlan
       body: 'You will be taken to Stripe Checkout to start CareerDNA Explorer at £29.99 a year.',
       bullets: [
         'Includes 1 full CareerDNA report a year.',
-        'Includes 5 AI advisor questions a year.',
+        'Includes 5 Your Advisor questions a year.',
         'Renews annually. You can manage or cancel your subscription from your account at any time.',
       ],
       confirmLabel: 'Continue to Stripe',
@@ -272,7 +272,7 @@ function buildConfirmationCopy({ variant, checkoutPlanKey, status, effectivePlan
       body: 'You will be taken to Stripe Checkout to start CareerDNA Premium at £39.99 a year.',
       bullets: [
         'Includes 2 full CareerDNA reports a year.',
-        'Includes 20 AI advisor questions a year.',
+        'Includes 20 Your Advisor questions a year.',
         'Includes all premium tools: rankings, your chances, live jobs and apprenticeships.',
         'Renews annually. You can manage or cancel your subscription from your account at any time.',
       ],
@@ -289,7 +289,7 @@ function buildConfirmationCopy({ variant, checkoutPlanKey, status, effectivePlan
         'Your subscription will be changed from Explorer to Premium now. Stripe will apply a pro-rated charge for the rest of your current billing year.',
       bullets: [
         'Your report allowance will increase to 2 a year immediately.',
-        'Your AI advisor allowance will increase to 20 questions a year immediately.',
+        'Your advisor allowance will increase to 20 questions a year immediately.',
         'All premium tools unlock straight away.',
         'The change will be made using your saved Stripe payment method.',
       ],

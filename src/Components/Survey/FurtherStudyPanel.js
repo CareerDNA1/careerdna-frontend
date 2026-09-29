@@ -199,14 +199,14 @@ export function RouteItem({ route, open = false, onToggle, reaction = '', onReac
                   <span className="fs-premium-badge">Premium</span>
                 </span>
                 <p className="pathway-role-item__summary">
-                  Our 2026 CareerDNA composite ranking of UK universities for {route.title}, built from official
+                  The 2026 CareerDNA Ranking of UK universities for {route.title}, built from official
                   Office for Students data. Browse the subject-specific ranking and open links to each university&rsquo;s courses.
                 </p>
                 <div className="fs-rank-cell__foot">
                   {rankCount > 0 ? (
                     <span className="fs-rank-cell__live">
                       <span className="fs-rank-cell__dot" aria-hidden="true" />
-                      {rankCount} live {rankCount === 1 ? 'course' : 'courses'} ranked
+                      {rankCount} {rankCount === 1 ? 'university' : 'universities'} ranked
                     </span>
                   ) : <span />}
                   <span className="fs-rank-cell__go">Explore courses and rankings&nbsp;<span aria-hidden="true">→</span></span>

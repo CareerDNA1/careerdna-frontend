@@ -50,7 +50,7 @@ export async function loadRankingSubjectIndex() {
       countByTitle,
     };
   } catch (_) {
-    rankingIndexCache = { ids: new Set(), titles: new Set() };
+    rankingIndexCache = { ids: new Set(), titles: new Set(), countById: new Map(), countByTitle: new Map() };
   }
   return rankingIndexCache;
 }

@@ -1,0 +1,106 @@
+/* Your Advisor drawer: right-hand panel on wide screens, bottom sheet on phones.
+   Sits under every modal (they are 96000+) but above the page. */
+:root { --advisor-drawer-w: 400px; }
+
+/* Push the page over while open, so report and advisor are side by side. */
+@media (min-width: 1100px) {
+  body.cdna-advisor-open #results-root,
+  body.cdna-advisor-open .profile-page { padding-right: var(--advisor-drawer-w); transition: padding-right 220ms ease; }
+}
+
+/* Edge tab (closed state) */
+.advisor-tab {
+  position: fixed; right: 0; top: 50%; transform: translateY(-50%);
+  z-index: 95000;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  width: 58px; padding: 12px 6px;
+  border: 1px solid #dbe7f6; border-right: 0; border-radius: 14px 0 0 14px;
+  background: #fff; color: #2f6fed; cursor: pointer;
+  box-shadow: -6px 0 22px rgba(15, 23, 42, 0.12);
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.advisor-tab:hover, .advisor-tab.is-dragging { transform: translateY(-50%) translateX(-4px); box-shadow: -10px 0 28px rgba(47, 111, 237, 0.2); }
+.advisor-tab:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
+.advisor-tab__icon { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 999px; background: #eef4ff; color: #5d6df1; }
+.advisor-tab__icon svg { width: 20px; height: 20px; }
+.advisor-tab__label { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.02em; text-align: center; line-height: 1.15; }
+.advisor-tab__hint { display: none; }
+
+/* Drawer: sits below the fixed account navbar so the menu stays reachable. */
+.advisor-drawer {
+  position: fixed; top: var(--advisor-drawer-top, 57px); right: 0; bottom: 0; width: var(--advisor-drawer-w); max-width: 100vw;
+  z-index: 95000;
+  display: flex; flex-direction: column;
+  background: #fff; border-left: 1px solid #dbe7f6;
+  box-shadow: -14px 0 40px rgba(15, 23, 42, 0.14);
+  transform: translateX(100%);
+  transition: transform 220ms ease;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+.advisor-drawer.is-open { transform: none; }
+.advisor-drawer__handle { display: none; }
+.advisor-drawer__head { display: flex; align-items: center; gap: 10px; padding: 14px 14px 12px; border-bottom: 1px solid #edf2f8; }
+.advisor-drawer__avatar { width: 38px !important; height: 38px !important; box-shadow: inset 0 0 0 1px rgba(93, 109, 241, 0.1) !important; }
+.advisor-drawer__avatar svg { width: 20px; height: 20px; }
+.advisor-drawer__titles { flex: 1 1 auto; min-width: 0; }
+.advisor-drawer__title { font-size: 1rem; font-weight: 800; color: #12233c; letter-spacing: -0.01em; }
+.advisor-drawer__sub { font-size: 0.76rem; color: #6b7788; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.advisor-drawer__close { flex: 0 0 auto; width: 30px; height: 30px; border: 0; border-radius: 999px; background: #f3f6fb; color: #64748b; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.advisor-drawer__close:hover { background: #e8eef8; color: #2f6fed; }
+.advisor-drawer__body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+
+/* Drawer variant of the chat: header hidden, messages fill, input pinned. */
+.advisor-drawer .career-advisor-shell { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; max-width: none; margin: 0; }
+.advisor-drawer .career-advisor-header { display: none; }
+.advisor-drawer .career-advisor-panel { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; border: 0; border-radius: 0; background: #fff; padding: 10px 12px 12px; }
+.advisor-drawer .career-advisor-messages { flex: 1 1 auto; min-height: 0; max-height: none; }
+.advisor-drawer .career-advisor-messages.is-empty { flex: 1 1 auto; min-height: 0; }
+.advisor-drawer .career-advisor-suggestions { margin-top: auto; }
+.advisor-drawer .career-advisor-prompts { grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px; }
+.advisor-drawer .career-advisor-prompts button { min-height: 38px; font-size: 0.82rem; padding: 8px 11px; }
+.advisor-drawer .career-advisor-prompt-intro { font-size: 0.78rem; }
+.advisor-drawer .career-advisor-credit-note { font-size: 0.74rem; }
+.advisor-drawer .career-advisor-message-content { font-size: 0.9rem; }
+
+/* Phones: bottom bar + bottom sheet */
+@media (max-width: 760px) {
+  .advisor-tab {
+    top: auto; bottom: 0; right: 0; left: 0; transform: none;
+    width: 100%; flex-direction: row; justify-content: flex-start; gap: 10px;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    border: 0; border-top: 1px solid #dbe7f6; border-radius: 16px 16px 0 0;
+    box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.12);
+  }
+  .advisor-tab:hover, .advisor-tab.is-dragging { transform: none; }
+  .advisor-tab__icon { width: 34px; height: 34px; }
+  .advisor-tab__label { font-size: 0.9rem; }
+  .advisor-tab__hint { display: block; margin-left: auto; font-size: 0.74rem; font-weight: 600; color: #6b7788; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
+  .advisor-drawer {
+    top: auto; left: 0; right: 0; bottom: 0; width: 100%; height: 86dvh; max-height: 86vh;
+    border-left: 0; border-top: 1px solid #dbe7f6; border-radius: 18px 18px 0 0;
+    box-shadow: 0 -14px 40px rgba(15, 23, 42, 0.18);
+    transform: translateY(100%);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .advisor-drawer__handle { display: flex; justify-content: center; padding: 8px 0 0; }
+  .advisor-drawer__handle span { width: 40px; height: 4px; border-radius: 999px; background: #d3dbe8; }
+  .advisor-drawer__head { padding-top: 6px; }
+  .advisor-drawer .career-advisor-input-row textarea { font-size: 16px; } /* no iOS zoom */
+  /* Gap between the content and the sheet edges (the chat's own phone rules
+     strip the panel padding for the old full-page layout). */
+  .advisor-drawer .career-advisor-panel { padding: 8px 18px 14px !important; }
+  .advisor-drawer .career-advisor-message.user,
+  .advisor-drawer .career-advisor-message.assistant { max-width: 90% !important; }
+  .advisor-drawer .career-advisor-suggestions { margin: 6px 0 8px !important; padding: 8px 0 0 !important; }
+  .advisor-drawer__head { padding-left: 18px; padding-right: 16px; }
+}
+
+/* Phones: no page scrolling behind the open sheet, and a dimmed backdrop that
+   closes it on tap. Desktop keeps the page scrollable beside the drawer. */
+.advisor-backdrop { display: none; }
+@media (max-width: 760px) {
+  body.cdna-advisor-lock { overflow: hidden; touch-action: none; }
+  .advisor-backdrop { display: block; position: fixed; inset: 0; z-index: 94990; background: rgba(15, 23, 42, 0.35); }
+  .advisor-drawer__head { cursor: grab; touch-action: none; }
+}

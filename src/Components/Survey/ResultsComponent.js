@@ -13,8 +13,8 @@ import SwipeDeck from './SwipeDeck';
 import DIMENSIONS from '../../utils/Dimensions';
 import ClarityChart from './ClarityChart';
 import SelectionInsightExplorer from './SelectionInsightExplorer';
-import CareerAdvisorChat from '../Advisor/CareerAdvisorChat';
-import SectionAdvisor from '../Advisor/SectionAdvisor';
+import AdvisorDrawer from '../Advisor/AdvisorDrawer';
+import { setAdvisorContext, openAdvisor } from '../../utils/advisorPanel';
 import { fetchSelectionInsights } from '../../utils/fetchSelectionInsights';
 import CareerWorldsAccordion from './CareerWorldsAccordion';
 import ResultsFilterBar, { emptyFilter as emptyResultsFilter } from './ResultsFilter';
@@ -50,12 +50,12 @@ const SECTION_ADVISOR_CONFIG = {
   },
   environments: {
     section: 'environments',
-    title: 'your ideal environments',
+    title: 'your work styles',
     questions: [
-      'Which careers match the environments I prefer?',
+      'Which careers match my work styles?',
       'What work settings would suit me best?',
       'How do I find roles that offer these conditions?',
-      'Which environments should I prioritise?',
+      'Which of my work styles should I prioritise?',
     ],
   },
   careerworlds: {
@@ -80,7 +80,7 @@ const SECTION_ADVISOR_CONFIG = {
   },
   roleexplorer: {
     section: 'roles',
-    title: 'these roles',
+    title: 'your roles',
     questions: [
       'What is a typical day in these roles?',
       'How do I get into these roles?',
@@ -99,7 +99,7 @@ const SECTION_ADVISOR_CONFIG = {
   },
   furtherstudy: {
     section: 'furtherstudy',
-    title: 'these study routes',
+    title: 'university options',
     questions: [
       'Which of these degrees fits me best?',
       'What A-levels do I need for these degrees?',
@@ -109,7 +109,7 @@ const SECTION_ADVISOR_CONFIG = {
   },
   nonuni: {
     section: 'nonuni',
-    title: 'training and work routes',
+    title: 'your training and work',
     questions: [
       'Which of these apprenticeships suits me best?',
       'How do apprenticeships compare to university for me?',
@@ -1195,12 +1195,6 @@ const LOCKED_TAB_PREVIEW = {
       'The individual roles within the pathways you selected. Each role sets out what the work involves, how it fits your profile, and current graduate jobs and internships.',
     ],
   },
-  advisor: {
-    title: 'CareerDNA AI Advisor',
-    intro: [
-      'An AI adviser with access to your results. Use it to understand why options were recommended, compare alternatives, plan next steps, or draft wording for applications and interviews.',
-    ],
-  },
 };
 
 function normalizeViewerStatus(raw = '') {
@@ -1974,10 +1968,12 @@ export default function ResultsComponent({
     [itemReactions, itemReactionMeta]
   );
 
+  // Your Advisor is available once a report exists for this run.
+  const canShowAdvisor = Boolean(effectiveAssessmentRunId && computedSummary && !loadingSummary);
+
   const analysisTabsWithDiscoverMore = useMemo(() => {
     const tabs = [...analysisTabs];
     const canShowDiscoverMore = Boolean(computedSummary && !loadingSummary);
-    const canShowAdvisor = Boolean(effectiveAssessmentRunId && computedSummary && !loadingSummary);
     // Further Study (how to get there) is only for school students — undergraduates
     // are past the further-study stage.
     const isSchoolViewer = normalizeViewerStatus(viewerStatus) === 'school';
@@ -1989,13 +1985,20 @@ export default function ResultsComponent({
     if (canShowDiscoverMore && isSchoolViewer) tabs.push({ key: 'furtherstudy', label: 'University', markdown: '' });
     if (canShowDiscoverMore && isSchoolViewer) tabs.push({ key: 'nonuni', label: 'Training & Work', markdown: '' });
     if (canShowDiscoverMore && !isSchoolViewer) tabs.push({ key: 'roleexplorer', label: 'Role Explorer', markdown: '' });
-    if (canShowAdvisor) tabs.push({ key: 'advisor', label: 'AI Advisor', markdown: '' });
     return tabs;
   }, [analysisTabs, effectiveAssessmentRunId, computedSummary, loadingSummary, viewerStatus]);
   const activeTab = useMemo(
     () => analysisTabsWithDiscoverMore.find((tab) => tab.key === activeAnalysisTab) || analysisTabsWithDiscoverMore[0] || null,
     [analysisTabsWithDiscoverMore, activeAnalysisTab]
   );
+
+  // Tell Your Advisor what the student is looking at, so its suggestions follow.
+  useEffect(() => {
+    const key = openTopSection === 'analysis' ? activeAnalysisTab : '';
+    const cfg = key ? SECTION_ADVISOR_CONFIG[key] : null;
+    setAdvisorContext(cfg ? { section: cfg.section, title: cfg.title, questions: cfg.questions } : null);
+    return () => setAdvisorContext(null);
+  }, [openTopSection, activeAnalysisTab]);
 
   // Before the report is generated the analysis tabs above are empty (they're
   // built from the report text). To keep the menu looking normal, we render a
@@ -2013,7 +2016,7 @@ export default function ResultsComponent({
           { key: 'nonuni', label: 'Training & Work' },
         ]
       : [{ key: 'roleexplorer', label: 'Role Explorer' }];
-    return [...base, ...extra, { key: 'advisor', label: 'AI Advisor' }];
+    return [...base, ...extra];
   }, [viewerStatus]);
 
   // Report entitlement, derived from the loaded profile. `canRunReport` decides
@@ -2619,10 +2622,18 @@ export default function ResultsComponent({
   useEffect(() => {
     if (initialTabAppliedRef.current) return;
     if (initialSection !== 'analysis' || !initialTab) return;
+    // The roadmap's "talk to your advisor" step: open the drawer on the summary.
+    if (initialTab === 'advisor') {
+      if (!canShowAdvisor) return;
+      initialTabAppliedRef.current = true;
+      setActiveAnalysisTab('summary');
+      openAdvisor();
+      return;
+    }
     if (!analysisTabsWithDiscoverMore.some((tab) => tab.key === initialTab)) return;
     initialTabAppliedRef.current = true;
     setActiveAnalysisTab(initialTab);
-  }, [initialSection, initialTab, analysisTabsWithDiscoverMore]);
+  }, [initialSection, initialTab, analysisTabsWithDiscoverMore, canShowAdvisor]);
 
   // Deep-link to an exact card: when the profile favourites open a report item,
   // find that card (tagged with data-fav-key) once its tab has rendered, open it
@@ -3126,12 +3137,6 @@ export default function ResultsComponent({
               ))}
               {renderNextStep('pathways')}
             </>
-          ) : tab.key === 'advisor' ? (
-            isActive ? (
-              <CareerAdvisorChat assessmentRunId={effectiveAssessmentRunId} embedded />
-            ) : (
-              <div className="analysis-box__body"><p>Your CareerDNA advisor.</p></div>
-            )
           ) : (
             <>
               <div
@@ -3142,15 +3147,6 @@ export default function ResultsComponent({
               {renderNextStep(tab.key)}
             </>
           )}
-          {SECTION_ADVISOR_CONFIG[tab.key] && effectiveAssessmentRunId ? (
-            <SectionAdvisor
-              key={tab.key}
-              assessmentRunId={effectiveAssessmentRunId}
-              section={SECTION_ADVISOR_CONFIG[tab.key].section}
-              title={SECTION_ADVISOR_CONFIG[tab.key].title}
-              suggestedQuestions={SECTION_ADVISOR_CONFIG[tab.key].questions}
-            />
-          ) : null}
         </div>
       </div>
     );
@@ -3205,6 +3201,7 @@ export default function ResultsComponent({
 
   return (
     <div id="results-root">
+      {canShowAdvisor ? <AdvisorDrawer assessmentRunId={effectiveAssessmentRunId} /> : null}
       {cascadePrompt ? (
         <CascadeRemoveModal
           parent={cascadePrompt.parent}

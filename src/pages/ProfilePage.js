@@ -29,6 +29,7 @@ import { getMyAcademicProfile, hasAcademicData } from '../utils/academicProfile'
 import { cancelScheduledDowngrade, setCancelAtPeriodEnd } from '../utils/stripeCheckout';
 import './ProfilePage.css';
 import { ageFromDOB, ukSchoolYearGroup } from '../utils/educationProgression';
+import AdvisorDrawer from '../Components/Advisor/AdvisorDrawer';
 
 const defaultIntroResponses = {
   name: '',
@@ -1018,8 +1019,8 @@ export default function ProfilePage() {
       ? 'per year'
       : 'left';
 
-  const advisorLimitTitle = isRecurringPlan ? 'AI questions this year' : 'AI questions left';
-  const advisorLimitSubtitle = isRecurringPlan ? 'Included in your plan each year' : 'Chat with your AI advisor';
+  const advisorLimitTitle = isRecurringPlan ? 'Advisor questions this year' : 'Advisor questions left';
+  const advisorLimitSubtitle = isRecurringPlan ? 'Included in your plan each year' : 'Chat with Your Advisor';
   const advisorLimitValue = advisorUsage?.unlimited
     ? '∞'
     : isRecurringPlan
@@ -1558,6 +1559,7 @@ export default function ProfilePage() {
   return (
     <div className="profile-page">
       <AccountNavbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+      {latestRun?.id && latestRun?.summary_markdown ? <AdvisorDrawer assessmentRunId={latestRun.id} /> : null}
 
       <div className="profile-shell">
         {/* Accent hero: identity + live journey progress + continue action */}

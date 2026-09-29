@@ -43,7 +43,7 @@ export default function ReportLimitModal({
   const isPaidPlan = ['explore', 'premium', 'premium_school', 'premium_university', 'dev'].includes(planKey);
   const canUpgradeToPremium = planKey === 'explore';
 
-  // AI Advisor question packs (loaded only for the advisor mode, paid plans).
+  // Advisor question packs (loaded only for the advisor mode, paid plans).
   const [packs, setPacks] = useState([]);
   const [packLoading, setPackLoading] = useState('');
   const [packError, setPackError] = useState('');
@@ -70,14 +70,14 @@ export default function ReportLimitModal({
     ? {
         title: 'Continue your CareerDNA journey',
         subtitle: !isPaidPlan
-          ? 'AI Advisor questions are included with CareerDNA Explorer and Premium. Choose a plan to start asking questions about your results.'
+          ? 'Your Advisor is included with CareerDNA Explorer and Premium. Choose a plan to start asking questions about your results.'
           : canUpgradeToPremium
           ? (packs.length
-              ? 'You have used all of your AI Advisor questions for this year. Add a question pack, or upgrade to Premium for 20 questions a year plus rankings, live jobs and openings.'
-              : 'You have used all of your AI Advisor questions for this year. Upgrade to Premium for 20 questions a year plus rankings, live jobs and openings.')
+              ? 'You have used all of your advisor questions for this year. Add a question pack, or upgrade to Premium for 20 questions a year plus rankings, live jobs and openings.'
+              : 'You have used all of your advisor questions for this year. Upgrade to Premium for 20 questions a year plus rankings, live jobs and openings.')
           : (packs.length
-              ? 'You have used all of your AI Advisor questions for this year. Add a question pack to keep asking.'
-              : 'You have used all of your AI Advisor questions for this year. More questions will be available with your next billing year, or enter an access code if you have one.'),
+              ? 'You have used all of your advisor questions for this year. Add a question pack to keep asking.'
+              : 'You have used all of your advisor questions for this year. More questions will be available with your next billing year, or enter an access code if you have one.'),
       }
     : isPremiumFeature
     ? {
@@ -95,7 +95,7 @@ export default function ReportLimitModal({
     : {
         title: 'Continue your CareerDNA journey',
         subtitle:
-          'Your free profile is a starting point. Unlock deeper insights, personalised recommendations and AI advisor support.',
+          'Your free profile is a starting point. Unlock deeper insights, personalised recommendations and Your Advisor.',
       };
 
   const submitCoupon = async () => {
