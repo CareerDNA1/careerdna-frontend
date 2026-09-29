@@ -203,7 +203,6 @@ export default function SatisfactionCard({ userId, assessmentRunId, asModal = fa
             role="radio"
             aria-checked={rating === face.rating}
             aria-label={face.label}
-            title={face.label}
           >
             <FaceIcon tone={face.tone} />
             <span className="satisfaction-face-label">{face.label}</span>

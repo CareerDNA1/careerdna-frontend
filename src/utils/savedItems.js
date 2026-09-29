@@ -99,6 +99,13 @@ export async function getReactions(itemType) {
 // Save / unsave (or mark "not for me") a live item. reaction is 'like' or
 // 'dislike'; pass remove:true to clear it. Returns the reaction now stored
 // ('like' | 'dislike' | '') so the caller can update its UI.
+// Anything showing favourites (the profile cards, for one) can listen for this
+// and reload, so a save made inside a popup shows up without a page refresh.
+export const FAVOURITES_CHANGED_EVENT = 'cdna:favourites-changed';
+export function notifyFavouritesChanged() {
+  if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(FAVOURITES_CHANGED_EVENT));
+}
+
 export async function setItemReaction({ itemType, itemId, itemTitle, itemMeta = null, reaction = 'like', remove = false }) {
   const { userId, runId } = await getContext();
   if (!userId || !runId || !itemType || !itemId) return null;
@@ -116,6 +123,7 @@ export async function setItemReaction({ itemType, itemId, itemTitle, itemMeta = 
 
     if (remove) {
       if (existing?.id) await supabase.from('result_feedback').delete().eq('id', existing.id);
+      notifyFavouritesChanged();
       return '';
     }
 
@@ -144,6 +152,7 @@ export async function setItemReaction({ itemType, itemId, itemTitle, itemMeta = 
       const retry = await write(withoutMeta);
       if (retry.error) return null;
     }
+    notifyFavouritesChanged();
     return reaction;
   } catch (_) {
     return null;

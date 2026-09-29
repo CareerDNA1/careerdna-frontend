@@ -256,7 +256,7 @@ export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = 
         {pilotDefinition ? (
           <>
             {!open && reaction === 'like' ? (
-              <span className="cw-liked-mark" aria-label="Saved to favourites" title="Saved to favourites">
+              <span className="cw-liked-mark" aria-label="Saved to favourites">
                 <BookmarkSimple size={19} weight="fill" aria-hidden="true" />
               </span>
             ) : null}
@@ -284,7 +284,7 @@ export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = 
         ) : (
           <>
             {!open && reaction === 'like' ? (
-              <span className="cw-liked-mark" aria-label="Saved to favourites" title="Saved to favourites">
+              <span className="cw-liked-mark" aria-label="Saved to favourites">
                 <BookmarkSimple size={19} weight="fill" aria-hidden="true" />
               </span>
             ) : null}

@@ -1,0 +1,13 @@
+/* Picker in the app's own menu style (same panel as the three dots menu on the
+   reports list), never the browser's native dropdown. The trigger is styled by
+   the caller via triggerClass; this file covers the wrapper and the floating menu. */
+.apps-menu-wrap { position: relative; display: inline-flex; align-self: flex-start; }
+.apps-menu { min-width: 220px; max-width: 280px; z-index: 100000; }
+.apps-menu .profile-run-menu-item { padding: 8px 11px; }
+.apps-menu-check { display: inline-flex; width: 14px; justify-content: center; color: #2f6fed; }
+.profile-run-menu-item.is-current { color: #2f6fed; font-weight: 700; }
+.apps-pick-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Standalone fallback for pages that do not load the profile stylesheet. */
+.apps-menu.profile-run-menu { padding: 4px; background: #fff; border: 1px solid #e8edf4; border-radius: 12px; box-shadow: 0 14px 34px rgba(15, 23, 42, 0.16); }
+.apps-menu .profile-run-menu-item { display: flex; align-items: center; gap: 9px; width: 100%; white-space: nowrap; border: none; background: transparent; border-radius: 8px; font-size: 0.85rem; font-family: inherit; color: #243447; cursor: pointer; text-align: left; }
+.apps-menu .profile-run-menu-item:hover { background: #f4f7fb; }

@@ -24,6 +24,7 @@
   font-weight: 700;
   color: #12233c;
 }
+.acad-title svg { color: #2f6fed; }
 .acad-notice { margin: 10px 0 0; color: #1f9e6b; font-size: 0.86rem; }
 .acad-error { margin: 10px 0 0; color: #c0392b; font-size: 0.86rem; }
 
@@ -119,7 +120,13 @@
   font-family: inherit;
 }
 .acad-input { flex: 1 1 auto; min-width: 0; }
-.acad-select { flex: 0 0 96px; }
+.acad-input.sug { padding: 0; border: 0; background: transparent; }
+.acad-row .apps-menu-wrap { flex: 0 0 96px; display: flex; }
+.acad-select { flex: 1 1 auto; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 6px; cursor: pointer; text-align: left; font-weight: 600; }
+.acad-select.is-empty { color: #8a97ac; font-weight: 500; }
+.acad-select svg { color: #6b7a8c; flex: 0 0 auto; }
+.acad-select:focus-visible { outline: 2px solid #2f6fed; outline-offset: 1px; border-color: #2f6fed; }
+.acad-row .apps-menu { min-width: 120px; }
 .acad-row-remove {
   flex: 0 0 auto;
   display: inline-flex;
@@ -169,7 +176,7 @@
 
 @media (max-width: 560px) {
   .acad-view-key { min-width: 0; flex-basis: 100%; }
-  .acad-select { flex-basis: 84px; }
+  .acad-row .apps-menu-wrap { flex-basis: 84px; }
 }
 
 /* Header action: same slim pill as Open Report on the reports list. */

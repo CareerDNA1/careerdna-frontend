@@ -1,6 +1,7 @@
 import { supabase } from './supabaseClient';
 import { pathwayWorld, canonicalWorldId } from './canonicalIds';
 import { fetchNonUniRoutes } from './fetchNonUniRoutes';
+import { notifyFavouritesChanged } from './savedItems';
 
 // When a student unlikes a career world or pathway, the degrees, roles and
 // training routes they saved under it become orphans. These helpers find those
@@ -130,6 +131,7 @@ export async function deleteFavouriteRows(ids = []) {
   if (!clean.length) return 0;
   const { error } = await supabase.from('result_feedback').delete().in('id', clean);
   if (error) throw error;
+  notifyFavouritesChanged();
   return clean.length;
 }
 

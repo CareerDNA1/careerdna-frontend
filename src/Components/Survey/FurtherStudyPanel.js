@@ -145,7 +145,7 @@ export function RouteItem({ route, open = false, onToggle, reaction = '', onReac
           </div>
           <div className="pathway-role-item__right">
             {!open && reaction === 'like' ? (
-              <span className="cdna-saved-mark" aria-label="Saved to favourites" title="Saved to favourites"><BookmarkSimple size={18} weight="fill" aria-hidden="true" /></span>
+              <span className="cdna-saved-mark" aria-label="Saved to favourites"><BookmarkSimple size={18} weight="fill" aria-hidden="true" /></span>
             ) : null}
             <span className="pathway-role-item__chevron">
               <svg

@@ -10,7 +10,11 @@ import {
   ALEVEL_SUBJECTS,
   GCSE_SUBJECTS,
 } from '../../utils/academicProfile';
+import PickMenu from './PickMenu';
+import SuggestInput from './SuggestInput';
 import './AcademicProfileCard.css';
+
+const gradeOptions = (grades) => [{ value: '', label: 'Grade' }, ...grades.map((g) => ({ value: g, label: g }))];
 
 // Self-entered academic profile on the Profile page: GCSEs + predicted A-levels.
 // Optional; sharpens university matches (reach / match / safe) when present.
@@ -173,21 +177,16 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
             <div className="acad-section-label">Predicted A-levels</div>
             {draft.predicted_alevels.map((row, i) => (
               <div className="acad-row" key={`al-${i}`}>
-                <input
+                <SuggestInput
                   className="acad-input"
-                  list="acad-alevels"
+                  options={ALEVEL_SUBJECTS}
                   placeholder="Subject"
+                  ariaLabel="A-level subject"
                   value={row.subject}
-                  onChange={(e) => setRow('predicted_alevels', i, 'subject', e.target.value)}
+                  onChange={(v) => setRow('predicted_alevels', i, 'subject', v)}
                 />
-                <select
-                  className="acad-select"
-                  value={row.grade}
-                  onChange={(e) => setRow('predicted_alevels', i, 'grade', e.target.value)}
-                >
-                  <option value="">Grade</option>
-                  {ALEVEL_GRADES.map((g) => <option key={g} value={g}>{g}</option>)}
-                </select>
+                <PickMenu options={gradeOptions(ALEVEL_GRADES)} value={row.grade} ariaLabel="Predicted grade"
+                  triggerClass={`acad-select${row.grade ? '' : ' is-empty'}`} onSelect={(v) => setRow('predicted_alevels', i, 'grade', v)} />
                 <button type="button" className="acad-row-remove" aria-label="Remove" onClick={() => removeRow('predicted_alevels', i)}>
                   <X size={14} weight="bold" aria-hidden="true" />
                 </button>
@@ -202,21 +201,16 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
             <div className="acad-section-label">GCSEs</div>
             {draft.gcses.map((row, i) => (
               <div className="acad-row" key={`gc-${i}`}>
-                <input
+                <SuggestInput
                   className="acad-input"
-                  list="acad-gcses"
+                  options={GCSE_SUBJECTS}
                   placeholder="Subject"
+                  ariaLabel="GCSE subject"
                   value={row.subject}
-                  onChange={(e) => setRow('gcses', i, 'subject', e.target.value)}
+                  onChange={(v) => setRow('gcses', i, 'subject', v)}
                 />
-                <select
-                  className="acad-select"
-                  value={row.grade}
-                  onChange={(e) => setRow('gcses', i, 'grade', e.target.value)}
-                >
-                  <option value="">Grade</option>
-                  {GCSE_GRADES.map((g) => <option key={g} value={g}>{g}</option>)}
-                </select>
+                <PickMenu options={gradeOptions(GCSE_GRADES)} value={row.grade} ariaLabel="GCSE grade"
+                  triggerClass={`acad-select${row.grade ? '' : ' is-empty'}`} onSelect={(v) => setRow('gcses', i, 'grade', v)} />
                 <button type="button" className="acad-row-remove" aria-label="Remove" onClick={() => removeRow('gcses', i)}>
                   <X size={14} weight="bold" aria-hidden="true" />
                 </button>
@@ -227,12 +221,6 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
             </button>
           </div>
 
-          <datalist id="acad-alevels">
-            {ALEVEL_SUBJECTS.map((s) => <option key={s} value={s} />)}
-          </datalist>
-          <datalist id="acad-gcses">
-            {GCSE_SUBJECTS.map((s) => <option key={s} value={s} />)}
-          </datalist>
 
           <p className="acad-foot">These are your own predicted grades. Only you can see them, and you can edit or clear them any time.</p>
 

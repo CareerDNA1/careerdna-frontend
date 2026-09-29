@@ -923,9 +923,11 @@ function SubjectAccordionItem({ item }) {
 // Big "Love this / Not for me" buttons at the bottom of an expanded pathway/role
 // row. Tooltip shows only "Added to favourites", once, when Love this is switched
 // on — no hover tooltips (matches the career-world card behaviour).
-export function PathwayReactionRow({ reaction = '', onReact, label = 'Feedback' }) {
+// `extra`: an optional third control rendered in the same row and style (e.g.
+// "Mark as applied" on a saved ad).
+export function PathwayReactionRow({ reaction = '', onReact, label = 'Feedback', extra = null }) {
   return (
-    <div className="cdna-react-row" aria-label={label}>
+    <div className={`cdna-react-row${extra ? ' cdna-react-row--three' : ''}`} aria-label={label}>
       <button
         type="button"
         className={`cdna-react-btn cdna-react-btn--like ${reaction === 'like' ? 'is-active' : ''}`}
@@ -955,6 +957,7 @@ export function PathwayReactionRow({ reaction = '', onReact, label = 'Feedback' 
       >
         <SmileyMeh size={18} weight="regular" aria-hidden="true" /> Not for me
       </button>
+      {extra}
     </div>
   );
 }
@@ -1020,7 +1023,6 @@ export function JobCard({ job, saved = false, onToggleSave, onOpen }) {
           className={`role-jobcard__save${saved ? ' is-saved' : ''}`}
           aria-pressed={saved}
           aria-label={saved ? 'Saved to favourites' : 'Save to favourites'}
-          title={saved ? 'Saved' : 'Save to favourites'}
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleSave(job); }}
         >
           <BookmarkSimple size={16} weight={saved ? 'fill' : 'bold'} aria-hidden="true" />
@@ -1568,7 +1570,7 @@ export function RoleAccordionItem({ item, onItemReaction, savedReactions = {}, s
           </div>
 
           {!open && reaction === 'like' ? (
-            <span className="cdna-saved-mark" aria-label="Saved to favourites" title="Saved to favourites"><BookmarkSimple size={18} weight="fill" aria-hidden="true" /></span>
+            <span className="cdna-saved-mark" aria-label="Saved to favourites"><BookmarkSimple size={18} weight="fill" aria-hidden="true" /></span>
           ) : null}
           {band ? (
             <span className={`cdna-band-pill cdna-band-pill--${bandKey(band)} pathway-role-item__badge`}>{band}</span>
@@ -1720,7 +1722,7 @@ function PathwayDefinitionItem({ item, open = false, onToggle, onItemReaction, s
           </div>
 
           {!open && reaction === 'like' ? (
-            <span className="cdna-saved-mark" aria-label="Saved to favourites" title="Saved to favourites"><BookmarkSimple size={18} weight="fill" aria-hidden="true" /></span>
+            <span className="cdna-saved-mark" aria-label="Saved to favourites"><BookmarkSimple size={18} weight="fill" aria-hidden="true" /></span>
           ) : null}
           {band ? (
             <span className={`cdna-band-pill cdna-band-pill--${bandKey(band)} pathway-role-item__badge`}>{band}</span>

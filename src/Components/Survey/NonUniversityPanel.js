@@ -451,7 +451,7 @@ function StandardRow({ route, liveVacancies, showTitle, reaction = '', onReact }
           <span className="nu-wayrow__meta">
             <span className="nu-wayrow__sub">{headKind}{levelChip ? ` · Level ${levelNum}` : ''}{deliversDegree ? ' · Degree' : ''}</span>
             {reaction === 'like' ? (
-              <span className="nu-wayrow__saved" aria-label="Saved to favourites" title="Saved to favourites"><BookmarkSimple size={13} weight="fill" aria-hidden="true" /> Saved</span>
+              <span className="nu-wayrow__saved" aria-label="Saved to favourites"><BookmarkSimple size={13} weight="fill" aria-hidden="true" /> Saved</span>
             ) : null}
             {vCount != null && vCount > 0 ? (
               <span className="nu-wayrow__live"><span className="nu-vac-dot" aria-hidden="true" />{vCount}{vCapped ? '+' : ''} live</span>
@@ -724,7 +724,7 @@ export function PathwayCard({ pathway, routes, open, onToggle, reaction, onReact
           <div className="pathway-role-item__right">
             {band ? <SignalBadge label={/match$/i.test(band) ? band : `${band} match`} /> : null}
             {!open && reaction === 'like' ? (
-              <span className="cdna-saved-mark" aria-label="Saved to favourites" title="Saved to favourites"><BookmarkSimple size={18} weight="fill" aria-hidden="true" /></span>
+              <span className="cdna-saved-mark" aria-label="Saved to favourites"><BookmarkSimple size={18} weight="fill" aria-hidden="true" /></span>
             ) : null}
             <span className="pathway-role-item__chevron">
               <svg className={`selection-chevron ${open ? 'is-open' : ''}`} viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>

@@ -1,0 +1,125 @@
+/* "Your applications" card. Layout and popup come from FavouritesCard.css (the
+   same fav-* classes), so it matches the favourites card exactly. Only the
+   application-specific bits live here. */
+.apps-card { margin-bottom: 0; }
+.apps-title svg { color: #2f6fed; }
+
+/* Status pill on rows (read only) */
+.apps-pill { flex: 0 0 auto; font-size: 0.7rem; font-weight: 700; border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
+.apps-pill--blue { background: #eef4ff; color: #2f6fed; }
+.apps-pill--amber { background: #fff4de; color: #9a5b00; }
+.apps-pill--green { background: #e1f5ee; color: #0f6e56; }
+.apps-pill--grey { background: #f1f4f9; color: #56657a; }
+
+/* Nudge under the preview */
+.apps-nudge {
+  display: flex; align-items: flex-start; gap: 8px;
+  margin: 12px 0 0; padding: 9px 12px;
+  background: #fff8e6; border: 1px solid #f5dfa3; border-radius: 10px;
+  color: #7a5200; font-size: 0.8rem; font-weight: 600; line-height: 1.4;
+}
+.apps-nudge svg { flex: 0 0 auto; color: #b7791f; margin-top: 1px; }
+
+/* Detail view */
+.apps-fact--warn { color: #b7791f; font-weight: 700; }
+
+/* Status picker: the app's standard menu panel under a pill-shaped trigger */
+
+.apps-note-edit { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.apps-note-edit input {
+  flex: 1 1 220px; min-width: 0; padding: 8px 10px; border: 1px solid #d3dbe8; border-radius: 9px;
+  font-family: inherit; font-size: 0.86rem; color: #12233c;
+}
+.apps-note-edit input:focus { outline: 2px solid #2f6fed; outline-offset: 1px; border-color: #2f6fed; }
+.apps-remove-confirm { display: inline-flex; align-items: center; gap: 8px; font-size: 0.84rem; color: #4b5c6b; flex-wrap: wrap; }
+
+/* Manual add (inside the popup) */
+.apps-add {
+  display: inline-flex; align-items: center; gap: 6px; margin: 0 0 16px;
+  border: 1px dashed #cddbf0; border-radius: 999px; background: #fff; color: #2f6fed;
+  padding: 6px 14px; font-family: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+}
+.apps-add:hover { background: #eef4ff; border-style: solid; }
+.apps-form { margin: 0 0 18px; padding: 14px; border: 1px solid #e6ebf3; border-radius: 12px; background: #f9fbfe; }
+.apps-form-lead { margin: 0 0 10px; color: #56657a; font-size: 0.84rem; line-height: 1.45; }
+.apps-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; }
+.apps-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.apps-field > span { font-size: 0.74rem; font-weight: 700; color: #5b6b8c; }
+.apps-field input {
+  width: 100%; box-sizing: border-box;
+  padding: 8px 10px; border: 1px solid #d3dbe8; border-radius: 9px;
+  font-family: inherit; font-size: 0.86rem; color: #12233c; background: #fff;
+}
+.apps-field input:focus { outline: 2px solid #2f6fed; outline-offset: 1px; border-color: #2f6fed; }
+.apps-field--title { grid-column: 1 / -1; }
+.apps-form-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+@media (max-width: 600px) {
+  .apps-form-grid { grid-template-columns: 1fr; }
+}
+
+/* Empty state */
+.apps-empty { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 18px 8px 6px; flex: 1; justify-content: center; }
+.apps-empty-title { font-size: 1rem; font-weight: 700; color: #12233c; margin-bottom: 4px; }
+.apps-empty-text { margin: 0; max-width: 320px; color: #56657a; font-size: 0.86rem; line-height: 1.5; }
+.apps-empty-text strong { color: #2f6fed; }
+.apps-add-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+.apps-add-row .apps-add { margin: 0; }
+
+/* Form field styled trigger for the type picker (same look as the text inputs) */
+.apps-field-pick {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: 100%; box-sizing: border-box;
+  padding: 8px 10px; border: 1px solid #d3dbe8; border-radius: 9px;
+  font-family: inherit; font-size: 0.86rem; color: #12233c; background: #fff; cursor: pointer; text-align: left;
+}
+.apps-field-pick:focus-visible { outline: 2px solid #2f6fed; outline-offset: 1px; border-color: #2f6fed; }
+.apps-field-pick svg { color: #6b7a8c; flex: 0 0 auto; }
+.apps-field .apps-menu-wrap { display: flex; width: 100%; }
+.apps-pick-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.apps-field-hint { font-weight: 500; font-style: normal; color: #8a97ac; margin-left: 4px; }
+.apps-form--page { margin: 0; padding: 0; border: 0; background: transparent; }
+.apps-form--page .fav-modal-title { margin-bottom: 4px; }
+.apps-pick .fav-modal-sub { margin-bottom: 16px; }
+
+/* Application detail: mirrors the favourite ad card */
+.apps-detail-row { padding: 14px 0 0; }
+.apps-detail-row .apps-menu-wrap { flex: 1 1 0; min-width: 0; display: flex; }
+.apps-detail-row--single .apps-note-big { flex: 1 1 100%; }
+.apps-status-big { width: 100%; justify-content: center; font-weight: 700; }
+.apps-status-big--blue { background: #eef4ff; border-color: #cddbf0; color: #2f6fed; }
+.apps-status-big--amber { background: #fff4de; border-color: #f2dfb3; color: #9a5b00; }
+.apps-status-big--green { background: #e1f5ee; border-color: #9fe1cb; color: #0f6e56; }
+.apps-status-big--grey { background: #f1f4f9; border-color: #dfe5ee; color: #56657a; }
+.apps-note-big { color: #4b5c6b; font-weight: 600; }
+.apps-note-big.has-note { color: #14233c; }
+.apps-note-big .apps-pick-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.apps-detail-row + .apps-note-edit { margin-top: 10px; }
+.apps-detail-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+.apps-remove-link { border: 0; background: none; padding: 0; font-family: inherit; font-size: 0.86rem; font-weight: 600; color: #8a97ac; cursor: pointer; }
+.apps-remove-link:hover:not(:disabled) { color: #b42318; text-decoration: underline; }
+.apps-remove-link:disabled { opacity: 0.5; cursor: default; }
+@media (max-width: 560px) { .apps-detail-row { flex-direction: column; } }
+
+/* Interview date */
+.apps-fact-btn { border: 1px solid #e3e9f2; background: #fff; color: #2f6fed; cursor: pointer; text-decoration: none; font-family: inherit; }
+.apps-fact-btn:hover { background: #eef4ff; border-color: #cddbf0; }
+.apps-cal-links { font-size: 0.8rem; color: #6b7a8c; }
+.apps-cal-links a { color: #2f6fed; font-weight: 700; text-decoration: none; }
+.apps-cal-links a:hover { text-decoration: underline; }
+.apps-event-input { margin: 0 0 14px; }
+.cascade-btn--danger { background: #fff; border-color: #f6cfca; color: #b42318; }
+.cascade-btn--danger:hover { background: #fdecea; }
+.cascade-actions a.cascade-btn { text-decoration: none; text-align: center; }
+.cascade-box .apps-cal-links { margin-top: 12px; }
+
+/* UCAS choice detail */
+.apps-ucas-line { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 12px 0 0; font-size: 0.82rem; color: #56657a; }
+.apps-detail-chances { display: flex; align-items: center; gap: 8px; margin-top: 6px; white-space: normal; }
+.apps-detail-chances b { color: #1f2a37; font-weight: 700; }
+
+/* Card preview rows: the card is narrow (three columns on school profiles), so
+   titles wrap to two lines rather than collapsing to a letter. */
+.apps-card .fav-prev-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.3; }
+.apps-card .fav-prev-main { min-width: 96px; }
+.apps-card .fav-prev .apps-pill { max-width: 46%; overflow: hidden; text-overflow: ellipsis; }

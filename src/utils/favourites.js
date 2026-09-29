@@ -1,5 +1,6 @@
 import { supabase } from './supabaseClient';
 import { canonicalItem, pathwayWorld, canonicalWorldId } from './canonicalIds';
+import { notifyFavouritesChanged } from './savedItems';
 
 // The insights engine labels pathway families as type "role" in the university
 // flow, so a liked PATHWAY can be stored with item_type 'role'. Recognise those
@@ -180,4 +181,5 @@ export async function removeFavourite(runId, itemId, itemType, storedType = '') 
     .eq('item_type', storedType || itemType)
     .eq('item_id', itemId);
   if (error) throw error;
+  notifyFavouritesChanged();
 }

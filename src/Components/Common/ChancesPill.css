@@ -1,0 +1,28 @@
+/* "Your chances" band shown next to a course in favourites and UCAS choices. */
+.chances-pill { position: relative; flex: 0 0 auto; cursor: help; outline: none; }
+.chances-pill--sm { padding: 2px 8px; font-size: 0.68rem; }
+.chances-pill--md { padding: 3px 10px; font-size: 0.74rem; }
+.chances-pill:focus-visible { box-shadow: 0 0 0 2px #dbe7fb; }
+/* Tooltip in the app's own white style (same as the favourites remove button). */
+.chances-pill[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute; right: 0; bottom: calc(100% + 8px);
+  z-index: 6; pointer-events: none;
+  width: max-content; max-width: 260px;
+  background: #fff; color: #1f2a37;
+  border: 1px solid #e2e8f0; border-radius: 10px;
+  padding: 7px 10px; white-space: normal; text-align: left;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+  font: 500 12px/1.4 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  opacity: 0; transform: translateY(3px);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+.chances-pill[data-tip]:hover::after, .chances-pill[data-tip]:focus-visible::after { opacity: 1; transform: none; }
+@media (hover: none) { .chances-pill::after { display: none; } }
+
+/* Inside the course stat strip: the band pill sits where the bold value would. */
+
+/* Favourites rows: the pill sits at the end of the row on wide screens and
+   moves onto the tag line under the title on phones (FavouritesCard.css). */
+.fav-item-chances-side { display: inline-flex; flex: 0 0 auto; }
+.fav-item-chances-side:empty { display: none; }

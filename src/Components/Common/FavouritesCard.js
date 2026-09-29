@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Heart, X, Briefcase, Compass, GraduationCap, BookOpen, FileText, Signpost, Sparkle, MapPin, CaretRight, ArrowSquareOut, ArrowLeft, CalendarBlank, CurrencyGbp, IdentificationBadge } from 'phosphor-react';
+import { Heart, X, CheckCircle, PaperPlaneTilt, ArrowRight, Briefcase, Compass, GraduationCap, BookOpen, FileText, Signpost, Sparkle, MapPin, CaretRight, ArrowSquareOut, ArrowLeft, CalendarBlank, CurrencyGbp, IdentificationBadge } from 'phosphor-react';
 import { getCareerWorldIcon, getPathwayIcon, getSubjectIcon, getStrengthIcon, getEnvironmentIcon } from '../../utils/iconMap';
 import { getFavouritesByCategory, removeFavourite } from '../../utils/favourites';
+import { canApplyFor, favouriteAppKey, isUcasChoice } from '../../utils/applications';
 import { findChildFavourites, deleteFavouriteRows } from '../../utils/favouriteCascade';
 import { supabase } from '../../utils/supabaseClient';
 import CascadeRemoveModal from './CascadeRemoveModal';
+import ChancesPill from './ChancesPill';
 import { loadSubjectRanking } from '../../utils/rankings';
 import { assembleFavouriteWorld, assembleFavouriteRole, assembleFavouriteDegree, assembleFavouriteTraining } from '../../utils/favouriteReportCard';
 import { WorldCard } from '../Survey/CareerWorldsAccordion';
@@ -77,7 +79,14 @@ const REPORT_TYPES = new Set(['career_world', 'pathway', 'subject', 'role', 'app
 // their most recent run, opening a popup that lists them by category. Tapping a
 // favourite takes them straight to that item in their report (the genuine card),
 // or opens its external link for saved jobs/courses.
-export default function FavouritesCard({ runId, onExplore, initialGroups, insightCtx }) {
+// appliedKeys: Set of `${type}|${id}` already in the applications tracker;
+// onApply(item): mark a favourite ad/course as applied (owned by the profile page).
+export default function FavouritesCard({ runId, onExplore, initialGroups, insightCtx, appliedKeys, onApply, stage = 'university', predictedGrades = [] }) {
+  // Grades band for a saved course (Safe / Match / Stretch / Ambitious), same as the rankings table.
+  const [chancesTip, setChancesTip] = useState('');
+  const chances = (item, size = 'sm') => (item && item.type === 'course' && item.stats?.typicalGrades)
+    ? <ChancesPill predicted={predictedGrades} typicalGrades={item.stats.typicalGrades} size={size} onTap={(t) => setChancesTip((cur) => (cur === t ? '' : t))} />
+    : null;
   // When the parent preloads the favourites (initialGroups), use them directly so
   // the card renders together with the rest of the profile instead of fetching
   // again and popping in a few seconds later.
@@ -92,10 +101,48 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
   const [removingId, setRemovingId] = useState('');
   // Row whose inline "Remove X from your favourites?" confirm is showing.
   const [confirmId, setConfirmId] = useState('');
+  // Opened ad/course that has an application: "Not for me" asks first.
+  const [detailConfirm, setDetailConfirm] = useState(false);
   // Removing a world/pathway that still has favourites under it: { parent, children }.
   const [cascadePrompt, setCascadePrompt] = useState(null);
   const [cascadeBusy, setCascadeBusy] = useState(false);
   const [error, setError] = useState('');
+  const [applyingId, setApplyingId] = useState('');
+  // Tapping an already-logged application explains where it can be changed.
+  const [appliedHintId, setAppliedHintId] = useState('');
+  const appliedHint = (item) => (isUcas(item)
+    ? 'This course is already one of your UCAS choices. To take it off, open Your applications, go to your UCAS application and use Remove from choices.'
+    : 'This is already in Your applications. Open it there to update its status or remove it.');
+  const isApplied = (item) => Boolean(appliedKeys && appliedKeys.has(favouriteAppKey(item)));
+  // A school student's course goes onto their UCAS choices rather than being "applied for".
+  const isUcas = (item) => isUcasChoice({ kind: item?.type === 'course' ? 'course' : '', item_type: item?.type }, stage);
+  const applyLabel = (item) => (isUcas(item) ? 'Add to UCAS choices' : 'Mark as applied');
+  const appliedLabel = (item) => (isUcas(item) ? 'UCAS choice' : 'Applied');
+  const handleApply = async (item) => {
+    if (typeof onApply !== 'function' || isApplied(item)) return;
+    try { setApplyingId(item.id); setError(''); await onApply(item); }
+    catch (e) { setError(e?.message || 'Could not save this application.'); }
+    finally { setApplyingId(''); }
+  };
+  // "Applied" control for an ad or course: a small action when not yet logged,
+  // a quiet green tick once it is.
+  const renderApplied = (item, size = 'sm') => {
+    if (!canApplyFor(item) || typeof onApply !== 'function') return null;
+    if (size === 'react') {
+      if (isApplied(item)) {
+        return <button type="button" className="cdna-react-btn cdna-react-btn--applied is-active" aria-pressed="true" onClick={() => setAppliedHintId((cur) => (cur === item.id ? '' : item.id))}><CheckCircle size={18} weight="fill" aria-hidden="true" /> {appliedLabel(item)}</button>;
+      }
+      return (
+        <button type="button" className="cdna-react-btn cdna-react-btn--applied" disabled={applyingId === item.id} onClick={() => handleApply(item)} aria-pressed="false">
+          <PaperPlaneTilt size={18} weight="bold" aria-hidden="true" /> {applyingId === item.id ? 'Saving…' : applyLabel(item)}
+        </button>
+      );
+    }
+    // List rows: a quiet green tick once the item is in the tracker (rows never
+    // offer the action itself; that happens inside the opened card).
+    if (isApplied(item)) return <span className="fav-applied fav-applied--sm"><CheckCircle size={13} weight="fill" aria-hidden="true" />{appliedLabel(item)}</span>;
+    return null;
+  };
 
   useEffect(() => {
     // Parent supplies the data: mirror it, don't fetch.
@@ -111,7 +158,8 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
 
   // Escape closes the innermost thing: inline confirm, then opened card, then popup.
   const escRef = useRef(() => {});
-  escRef.current = () => { if (confirmId) setConfirmId(''); else if (detail) setDetail(null); else setOpen(false); };
+  escRef.current = () => { if (detailConfirm) setDetailConfirm(false); else if (confirmId) setConfirmId(''); else if (detail) { setDetail(null); } else setOpen(false); };
+  useEffect(() => { setDetailConfirm(false); }, [detail]);
   useEffect(() => {
     if (!open) return undefined;
     const onKey = (e) => { if (e.key === 'Escape') escRef.current(); };
@@ -150,6 +198,8 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
   // stats, look it up live from the rankings data so the card always shows the
   // same rich stat strip as the rankings modal.
   useEffect(() => {
+    setAppliedHintId('');
+    setChancesTip('');
     setLinkStats(null);
     if (!detail || detail.type !== 'course' || detail.stats) return undefined;
     if (!detail.subject && !detail.title) return undefined;
@@ -245,8 +295,58 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
 
   if (loading) return null;
 
+  // Discreet link at the top right of an opened favourite: jump to the matching
+  // section of the report (the same tabs the journey uses).
+  const reportSectionLabel = (item) => {
+    const uni = stage === 'university';
+    switch (item?.type) {
+      case 'career_world': return 'Career worlds';
+      case 'pathway': return uni ? 'Pathways' : 'Career pathways';
+      case 'role': return uni ? 'Roles' : 'Career pathways';
+      case 'subject': return 'University';
+      case 'course': return 'University';
+      case 'nonuni_pathway': return 'Training & work';
+      case 'apprenticeship': return 'Training & work';
+      case 'job': {
+        const kind = item?.meta?.kind;
+        if (kind === 'apprenticeship' || /apprentice/i.test(String(item?.meta?.source || ''))) return 'Training & work';
+        return uni ? 'Roles' : 'Career pathways';
+      }
+      case 'strength': return 'Strengths';
+      case 'environment': return 'Work styles';
+      default: return '';
+    }
+  };
+  const reportLinkType = (item) => {
+    if (item?.type === 'job') {
+      const kind = item?.meta?.kind;
+      if (kind === 'apprenticeship' || /apprentice/i.test(String(item?.meta?.source || ''))) return 'apprenticeship';
+      return 'role';
+    }
+    return item?.type;
+  };
+  const renderTopBar = (item) => (
+    <div className="fav-topbar">
+      <button type="button" className="fav-back" onClick={() => setDetail(null)}>
+        <ArrowLeft size={15} weight="bold" aria-hidden="true" /> All favourites
+      </button>
+      {onExplore && reportSectionLabel(item) ? (
+        <button type="button" className="fav-back fav-back--report" onClick={() => { onExplore(reportLinkType(item), item.type === 'job' ? '' : item.title); setOpen(false); }}>
+          {reportSectionLabel(item)} in your report <ArrowRight size={15} weight="bold" aria-hidden="true" />
+        </button>
+      ) : null}
+    </div>
+  );
+
+  // The whole card opens the popup (not just "View all"); clicks inside the
+  // popup itself or on buttons/links are left alone.
+  const openFromCard = (e) => {
+    if (e.target.closest('.fav-overlay, button, a, input, select, textarea')) return;
+    if (total > 0) setOpen(true);
+  };
+
   return (
-    <section className="fav-card">
+    <section className={`fav-card${total > 0 ? ' fav-card--clickable' : ''}`} onClick={openFromCard}>
       {cascadePrompt ? (
         <CascadeRemoveModal
           parent={cascadePrompt.parent}
@@ -280,6 +380,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                   {item.subtitle ? <span className="fav-prev-sub">{item.subtitle}</span> : null}
                   {item.note ? <span className="fav-prev-sub fav-note">{item.note}</span> : null}
                 </span>
+                <span className="fav-item-chances-side">{chances(item)}</span>
                 {item.expired ? <span className="fav-prev-closed">Closed</span> : <span className="fav-prev-type">{meta.label}</span>}
               </div>
             );
@@ -300,9 +401,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
             {detail && INPLACE_TYPES.has(detail.type) ? (
               /* ---- IN-PLACE CARD (exact report card) ---- */
               <div className="fav-cardview">
-                <button type="button" className="fav-back" onClick={() => setDetail(null)}>
-                  <ArrowLeft size={15} weight="bold" aria-hidden="true" /> All favourites
-                </button>
+                {renderTopBar(detail)}
                 {error ? <p className="fav-error">{error}</p> : null}
                 {cardLoading ? (
                   <div className="fav-detail-loading"><span className="fav-detail-spinner" aria-hidden="true" /> Loading card&hellip;</div>
@@ -314,7 +413,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                     pathwayTitle={cardData.pathwayTitle}
                     showGradJobs
                     savedReactions={{ [cardData.role?.id]: 'like' }}
-                    onItemReaction={({ reaction, remove }) => { if (remove || reaction !== 'like') handleRemove(detail); }}
+                    onItemReaction={({ reaction, remove }) => { if (remove || reaction !== 'like') setDetailConfirm(true); }}
                   />
                 ) : cardData && cardData.kind === 'degree' ? (
                   <RouteItem
@@ -322,7 +421,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                     open
                     onToggle={() => {}}
                     reaction="like"
-                    onReact={(next) => { if (next !== 'like') handleRemove(detail); }}
+                    onReact={(next) => { if (next !== 'like') setDetailConfirm(true); }}
                     hasRankings={cardData.hasRankings}
                     rankCount={cardData.rankCount}
                   />
@@ -333,7 +432,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                     open
                     onToggle={() => {}}
                     reaction={detail.type === 'nonuni_pathway' ? 'like' : ''}
-                    onReact={(next) => { if (detail.type === 'nonuni_pathway' && next !== 'like') handleRemove(detail); }}
+                    onReact={(next) => { if (detail.type === 'nonuni_pathway' && next !== 'like') setDetailConfirm(true); }}
                     liveVacancies
                     savedReactions={{ [detail.id]: 'like' }}
                     onStandardReact={() => {}}
@@ -344,7 +443,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                     open
                     onToggle={() => {}}
                     reaction="like"
-                    onReact={(next) => { if (next !== 'like') handleRemove(detail); }}
+                    onReact={(next) => { if (next !== 'like') setDetailConfirm(true); }}
                     itemType={cardData.itemType}
                     pilotDefinition={cardData.pilotDefinition}
                   />
@@ -358,6 +457,15 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                     ) : null}
                   </div>
                 )}
+                {detailConfirm ? (
+                  <div className="fav-item fav-item--confirm" role="group" style={{ marginTop: 12 }}>
+                    <span className="fav-item-title">Remove <strong>{detail.title}</strong> from your favourites?{isApplied(detail) ? (isUcas(detail) ? ' It stays on your UCAS application.' : ' Your application will stay in Your applications.') : ''}</span>
+                    <span className="fav-confirm-actions">
+                      <button type="button" className="fav-btn fav-btn--danger" onClick={() => { setDetailConfirm(false); handleRemove(detail); }}>Remove</button>
+                      <button type="button" className="fav-btn fav-btn--ghost" onClick={() => setDetailConfirm(false)}>Cancel</button>
+                    </span>
+                  </div>
+                ) : null}
               </div>
             ) : detail && detail.type === 'job' ? (
               /* ---- SAVED JOB: the same card the job opens as in the report ---- */
@@ -371,9 +479,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                 ].filter(Boolean);
                 return (
                   <div className="fav-cardview">
-                    <button type="button" className="fav-back" onClick={() => setDetail(null)}>
-                      <ArrowLeft size={15} weight="bold" aria-hidden="true" /> All favourites
-                    </button>
+                    {renderTopBar(detail)}
                     {error ? <p className="fav-error">{error}</p> : null}
                     <div className="fav-detail-head">
                       <span className="fav-detail-ic" aria-hidden="true"><Briefcase size={22} weight="bold" /></span>
@@ -395,9 +501,20 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                       ) : null}
                       <PathwayReactionRow
                         reaction="like"
-                        onReact={(next) => { if (next !== 'like') handleRemove(detail); }}
+                        onReact={(next) => { if (next !== 'like') setDetailConfirm(true); }}
                         label="Job feedback"
+                        extra={renderApplied(detail, 'react')}
                       />
+                      {appliedHintId === detail.id ? <p className="fav-applied-hint">{appliedHint(detail)}</p> : null}
+                      {detailConfirm ? (
+                        <div className="fav-item fav-item--confirm" role="group" style={{ marginTop: 10 }}>
+                          <span className="fav-item-title">Remove <strong>{detail.title}</strong> from your favourites?{isApplied(detail) ? (isUcas(detail) ? ' It stays on your UCAS application.' : ' Your application will stay in Your applications.') : ''}</span>
+                          <span className="fav-confirm-actions">
+                            <button type="button" className="fav-btn fav-btn--danger" onClick={() => { setDetailConfirm(false); handleRemove(detail); }}>Remove</button>
+                            <button type="button" className="fav-btn fav-btn--ghost" onClick={() => setDetailConfirm(false)}>Cancel</button>
+                          </span>
+                        </div>
+                      ) : null}
                       {detail.url ? (
                         <div className="job-detail-actions">
                           <a className="cw-readmore job-detail-apply" href={detail.url} target="_blank" rel="noopener noreferrer">
@@ -412,9 +529,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
             ) : detail && LINK_TYPES.has(detail.type) ? (
               /* ---- SAVED LINK CARD (a specific university course or job advert) ---- */
               <div className="fav-cardview">
-                <button type="button" className="fav-back" onClick={() => setDetail(null)}>
-                  <ArrowLeft size={15} weight="bold" aria-hidden="true" /> All favourites
-                </button>
+                {renderTopBar(detail)}
                 {error ? <p className="fav-error">{error}</p> : null}
                 {/* Identical to the rankings course-save card (same classes). */}
                 <div className="fav-course-card">
@@ -431,7 +546,9 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                         {s.typicalGrades ? <span className="rk-course-stat"><b>{s.typicalGrades}</b> typical offer</span> : null}
                         {s.offerRate != null ? <span className="rk-course-stat"><b>{Math.round(s.offerRate * 100)}%</b> offer rate</span> : null}
                         {s.tef ? <span className="rk-course-stat"><b>{s.tef}</b> TEF</span> : null}
+                        {s.typicalGrades && chances({ type: 'course', stats: s }) ? <span className="rk-course-stat rk-course-stat--band">Your chances: {chances({ type: 'course', stats: s })}</span> : null}
                         <span className="rk-course-stats__note">For this subject area at {detail.subtitle}. Source: Office for Students, UCAS.</span>
+                        {chancesTip ? <span className="rk-course-stats__note fav-chances-tip">{chancesTip}</span> : null}
                       </div>
                     );
                   })() : null}
@@ -443,9 +560,20 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                   <div className="rk-course-react">
                     <PathwayReactionRow
                       reaction="like"
-                      onReact={(next) => { if (next !== 'like') handleRemove(detail); }}
+                      onReact={(next) => { if (next !== 'like') setDetailConfirm(true); }}
                       label={detail.type === 'job' ? 'Job feedback' : 'Course feedback'}
+                      extra={renderApplied(detail, 'react')}
                     />
+                    {appliedHintId === detail.id ? <p className="fav-applied-hint">{appliedHint(detail)}</p> : null}
+                    {detailConfirm ? (
+                        <div className="fav-item fav-item--confirm" role="group" style={{ marginTop: 10 }}>
+                          <span className="fav-item-title">Remove <strong>{detail.title}</strong> from your favourites?{isApplied(detail) ? (isUcas(detail) ? ' It stays on your UCAS application.' : ' Your application will stay in Your applications.') : ''}</span>
+                          <span className="fav-confirm-actions">
+                            <button type="button" className="fav-btn fav-btn--danger" onClick={() => { setDetailConfirm(false); handleRemove(detail); }}>Remove</button>
+                            <button type="button" className="fav-btn fav-btn--ghost" onClick={() => setDetailConfirm(false)}>Cancel</button>
+                          </span>
+                        </div>
+                      ) : null}
                   </div>
                 </div>
               </div>
@@ -454,6 +582,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
             <div className="fav-modal-title">Your favourites</div>
             <div className="fav-modal-sub">Saved from your latest run. Tap one to open it, or remove any you no longer want.</div>
             {error ? <p className="fav-error">{error}</p> : null}
+            {chancesTip ? <p className="fav-applied-hint">{chancesTip}</p> : null}
 
             <div className="fav-groups">
               {(groups || []).map((g) => (
@@ -472,7 +601,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                         return (
                           <div className="fav-item fav-item--confirm" key={item.id} role="group" aria-label={`Remove ${item.title} from your favourites?`}>
                             <span className="fav-item-main">
-                              <span className="fav-item-title">Remove <strong>{item.title}</strong> from your favourites?</span>
+                              <span className="fav-item-title">Remove <strong>{item.title}</strong> from your favourites?{isApplied(item) ? (isUcas(item) ? ' It stays on your UCAS application.' : ' Your application will stay in Your applications.') : ''}</span>
                             </span>
                             <span className="fav-confirm-actions">
                               <button type="button" className="fav-btn fav-btn--danger" disabled={removingId === item.id}
@@ -503,6 +632,8 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                             {item.subtitle ? <span className="fav-item-sub">{item.subtitle}</span> : null}
                             {item.note ? <span className="fav-item-sub fav-note">{item.note}</span> : null}
                           </span>
+                          <span className="fav-item-chances-side">{chances(item)}</span>
+                          {isApplied(item) ? renderApplied(item) : null}
                           {item.expired ? <span className="fav-item-expired">Closed</span> : null}
                           {canOpen ? (
                             (isExternal && !opensInModal)

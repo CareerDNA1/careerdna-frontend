@@ -6,6 +6,7 @@ import { getMyAcademicProfile } from '../../utils/academicProfile';
 import { studentTop3Tariff, gradedAlevelCount, gradeBand, checkPrerequisites } from '../../utils/matchBand';
 import { showSelectionTooltip, hideSelectionTooltip } from '../Survey/SelectionInsightExplorer';
 import { getReactions, setItemReaction } from '../../utils/savedItems';
+import PickMenu from '../Common/PickMenu';
 import './RankingsModal.css';
 
 // Stable id for a saved course (prefer its provider URL; fall back to uni+title).
@@ -45,12 +46,24 @@ function titleCase(s) {
     .join(' ');
 }
 
+// TEF badge with the app's own tooltip (not the browser's title box).
+const tipProps = (title, body) => ({
+  'data-selection-tooltip': 'true',
+  'data-tooltip-title': title,
+  'data-tooltip-body': body,
+  tabIndex: 0,
+  onMouseEnter: (e) => showSelectionTooltip(e.currentTarget),
+  onMouseLeave: hideSelectionTooltip,
+  onFocus: (e) => showSelectionTooltip(e.currentTarget),
+  onBlur: hideSelectionTooltip,
+  onClick: (e) => { e.stopPropagation(); showSelectionTooltip(e.currentTarget, { pinned: true }); },
+});
 function tefPill(tef) {
-  const na = <span className="rk-tef rk-tef--none" title="The Teaching Excellence Framework rates English universities only">N/A</span>;
+  const na = <span className="rk-tef rk-tef--none" {...tipProps('TEF', 'The Teaching Excellence Framework rates English universities only.')}>N/A</span>;
   if (!tef) return na;
   const s = TEF_STYLE[tef];
   if (!s) return na;
-  return <span className={`rk-tef${s.small ? ' rk-tef--ri' : ''}`} style={{ background: s.bg, color: s.fg }} title={`Teaching Excellence Framework: ${s.label}`}>{s.label}</span>;
+  return <span className={`rk-tef${s.small ? ' rk-tef--ri' : ''}`} style={{ background: s.bg, color: s.fg }} {...tipProps('Teaching Excellence Framework', `${s.label}: the Office for Students rating of teaching quality and student outcomes.`)}>{s.label}</span>;
 }
 
 export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
@@ -235,10 +248,8 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
         ) : (
           <>
             <div className="rk-controls">
-              <label htmlFor="rk-sort">Sort by</label>
-              <select id="rk-sort" value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
-                {SORTS.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
-              </select>
+              <span className="rk-controls-label">Sort by</span>
+              <PickMenu options={SORTS.map((s) => ({ value: s.key, label: s.label }))} value={sortKey} ariaLabel="Sort by" triggerClass="rk-sort" onSelect={setSortKey} />
             </div>
 
             {!showChances ? (
@@ -288,7 +299,7 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                         <div className="rk-uni">
                           {courses.length ? (
                             <button type="button" className="rk-uni-btn" onClick={() => toggleCourses(key)}
-                              aria-expanded={isOpen} title="Show matching degrees">
+                              aria-expanded={isOpen}>
                               <span className="rk-uni-name">{u.institution}</span>
                               <span className="rk-uni-count">{isOpen ? '▾' : '▸'} {courses.length}<span className="rk-uni-count-word"> {courses.length === 1 ? 'course' : 'courses'}</span></span>
                             </button>
@@ -372,6 +383,10 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                   {courseCard.stats.typicalGrades ? <span className="rk-course-stat"><b>{courseCard.stats.typicalGrades}</b> typical offer</span> : null}
                   {courseCard.stats.offerRate != null ? <span className="rk-course-stat"><b>{Math.round(courseCard.stats.offerRate * 100)}%</b> offer rate</span> : null}
                   {courseCard.stats.tef ? <span className="rk-course-stat"><b>{courseCard.stats.tef}</b> TEF</span> : null}
+                  {courseCard.stats.typicalGrades && gradeBand(studentTariff, courseCard.stats.typicalGrades) ? (() => {
+                    const b = gradeBand(studentTariff, courseCard.stats.typicalGrades);
+                    return <span className="rk-course-stat rk-course-stat--band">Your chances: <span className={`rk-band rk-band--${b.key}`}>{b.label}</span></span>;
+                  })() : null}
                   <span className="rk-course-stats__note">For this subject area at {courseCard.university}. Source: Office for Students, UCAS.</span>
                 </div>
               ) : null}

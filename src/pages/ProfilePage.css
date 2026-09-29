@@ -218,7 +218,7 @@
 /* Overview stats strip (Journey / Favourites / Assessments). */
 .profile-stats {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 18px;
 }
@@ -255,10 +255,21 @@
 .profile-stat--advisor .profile-stat-ic { background: #5b5fc7; }
 .profile-stat--advisor .profile-stat-num { color: #24276b; }
 .profile-stat--advisor .profile-stat-label { color: #3f43a3; }
+.profile-stat--apps { background: #fff4de; }
+.profile-stat--apps .profile-stat-ic { background: #e08a1e; }
+.profile-stat--apps .profile-stat-num { color: #5c3a00; }
+.profile-stat--apps .profile-stat-label { color: #9a5b00; }
+/* Five tiles: on narrower screens lay them out as a row of three then a row
+   of two, so nothing sits on its own. */
+@media (max-width: 900px) {
+  .profile-stats { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .profile-stat { grid-column: span 2; }
+  .profile-stat:nth-child(4), .profile-stat:nth-child(5) { grid-column: span 3; }
+}
 @media (max-width: 560px) {
   /* Keep the three stats as a compact row (icon over number) instead of three
      tall stacked blocks. */
-  .profile-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .profile-stats { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
   .profile-stat { flex-direction: column; align-items: flex-start; gap: 6px; padding: 11px 12px; min-width: 0; }
   .profile-stat-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
   .profile-stat-ic { width: 30px; height: 30px; border-radius: 9px; }
@@ -277,8 +288,15 @@
 /* Both middle cards fill the row so Favourites and Grades are always equal height. */
 .profile-favrow > * { height: 100%; min-width: 0; }
 .profile-favrow--single { grid-template-columns: minmax(0, 1fr); }
+/* School: favourites | grades | applications. University: favourites | applications. */
+.profile-favrow--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 1100px) {
+  .profile-favrow--three { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .profile-favrow--three > :last-child { grid-column: 1 / -1; }
+}
 @media (max-width: 820px) {
-  .profile-favrow { grid-template-columns: minmax(0, 1fr); }
+  .profile-favrow, .profile-favrow--three { grid-template-columns: minmax(0, 1fr); }
+  .profile-favrow--three > :last-child { grid-column: auto; }
 }
 
 /* Continue CTA sitting on the current step of the roadmap. */
@@ -3394,7 +3412,7 @@
 .profile-jcard-nextname { font-size: 0.98rem; font-weight: 600; color: #14233c; line-height: 1.35; }
 .profile-jcard-nextlabel { font-weight: 500; color: #6b7a8c; margin-right: 6px; }
 .profile-jcard-go {
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex; align-items: center; gap: 6px; text-align: left;
   padding: 0; border: 0; background: transparent;
   color: #2f6fed; font-family: inherit; font-size: inherit; font-weight: 700;
   cursor: pointer;

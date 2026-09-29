@@ -79,15 +79,17 @@
   margin-bottom: 10px;
 }
 .rk-controls label { font-size: 0.78rem; color: #56657a; }
-.rk-controls select {
-  font-size: 0.8rem;
-  padding: 6px 10px;
-  border: 1px solid #d7e0ee;
-  border-radius: 8px;
-  background: #fff;
-  color: #12233c;
-  font-family: inherit;
+.rk-controls-label { font-size: 0.78rem; color: #56657a; }
+.rk-sort {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 0.8rem; font-weight: 600; padding: 6px 10px;
+  border: 1px solid #d7e0ee; border-radius: 8px; background: #fff; color: #1f2a37;
+  font-family: inherit; cursor: pointer;
 }
+.rk-sort:hover { border-color: #cddbf0; }
+.rk-sort:focus-visible { outline: 2px solid #2f6fed; outline-offset: 1px; }
+.rk-sort svg { color: #6b7a8c; }
+.rk-tef { cursor: help; }
 
 /* The outer wrapper is the flex-shrinkable region inside the modal column, so
    the table scrolls internally instead of pushing the modal past the viewport. */
@@ -323,6 +325,7 @@
   font-size: 0.76rem; color: #4b5c6b;
 }
 .rk-course-stat b { color: #1f2a37; font-weight: 700; }
+.rk-course-stat--band { align-items: center; gap: 6px; }
 .rk-course-stats__note { flex-basis: 100%; margin-top: 2px; font-size: 0.72rem; color: #8593a6; line-height: 1.4; }
 .rk-course-modal__link {
   display: inline-block;

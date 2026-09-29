@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { BrainCircuit } from 'lucide-react';
+import { BrainCircuit, Send } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AccountNavbar from '../Components/Common/AccountNavbar';
 import { useAuth } from '../context/AuthContext';
@@ -20,8 +20,11 @@ import PricingModal from '../Components/Common/PricingModal';
 import SatisfactionCard from '../Components/Common/SatisfactionCard';
 import { getSatisfactionPrompt, dismissSatisfactionPulse } from '../utils/satisfaction';
 import { normaliseFavouriteType, getFavouritesByCategory } from '../utils/favourites';
+import { FAVOURITES_CHANGED_EVENT } from '../utils/savedItems';
 import AcademicProfileCard from '../Components/Common/AcademicProfileCard';
 import FavouritesCard from '../Components/Common/FavouritesCard';
+import ApplicationsCard from '../Components/Common/ApplicationsCard';
+import { listApplications, applyFromFavourite, appliedKeySet, forStage, stageForStatus, applicationCount, applicationRowCount } from '../utils/applications';
 import { getMyAcademicProfile, hasAcademicData } from '../utils/academicProfile';
 import { cancelScheduledDowngrade, setCancelAtPeriodEnd } from '../utils/stripeCheckout';
 import './ProfilePage.css';
@@ -529,7 +532,49 @@ export default function ProfilePage() {
       .catch(() => { if (!cancelled) { setFavGroups([]); setFavForRun(runId); } });
     return () => { cancelled = true; };
   }, [currentRun?.id, user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Saves made inside a popup (a live ad saved from an opened role card, say)
+  // announce themselves; reload so the favourites card and count stay current.
+  useEffect(() => {
+    const runId = currentRun?.id;
+    if (!runId || !user?.id) return undefined;
+    let timer = null;
+    const onChanged = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        getFavouritesByCategory(runId).then((groups) => setFavGroups(groups || [])).catch(() => {});
+      }, 300);
+    };
+    window.addEventListener(FAVOURITES_CHANGED_EVENT, onChanged);
+    return () => { clearTimeout(timer); window.removeEventListener(FAVOURITES_CHANGED_EVENT, onChanged); };
+  }, [currentRun?.id, user?.id]);
   const favCount = favGroups ? favGroups.reduce((a, g) => a + g.items.length, 0) : null;
+  // Applications tracker (per student, not per run). Loaded once with the profile.
+  const [applications, setApplications] = useState(null);
+  useEffect(() => {
+    if (!user?.id) return undefined;
+    let cancelled = false;
+    listApplications()
+      .then((rows) => { if (!cancelled) setApplications(rows || []); })
+      .catch(() => { if (!cancelled) setApplications([]); });
+    return () => { cancelled = true; };
+  }, [user?.id]);
+  // Applications follow the stage of the current report: a school report shows
+  // UCAS choices, apprenticeship and college applications; a university report
+  // shows graduate roles. The other set is kept and shows when that report is current.
+  const applicationStage = stageForStatus((currentRun || runs?.[0])?.intro_answers_json?.status);
+  const stageApplications = useMemo(() => (applications == null ? null : forStage(applications, applicationStage)), [applications, applicationStage]);
+  // "Already applied" is checked against every application the student has,
+  // whichever stage it was made under, so the same ad is never logged twice.
+  const appliedKeys = useMemo(() => appliedKeySet(applications || []), [applications]);
+  // One UCAS application counts once, and only after it has been sent.
+  const applicationTotal = useMemo(() => (stageApplications == null ? null : applicationCount(stageApplications, applicationStage)), [stageApplications, applicationStage]);
+  // The tile and the card header count what is tracked (a UCAS application is
+  // one item even while it is being built); the journey's Apply step is stricter.
+  const applicationTracked = useMemo(() => (stageApplications == null ? null : applicationRowCount(stageApplications, applicationStage)), [stageApplications, applicationStage]);
+  const handleApplyFromFavourite = async (item) => {
+    const created = await applyFromFavourite(item, { runId: currentRun?.id || null, stage: applicationStage });
+    setApplications((prev) => [created, ...(prev || []).filter((a) => a.id !== created.id)]);
+  };
   useEffect(() => {
     const runId = currentRun?.id;
     const uid = user?.id;
@@ -570,6 +615,7 @@ export default function ProfilePage() {
   const [satDismissed, setSatDismissed] = useState(false);
   const [academicHasData, setAcademicHasData] = useState(false);
   const [gradesOpenSignal, setGradesOpenSignal] = useState(0);
+  const [appsOpenSignal, setAppsOpenSignal] = useState(0);
 
   // Load whether the student has entered grades (drives the "Enter your grades"
   // roadmap step). Updated directly from the grades popup's onSaved callback.
@@ -1329,7 +1375,9 @@ export default function ProfilePage() {
   // University students explore pathways then roles; school students explore
   // career worlds then pathways. The roadmap labels/gating adapt accordingly.
   const latestStatus = String(latestRun?.intro_answers_json?.status || '').toLowerCase();
-  const isUniversity = ['undergrad', 'postgrad', 'ug', 'pg', 'university', 'master', 'msc', 'mba'].some((s) => latestStatus.includes(s));
+  // One rule everywhere: a school report gets the school roadmap and UCAS;
+  // every other report (university, graduate, other) gets the shorter roadmap.
+  const isUniversity = stageForStatus(latestStatus) !== 'school';
   const journeyDone = {
     survey: Boolean(latestRun),
     profile: Boolean(latestArchetypes && Object.keys(latestArchetypes).length),
@@ -1344,7 +1392,9 @@ export default function ProfilePage() {
     // Nothing writes an 'advisor' reaction row; the profile's question counter is
     // the reliable signal that the student has used the advisor.
     advisor: engagedTypes.has('advisor') || Number(profile?.advisor_questions_used || 0) > 0,
-    apply: false, // terminal, real-world step — never auto-completed
+    // Done once the student has logged at least one application (a UCAS
+    // application counts once it has been sent).
+    apply: Boolean(applicationTotal),
   };
   // Students (school) get extra steps: explore university/training, enter grades,
   // and finally apply. University leavers keep the shorter roadmap.
@@ -1359,8 +1409,7 @@ export default function ProfilePage() {
       { key: 'exploreuni', label: 'Explore university or training/work' },
       { key: 'grades', label: 'Enter your grades' },
     ] : []),
-    // Terminal step for everyone: never auto-completed, so the journey is
-    // never shown as 100% done.
+    // Terminal step for everyone: completes when the first application is tracked.
     { key: 'apply', label: isUniversity ? 'Apply for graduate roles or further study' : 'Apply for university or training/work' },
   ].map((step) => ({ ...step, done: Boolean(journeyDone[step.key]) }));
   const journeyCurrentIdx = journeySteps.findIndex((s) => !s.done);
@@ -1564,15 +1613,6 @@ export default function ProfilePage() {
                   <span className="profile-stat-label">Assessments</span>
                 </div>
               </div>
-              <div className="profile-stat profile-stat--fav">
-                <span className="profile-stat-ic" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 21s-7-4.5-9.5-8.5C.5 8.5 3 5 6.5 5 8.5 5 10 6 12 8c2-2 3.5-3 5.5-3C21 5 23.5 8.5 21.5 12.5 19 16.5 12 21 12 21z" /></svg>
-                </span>
-                <div className="profile-stat-body">
-                  <span className="profile-stat-num">{favCount == null ? '—' : favCount}</span>
-                  <span className="profile-stat-label">Favourites</span>
-                </div>
-              </div>
               <div className="profile-stat profile-stat--runs">
                 <span className="profile-stat-ic" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 4v4h4" /><path d="M12 8v4l3 2" /></svg>
@@ -1591,6 +1631,24 @@ export default function ProfilePage() {
                   <span className="profile-stat-label">Questions asked</span>
                 </div>
               </div>
+              <div className="profile-stat profile-stat--fav">
+                <span className="profile-stat-ic" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 21s-7-4.5-9.5-8.5C.5 8.5 3 5 6.5 5 8.5 5 10 6 12 8c2-2 3.5-3 5.5-3C21 5 23.5 8.5 21.5 12.5 19 16.5 12 21 12 21z" /></svg>
+                </span>
+                <div className="profile-stat-body">
+                  <span className="profile-stat-num">{favCount == null ? '…' : favCount}</span>
+                  <span className="profile-stat-label">Favourites</span>
+                </div>
+              </div>
+              <div className="profile-stat profile-stat--apps">
+                <span className="profile-stat-ic" aria-hidden="true">
+                  <Send size={19} aria-hidden="true" focusable="false" />
+                </span>
+                <div className="profile-stat-body">
+                  <span className="profile-stat-num">{applicationTracked == null ? '…' : applicationTracked}</span>
+                  <span className="profile-stat-label">Applications</span>
+                </div>
+              </div>
             </div>
 
             <section className="profile-jcard" aria-label={journeyNextStep ? `Your journey. Next step: ${journeyNextStep.label}` : 'Your journey'}>
@@ -1601,13 +1659,13 @@ export default function ProfilePage() {
                     <span className="profile-jcard-pill">{journeyDoneCount} of {journeyTotal} steps done</span>
                   </span>
                   <span className="profile-jcard-nextname">
-                    <span className="profile-jcard-nextlabel">Next step:</span>
+                    <span className="profile-jcard-nextlabel">{journeyNextStep ? 'Next step:' : 'All steps done.'}</span>
                     <button
                       type="button"
                       className="profile-jcard-go"
-                      onClick={() => (journeyNextStep ? goToStep(journeyNextStep) : openRunAt({ section: 'analysis' }))}
+                      onClick={() => (journeyNextStep ? goToStep(journeyNextStep) : setAppsOpenSignal((n) => n + 1))}
                     >
-                      {journeyNextStep ? journeyNextStep.label : 'Open your report'}
+                      {journeyNextStep ? journeyNextStep.label : 'Keep your applications up to date'}
                       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="M13 6l6 6-6 6" /></svg>
                     </button>
                   </span>
@@ -1656,8 +1714,8 @@ export default function ProfilePage() {
 
         {/* Favourites (left) + grades (right, school only) from the latest run. */}
         {overviewReady && latestRun ? (
-          <div className={`profile-favrow${latestStatus === 'school' ? '' : ' profile-favrow--single'}`}>
-            <FavouritesCard runId={latestRun.id} onExplore={exploreFavourite} initialGroups={favGroups} insightCtx={{
+          <div className={`profile-favrow${latestStatus === 'school' ? ' profile-favrow--three' : ''}`}>
+            <FavouritesCard runId={latestRun.id} onExplore={exploreFavourite} initialGroups={favGroups} appliedKeys={appliedKeys} onApply={handleApplyFromFavourite} stage={applicationStage} predictedGrades={academicProfileData?.predicted_alevels || []} insightCtx={{
               archetypes: latestRun?.results_json?.archetypes || null,
               subdimensions: latestRun?.results_json?.subdimensionRows || [],
               summaryMarkdown: latestRun?.summary_markdown || '',
@@ -1665,6 +1723,24 @@ export default function ProfilePage() {
               likedWorlds: (favGroups || []).filter((g) => g.type === 'career_world').flatMap((g) => g.items.map((it) => ({ id: it.id, title: it.title }))),
             }} />
             {latestStatus === 'school' ? <AcademicProfileCard openSignal={gradesOpenSignal} initialProfile={academicProfileData} onSaved={(ap) => { setAcademicHasData(hasAcademicData(ap)); setAcademicProfileData(ap || null); }} /> : null}
+            {/* Applications tracker: everything the student has applied for. */}
+            <ApplicationsCard
+              apps={stageApplications || []}
+              onChange={(next) => setApplications((prev) => {
+                // The card only sees this stage's rows; keep the other stage's rows as they are.
+                const others = (prev || []).filter((a) => !forStage([a], applicationStage).length);
+                return [...(next || []), ...others];
+              })}
+              runId={latestRun.id}
+              stage={applicationStage}
+              isUniversity={isUniversity}
+              predictedGrades={academicProfileData?.predicted_alevels || []}
+              schoolYear={latestRun?.intro_answers_json?.schoolYear || ''}
+              openSignal={appsOpenSignal}
+              onEnterGrades={() => setGradesOpenSignal((n) => n + 1)}
+              candidates={(favGroups || []).flatMap((g) => g.items).filter((it) => (it.type === 'job' || it.type === 'course') && !appliedKeys.has(`${it.type}|${it.id}`))}
+              onApplyFavourite={handleApplyFromFavourite}
+            />
           </div>
         ) : null}
 
@@ -1721,8 +1797,12 @@ export default function ProfilePage() {
                     <span><strong>{ageValue(run)}</strong> yrs</span>
                     <span className="profile-run-sep">|</span>
                     <span>{statusLabel(run.intro_answers_json?.status)}</span>
-                    <span className="profile-run-sep profile-run-sep--hide-tablet">|</span>
-                    <span className="profile-run-detail--hide-tablet">{nextStepLabel(run)}</span>
+                    {nextStepLabel(run) !== '—' && (
+                      <>
+                        <span className="profile-run-sep profile-run-sep--hide-tablet">|</span>
+                        <span className="profile-run-detail--hide-tablet">{nextStepLabel(run)}</span>
+                      </>
+                    )}
                     {subjectLabel(run) !== '—' && (
                       <>
                         <span className="profile-run-sep">|</span>

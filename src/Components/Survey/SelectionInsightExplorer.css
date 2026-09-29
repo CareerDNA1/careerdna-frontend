@@ -1646,3 +1646,12 @@
 .role-jobs-showall { margin-top: 12px; width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #cdd8ea; background: #f5f8ff; color: #2f6fed; font-size: 0.9rem; font-weight: 700; cursor: pointer; }
 .role-jobs-showall:hover { background: #eaf1ff; }
 .role-jobs-modal__foot { margin-top: 18px; padding-top: 14px; border-top: 1px solid #e6ebf2; display: flex; flex-wrap: wrap; gap: 8px 20px; }
+
+/* Third control in the reaction row (saved ads/courses): "Mark as applied". */
+.cdna-react-row--three { flex-wrap: wrap; }
+.cdna-react-row--three .cdna-react-btn { flex: 1 1 150px; }
+.cdna-react-btn--applied.is-active { background: #e1f5ee; border-color: #9fe1cb; color: #0f6e56; cursor: default; opacity: 1; }
+.cdna-react-btn--applied:disabled:not(.is-active) { opacity: 0.6; cursor: default; }
+@media (max-width: 560px) {
+  .cdna-react-row--three .cdna-react-btn--applied { flex-basis: 100%; }
+}
