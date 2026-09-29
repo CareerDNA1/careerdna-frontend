@@ -109,7 +109,7 @@
   margin-bottom: 8px;
 }
 .acad-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.acad-input, .acad-select {
+.acad-select {
   box-sizing: border-box;
   border: 1px solid #d7e0ee;
   border-radius: 8px;
@@ -118,15 +118,21 @@
   color: #1f2a37;
   background: #fff;
   font-family: inherit;
+  min-height: 38px;
 }
-.acad-input { flex: 1 1 auto; min-width: 0; }
-.acad-input.sug { padding: 0; border: 0; background: transparent; }
-.acad-row .apps-menu-wrap { flex: 0 0 96px; display: flex; }
-.acad-select { flex: 1 1 auto; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 6px; cursor: pointer; text-align: left; font-weight: 600; }
+/* Row: subject picker takes the space, grade picker is a fixed narrow column. */
+.acad-row .apps-menu-wrap { flex: 0 0 96px; min-width: 0; display: flex; }
+.acad-row .apps-menu-wrap:first-child { flex: 1 1 auto; }
+.acad-select { flex: 1 1 auto; width: 100%; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 6px; cursor: pointer; text-align: left; font-weight: 600; }
 .acad-select.is-empty { color: #8a97ac; font-weight: 500; }
 .acad-select svg { color: #6b7a8c; flex: 0 0 auto; }
 .acad-select:focus-visible { outline: 2px solid #2f6fed; outline-offset: 1px; border-color: #2f6fed; }
+/* Compulsory GCSE: shown as a locked field, not a picker. */
+.acad-select--fixed { cursor: default; background: #f7f9fc; color: #33475b; }
+.acad-select--fixed svg { color: #a4afc0; }
 .acad-row .apps-menu { min-width: 120px; }
+.acad-row-remove--blank { border-color: transparent; background: transparent; pointer-events: none; }
+.acad-section-note { margin: 6px 0 0; font-size: 0.76rem; color: #8a97a8; line-height: 1.45; }
 .acad-row-remove {
   flex: 0 0 auto;
   display: inline-flex;
@@ -176,7 +182,11 @@
 
 @media (max-width: 560px) {
   .acad-view-key { min-width: 0; flex-basis: 100%; }
-  .acad-row .apps-menu-wrap { flex-basis: 84px; }
+  .acad-row { gap: 6px; }
+  .acad-row .apps-menu-wrap { flex-basis: 88px; }
+  .acad-select { padding: 9px 10px; min-height: 40px; }
+  .acad-overlay { padding: 10px; align-items: flex-end; }
+  .acad-modal { max-height: calc(100vh - 20px); border-radius: 18px; padding: 18px 14px 14px; }
 }
 
 /* Header action: same slim pill as Open Report on the reports list. */

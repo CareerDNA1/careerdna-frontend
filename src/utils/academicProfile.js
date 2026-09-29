@@ -10,20 +10,38 @@ export const ALEVEL_TARIFF = { 'A*': 56, A: 48, B: 40, C: 32, D: 24, E: 16 };
 export const ALEVEL_GRADES = ['A*', 'A', 'B', 'C', 'D', 'E'];
 export const GCSE_GRADES = [9, 8, 7, 6, 5, 4, 3, 2, 1];
 
-// Common A-level subject names for the picker (free text also allowed). Kept in
-// step with the controlled vocabulary used by subject_requirements on the backend.
+// A-level subjects offered by UK exam boards (AQA, OCR, Edexcel, WJEC). Students
+// pick from this list; the names match the controlled vocabulary used by
+// subject_requirements on the backend, so prerequisites can be checked.
 export const ALEVEL_SUBJECTS = [
-  'Maths', 'Further Maths', 'Physics', 'Chemistry', 'Biology', 'Computer Science',
-  'Economics', 'Geography', 'History', 'English Literature', 'English Language',
-  'Psychology', 'Sociology', 'Politics', 'Philosophy', 'Religious Studies',
-  'Art & Design', 'Design & Technology', 'Media Studies', 'Film Studies', 'Music',
-  'Music Technology', 'Drama & Theatre Studies', 'Dance', 'Physical Education',
-  'Business', 'Law', 'French', 'Spanish', 'German', 'Latin', 'Statistics', 'Electronics',
+  'Accounting', 'Ancient History', 'Arabic', 'Art & Design', 'Biology', 'Business',
+  'Chemistry', 'Chinese', 'Classical Civilisation', 'Computer Science', 'Dance',
+  'Design & Technology', 'Drama & Theatre Studies', 'Economics', 'Electronics',
+  'English Language', 'English Language & Literature', 'English Literature',
+  'Environmental Science', 'Film Studies', 'French', 'Further Maths', 'Geography',
+  'Geology', 'German', 'Government & Politics', 'Greek', 'Health & Social Care',
+  'History', 'History of Art', 'Italian', 'Japanese', 'Latin', 'Law', 'Maths',
+  'Media Studies', 'Music', 'Music Technology', 'Philosophy', 'Photography',
+  'Physical Education', 'Physics', 'Politics', 'Polish', 'Portuguese', 'Psychology',
+  'Religious Studies', 'Russian', 'Sociology', 'Spanish', 'Statistics', 'Textiles',
+  'Urdu', 'Welsh',
 ];
+// GCSE subjects. Maths and English Language are compulsory in England and are
+// always present on the profile.
+export const GCSE_COMPULSORY = ['Maths', 'English Language'];
 export const GCSE_SUBJECTS = [
   'Maths', 'English Language', 'English Literature', 'Science (Combined)', 'Biology',
-  'Chemistry', 'Physics', 'Geography', 'History', 'French', 'Spanish', 'Computer Science',
+  'Chemistry', 'Physics', 'Ancient History', 'Arabic', 'Art & Design', 'Astronomy',
+  'Business', 'Chinese', 'Citizenship', 'Classical Civilisation', 'Computer Science',
+  'Dance', 'Design & Technology', 'Drama', 'Economics', 'Engineering', 'Food Preparation & Nutrition',
+  'French', 'Further Maths', 'Geography', 'Geology', 'German', 'Greek', 'Health & Social Care',
+  'History', 'Italian', 'Japanese', 'Latin', 'Media Studies', 'Music', 'Photography',
+  'Physical Education', 'Polish', 'Psychology', 'Religious Studies', 'Russian', 'Sociology',
+  'Spanish', 'Statistics', 'Textiles', 'Urdu', 'Welsh',
 ];
+// Sensible caps: schools rarely allow more than 5 A-levels or 12 GCSEs.
+export const MAX_ALEVELS = 5;
+export const MAX_GCSES = 12;
 
 export function emptyAcademicProfile() {
   return {
@@ -88,13 +106,26 @@ export async function saveMyAcademicProfile(academicProfile) {
   if (userError) throw userError;
   if (!user) throw new Error('User not authenticated.');
 
-  // Clean: drop empty rows, coerce grades, stamp source + date.
-  const gcses = (Array.isArray(academicProfile?.gcses) ? academicProfile.gcses : [])
+  // Clean: drop empty rows and repeated subjects (first entry wins), coerce
+  // grades, stamp source + date. A GCSE without a grade says nothing useful, so
+  // it is dropped; an A-level subject without a predicted grade is kept because
+  // the subject itself matters for degree prerequisites.
+  const dedupe = (rows) => {
+    const seen = new Set();
+    return rows.filter((r) => {
+      const k = r.subject.toLowerCase();
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  };
+  const gcses = dedupe((Array.isArray(academicProfile?.gcses) ? academicProfile.gcses : [])
     .filter((r) => r && String(r.subject || '').trim())
-    .map((r) => ({ subject: String(r.subject).trim(), grade: Number(r.grade) || null }));
-  const predicted = (Array.isArray(academicProfile?.predicted_alevels) ? academicProfile.predicted_alevels : [])
+    .map((r) => ({ subject: String(r.subject).trim(), grade: Number(r.grade) || null })))
+    .filter((r) => r.grade != null);
+  const predicted = dedupe((Array.isArray(academicProfile?.predicted_alevels) ? academicProfile.predicted_alevels : [])
     .filter((r) => r && String(r.subject || '').trim())
-    .map((r) => ({ subject: String(r.subject).trim(), grade: String(r.grade || '').toUpperCase() || null }));
+    .map((r) => ({ subject: String(r.subject).trim(), grade: String(r.grade || '').toUpperCase() || null })));
 
   const payload = {
     id: user.id,

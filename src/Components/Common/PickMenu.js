@@ -1,33 +1,73 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { CaretDown, Check } from 'phosphor-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { CaretDown, Check, MagnifyingGlass, X } from 'phosphor-react';
 import './PickMenu.css';
 
-// Status picker in the app's own menu style (same panel as the three dots
-// menu on the reports list), not the browser's native dropdown.
-export default function PickMenu({ options, value, triggerClass, disabled, onSelect, ariaLabel }) {
+// Picker in the app's own menu style (same panel as the three dots menu on the
+// reports list), never the browser's native dropdown.
+//
+// Desktop: a floating panel under the trigger (flips above when there is no
+// room), capped in height and scrollable for long lists, with an optional
+// search box. Phones: a bottom sheet over the page, which stays put when the
+// keyboard opens and cannot be clipped by a scrolling modal.
+//
+// options: [{ value, label, hint?, disabled? }]
+const PHONE = '(max-width: 560px)';
+const ROW = 36;
+const MAX_PANEL = 320;
+
+export default function PickMenu({
+  options, value, triggerClass, disabled, onSelect, ariaLabel,
+  title, searchable = false, searchPlaceholder = 'Search', placeholder,
+}) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState(null);
+  const [q, setQ] = useState('');
+  const [active, setActive] = useState(-1);
   const wrapRef = useRef(null);
-  // The popup scrolls, so an absolutely positioned menu would be clipped by
-  // it. Float the menu at fixed viewport coordinates under the pill instead,
-  // flipping above it when there is no room below.
+  const panelRef = useRef(null);
+  const searchRef = useRef(null);
+  const isPhone = () => window.matchMedia(PHONE).matches;
+  const [sheet, setSheet] = useState(false);
+
+  const shown = useMemo(() => {
+    const s = q.trim().toLowerCase();
+    if (!s) return options;
+    const starts = options.filter((o) => String(o.label).toLowerCase().startsWith(s));
+    const contains = options.filter((o) => !starts.includes(o) && String(o.label).toLowerCase().includes(s));
+    return [...starts, ...contains];
+  }, [options, q]);
+
   const place = () => {
     const el = wrapRef.current;
     if (!el) return;
     const r = el.getBoundingClientRect();
-    const menuH = options.length * 36 + 10;
+    const menuH = Math.min(MAX_PANEL, shown.length * ROW + (searchable ? 54 : 10));
     const below = window.innerHeight - r.bottom;
     const above = r.top;
-    // Prefer below; go above only when below is short and above has more room.
     const top = (below >= menuH + 8 || below >= above) ? r.bottom + 6 : Math.max(8, r.top - menuH - 6);
-    setPos({ top, left: r.left });
+    // Keep the panel inside the viewport horizontally.
+    const width = panelRef.current ? panelRef.current.offsetWidth : 0;
+    const left = Math.max(8, Math.min(r.left, window.innerWidth - width - 8));
+    setPos({ top, left });
   };
+
+  const close = () => { setOpen(false); setQ(''); setActive(-1); };
+  const choose = (o) => { if (o.disabled) return; close(); onSelect(o.value); };
+
   useEffect(() => {
     if (!open) return undefined;
-    place();
-    const onDoc = (e) => { if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false); };
-    const onKey = (e) => { if (e.key === 'Escape') { e.stopPropagation(); setOpen(false); } };
-    const onMove = () => place();
+    setSheet(isPhone());
+    if (!isPhone()) place();
+    const onDoc = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target) && panelRef.current && !panelRef.current.contains(e.target)) close();
+    };
+    const onKey = (e) => {
+      if (e.key === 'Escape') { e.stopPropagation(); close(); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); setActive((a) => Math.min(shown.length - 1, a + 1)); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((a) => Math.max(0, a - 1)); }
+      else if (e.key === 'Enter' && active >= 0 && shown[active]) { e.preventDefault(); choose(shown[active]); }
+    };
+    const onMove = () => { if (!isPhone()) place(); };
     document.addEventListener('mousedown', onDoc);
     document.addEventListener('keydown', onKey, true);
     window.addEventListener('resize', onMove);
@@ -38,27 +78,83 @@ export default function PickMenu({ options, value, triggerClass, disabled, onSel
       window.removeEventListener('resize', onMove);
       document.removeEventListener('scroll', onMove, true);
     };
-  }, [open]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, shown, active]);
+
+  // Focus the search box once the panel or sheet is actually on screen.
+  useEffect(() => {
+    if (open && searchable && (sheet || pos) && searchRef.current) searchRef.current.focus({ preventScroll: true });
+  }, [open, searchable, sheet, pos]);
+
+  // Lock page scroll behind the sheet.
+  useEffect(() => {
+    if (!(open && sheet)) return undefined;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, [open, sheet]);
+
+  useEffect(() => {
+    if (open && active >= 0 && panelRef.current) {
+      const el = panelRef.current.querySelectorAll('[role="menuitemradio"]')[active];
+      if (el) el.scrollIntoView({ block: 'nearest' });
+    }
+  }, [active, open]);
+
+  const current = options.find((o) => o.value === value);
+  const empty = value === '' || value == null;
+  const label = empty && placeholder ? placeholder : (current ? current.label : (value || ''));
+
+  const list = (
+    <>
+      {searchable ? (
+        <div className="pick-search">
+          <MagnifyingGlass size={14} weight="bold" aria-hidden="true" />
+          <input ref={searchRef} type="text" value={q} placeholder={searchPlaceholder} aria-label={searchPlaceholder}
+            autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false"
+            onChange={(e) => { setQ(e.target.value); setActive(-1); }} />
+          {q ? <button type="button" className="pick-search-clear" aria-label="Clear search" onClick={() => { setQ(''); searchRef.current && searchRef.current.focus(); }}><X size={12} weight="bold" /></button> : null}
+        </div>
+      ) : null}
+      <div className="pick-list" role="menu">
+        {shown.length ? shown.map((s, i) => (
+          <button type="button" role="menuitemradio" aria-checked={s.value === value} key={String(s.value)} disabled={s.disabled}
+            className={`profile-run-menu-item${s.value === value ? ' is-current' : ''}${i === active ? ' is-active' : ''}`}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => choose(s)}>
+            <span className="apps-menu-check" aria-hidden="true">{s.value === value ? <Check size={14} weight="bold" /> : null}</span>
+            <span className="pick-item-label">{s.label}</span>
+            {s.hint ? <span className="pick-item-hint">{s.hint}</span> : null}
+          </button>
+        )) : <div className="pick-empty">No matches</div>}
+      </div>
+    </>
+  );
+
   return (
     <div className="apps-menu-wrap" ref={wrapRef}>
       <button type="button" className={triggerClass} disabled={disabled} aria-haspopup="menu" aria-expanded={open} aria-label={ariaLabel}
-        onClick={() => setOpen((v) => !v)}>
-        <span className="apps-pick-label">{(options.find((o) => o.value === value) || {}).label || value}</span>
+        onClick={() => (open ? close() : setOpen(true))}>
+        <span className="apps-pick-label">{label}</span>
         <CaretDown size={12} weight="bold" aria-hidden="true" />
       </button>
-      {open && pos ? (
-        <div className="profile-run-menu apps-menu" role="menu" style={{ position: 'fixed', top: pos.top, left: pos.left, right: 'auto', bottom: 'auto', width: 'max-content' }}>
-          {options.map((s) => (
-            <button type="button" role="menuitemradio" aria-checked={s.value === value} key={s.value}
-              className={`profile-run-menu-item${s.value === value ? ' is-current' : ''}`}
-              onClick={() => { setOpen(false); onSelect(s.value); }}>
-              <span className="apps-menu-check" aria-hidden="true">{s.value === value ? <Check size={14} weight="bold" /> : null}</span>
-              {s.label}
-            </button>
-          ))}
+      {open && sheet ? (
+        <div className="pick-sheet-backdrop" onMouseDown={(e) => { if (e.target === e.currentTarget) close(); }}>
+          <div className="pick-sheet" ref={panelRef} role="dialog" aria-modal="true" aria-label={title || ariaLabel}>
+            <div className="pick-sheet-head">
+              <span className="pick-sheet-title">{title || ariaLabel}</span>
+              <button type="button" className="pick-sheet-close" aria-label="Close" onClick={close}><X size={16} weight="bold" /></button>
+            </div>
+            {list}
+          </div>
+        </div>
+      ) : null}
+      {open && !sheet && pos ? (
+        <div ref={panelRef} className={`profile-run-menu apps-menu${searchable ? ' apps-menu--search' : ''}`}
+          style={{ position: 'fixed', top: pos.top, left: pos.left, right: 'auto', bottom: 'auto', width: 'max-content' }}>
+          {list}
         </div>
       ) : null}
     </div>
   );
 }
-

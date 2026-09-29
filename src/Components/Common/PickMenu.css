@@ -1,13 +1,48 @@
 /* Picker in the app's own menu style (same panel as the three dots menu on the
    reports list), never the browser's native dropdown. The trigger is styled by
-   the caller via triggerClass; this file covers the wrapper and the floating menu. */
+   the caller via triggerClass; this file covers the wrapper, the floating panel
+   (desktop) and the bottom sheet (phones). */
 .apps-menu-wrap { position: relative; display: inline-flex; align-self: flex-start; }
 .apps-menu { min-width: 220px; max-width: 280px; z-index: 100000; }
+.apps-menu--search { min-width: 260px; }
 .apps-menu .profile-run-menu-item { padding: 8px 11px; }
-.apps-menu-check { display: inline-flex; width: 14px; justify-content: center; color: #2f6fed; }
+.apps-menu-check { display: inline-flex; width: 14px; flex: 0 0 auto; justify-content: center; color: #2f6fed; }
 .profile-run-menu-item.is-current { color: #2f6fed; font-weight: 700; }
+.profile-run-menu-item.is-active { background: #eef4ff; color: #2f6fed; }
+.profile-run-menu-item:disabled { opacity: 0.45; cursor: default; }
 .apps-pick-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pick-item-label { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.pick-item-hint { flex: 0 0 auto; font-size: 0.72rem; font-weight: 500; color: #8a97ac; }
 /* Standalone fallback for pages that do not load the profile stylesheet. */
 .apps-menu.profile-run-menu { padding: 4px; background: #fff; border: 1px solid #e8edf4; border-radius: 12px; box-shadow: 0 14px 34px rgba(15, 23, 42, 0.16); }
 .apps-menu .profile-run-menu-item { display: flex; align-items: center; gap: 9px; width: 100%; white-space: nowrap; border: none; background: transparent; border-radius: 8px; font-size: 0.85rem; font-family: inherit; color: #243447; cursor: pointer; text-align: left; }
 .apps-menu .profile-run-menu-item:hover { background: #f4f7fb; }
+
+/* Long lists scroll inside the panel instead of running off the screen. */
+.pick-list { max-height: 262px; overflow-y: auto; overscroll-behavior: contain; }
+.pick-empty { padding: 10px 11px; font-size: 0.82rem; color: #8a97ac; }
+
+/* Search box at the top of a searchable picker. */
+.pick-search { display: flex; align-items: center; gap: 6px; margin: 2px 2px 6px; padding: 0 8px; border: 1px solid #d7e0ee; border-radius: 9px; background: #fff; }
+.pick-search:focus-within { border-color: #2f6fed; box-shadow: 0 0 0 2px #dbe7fb; }
+.pick-search svg { color: #8a97ac; flex: 0 0 auto; }
+.pick-search input { flex: 1 1 auto; min-width: 0; border: 0; background: transparent; padding: 8px 0; font-family: inherit; font-size: 0.88rem; color: #1f2a37; outline: none; }
+.pick-search-clear { display: inline-flex; border: 0; background: #eef2f8; color: #56657a; border-radius: 999px; width: 20px; height: 20px; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
+
+/* Bottom sheet (phones). */
+.pick-sheet-backdrop { position: fixed; inset: 0; z-index: 100000; background: rgba(15, 23, 42, 0.45); display: flex; align-items: flex-end; justify-content: center; }
+.pick-sheet {
+  width: 100%; max-height: 72vh; display: flex; flex-direction: column;
+  background: #fff; border-radius: 18px 18px 0 0; padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+  box-shadow: 0 -14px 34px rgba(15, 23, 42, 0.18);
+  animation: pick-sheet-up 160ms ease-out;
+}
+@keyframes pick-sheet-up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+.pick-sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 4px 6px 8px; }
+.pick-sheet-title { font-size: 0.95rem; font-weight: 700; color: #12233c; }
+.pick-sheet-close { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border: 0; border-radius: 999px; background: #f3f6fb; color: #64748b; cursor: pointer; }
+.pick-sheet .pick-list { max-height: none; flex: 1 1 auto; min-height: 0; -webkit-overflow-scrolling: touch; }
+.pick-sheet .profile-run-menu-item { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; background: transparent; border-radius: 10px; padding: 12px 10px; font-family: inherit; font-size: 0.95rem; color: #243447; text-align: left; white-space: normal; cursor: pointer; }
+.pick-sheet .profile-run-menu-item:active { background: #f4f7fb; }
+.pick-sheet .pick-search { margin: 0 0 6px; }
+.pick-sheet .pick-search input { font-size: 16px; padding: 10px 0; } /* 16px stops iOS zooming the page on focus */
