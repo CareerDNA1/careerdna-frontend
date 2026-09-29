@@ -441,3 +441,13 @@
   .rk-modal { padding: 18px 14px 12px; }
   .rk-head { margin-right: 36px; }
 }
+
+/* Figure basis: area-level or small-cohort figures are marked so the reader can
+   weigh them; hover or tap shows the cohort, level and year. */
+.rk-fig { cursor: help; outline: none; border-radius: 4px; }
+.rk-fig:focus-visible { box-shadow: 0 0 0 2px #dbe7fb; }
+.rk-fig--area { text-decoration: underline dotted #9fb0c8; text-underline-offset: 3px; color: #56657a; }
+.rk-fig--small { text-decoration: underline dotted #d9c48a; text-underline-offset: 3px; }
+.rk-limited { display: block; width: fit-content; margin-bottom: 4px; padding: 1px 7px; border-radius: 999px; background: #f1f4f9; color: #6b7a8c; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.01em; cursor: help; }
+.rk-sub-limited { color: #8a97ac; }
+.rk-row--limited .rk-score { color: #8a97ac; background: #f1f4f9; }

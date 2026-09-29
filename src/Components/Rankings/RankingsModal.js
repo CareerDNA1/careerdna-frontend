@@ -21,9 +21,10 @@ function courseKey(university, course) {
 
 const SORTS = [
   { key: 'score', label: 'CareerDNA Rank', field: 'score' },
+  { key: 'gradjobs', label: 'Graduate-level jobs', field: 'graduateJobs' },
   { key: 'salary', label: 'Graduate salary', field: 'medianSalary' },
-  { key: 'employment', label: 'Employment', field: 'employment' },
-  { key: 'meaningful', label: 'Meaningful work', field: 'meaningfulWork' },
+  { key: 'employment', label: 'In work or study', field: 'employment' },
+  { key: 'meaningful', label: 'Career readiness', field: 'meaningfulWork' },
   { key: 'satisfaction', label: 'Student satisfaction', field: 'satisfaction' },
   { key: 'continuation', label: 'Continuation', field: 'continuation' },
   { key: 'entry', label: 'Entry requirements', field: 'tariffPoints' },
@@ -37,6 +38,17 @@ const TEF_STYLE = {
   'Requires Improvement': { bg: '#e6d3cd', fg: '#7a3322', label: 'Requires improvement', small: true },
 };
 
+// A metric cell: the real published value, marked and explained when it is an
+// area-level figure or rests on a small cohort.
+function fig(u, metric, text, title) {
+  const b = u.basis && u.basis[metric];
+  if (!b) return text;
+  const area = isArea(b);
+  const small = !area && b.n && b.n < 30;
+  if (!area && !small) return <span {...tipProps(title, basisText(b))} className="rk-fig">{text}</span>;
+  return <span {...tipProps(title, basisText(b))} className={`rk-fig ${area ? 'rk-fig--area' : 'rk-fig--small'}`}>{text}</span>;
+}
+
 function titleCase(s) {
   const small = new Set(['and', 'of', 'the', 'for', 'with', 'in', 'at', 'to', 'a', 'an', 'or']);
   return String(s || '')
@@ -45,6 +57,25 @@ function titleCase(s) {
     .map((w, i) => (i > 0 && small.has(w) ? w : w.charAt(0).toUpperCase() + w.slice(1)))
     .join(' ');
 }
+
+// What a published figure rests on: cohort size, the level it was published
+// at, and the data year. Discover Uni publishes a course's figure for the whole
+// broad area (e.g. "business and management") when the subject cohort is too
+// small, so those are marked and the reader can weigh them.
+const LEVEL_TEXT = {
+  course: 'Figure published for this course.',
+  subject: 'Figure published for this subject.',
+  area: 'Figure published for the broad subject area, not this subject alone, because the subject cohort was too small.',
+  broad: 'Figure published for the whole subject group, not this subject alone, because the subject cohort was too small.',
+};
+function basisText(b) {
+  if (!b) return '';
+  const parts = [LEVEL_TEXT[b.level] || ''];
+  if (b.n) parts.push(`${b.n} graduates in the figure.`);
+  if (b.year) parts.push(`Data year ${b.year}.`);
+  return parts.filter(Boolean).join(' ');
+}
+const isArea = (b) => b && (b.level === 'area' || b.level === 'broad');
 
 // TEF badge with the app's own tooltip (not the browser's title box).
 const tipProps = (title, body) => ({
@@ -189,7 +220,11 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
   const rows = useMemo(() => {
     const list = Array.isArray(data?.universities) ? [...data.universities] : [];
     const field = (SORTS.find((s) => s.key === sortKey) || SORTS[0]).field;
-    list.sort((a, b) => (Number(b[field] || 0) - Number(a[field] || 0)));
+    // Universities with limited data (fewer than two graduate-outcome figures)
+    // sit after the ranked ones whatever the sort, so a thin record never
+    // leapfrogs a full one on a single number.
+    const ranked = (u) => (u.ranked === false ? 0 : 1);
+    list.sort((a, b) => (ranked(b) - ranked(a)) || (Number(b[field] || 0) - Number(a[field] || 0)));
     return list;
   }, [data, sortKey]);
 
@@ -199,16 +234,17 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
   // column carries its width, header lines, tooltip and a cell renderer, so the
   // header and body stay in lockstep and the grid template is derived from it.
   const rkColumnDefs = [
-    { key: 'score', group: 'verdict', width: 70, cls: 'rk-num rk-score', lines: ['CareerDNA', 'Rank'], title: 'CareerDNA Rank', tip: 'Our overall university score (0–100). It blends graduate outcomes (50%: salary, employment, meaningful work), student satisfaction (25%), entry standards (15%) and continuation (10%).', render: (u) => Math.round(u.score) },
+    { key: 'score', group: 'verdict', width: 70, cls: 'rk-num rk-score', lines: ['CareerDNA', 'Score'], title: 'CareerDNA Score', tip: 'Our employability score for this university in this subject (0 to 100); the # column is the rank it gives. It blends graduate-level jobs (25%), graduate salary (20%), continuation (15%), in work or study (10%), career readiness (10%), entry standards (10%) and student satisfaction (10%). Each figure counts in proportion to the number of graduates behind it, and a figure published only for the broad subject area is shown but does not move the score. Universities with fewer than two graduate-outcome figures are listed at the end with limited data.', render: (u) => Math.round(u.score) },
     { key: 'tef', group: 'verdict', width: 62, cls: 'rk-mid', lines: ['TEF'], title: 'Teaching Excellence Framework', tip: 'The official Gold, Silver or Bronze rating for teaching quality.', render: (u) => tefPill(u.tef) },
     { key: 'chances', group: 'getin', width: 92, cls: 'rk-mid', when: showChances, lines: ['Your', 'chances'], title: 'Your chances', tip: "How your predicted A-level results compare with each university's typical offer.\n\nSafe: your predicted grades are comfortably above the typical offer.\nMatch: your predicted grades are about the same as the typical offer.\nStretch: you would need to improve on your predicted grades to get a place.\nAmbitious: you would need to improve significantly on your predicted grades to get a place.\n\nBased on the typical entry grades for this course. Individual offers can vary.", render: (u) => { const b = gradeBand(studentTariff, u.typicalGrades); return b ? <span className={`rk-band rk-band--${b.key}`}>{b.label}</span> : <span className="rk-band-na">–</span>; } },
     { key: 'entry', group: 'getin', width: 58, cls: 'rk-mid rk-entry', lines: ['Entry'], title: 'Entry requirements', tip: 'Typical entry grades, based on the UCAS tariff of accepted students.', render: (u) => u.typicalGrades || '–' },
     { key: 'offer', group: 'getin', width: 66, cls: 'rk-num rk-offer', lines: ['Offer', 'rate'], title: 'Offer rate', tip: `The share of applicants who received an offer. A lower rate means more competitive. This is the figure for the broad subject area${data?.offerAreaName ? ` (${data.offerAreaName})` : ''} (UCAS).`, render: (u) => (u.offerRate != null ? `${Math.round(u.offerRate * 100)}%` : '–') },
-    { key: 'salary', group: 'outcomes', width: 66, cls: 'rk-num', lines: ['Median', 'salary'], title: 'Median salary', tip: 'Median graduate salary, 15 months after finishing the course.', render: (u) => (u.medianSalary ? `£${Math.round(u.medianSalary / 1000)}k` : '–') },
-    { key: 'employed', group: 'outcomes', width: 72, cls: 'rk-num', lines: ['Employed'], title: 'Employed', tip: 'Percentage of graduates in work or further study 15 months after finishing.', render: (u) => (u.employment != null ? `${u.employment}%` : '–') },
-    { key: 'meaningful', group: 'outcomes', width: 78, cls: 'rk-num', lines: ['Meaningful', 'work'], title: 'Meaningful work', tip: 'Percentage of graduates who say their work is meaningful and fits their future plans (Graduate Outcomes survey).', render: (u) => (u.meaningfulWork != null ? `${u.meaningfulWork}%` : '–') },
-    { key: 'satisfaction', group: 'outcomes', width: 76, cls: 'rk-num', lines: ['Satisfaction'], title: 'Student satisfaction', tip: 'Average student satisfaction, from the National Student Survey (NSS).', render: (u) => (u.satisfaction != null ? `${u.satisfaction}%` : '–') },
-    { key: 'continuation', group: 'outcomes', width: 84, cls: 'rk-num', lines: ['Continuation'], title: 'Continuation', tip: 'Percentage of students who continue their studies past the first year.', render: (u) => (u.continuation != null ? `${u.continuation}%` : '–') },
+    { key: 'gradjobs', group: 'outcomes', width: 74, cls: 'rk-num', lines: ['Graduate', 'jobs'], title: 'Graduate-level jobs', tip: 'Percentage of graduates in professional or managerial work 15 months after finishing (Graduate Outcomes survey). The strongest single measure of whether a course leads to graduate-level employment.', render: (u) => (u.graduateJobs != null ? fig(u, 'gradjobs', `${u.graduateJobs}%`, 'Graduate-level jobs') : '–') },
+    { key: 'salary', group: 'outcomes', width: 66, cls: 'rk-num', lines: ['Median', 'salary'], title: 'Median salary', tip: 'Median graduate salary, 15 months after finishing the course.', render: (u) => (u.medianSalary ? fig(u, 'salary', `£${Math.round(u.medianSalary / 1000)}k`, 'Median salary') : '–') },
+    { key: 'employed', group: 'outcomes', width: 72, cls: 'rk-num', lines: ['In work', 'or study'], title: 'In work or study', tip: 'Percentage of graduates in any work or further study 15 months after finishing.', render: (u) => (u.employment != null ? fig(u, 'employment', `${u.employment}%`, 'In work or study') : '–') },
+    { key: 'meaningful', group: 'outcomes', width: 78, cls: 'rk-num', lines: ['Career', 'readiness'], title: 'Career readiness', tip: 'Average of two Graduate Outcomes questions: graduates who say their current activity is on track with their future plans, and who say they are using what they learned on the course.', render: (u) => (u.meaningfulWork != null ? fig(u, 'meaningful', `${u.meaningfulWork}%`, 'Career readiness') : '–') },
+    { key: 'satisfaction', group: 'outcomes', width: 76, cls: 'rk-num', lines: ['Satisfaction'], title: 'Student satisfaction', tip: 'Average student satisfaction, from the National Student Survey (NSS).', render: (u) => (u.satisfaction != null ? fig(u, 'satisfaction', `${u.satisfaction}%`, 'Student satisfaction') : '–') },
+    { key: 'continuation', group: 'outcomes', width: 84, cls: 'rk-num', lines: ['Continuation'], title: 'Continuation', tip: 'Percentage of students who continue their studies past the first year.', render: (u) => (u.continuation != null ? fig(u, 'continuation', `${u.continuation}%`, 'Continuation') : '–') },
   ];
   let rkPrevGroup = null;
   const rkCols = rkColumnDefs
@@ -235,6 +271,7 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                 <>
                   <span className="rk-sub-area">{data.titleFiltered ? data.subject : titleCase(data.rankedBy || data.subject)}</span>
                   {` · ${data.count} universities`}
+                  {data.limitedCount ? <span className="rk-sub-limited">{` · ${data.limitedCount} more with limited data`}</span> : null}
                 </>
               ) : (subjectTitle || 'Loading…')}
             </div>
@@ -267,7 +304,7 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
               <div className="rk-table-wrap" ref={wrapRef} onScroll={updateArrow}>
               <div className="rk-table" style={{ minWidth: rkTableMinWidth }}>
                 <div className="rk-row rk-row--head" style={{ gridTemplateColumns: rkGridCols }}>
-                  <div>#</div>
+                  <div {...tipProps('Rank', 'CareerDNA rank for this subject. It stays the same whichever column you sort by. Universities with limited data are listed after the ranked ones without a rank.')}>#</div>
                   <div>University</div>
                   {rkCols.map((c) => (
                     <div
@@ -294,9 +331,12 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                   const isOpen = openCourses.has(key);
                   return (
                     <div className="rk-rowgroup" key={key}>
-                      <div className="rk-row" style={{ gridTemplateColumns: rkGridCols }}>
-                        <div className="rk-rank">{i + 1}</div>
+                      <div className={`rk-row${u.ranked === false ? ' rk-row--limited' : ''}`} style={{ gridTemplateColumns: rkGridCols }}>
+                        <div className="rk-rank">{u.ranked === false || !u.rank ? '–' : u.rank}</div>
                         <div className="rk-uni">
+                          {u.ranked === false ? (
+                            <span className="rk-limited" {...tipProps('Limited data', 'Listed but not ranked: fewer than two graduate-outcome figures (salary, employment, meaningful work) were published for this subject here, or the provider is rated Requires improvement by the Office for Students, or fewer than half of its students across all subjects continue past the first year.')}>Limited data</span>
+                          ) : null}
                           {courses.length ? (
                             <button type="button" className="rk-uni-btn" onClick={() => toggleCourses(key)}
                               aria-expanded={isOpen}>
@@ -326,7 +366,7 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                                 onClick={() => setCourseCard({
                                   id: cid, title: c.title, url: c.url || '', university: u.institution,
                                   stats: {
-                                    score: u.score, medianSalary: u.medianSalary, employment: u.employment,
+                                    score: u.score, graduateJobs: u.graduateJobs, medianSalary: u.medianSalary, employment: u.employment,
                                     meaningfulWork: u.meaningfulWork, satisfaction: u.satisfaction,
                                     continuation: u.continuation, typicalGrades: u.typicalGrades,
                                     offerRate: u.offerRate, tef: u.tef,
@@ -351,7 +391,7 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
               {data && data.rankedBy && !data.subject.toLowerCase().includes(String(data.rankedBy).toLowerCase())
                 ? `The ranking statistics are based on the ${titleCase(data.rankedBy)} subject area. `
                 : ''}
-              Built from official 2025 data from the Office for Students. Entry grades are indicative.
+              Built from official 2026 Discover Uni data from the Office for Students. Figures marked with a dotted line were published for the broad subject area rather than this subject alone, or rest on a small cohort; hover or tap a figure to see its basis. Entry grades are indicative.
               {data && data.offerAreaName ? (
                 <>
                   {' '}Offer rate is the {data.offerRateYear || 2025} UCAS offer rate for the broad subject
@@ -378,7 +418,8 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                 <div className="rk-course-stats">
                   {courseCard.stats.score != null ? <span className="rk-course-stat"><b>{Math.round(courseCard.stats.score)}</b> CareerDNA rank</span> : null}
                   {courseCard.stats.medianSalary ? <span className="rk-course-stat"><b>£{Math.round(courseCard.stats.medianSalary / 1000)}k</b> median salary</span> : null}
-                  {courseCard.stats.employment != null ? <span className="rk-course-stat"><b>{courseCard.stats.employment}%</b> employed</span> : null}
+                  {courseCard.stats.graduateJobs != null ? <span className="rk-course-stat"><b>{courseCard.stats.graduateJobs}%</b> graduate jobs</span> : null}
+                  {courseCard.stats.employment != null ? <span className="rk-course-stat"><b>{courseCard.stats.employment}%</b> in work or study</span> : null}
                   {courseCard.stats.satisfaction != null ? <span className="rk-course-stat"><b>{courseCard.stats.satisfaction}%</b> satisfaction</span> : null}
                   {courseCard.stats.typicalGrades ? <span className="rk-course-stat"><b>{courseCard.stats.typicalGrades}</b> typical offer</span> : null}
                   {courseCard.stats.offerRate != null ? <span className="rk-course-stat"><b>{Math.round(courseCard.stats.offerRate * 100)}%</b> offer rate</span> : null}
