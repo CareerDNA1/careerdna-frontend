@@ -60,7 +60,7 @@
 }
 .acad-chip--gcse { background: #eef2f8; border-color: #dfe7f2; color: #33475b; }
 
-.acad-foot { margin: 12px 0 0; color: #8a97a8; font-size: 0.78rem; line-height: 1.45; }
+.acad-foot { margin: auto 0 0; padding-top: 12px; color: #8a97a8; font-size: 0.78rem; line-height: 1.45; }
 
 /* Editor popup (modal). */
 .acad-overlay {

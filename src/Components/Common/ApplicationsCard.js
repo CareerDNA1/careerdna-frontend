@@ -281,6 +281,7 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
             : <>Tap <strong>Mark as applied</strong> on a favourite once you have applied, and follow it here.</>}</p>
         </div>
       )}
+      {rowCount > 0 ? <p className="fav-foot fav-foot--card">Record what you have applied to and track closing dates, interviews and outcomes here.</p> : null}
       {staleCount ? (
         <p className="apps-nudge"><WarningCircle size={15} weight="fill" aria-hidden="true" />
           {staleCount === 1 ? 'One application closed over two weeks ago with no update. Heard anything?' : `${staleCount} applications closed over two weeks ago with no update. Heard anything?`}

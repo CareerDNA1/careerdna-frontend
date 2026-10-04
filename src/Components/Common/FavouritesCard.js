@@ -389,6 +389,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
       ) : (
         <p className="fav-empty">Like a career world, pathway, degree or role in your results and it saves here.</p>
       )}
+      {total > 0 ? <p className="fav-foot fav-foot--card">Like worlds, pathways, degrees, courses and routes in your report to add more.</p> : null}
 
       {open ? (
         <div className="fav-overlay" role="dialog" aria-modal="true" aria-label="Your favourites"

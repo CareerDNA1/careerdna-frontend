@@ -11,6 +11,7 @@ const state = {
   context: null,      // { section, title, questions[] }
   prefill: '',        // a question to place in the input when the drawer opens
   prefillSend: false, // send the prefilled question straight away
+  facts: { stage: '', grades: false, saved: false, applied: false }, // what the student has done so far
 };
 const listeners = new Set();
 
@@ -60,6 +61,15 @@ export function setAdvisorContext(context) {
   emit();
 }
 
+// Stage (school or university) and what the student has entered so far, so
+// the suggested questions only offer what the advisor can actually answer.
+export function setAdvisorFacts(partial = {}) {
+  const next = { ...state.facts, ...(partial || {}) };
+  if (JSON.stringify(next) === JSON.stringify(state.facts)) return;
+  state.facts = next;
+  emit();
+}
+
 // The drawer calls this once it has consumed the prefilled question.
 export function clearAdvisorPrefill() {
   if (!state.prefill && !state.prefillSend) return;
@@ -69,7 +79,7 @@ export function clearAdvisorPrefill() {
 }
 
 export function getAdvisorPanelState() {
-  return { open: state.open, context: state.context, prefill: state.prefill, prefillSend: state.prefillSend };
+  return { open: state.open, context: state.context, prefill: state.prefill, prefillSend: state.prefillSend, facts: state.facts };
 }
 
 export function useAdvisorPanel() {

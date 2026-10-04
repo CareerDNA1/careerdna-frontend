@@ -3,6 +3,7 @@ import { BookmarkSimple } from 'phosphor-react';
 import { PathwayReactionRow } from '../Survey/SelectionInsightExplorer';
 import { loadSubjectRanking } from '../../utils/rankings';
 import { getMyAcademicProfile } from '../../utils/academicProfile';
+import { setAdvisorContext, getAdvisorPanelState } from '../../utils/advisorPanel';
 import { studentTop3Tariff, gradedAlevelCount, gradeBand, checkPrerequisites } from '../../utils/matchBand';
 import { showSelectionTooltip, hideSelectionTooltip } from '../Survey/SelectionInsightExplorer';
 import { getReactions, setItemReaction } from '../../utils/savedItems';
@@ -111,6 +112,13 @@ function tefPill(tef) {
 }
 
 export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
+  // While the table is open, Your Advisor suggests questions about comparing
+  // universities; the previous context comes back when it closes.
+  useEffect(() => {
+    const prev = getAdvisorPanelState().context;
+    setAdvisorContext({ section: 'rankings' });
+    return () => setAdvisorContext(prev);
+  }, []);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');

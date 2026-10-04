@@ -30,6 +30,7 @@ import { cancelScheduledDowngrade, setCancelAtPeriodEnd } from '../utils/stripeC
 import './ProfilePage.css';
 import { ageFromDOB, ukSchoolYearGroup } from '../utils/educationProgression';
 import AdvisorDrawer from '../Components/Advisor/AdvisorDrawer';
+import { setAdvisorContext } from '../utils/advisorPanel';
 
 const defaultIntroResponses = {
   name: '',
@@ -1372,6 +1373,12 @@ export default function ProfilePage() {
   // Survey/Profile are milestones from the run itself; the exploration steps only
   // complete once the user has actually interacted (liked/disliked) on that page.
   const latestRun = currentRun || runs?.[0] || null;
+
+  // Your Advisor on this page talks about next steps, favourites, grades and applications.
+  useEffect(() => {
+    setAdvisorContext({ section: 'profilepage' });
+    return () => setAdvisorContext(null);
+  }, []);
   const latestArchetypes = latestRun?.results_json?.archetypes || null;
   // University students explore pathways then roles; school students explore
   // career worlds then pathways. The roadmap labels/gating adapt accordingly.
@@ -1559,7 +1566,7 @@ export default function ProfilePage() {
   return (
     <div className="profile-page">
       <AccountNavbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
-      {latestRun?.id && latestRun?.summary_markdown ? <AdvisorDrawer assessmentRunId={latestRun.id} /> : null}
+      {latestRun?.id && latestRun?.summary_markdown ? <AdvisorDrawer assessmentRunId={latestRun.id} stage={isUniversity ? 'university' : 'school'} /> : null}
 
       <div className="profile-shell">
         {/* Accent hero: identity + live journey progress + continue action */}
@@ -1568,10 +1575,16 @@ export default function ProfilePage() {
             <div className="profile-hero-id">
               <div className="profile-hero-avatar" aria-hidden="true">{initials}</div>
               <div className="profile-hero-idtext">
-                <h1 className="profile-hero-welcome" aria-busy={loadingRuns}>
-                  {loadingRuns
-                    ? <span className="profile-skel profile-skel--title" aria-label="Loading" />
-                    : `Welcome back${profile?.first_name ? `, ${profile.first_name}` : ''}`}
+                <h1 className="profile-hero-welcome" aria-busy={!profile && !user}>
+                  {(() => {
+                    // The greeting never waits for the reports to load: the
+                    // name comes from the profile row or, before that arrives,
+                    // from the signed-in user's own details, like the email does.
+                    const meta = user?.user_metadata || {};
+                    const first = profile?.first_name || meta.first_name || String(meta.full_name || meta.name || '').trim().split(/\s+/)[0] || '';
+                    if (!profile && !user) return <span className="profile-skel profile-skel--title" aria-label="Loading" />;
+                    return `Welcome back${first ? `, ${first}` : ''}`;
+                  })()}
                 </h1>
                 <div className="profile-hero-meta">
                   <span className="profile-hero-email">{profile?.email || user?.email || '—'}</span>
@@ -1672,6 +1685,11 @@ export default function ProfilePage() {
                     </button>
                   </span>
                 </div>
+                {latestRun?.id ? (
+                  <button type="button" className="profile-jcard-open" onClick={() => openRun(latestRun.id)}>
+                    Open current report
+                  </button>
+                ) : null}
               </div>
               <div className={`profile-jrail-wrap${journeyRailEdges.left ? ' can-left' : ''}${journeyRailEdges.right ? ' can-right' : ''}`}>
                 <button type="button" className="profile-jrail-arrow profile-jrail-arrow--left" aria-label="Earlier steps" onClick={() => scrollJourneyRail(-1)}>

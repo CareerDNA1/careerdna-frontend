@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { renderSafeMarkdown } from '../../utils/renderSafeMarkdown';
-import { PaperPlaneTilt } from 'phosphor-react';
+import { PaperPlaneRight } from 'phosphor-react';
 import { BrainCircuit } from 'lucide-react';
 import './CareerAdvisorChat.css';
 import ReportLimitModal from '../Common/ReportLimitModal';
@@ -60,7 +60,7 @@ function renderPlainText(content = '') {
 // context: { section, title, questions } for what the student is looking at;
 // its questions lead the suggestions and tag the messages sent from there.
 // prefill / prefillSend: a question handed over by an "Ask your advisor" button.
-export default function CareerAdvisorChat({ assessmentRunId, embedded = false, variant = 'page', context = null, prefill = '', prefillSend = false }) {
+export default function CareerAdvisorChat({ assessmentRunId, embedded = false, variant = 'page', context = null, generalQuestions = null, prefill = '', prefillSend = false }) {
   const [conversation, setConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [starterPrompts, setStarterPrompts] = useState(FALLBACK_STARTER_PROMPTS);
@@ -78,6 +78,14 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
   const shouldScrollAfterSendRef = useRef(false);
   const textareaRef = useRef(null);
   const handleSendRef = useRef(null);
+
+  // Messages are shown newest-last and the chat opens at the bottom. Only the
+  // most recent PAGE_SIZE are rendered at first; scrolling to the top reveals
+  // the earlier ones a page at a time, keeping the scroll position in place.
+  const PAGE_SIZE = 10;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [loadingEarlier, setLoadingEarlier] = useState(false);
+  const didInitialScrollRef = useRef(false);
 
   const hasMessages = messages.length > 0;
   const isDrawer = variant === 'drawer';
@@ -137,19 +145,58 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, prefill, prefillSend]);
 
-  useEffect(() => {
-    if (!messagesRef.current) return;
+  // Scroll inside the message list only (never the page behind it).
+  const scrollList = (top, smooth) => {
+    const el = messagesRef.current;
+    if (!el) return;
+    if (smooth && typeof el.scrollTo === 'function') el.scrollTo({ top, behavior: 'smooth' });
+    else el.scrollTop = top;
+  };
 
-    if (sending) {
-      bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  // Land at the bottom once the history is in; then follow new messages.
+  useEffect(() => {
+    const el = messagesRef.current;
+    if (!el || loading) return;
+    if (!didInitialScrollRef.current) {
+      didInitialScrollRef.current = true;
+      setVisibleCount(PAGE_SIZE);
+      requestAnimationFrame(() => scrollList(el.scrollHeight, false));
       return;
     }
-
+    // Position of a message's top edge within the scrolling list.
+    const topOf = (node) => node.getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop - 6;
+    if (sending) {
+      // Put the question at the top so the answer appears right under it.
+      const users = el.querySelectorAll('.career-advisor-message.user');
+      const lastUser = users[users.length - 1];
+      scrollList(lastUser ? Math.max(0, topOf(lastUser)) : el.scrollHeight, true);
+      return;
+    }
     if (shouldScrollAfterSendRef.current && latestAssistantRef.current) {
-      latestAssistantRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Land at the top of the advisor's answer, not the bottom of it.
+      scrollList(Math.max(0, topOf(latestAssistantRef.current)), true);
       shouldScrollAfterSendRef.current = false;
     }
-  }, [messages, sending]);
+  }, [messages, sending, loading]);
+
+  // Reveal the previous page when the student scrolls to the top, keeping
+  // what they are reading where it is.
+  const handleMessagesScroll = () => {
+    const el = messagesRef.current;
+    if (!el || loadingEarlier || visibleCount >= messages.length) return;
+    if (el.scrollTop > 24) return;
+    setLoadingEarlier(true);
+    const prevHeight = el.scrollHeight;
+    const prevTop = el.scrollTop;
+    setTimeout(() => {
+      setVisibleCount((n) => Math.min(messages.length, n + PAGE_SIZE));
+      requestAnimationFrame(() => {
+        const node = messagesRef.current;
+        if (node) node.scrollTop = node.scrollHeight - prevHeight + prevTop;
+        setLoadingEarlier(false);
+      });
+    }, 350);
+  };
 
   const placeholder = useMemo(() => {
     if (sending) return 'Thinking…';
@@ -188,6 +235,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
       setErrorMsg('');
       setInput('');
       setMessages((prev) => [...prev, optimisticUserMessage]);
+      setVisibleCount((n) => n + 2);
 
       const data = await sendAdvisorMessage({
         assessmentRunId,
@@ -262,7 +310,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
   );
   const contextPrompts = (Array.isArray(context?.questions) ? context.questions : [])
     .filter((q) => q && !askedKeys.has(normalizePromptText(q).toLowerCase()));
-  const generalPrompts = starterPrompts
+  const generalPrompts = (Array.isArray(generalQuestions) && generalQuestions.length ? generalQuestions : starterPrompts)
     .filter((prompt) => !usedStarterPromptKeys.has(normalizePromptText(prompt).toLowerCase()) && !askedKeys.has(normalizePromptText(prompt).toLowerCase()));
   const promptLimit = isDrawer ? (hasMessages ? 2 : 4) : (hasMessages ? 3 : 5);
   const visiblePrompts = [...contextPrompts, ...generalPrompts.filter((p) => !contextPrompts.includes(p))].slice(0, promptLimit);
@@ -306,10 +354,15 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
           </div>
         ) : (
           <>
-            <div ref={messagesRef} className={`career-advisor-messages ${!hasMessages ? 'is-empty' : ''}`}>
+            <div ref={messagesRef} className={`career-advisor-messages ${!hasMessages ? 'is-empty' : ''}`} onScroll={handleMessagesScroll}>
+              {hasMessages && visibleCount < messages.length ? (
+                <div className={`career-advisor-earlier${loadingEarlier ? ' is-loading' : ''}`} role="status">
+                  {loadingEarlier ? <><span className="cdna-load-spinner" aria-hidden="true" /><span>Loading earlier messages…</span></> : <span>Scroll up for earlier messages</span>}
+                </div>
+              ) : null}
               {!hasMessages ? null : (
-                messages.map((message, index) => {
-                  const isLatestAssistant = message.role === 'assistant' && !messages.slice(index + 1).some((nextMessage) => nextMessage.role === 'assistant');
+                messages.slice(Math.max(0, messages.length - visibleCount)).map((message, index, shown) => {
+                  const isLatestAssistant = message.role === 'assistant' && !shown.slice(index + 1).some((nextMessage) => nextMessage.role === 'assistant');
 
                   return (
                   <div
@@ -401,7 +454,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
                 aria-label={sendTooltip}
                 data-tooltip={sendTooltip}
               >
-                <PaperPlaneTilt size={22} weight="fill" aria-hidden="true" />
+                <PaperPlaneRight size={20} weight="fill" aria-hidden="true" />
               </button>
             </div>
           </>

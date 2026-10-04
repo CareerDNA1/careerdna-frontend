@@ -173,11 +173,11 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
               ))}
             </span>
           </div>
-          <p className="acad-foot">Your grades unlock personalised university matches. Open a degree in the University section of your report and choose Explore courses and rankings to see which universities are a safe bet, a match, or a stretch for you.</p>
+          <p className="acad-foot">Keep these up to date. They power Your chances in the university rankings and let Your Advisor compare your grades with the degrees and routes you save.</p>
         </div>
       ) : (
         <div className="acad-empty">
-          <p>Add your GCSEs and predicted A-levels to unlock personalised university matches on the rankings and course cards.</p>
+          <p>Add your GCSEs and predicted A-levels to see Your chances in the rankings.</p>
         </div>
       )}
       </section>
@@ -252,7 +252,7 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
             <p className="acad-section-note">Maths and English Language are compulsory GCSEs, so they are always listed. Leave the grade blank if you do not have it yet.</p>
           </div>
 
-          <p className="acad-foot">These are your own predicted grades. Only you can see them, and you can edit or clear them any time.</p>
+          <p className="acad-foot">Only you can see these. Edit or clear them any time.</p>
 
           <div className="acad-actions">
             <button type="button" className="acad-btn acad-btn--ghost" onClick={cancelEdit} disabled={saving}>Cancel</button>

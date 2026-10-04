@@ -54,6 +54,20 @@ export default function SwipeDeck({ activeKey, current, prev, next, onPrev, onNe
     // change tab is disruptive (it fires during ordinary click-drags and text
     // selection), so ignore mouse input and let touch / pen drive the deck.
     if (e.pointerType === 'mouse') { drag.current.id = null; return; }
+    // Gestures that start inside an inner horizontal swiper or a sideways
+    // scrolling element belong to that element, not to the section slider.
+    const t = e.target;
+    if (t && t.closest) {
+      if (t.closest('[data-swipe-ignore]')) { drag.current.id = null; return; }
+      let el = t;
+      while (el && el !== e.currentTarget) {
+        if (el.scrollWidth > el.clientWidth + 1) {
+          const ox = window.getComputedStyle(el).overflowX;
+          if (ox === 'auto' || ox === 'scroll') { drag.current.id = null; return; }
+        }
+        el = el.parentElement;
+      }
+    }
     drag.current = { x: e.clientX, y: e.clientY, decided: false, horizontal: false, id: e.pointerId };
   };
 

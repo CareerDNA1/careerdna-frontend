@@ -5,7 +5,9 @@ import './ReportProblemModal.css';
 // A small popup shown when the footer "Report a problem" link is clicked. Lets
 // the user describe an issue in free text; the report is stored in the database
 // (with the current page + run id attached) and surfaced in the admin panel.
-export default function ReportProblemModal({ onClose, assessmentRunId = '' }) {
+// prefix: hidden context (for example crash details) sent ahead of the
+// student's own words, so the admin panel sees both.
+export default function ReportProblemModal({ onClose, assessmentRunId = '', prefix = '' }) {
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -22,7 +24,7 @@ export default function ReportProblemModal({ onClose, assessmentRunId = '' }) {
     try {
       setSending(true);
       setError('');
-      await reportProblem({ message: text, assessmentRunId });
+      await reportProblem({ message: prefix ? `${prefix}${text}` : text, assessmentRunId });
       setSent(true);
     } catch (err) {
       setError(err?.message || 'Could not submit your report. Please try again.');

@@ -1,5 +1,5 @@
 // src/Components/Survey/ResultsComponent.js
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import './ResultsComponent.css';
 import ReportLimitModal from '../Common/ReportLimitModal';
@@ -34,90 +34,13 @@ import { normaliseFavouriteType } from '../../utils/favourites';
 import { canonicalItem } from '../../utils/canonicalIds';
 import CascadeRemoveModal from '../Common/CascadeRemoveModal';
 
-// Per-section contextual advisor config: which analysis tabs get an inline
-// "ask the advisor" panel, the section tag used to store/filter its own thread,
-// and the tailored starter questions shown there.
-const SECTION_ADVISOR_CONFIG = {
-  strengths: {
-    section: 'strengths',
-    title: 'your strengths',
-    questions: [
-      'Why do my strengths matter for my career?',
-      'Which careers make the most of my top strengths?',
-      'How can I develop my strengths further?',
-      'Which of my strengths are most in demand?',
-    ],
-  },
-  environments: {
-    section: 'environments',
-    title: 'your work styles',
-    questions: [
-      'Which careers match my work styles?',
-      'What work settings would suit me best?',
-      'How do I find roles that offer these conditions?',
-      'Which of my work styles should I prioritise?',
-    ],
-  },
-  careerworlds: {
-    section: 'careerworlds',
-    title: 'your career worlds',
-    questions: [
-      'Why do these career worlds fit me?',
-      'How do I get into my top career world?',
-      'Which of these worlds has the best prospects?',
-      'Compare my top two career worlds for me.',
-    ],
-  },
-  pathways: {
-    section: 'pathways',
-    title: 'your career pathways',
-    questions: [
-      'What is the difference between a career pathway and the roles within it?',
-      'What roles does each pathway lead to?',
-      'What do I need to do to prepare for my top pathways?',
-      'How do I know which pathway fits me best?',
-    ],
-  },
-  roleexplorer: {
-    section: 'roles',
-    title: 'your roles',
-    questions: [
-      'What is a typical day in these roles?',
-      'How do I get into these roles?',
-      'Which of these roles is most in demand?',
-      'What skills do I need for these roles?',
-    ],
-  },
-  discovermore: {
-    section: 'discovermore',
-    title: 'your career pathways',
-    questions: [
-      'What is the difference between a career world and a career pathway?',
-      'What types of roles does each pathway lead to?',
-      'How do I know which pathway fits me best?',
-    ],
-  },
-  furtherstudy: {
-    section: 'furtherstudy',
-    title: 'university options',
-    questions: [
-      'Which of these degrees fits me best?',
-      'What A-levels do I need for these degrees?',
-      'What careers do these degrees lead to?',
-      'How do I choose between these degrees?',
-    ],
-  },
-  nonuni: {
-    section: 'nonuni',
-    title: 'your training and work',
-    questions: [
-      'Which of these apprenticeships suits me best?',
-      'How do apprenticeships compare to university for me?',
-      'How do I find and apply for these apprenticeships?',
-      'Which of these routes has the best prospects?',
-    ],
-  },
+// Which advisor context each part of the report maps to. The titles and
+// suggested questions live in utils/advisorQuestions.js (one shared config).
+const ADVISOR_SECTION_FOR_TAB = {
+  summary: 'summary', strengths: 'strengths', environments: 'environments', careerworlds: 'careerworlds',
+  pathways: 'pathways', discovermore: 'discovermore', roleexplorer: 'roleexplorer', furtherstudy: 'furtherstudy', nonuni: 'nonuni',
 };
+const ADVISOR_SECTION_FOR_TOP = { profile: 'yourtype', traits: 'traits', selfawareness: 'selfawareness' };
 
 /* ---------- helpers ---------- */
 const norm = (s) =>
@@ -1994,11 +1917,12 @@ export default function ResultsComponent({
 
   // Tell Your Advisor what the student is looking at, so its suggestions follow.
   useEffect(() => {
-    const key = openTopSection === 'analysis' ? activeAnalysisTab : '';
-    const cfg = key ? SECTION_ADVISOR_CONFIG[key] : null;
-    setAdvisorContext(cfg ? { section: cfg.section, title: cfg.title, questions: cfg.questions } : null);
+    const key = openTopSection === 'analysis'
+      ? ADVISOR_SECTION_FOR_TAB[activeAnalysisTab]
+      : (ADVISOR_SECTION_FOR_TOP[activeProfileTab] || ADVISOR_SECTION_FOR_TOP[openTopSection]);
+    setAdvisorContext(key ? { section: key } : null);
     return () => setAdvisorContext(null);
-  }, [openTopSection, activeAnalysisTab]);
+  }, [openTopSection, activeAnalysisTab, activeProfileTab]);
 
   // Before the report is generated the analysis tabs above are empty (they're
   // built from the report text). To keep the menu looking normal, we render a
@@ -2495,13 +2419,39 @@ export default function ResultsComponent({
     setOverallFeedback((prev) => ({ ...prev, comment: overallFeedbackDraftComment }));
   };
 
-  useEffect(() => {
-    if (!activeTab?.markdown || !markdownContentRef.current) return;
-    const frame = window.requestAnimationFrame(() => {
-      decorateAnalysisSignals(markdownContentRef.current, analysisMeta, resolvedItemReactions, scoresForChart);
-  });
-    return () => window.cancelAnimationFrame(frame);
-  });
+  // Decorate the rendered markdown (cards, icons, pills, green trait names).
+  // The section slider mounts a neighbouring copy of this component while a
+  // swipe is in progress, so a single ref could end up pointing at the copy and
+  // then at null when it unmounted, leaving the visible section plain. So we
+  // find every rendered markdown container ourselves, decorate each, and watch
+  // the page so a freshly mounted container is decorated too.
+  useLayoutEffect(() => {
+    if (!activeTab?.markdown) return undefined;
+    const scope = document.getElementById('results-root') || document;
+    let running = false;
+    const run = () => {
+      if (running) return;
+      running = true;
+      try {
+        scope.querySelectorAll('.analysis-box .markdown-content').forEach((root) => {
+          if (root.querySelector('ol, ul') && !root.querySelector('.cdna-card-list')) {
+            decorateAnalysisSignals(root, analysisMeta, resolvedItemReactions, scoresForChart);
+          }
+        });
+      } finally { running = false; }
+    };
+    // Inputs changed: redo every container from scratch.
+    scope.querySelectorAll('.analysis-box .markdown-content').forEach((root) => {
+      decorateAnalysisSignals(root, analysisMeta, resolvedItemReactions, scoresForChart);
+    });
+    let timer = null;
+    const observer = new MutationObserver(() => {
+      if (timer) return;
+      timer = window.setTimeout(() => { timer = null; run(); }, 0);
+    });
+    observer.observe(scope, { childList: true, subtree: true });
+    return () => { observer.disconnect(); if (timer) window.clearTimeout(timer); };
+  }, [activeTab?.markdown, analysisMeta, resolvedItemReactions, scoresForChart]);
 
   useEffect(() => {
     const root = markdownContentRef.current;
@@ -3201,7 +3151,7 @@ export default function ResultsComponent({
 
   return (
     <div id="results-root">
-      {canShowAdvisor ? <AdvisorDrawer assessmentRunId={effectiveAssessmentRunId} /> : null}
+      {canShowAdvisor ? <AdvisorDrawer assessmentRunId={effectiveAssessmentRunId} stage={normalizeViewerStatus(viewerStatus) === 'school' ? 'school' : 'university'} /> : null}
       {cascadePrompt ? (
         <CascadeRemoveModal
           parent={cascadePrompt.parent}

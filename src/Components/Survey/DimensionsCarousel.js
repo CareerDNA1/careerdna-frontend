@@ -407,6 +407,33 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
   }, [dims, scores, isMobile, maxPerDimension, fontsReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const slideWidthPct = 100 / (slides.length || 1);
+  // Phone tab strip: show the right-edge fade and chevron until the strip has
+  // been scrolled to its end (or when it fits without scrolling).
+  const tabsRef = useRef(null);
+  const [tabsAtEnd, setTabsAtEnd] = useState(true);
+  useEffect(() => {
+    const list = tabsRef.current;
+    if (!list) return undefined;
+    const update = () => {
+      const maxScroll = list.scrollWidth - list.clientWidth;
+      setTabsAtEnd(maxScroll <= 1 || list.scrollLeft >= maxScroll - 1);
+    };
+    update();
+    list.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => { list.removeEventListener("scroll", update); window.removeEventListener("resize", update); };
+  }, [slides.length, isMobile]);
+  // Keep the active title visible in the strip when the slide changes (swipe or
+  // arrows), scrolling the strip sideways only, never the page.
+  useEffect(() => {
+    const list = tabsRef.current;
+    const btn = list && list.children && list.children[index];
+    if (!list || !btn) return;
+    const left = btn.offsetLeft - 12;
+    const right = btn.offsetLeft + btn.offsetWidth + 12;
+    if (left < list.scrollLeft) list.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+    else if (right > list.scrollLeft + list.clientWidth) list.scrollTo({ left: right - list.clientWidth, behavior: "smooth" });
+  }, [index]);
   const go = useCallback(
     (to) => {
       hideSubdimTooltip();
@@ -415,6 +442,7 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
     [slides.length]
   );
 
+  const stopPointer = (e) => { e.stopPropagation(); };
   const onTouchStart = (e) => {
     // Keep this inner swiper's gestures from bubbling to any outer swipe deck.
     e.stopPropagation();
@@ -450,8 +478,19 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
+      // The outer section slider listens to POINTER events, which touch
+      // stopPropagation does not cover, so it was dragging the whole page while
+      // the finger moved between dimensions. Stop those too, and mark the
+      // element so the deck ignores gestures that start in here.
+      onPointerDown={stopPointer}
+      onPointerMove={stopPointer}
+      onPointerUp={stopPointer}
+      onPointerCancel={stopPointer}
+      data-swipe-ignore="1"
     >
+      <div className={`cdna-dim-tabs-wrap${tabsAtEnd ? " is-scroll-end" : ""}`}>
       <div
+        ref={tabsRef}
         role="tablist"
         aria-label="Dimensions"
         className="cdna-dim-tabs--scroll"
@@ -491,6 +530,7 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
             {s.dimLabel}
           </button>
         ))}
+      </div>
       </div>
       <div
         ref={trackRef}

@@ -43,6 +43,8 @@
 .fav-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .fav-btn--primary:disabled:hover { background: #2f6fed; }
 .fav-foot { margin: 10px 0 0; color: #56657a; font-size: 0.86rem; line-height: 1.5; }
+/* One-line note pinned to the bottom of the profile cards (favourites, applications), matching the grades card. */
+.fav-foot--card { margin-top: auto; padding-top: 12px; color: #8a97a8; font-size: 0.78rem; line-height: 1.45; }
 .fav-empty { margin: 10px 0 0; color: #56657a; font-size: 0.86rem; line-height: 1.5; }
 
 /* Popup */

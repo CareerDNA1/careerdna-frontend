@@ -141,6 +141,21 @@
 
 .cdna-dim-tabs--scroll { scrollbar-width: none; -ms-overflow-style: none; }
 .cdna-dim-tabs--scroll::-webkit-scrollbar { display: none; }
+/* Dimension tab strip on phones: same right-edge fade and chevron as the main
+   tab strip, hidden once scrolled to the end. */
+.cdna-dim-tabs-wrap { position: relative; }
+@media (max-width: 760px) {
+  .cdna-dim-tabs-wrap::after {
+    content: '\203A';
+    position: absolute; top: 0; right: 0; bottom: 13px; width: 48px;
+    display: flex; align-items: center; justify-content: flex-end; padding-right: 6px;
+    font-size: 1.4rem; font-weight: 800; color: #2f6fed;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), #ffffff 55%);
+    pointer-events: none; opacity: 1; transition: opacity 160ms ease;
+    animation: tabSwipeHint 1.5s ease-in-out infinite;
+  }
+  .cdna-dim-tabs-wrap.is-scroll-end::after { opacity: 0; animation: none; }
+}
 
 .selection-list-button {
   min-width: 0;

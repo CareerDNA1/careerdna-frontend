@@ -3402,6 +3402,15 @@
   margin-bottom: 26px;
 }
 .profile-jcard-headtext { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1; }
+/* Same pill as View all on the favourites and applications cards. */
+.profile-jcard-open {
+  flex: 0 0 auto; align-self: flex-start;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 4px 12px; min-height: 26px; border-radius: 999px; border: 1px solid transparent;
+  background: #2f6fed; color: #fff; font-family: inherit; font-size: 0.72rem; font-weight: 600; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(47, 111, 237, 0.15); white-space: nowrap;
+}
+.profile-jcard-open:hover { background: #245fd6; }
 .profile-jcard-title { display: flex; align-items: center; gap: 10px; font-size: 1.05rem; font-weight: 700; color: #14233c; }
 .profile-jcard-pill {
   display: inline-flex; align-items: center;
@@ -3472,9 +3481,15 @@
 
 @media (max-width: 720px) {
   .profile-jcard { padding: 16px 14px; }
-  .profile-jcard-head { margin-bottom: 6px; flex-wrap: wrap; }
-  .profile-jcard-nextname { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
-  .profile-jcard-nextname { font-size: 0.98rem; }
+  /* Phone: title and count on one line, the next step on the next, and the
+     Open current report pill underneath, so nothing wraps mid-phrase. */
+  .profile-jcard-head { margin-bottom: 6px; flex-direction: column; align-items: stretch; gap: 8px; }
+  .profile-jcard-headtext { gap: 4px; }
+  .profile-jcard-title { justify-content: space-between; white-space: nowrap; }
+  .profile-jcard-nextname { display: block; font-size: 0.92rem; line-height: 1.4; }
+  .profile-jcard-nextlabel { margin-right: 4px; }
+  .profile-jcard-go { font-size: 0.92rem; }
+  .profile-jcard-open { align-self: flex-start; margin-top: 2px; }
   /* Same stepper as desktop, scrolled sideways like a carousel. Fixed step
      width keeps the labels readable; the rail bleeds to the card edges and
      opens centred on the current step (see ProfilePage.js). */

@@ -2,30 +2,39 @@
    Sits under every modal (they are 96000+) but above the page. */
 :root { --advisor-drawer-w: 400px; }
 
-/* Push the page over while open, so report and advisor are side by side. */
-@media (min-width: 1100px) {
-  body.cdna-advisor-open #results-root,
-  body.cdna-advisor-open .profile-page { padding-right: var(--advisor-drawer-w); transition: padding-right 220ms ease; }
-}
+/* The drawer overlays the page; the page keeps its layout and stays scrollable. */
 
-/* Edge tab (closed state) */
+/* Floating pill (closed state): bottom right on desktop, centred on phones. */
 .advisor-tab {
-  position: fixed; right: 0; top: 50%; transform: translateY(-50%);
+  position: fixed; right: 22px; bottom: 22px;
   z-index: 95000;
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
-  width: 58px; padding: 12px 6px;
-  border: 1px solid #dbe7f6; border-right: 0; border-radius: 14px 0 0 14px;
-  background: #fff; color: #2f6fed; cursor: pointer;
-  box-shadow: -6px 0 22px rgba(15, 23, 42, 0.12);
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 38px; padding: 0 14px 0 5px;
+  border: 0; border-radius: 999px;
+  background: linear-gradient(135deg, #0f9d8a, #14b8a6); color: #fff; cursor: pointer;
+  box-shadow: 0 10px 24px rgba(15, 157, 138, 0.36);
   font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  transition: transform 160ms ease, box-shadow 160ms ease;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
 }
-.advisor-tab:hover, .advisor-tab.is-dragging { transform: translateY(-50%) translateX(-4px); box-shadow: -10px 0 28px rgba(47, 111, 237, 0.2); }
-.advisor-tab:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
-.advisor-tab__icon { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 999px; background: #eef4ff; color: #5d6df1; }
-.advisor-tab__icon svg { width: 20px; height: 20px; }
-.advisor-tab__label { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.02em; text-align: center; line-height: 1.15; }
-.advisor-tab__hint { display: none; }
+.advisor-tab:hover, .advisor-tab.is-dragging { transform: translateY(-2px); background: linear-gradient(135deg, #0d8f7e, #10a896); box-shadow: 0 14px 28px rgba(15, 157, 138, 0.42); }
+.advisor-tab:focus-visible { outline: 2px solid #0f9d8a; outline-offset: 3px; }
+.advisor-tab__icon { display: inline-flex; width: 28px; height: 28px; align-items: center; justify-content: center; border-radius: 999px; background: #fff; color: #0f9d8a; flex: 0 0 auto; }
+.advisor-tab__icon svg { width: 17px; height: 17px; }
+.advisor-tab__label { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.01em; white-space: nowrap; line-height: 1; }
+.advisor-tab__ask { display: none; }
+/* Context hint: a small white tooltip above the pill, shown on hover and for a
+   few seconds whenever the section changes. */
+.advisor-tab__hint {
+  position: absolute; right: 0; bottom: calc(100% + 10px);
+  padding: 7px 11px; border-radius: 10px;
+  background: #fff; color: #56657a; border: 1px solid #e3e9f2;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+  font-size: 0.76rem; font-weight: 600; white-space: nowrap;
+  opacity: 0; transform: translateY(4px); pointer-events: none;
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+.advisor-tab__hint::after { content: ""; position: absolute; right: 18px; top: 100%; border: 6px solid transparent; border-top-color: #fff; }
+.advisor-tab:hover .advisor-tab__hint, .advisor-tab.show-hint .advisor-tab__hint { opacity: 1; transform: none; }
 
 /* Drawer: sits below the fixed account navbar so the menu stays reachable. */
 .advisor-drawer {
@@ -33,6 +42,7 @@
   z-index: 95000;
   display: flex; flex-direction: column;
   background: #fff; border-left: 1px solid #dbe7f6;
+  border-radius: 20px 0 0 20px; overflow: hidden;
   box-shadow: -14px 0 40px rgba(15, 23, 42, 0.14);
   transform: translateX(100%);
   transition: transform 220ms ease;
@@ -63,22 +73,47 @@
 .advisor-drawer .career-advisor-credit-note { font-size: 0.74rem; }
 .advisor-drawer .career-advisor-message-content { font-size: 0.9rem; }
 
+/* Send button in the drawer: a 38px circle matched to a 38px input, icon optically centred. */
+.advisor-drawer .career-advisor-input-row { align-items: center; gap: 8px !important; padding-top: 10px !important; }
+.advisor-drawer .career-advisor-input-row .career-advisor-send-button {
+  width: 38px !important; height: 38px !important; min-width: 38px !important; min-height: 38px !important;
+  max-width: 38px !important; max-height: 38px !important; padding: 0 !important; margin: 0 !important;
+  border-radius: 999px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  line-height: 0 !important;
+}
+.advisor-drawer .career-advisor-input-row .career-advisor-send-button svg { width: 17px !important; height: 17px !important; display: block; margin: 0 !important; transform: rotate(-40deg) translate(0.5px, 0); } /* the right-pointing plane is symmetric, so rotating it keeps it optically centred */
+.advisor-drawer .career-advisor-input-row textarea {
+  min-height: 38px !important; max-height: 110px !important; padding: 9px 14px !important;
+  font-size: 0.9rem !important; line-height: 1.3 !important; border-radius: 19px !important;
+}
+.advisor-drawer .career-advisor-input-row textarea::placeholder { font-size: 0.9rem !important; }
+
+/* Earlier-messages cue at the top of the list */
+.career-advisor-earlier { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 6px 0 10px; font-size: 0.74rem; color: #8a97ac; }
+.career-advisor-earlier .cdna-load-spinner { width: 14px; height: 14px; }
+
+/* While the drawer is open the page still scrolls with the wheel, but its
+   scrollbar is hidden so the only visible scroller is the chat's own. */
+@media (min-width: 1100px) {
+  html.cdna-advisor-open { scrollbar-width: none; }
+  html.cdna-advisor-open::-webkit-scrollbar { display: none; }
+}
+
 /* Phones: bottom bar + bottom sheet */
 @media (max-width: 760px) {
   .advisor-tab {
-    top: auto; bottom: 0; right: 0; left: 0; transform: none;
-    width: 100%; flex-direction: row; justify-content: flex-start; gap: 10px;
-    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-    border: 0; border-top: 1px solid #dbe7f6; border-radius: 16px 16px 0 0;
-    box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.12);
+    right: auto; left: 50%; bottom: calc(10px + env(safe-area-inset-bottom)); transform: translateX(-50%);
+    height: 36px; padding: 0 14px 0 5px; gap: 7px;
   }
-  .advisor-tab:hover, .advisor-tab.is-dragging { transform: none; }
-  .advisor-tab__icon { width: 34px; height: 34px; }
-  .advisor-tab__label { font-size: 0.9rem; }
-  .advisor-tab__hint { display: block; margin-left: auto; font-size: 0.74rem; font-weight: 600; color: #6b7788; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
+  .advisor-tab:hover, .advisor-tab.is-dragging { transform: translateX(-50%); }
+  .advisor-tab__icon { width: 26px; height: 26px; }
+  .advisor-tab__icon svg { width: 15px; height: 15px; }
+  .advisor-tab__label { font-size: 0.8rem; }
+  .advisor-tab__ask { display: inline; }
+  .advisor-tab__hint { display: none; }
   .advisor-drawer {
     top: auto; left: 0; right: 0; bottom: 0; width: 100%; height: 86dvh; max-height: 86vh;
-    border-left: 0; border-top: 1px solid #dbe7f6; border-radius: 18px 18px 0 0;
+    border-left: 0; border-top: 1px solid #dbe7f6; border-radius: 18px 18px 0 0; overflow: visible;
     box-shadow: 0 -14px 40px rgba(15, 23, 42, 0.18);
     transform: translateY(100%);
     padding-bottom: env(safe-area-inset-bottom);
@@ -86,7 +121,7 @@
   .advisor-drawer__handle { display: flex; justify-content: center; padding: 8px 0 0; }
   .advisor-drawer__handle span { width: 40px; height: 4px; border-radius: 999px; background: #d3dbe8; }
   .advisor-drawer__head { padding-top: 6px; }
-  .advisor-drawer .career-advisor-input-row textarea { font-size: 16px; } /* no iOS zoom */
+  .advisor-drawer .career-advisor-input-row textarea { font-size: 16px !important; min-height: 42px !important; } /* no iOS zoom */
   /* Gap between the content and the sheet edges (the chat's own phone rules
      strip the panel padding for the old full-page layout). */
   .advisor-drawer .career-advisor-panel { padding: 8px 18px 14px !important; }

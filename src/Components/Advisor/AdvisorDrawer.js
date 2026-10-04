@@ -1,9 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'phosphor-react';
 import { BrainCircuit } from 'lucide-react';
 import CareerAdvisorChat from './CareerAdvisorChat';
-import { useAdvisorPanel, openAdvisor, closeAdvisor, toggleAdvisor } from '../../utils/advisorPanel';
+import { useAdvisorPanel, openAdvisor, closeAdvisor, toggleAdvisor, setAdvisorFacts } from '../../utils/advisorPanel';
+import { advisorContextFor, advisorGeneralQuestions } from '../../utils/advisorQuestions';
+import { getMyAcademicProfile, hasAcademicData } from '../../utils/academicProfile';
+import { getFavouritesByCategory } from '../../utils/favourites';
+import { listApplications } from '../../utils/applications';
 import './AdvisorDrawer.css';
 
 // "Your Advisor": one persistent panel for the whole results area. On wide
@@ -15,8 +19,41 @@ import './AdvisorDrawer.css';
 const PHONE = '(max-width: 760px)';
 const isPhone = () => window.matchMedia(PHONE).matches;
 
-export default function AdvisorDrawer({ assessmentRunId }) {
-  const { open, context, prefill, prefillSend } = useAdvisorPanel();
+// stage: 'school' or 'university' (the report's viewer status). The drawer
+// resolves the suggested questions for the current section from the shared
+// config, using what the student has entered so far (grades, favourites,
+// applications) to decide which questions to offer.
+export default function AdvisorDrawer({ assessmentRunId, stage = '' }) {
+  const { open, context: rawContext, prefill, prefillSend, facts } = useAdvisorPanel();
+  const context = useMemo(() => {
+    if (!rawContext) return null;
+    const resolved = advisorContextFor(rawContext.section, facts.stage || stage, facts);
+    return resolved || rawContext;
+  }, [rawContext, facts, stage]);
+  const generalQuestions = useMemo(() => advisorGeneralQuestions(facts.stage || stage), [facts.stage, stage]);
+
+  // Load the facts once per report: stage, grades entered, favourites saved,
+  // applications made. Refreshed when the drawer opens so new saves show.
+  useEffect(() => {
+    if (!assessmentRunId) return undefined;
+    let cancelled = false;
+    (async () => {
+      const [ap, favs, apps] = await Promise.all([
+        getMyAcademicProfile().catch(() => null),
+        getFavouritesByCategory(assessmentRunId).catch(() => []),
+        listApplications().catch(() => []),
+      ]);
+      if (cancelled) return;
+      const savedCount = (Array.isArray(favs) ? favs : []).reduce((n, g) => n + ((g && g.items && g.items.length) || 0), 0);
+      setAdvisorFacts({
+        stage: stage || '',
+        grades: hasAcademicData(ap),
+        saved: savedCount > 0,
+        applied: Array.isArray(apps) && apps.length > 0,
+      });
+    })();
+    return () => { cancelled = true; };
+  }, [assessmentRunId, stage, open]);
   const [dragging, setDragging] = useState(false);
   const startRef = useRef(null);
 
@@ -25,12 +62,13 @@ export default function AdvisorDrawer({ assessmentRunId }) {
   // phones the sheet covers the page, so the page must not scroll behind it.
   useEffect(() => {
     document.body.classList.toggle('cdna-advisor-open', open);
+    document.documentElement.classList.toggle('cdna-advisor-open', open);
     const lock = open && isPhone();
     document.body.classList.toggle('cdna-advisor-lock', lock);
     const nav = document.querySelector('.account-navbar-wrapper');
     const top = nav && getComputedStyle(nav).position === 'fixed' ? Math.round(nav.getBoundingClientRect().bottom) : 0;
     document.documentElement.style.setProperty('--advisor-drawer-top', `${Math.max(0, top)}px`);
-    return () => { document.body.classList.remove('cdna-advisor-open'); document.body.classList.remove('cdna-advisor-lock'); };
+    return () => { document.body.classList.remove('cdna-advisor-open'); document.documentElement.classList.remove('cdna-advisor-open'); document.body.classList.remove('cdna-advisor-lock'); };
   }, [open]);
 
   // Escape closes the drawer unless a modal above it is handling the key.
@@ -79,6 +117,15 @@ export default function AdvisorDrawer({ assessmentRunId }) {
     if (isPhone() ? t.clientY - s.y > 60 : t.clientX - s.x > 60) closeAdvisor();
   };
 
+  // Show the context hint briefly whenever the section changes (desktop pill).
+  const [showHint, setShowHint] = useState(false);
+  useEffect(() => {
+    if (open || !context?.title) return undefined;
+    setShowHint(true);
+    const t = setTimeout(() => setShowHint(false), 3500);
+    return () => clearTimeout(t);
+  }, [open, context?.title]);
+
   if (!assessmentRunId) return null;
 
   const contextTitle = context?.title ? `Ask about ${context.title}` : 'Ask anything about your results';
@@ -91,14 +138,14 @@ export default function AdvisorDrawer({ assessmentRunId }) {
       {!open ? (
         <button
           type="button"
-          className={`advisor-tab${dragging ? ' is-dragging' : ''}`}
+          className={`advisor-tab${dragging ? ' is-dragging' : ''}${showHint ? ' show-hint' : ''}`}
           onClick={() => openAdvisor()}
           aria-label="Open Your Advisor"
           aria-expanded={false}
         >
           <span className="advisor-tab__icon" aria-hidden="true"><BrainCircuit /></span>
-          <span className="advisor-tab__label">Your Advisor</span>
-          <span className="advisor-tab__hint">{context?.title ? `Ask about ${context.title}` : 'Ask about your results'}</span>
+          <span className="advisor-tab__label"><span className="advisor-tab__ask">Ask </span>Your Advisor</span>
+          <span className="advisor-tab__hint" aria-hidden="true">{context?.title ? `Ask about ${context.title}` : 'Ask about your results'}</span>
         </button>
       ) : null}
 
@@ -108,7 +155,7 @@ export default function AdvisorDrawer({ assessmentRunId }) {
         <header className="advisor-drawer__head" onTouchStart={onHandleTouchStart} onTouchEnd={onHandleTouchEnd}>
           <span className="advisor-drawer__avatar career-advisor-avatar" aria-hidden="true"><BrainCircuit /></span>
           <div className="advisor-drawer__titles">
-            <div className="advisor-drawer__title">Your Advisor</div>
+            <div className="advisor-drawer__title">Your CareerDNA Advisor</div>
             <div className="advisor-drawer__sub">{contextTitle}</div>
           </div>
           <button type="button" className="advisor-drawer__close" onClick={() => toggleAdvisor()} aria-label="Close Your Advisor">
@@ -121,6 +168,7 @@ export default function AdvisorDrawer({ assessmentRunId }) {
               assessmentRunId={assessmentRunId}
               variant="drawer"
               context={context}
+              generalQuestions={generalQuestions}
               prefill={prefill}
               prefillSend={prefillSend}
             />
