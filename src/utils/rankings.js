@@ -1,26 +1,12 @@
-import { buildApiCandidates } from './config';
+import { apiFetch } from './apiFetch';
 
-async function getJson(path) {
-  const candidates = buildApiCandidates(path);
-  let lastError = null;
-  for (const url of candidates) {
-    try {
-      const res = await fetch(url, { method: 'GET' });
-      if (res.status === 404) { lastError = new Error('404'); lastError.status = 404; continue; }
-      let data = null;
-      try { data = await res.json(); } catch (_) { data = null; }
-      if (!res.ok) {
-        const e = new Error(data?.message || `Request failed: ${res.status}`);
-        e.status = res.status;
-        throw e;
-      }
-      return data;
-    } catch (error) {
-      if (error?.status && error.status !== 404) throw error;
-      lastError = error;
-    }
-  }
-  throw lastError || new Error('Could not load rankings right now.');
+// Premium data routes check the plan on the server; apiFetch sends the session
+// token when signed in. A 404 from every base URL surfaces as err.status === 404,
+// which loadSubjectRanking relies on.
+// The first load of a subject's ranking builds the course list on the server,
+// which can be slow on a cold start, so allow longer than the default timeout.
+function getJson(path) {
+  return apiFetch(path, { timeoutMs: 45000 });
 }
 
 let subjectsCache = null;

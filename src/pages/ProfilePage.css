@@ -449,7 +449,7 @@
 .profile-admin-eyebrow {
   display: block;
   margin-bottom: 2px;
-  color: #7a8798;
+  color: #5e6f88;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -539,7 +539,7 @@
 
 .profile-card-count {
   font-size: 0.75rem;
-  color: #7a8798;
+  color: #5e6f88;
 }
 
 .profile-card-footer {
@@ -551,7 +551,7 @@
 
 .profile-card-footer-text {
   font-size: 0.8rem;
-  color: #7a8798;
+  color: #5e6f88;
 }
 
 /* =============================================
@@ -613,7 +613,7 @@
 /* Date */
 .profile-run-date {
   font-size: 0.75rem;
-  color: #7a8798;
+  color: #5e6f88;
   min-width: 90px;
 }
 
@@ -932,7 +932,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #7a8798;
+  color: #5e6f88;
   text-align: center;
   font-size: 0.9rem;
   font-weight: 400;
@@ -1113,7 +1113,7 @@
   margin: 4px 0 0;
   font-size: 0.78rem;
   line-height: 1.45;
-  color: #7a8798;
+  color: #5e6f88;
 }
 
 .profile-field-help a {
@@ -1441,7 +1441,7 @@
   margin: 0 0 3px;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #8a95a6;
+  color: #64748b;
 }
 
 .profile-danger-zone p {
@@ -1572,7 +1572,7 @@
 }
 
 .profile-account-detail-row--stacked strong small {
-  color: #8a95a6;
+  color: #64748b;
   font-size: 0.72rem;
   font-weight: 500;
   line-height: 1.3;
@@ -1584,7 +1584,7 @@
   padding: 8px 10px;
   border-radius: 10px !important;
   background: #f8fafc;
-  color: #7a8798;
+  color: #5e6f88;
   font-size: 0.76rem;
   font-weight: 600;
   line-height: 1.35;
@@ -1788,7 +1788,7 @@
   right: 6px;
   border: none;
   background: transparent;
-  color: #8a97a8;
+  color: #64748b;
   font-size: 1.05rem;
   line-height: 1;
   padding: 2px 5px;
@@ -2268,7 +2268,7 @@
 
 .profile-account-plan-note {
   margin-top: 2px;
-  color: #8a95a6;
+  color: #64748b;
   font-size: 0.72rem;
   font-weight: 500;
   line-height: 1.3;
@@ -3254,7 +3254,7 @@
   margin-top: 10px;
   font-size: 0.72rem;
   line-height: 1.25;
-  color: #8a97a8;
+  color: #64748b;
   max-width: 96px;
   overflow-wrap: break-word;
 }
@@ -3419,7 +3419,7 @@
   font-size: 0.76rem; font-weight: 700; white-space: nowrap;
 }
 .profile-jcard-nextname { font-size: 0.98rem; font-weight: 600; color: #14233c; line-height: 1.35; }
-.profile-jcard-nextlabel { font-weight: 500; color: #6b7a8c; margin-right: 6px; }
+.profile-jcard-nextlabel { font-weight: 500; color: #5e6f88; margin-right: 6px; }
 .profile-jcard-go {
   display: inline-flex; align-items: center; gap: 6px; text-align: left;
   padding: 0; border: 0; background: transparent;
@@ -3447,13 +3447,13 @@
 .profile-jrail-dot {
   position: relative; z-index: 1;
   width: 28px; height: 28px; border-radius: 50%;
-  border: 1.5px solid #d3dbe8; background: #fff; color: #a4afc0;
+  border: 1.5px solid #d3dbe8; background: #fff; color: #64748b;
   display: inline-flex; align-items: center; justify-content: center;
   transition: transform .15s ease, border-color .15s ease;
 }
 .profile-jrail-dot svg { width: 13px; height: 13px; }
 .profile-jrail-btn:hover .profile-jrail-dot { transform: scale(1.1); border-color: #2f6fed; }
-.profile-jrail-lbl { font-size: 0.8rem; font-weight: 500; color: #7a8798; text-align: center; line-height: 1.25; }
+.profile-jrail-lbl { font-size: 0.8rem; font-weight: 500; color: #5e6f88; text-align: center; line-height: 1.25; }
 .profile-jrail-btn:hover .profile-jrail-lbl { color: #2f6fed; }
 /* connector line: sits at the centre of the small dots */
 .profile-jrail-step + .profile-jrail-step::before {
@@ -3480,16 +3480,16 @@
 .profile-jrail-arrow { display: none; }
 
 @media (max-width: 720px) {
-  .profile-jcard { padding: 16px 14px; }
+  .profile-jcard { padding: 18px 16px 20px; }
   /* Phone: title and count on one line, the next step on the next, and the
      Open current report pill underneath, so nothing wraps mid-phrase. */
-  .profile-jcard-head { margin-bottom: 6px; flex-direction: column; align-items: stretch; gap: 8px; }
-  .profile-jcard-headtext { gap: 4px; }
+  .profile-jcard-head { margin-bottom: 14px; flex-direction: column; align-items: stretch; gap: 12px; }
+  .profile-jcard-headtext { gap: 8px; }
   .profile-jcard-title { justify-content: space-between; white-space: nowrap; }
   .profile-jcard-nextname { display: block; font-size: 0.92rem; line-height: 1.4; }
   .profile-jcard-nextlabel { margin-right: 4px; }
   .profile-jcard-go { font-size: 0.92rem; }
-  .profile-jcard-open { align-self: flex-start; margin-top: 2px; }
+  .profile-jcard-open { align-self: flex-start; margin-top: 2px; min-height: 32px; padding: 6px 16px; font-size: 0.8rem; }
   /* Same stepper as desktop, scrolled sideways like a carousel. Fixed step
      width keeps the labels readable; the rail bleeds to the card edges and
      opens centred on the current step (see ProfilePage.js). */
@@ -3499,8 +3499,8 @@
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x proximity;
     scrollbar-width: none;
-    margin: 0 -14px;
-    padding: 12px 0 6px 30px; /* room for the enlarged current dot and its glow */
+    margin: 0 -16px;
+    padding: 18px 0 10px 30px; /* room for the enlarged current dot and its glow */
   }
   /* Browsers drop trailing padding inside a scroll container, so the end
      breathing room is a real flex spacer instead. Keeps the last step and its
@@ -3509,7 +3509,7 @@
   .profile-jrail::-webkit-scrollbar { display: none; }
   /* Scroll cues: soft fades at whichever edge still hides steps, plus small
      round arrows. Both only appear when there is something to scroll to. */
-  .profile-jrail-wrap { position: relative; margin: 0 -14px; }
+  .profile-jrail-wrap { position: relative; margin: 0 -16px; }
   .profile-jrail-wrap .profile-jrail { margin: 0; }
   .profile-jrail-wrap::before,
   .profile-jrail-wrap::after {
@@ -3533,4 +3533,344 @@
   .profile-jrail-wrap.can-right .profile-jrail-arrow--right { display: flex; }
   .profile-jrail-step { flex: 0 0 96px; scroll-snap-align: center; }
   .profile-jrail-lbl { font-size: 0.7rem; }
+}
+
+.profile-delete-note { font-size: 0.84rem; color: #5e6f88; margin-top: 8px; }
+
+.profile-delete-list {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  border: 1px solid #e7edf5;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.profile-delete-list li {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 12px;
+  padding: 11px 14px;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: #26364d;
+  border-bottom: 1px solid #eef2f7;
+}
+.profile-delete-list li:last-child { border-bottom: none; }
+.profile-delete-list-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #5e6f88;
+  padding-top: 2px;
+}
+
+/* Journey steps locked until the assessment is complete */
+.profile-jrail-step.is-locked .profile-jrail-btn { cursor: default; }
+.profile-jrail-step.is-locked .profile-jrail-dot { opacity: 0.55; }
+.profile-jrail-step.is-locked .profile-jrail-lbl { color: #8a97a8; }
+.profile-jrail-step.is-locked .profile-jrail-btn:hover .profile-jrail-dot { transform: none; border-color: #d5dde8; }
+.profile-jrail-step.is-locked .profile-jrail-btn:hover .profile-jrail-lbl { color: #8a97a8; }
+.profile-jrail-hint {
+  position: fixed;
+  transform: translate(-50%, -100%);
+  white-space: nowrap;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1f2a37;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.2;
+  opacity: 1;
+  pointer-events: none;
+  z-index: 999999;
+  animation: cdna-fade-in 140ms ease;
+}
+@keyframes cdna-fade-in { from { opacity: 0; } to { opacity: 1; } }
+.profile-jrail-hint::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -55%) rotate(45deg);
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* First-time milestone celebration on a stat tile */
+.profile-stat { position: relative; }
+.profile-stat.is-celebrating {
+  animation: cdna-stat-pop 700ms cubic-bezier(.2,.9,.3,1.3) 1;
+  box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.35), 0 12px 28px rgba(47, 111, 237, 0.18);
+}
+.profile-stat.is-celebrating .profile-stat-num { animation: cdna-stat-count 600ms ease 1; }
+.profile-stat.is-celebrating::before,
+.profile-stat.is-celebrating::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: #2f6fed;
+  box-shadow:
+    -42px -30px 0 0 #f5b400, 38px -34px 0 0 #2f6fed, -58px 6px 0 0 #e63b57,
+    56px 2px 0 0 #1f9e6b, -26px 30px 0 0 #2f6fed, 30px 28px 0 0 #f5b400,
+    0 -44px 0 0 #e63b57, 4px 40px 0 0 #1f9e6b;
+  opacity: 0;
+  animation: cdna-confetti 1400ms ease-out 1;
+}
+.profile-stat.is-celebrating::after { animation-delay: 160ms; transform: rotate(35deg); }
+.profile-stat-celebrate {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1f2a37;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.2;
+  z-index: 6;
+  animation: cdna-celebrate-note 5200ms ease 1 both;
+}
+.profile-stat-celebrate::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -55%) rotate(45deg);
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+}
+@keyframes cdna-stat-pop { 0% { transform: scale(1); } 40% { transform: scale(1.06); } 100% { transform: scale(1); } }
+@keyframes cdna-stat-count { 0% { transform: translateY(6px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+@keyframes cdna-confetti {
+  0% { opacity: 0; transform: scale(0.2); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.5) translateY(18px); }
+}
+@keyframes cdna-celebrate-note {
+  0% { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  8% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  88% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@media (max-width: 760px) {
+  .profile-stat-celebrate { white-space: normal; max-width: 220px; text-align: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .profile-stat.is-celebrating, .profile-stat.is-celebrating .profile-stat-num,
+  .profile-stat.is-celebrating::before, .profile-stat.is-celebrating::after { animation: none; }
+  .profile-stat.is-celebrating::before, .profile-stat.is-celebrating::after { display: none; }
+}
+/* Keep the milestone note inside the page on the first and last tiles */
+.profile-stat:first-child .profile-stat-celebrate { left: 0; transform: none; animation-name: cdna-celebrate-note-flat; }
+.profile-stat:first-child .profile-stat-celebrate::after { left: 36px; }
+.profile-stat:last-child .profile-stat-celebrate { left: auto; right: 0; transform: none; animation-name: cdna-celebrate-note-flat; }
+.profile-stat:last-child .profile-stat-celebrate::after { left: auto; right: 30px; }
+@keyframes cdna-celebrate-note-flat {
+  0% { opacity: 0; transform: translateY(6px); }
+  8% { opacity: 1; transform: translateY(0); }
+  88% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+
+/* Milestone message on phones: one line above the tiles, where per-tile
+   notes would overlap. Desktop keeps the per-tile note. */
+.profile-stats-celebrate {
+  display: none;
+  margin: 0 0 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.10);
+  color: #1f2a37;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  animation: cdna-celebrate-note-flat 5200ms ease 1 both;
+}
+@media (max-width: 760px) {
+  .profile-stats-celebrate { display: block; }
+  .profile-stat-celebrate { display: none; }
+}
+
+/* Phone layout for a saved report row (final word over the blocks above):
+   number, Current badge and date on the first line; Open Report and Re-run
+   on the right; details below; the "..." menu tucked under Re-run. */
+@media (max-width: 600px) {
+  .profile-run-row {
+    display: grid !important;
+    grid-template-columns: auto auto 1fr !important;
+    grid-template-areas:
+      "id   date act"
+      "info info act" !important;
+    align-items: start !important;
+    column-gap: 10px !important;
+    row-gap: 6px !important;
+    padding: 12px 14px !important;
+  }
+  .profile-run-id { grid-area: id; order: 0; display: flex; align-items: center; gap: 6px; }
+  .profile-run-date { grid-area: date; justify-self: start !important; align-self: center; margin: 0; font-size: 0.74rem; }
+  .profile-run-details { grid-area: info; margin: 0; }
+  .profile-run-actions {
+    grid-area: act;
+    order: 0;
+    justify-self: end;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: auto auto;
+    grid-template-areas:
+      "open rerun"
+      ".    menu";
+    gap: 6px !important;
+    align-items: center;
+  }
+  .profile-run-actions > .profile-btn-hover-primary { grid-area: open; }
+  .profile-run-actions > .profile-btn-hover-outline { grid-area: rerun; }
+  .profile-run-actions > .profile-run-menu-wrap { grid-area: menu; justify-self: end; margin: 0 !important; }
+  .profile-run-actions .profile-btn-hover-primary,
+  .profile-run-actions .profile-btn-hover-outline {
+    font-size: 0.76rem !important;
+    min-height: 32px !important;
+    padding: 4px 12px !important;
+    border-radius: 999px !important;
+    white-space: nowrap;
+  }
+  .profile-run-menu-btn { width: 32px; height: 32px; }
+}
+
+/* ===== Journey card, redesigned: progress bar, one tappable next step,
+   the step rail with its lines and arrows, and a quiet report link. ===== */
+.profile-jcard-head { margin-bottom: 12px !important; }
+.profile-jcard-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: #e9eef6;
+  overflow: hidden;
+  margin: 0 0 14px;
+}
+.profile-jcard-bar__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #2f6fed;
+  transition: width 400ms ease;
+}
+.profile-jcard-next {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #d6e2f8;
+  border-radius: 14px;
+  background: #f5f8ff;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
+}
+.profile-jcard-next:hover { border-color: #b9d0f5; background: #eef4ff; box-shadow: 0 6px 16px rgba(47, 111, 237, 0.12); }
+.profile-jcard-next:hover .profile-jcard-next__chev { transform: translateX(3px); }
+.profile-jcard-next__ic {
+  flex: 0 0 auto;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: #2f6fed;
+  color: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.profile-jcard-next__ic svg { width: 17px; height: 17px; }
+.profile-jcard-next__text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.profile-jcard-next__label { font-size: 0.72rem; font-weight: 600; color: #5e6f88; letter-spacing: 0.02em; }
+.profile-jcard-next__name { font-size: 0.98rem; font-weight: 700; color: #14233c; line-height: 1.3; }
+.profile-jcard-next__chev { flex: 0 0 auto; color: #2f6fed; transition: transform 150ms ease; }
+.profile-jcard-foot { display: flex; justify-content: flex-end; margin-top: 4px; }
+.profile-jcard-openlink {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 0; background: none; padding: 6px 2px;
+  font-family: inherit; font-size: 0.82rem; font-weight: 650; color: #2f6fed; cursor: pointer;
+}
+.profile-jcard-openlink:hover { text-decoration: underline; }
+.profile-jcard-openlink svg { transition: transform 150ms ease; }
+.profile-jcard-openlink:hover svg { transform: translateX(3px); }
+/* Rail sits a little closer to the next-step row now that the header is shorter. */
+.profile-jrail { padding-top: 18px; }
+@media (max-width: 720px) {
+  .profile-jcard-head { flex-direction: row !important; align-items: center !important; }
+  .profile-jcard-next { padding: 11px 12px; }
+  .profile-jrail { padding-top: 16px; }
+}
+
+/* ===== Saved reports, redesigned: one row per report that opens on tap,
+   a number chip, title line with Current badge, details below, and a single
+   menu for everything else. Overrides the older layouts above. ===== */
+.profile-run-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 12px 12px 12px 14px !important;
+  border: 1px solid #e6ebf3;
+  border-radius: 14px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  grid-template-areas: none !important;
+}
+.profile-run-row + .profile-run-row { margin-top: 10px; }
+.profile-run-row:hover { border-color: #cddbf0; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07); }
+.profile-run-row:focus-visible { outline: 3px solid rgba(47, 111, 237, 0.35); outline-offset: 2px; }
+.profile-run-row.is-current { border-color: #d6e2f8; }
+.profile-run-chip {
+  flex: 0 0 auto;
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: #e6f1fb;
+  color: #0c447c;
+  font-weight: 700;
+  font-size: 0.84rem;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.profile-run-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.profile-run-titleline { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.profile-run-title { font-size: 0.95rem; font-weight: 700; color: #14233c; white-space: nowrap; }
+.profile-run-row .profile-run-details {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.78rem !important;
+  color: #5e6f88;
+  white-space: normal;
+  margin: 0 !important;
+}
+.profile-run-row .profile-run-sep { color: #c2cdde; }
+.profile-run-chev { flex: 0 0 auto; color: #8a97a8; }
+.profile-run-row:hover .profile-run-chev { color: #2f6fed; }
+.profile-run-row .profile-run-menu-wrap { flex: 0 0 auto; margin: 0 !important; position: relative; }
+.profile-run-row .profile-run-menu-btn { width: 34px; height: 34px; }
+@media (max-width: 600px) {
+  .profile-run-row { padding: 11px 10px 11px 12px !important; gap: 10px !important; }
+  .profile-run-chip { width: 36px; height: 36px; font-size: 0.78rem; }
+  .profile-run-chev { display: none; }
+  .profile-run-detail--hide-tablet, .profile-run-sep--hide-tablet { display: none; }
 }

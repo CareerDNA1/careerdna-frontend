@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import './TrustSecurityPage.css';
 import logo from '../Assets/images/logo-career-dna.png';
@@ -65,6 +65,45 @@ const cards = [
     closing: 'AI-supported guidance is designed to inform, not replace, human judgement.',
   },
   {
+    icon: '🛟',
+    title: 'Safeguarding',
+    body: 'CareerDNA is a careers tool, not a counselling service, and many of our users are aged 13 to 17. Your Advisor is built to recognise when a conversation is about something more serious than careers.',
+    bullets: [
+      'If a message suggests someone may be at risk, Your Advisor stops giving careers advice and responds with care',
+      'The student is shown Childline (0800 1111), Samaritans (116 123), Shout (text 85258) and 999 for emergencies, and encouraged to tell a trusted adult',
+      'Flagged messages are recorded so a named safeguarding lead can review them; these turns never use up advisor questions',
+      'Where a school provides access, we share concerns with the school\u2019s designated safeguarding lead under our agreement with them',
+    ],
+    closing: 'Questions about safeguarding can be sent to hello@mycareerdna.io.',
+  },
+  {
+    icon: '📊',
+    title: 'Data Sources & Attribution',
+    body: 'The rankings, entry requirements, graduate outcomes and apprenticeship information shown in CareerDNA come from official UK sources and are presented alongside your profile. They are inputs to a decision, not the decision itself.',
+    bullets: [
+      'University rankings and graduate outcomes: Office for Students (Discover Uni data, Graduate Outcomes survey, National Student Survey, Teaching Excellence Framework)',
+      'Offer rates and entry tariffs: UCAS end of cycle data',
+      'Apprenticeship standards: Institute for Apprenticeships and Technical Education; live vacancies from Find an Apprenticeship and partner job boards',
+      'Contains public sector information licensed under the Open Government Licence v3.0',
+      'CareerDNA scores and matches are our own analysis of this data; always confirm requirements with the university or provider before applying',
+    ],
+    closing: 'If you spot an error in any figure, tell us through Report a problem and we will check it against the source.',
+  },
+  {
+    icon: '♿',
+    id: 'accessibility',
+    title: 'Accessibility',
+    body: 'We want every student to be able to use CareerDNA, whatever device or assistive technology they use. The platform is built to the Web Content Accessibility Guidelines (WCAG) 2.2 at level AA and we test it with keyboard-only navigation and screen readers.',
+    bullets: [
+      'Every page and pop-up can be used with a keyboard alone; focus stays inside open dialogues and returns when they close',
+      'Buttons, tabs, menus and pickers carry the names and roles that screen readers expect',
+      'Text and interface colours meet the AA contrast standard, and the layout works at 200% zoom and on small screens',
+      'Animations respect the reduce motion setting on your device',
+      'Where live data comes from third parties (for example job adverts), we present it in our own accessible layout',
+    ],
+    closing: 'If any part of CareerDNA is hard for you to use, email hello@mycareerdna.io or use Report a problem and we will fix it or offer the information another way.',
+  },
+  {
     icon: '📁',
     title: 'Data Retention & User Rights',
     body: 'Users can delete their account and associated platform data directly through their profile settings. Subject to applicable law, users may also have rights over the personal information held about them.',
@@ -81,6 +120,14 @@ const cards = [
 
 export default function TrustSecurityPage() {
   const [legalModal, setLegalModal] = useState(null);
+
+  // Footer links such as /trust-security#accessibility land on the right card.
+  useEffect(() => {
+    const id = window.location.hash.replace('#', '');
+    if (!id) return;
+    const el = document.getElementById(id);
+    if (el) window.setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }, []);
 
   const openLegal = (tab) => {
     setLegalModal(tab);
@@ -119,7 +166,7 @@ export default function TrustSecurityPage() {
 
           <div className="trust-grid">
             {cards.map((card) => (
-              <article className="trust-card" key={card.title} onClick={handleCardClick}>
+              <article className="trust-card" key={card.title} id={card.id} onClick={handleCardClick}>
                 <div className="trust-card-top">
                   <div className="trust-card-icon" aria-hidden="true">{card.icon}</div>
                   <div className="trust-card-intro">
@@ -168,8 +215,8 @@ export default function TrustSecurityPage() {
 
               <p className="trust-card-closing trust-contact-text">
                 Privacy and security enquiries:{' '}
-                <a className="trust-email-link" href="mailto:support@mycareerdna.io">
-                  support@mycareerdna.io
+                <a className="trust-email-link" href="mailto:hello@mycareerdna.io">
+                  hello@mycareerdna.io
                 </a>
               </p>
             </article>
@@ -192,7 +239,7 @@ export default function TrustSecurityPage() {
               Terms of Use
             </button>
             <span aria-hidden="true">·</span>
-            <a href="mailto:support@mycareerdna.io">Contact</a>
+            <a href="mailto:hello@mycareerdna.io">Contact</a>
           </nav>
 
           <p className="trust-footer-copy">

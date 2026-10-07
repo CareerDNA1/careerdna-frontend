@@ -1,6 +1,7 @@
 // src/Hooks/useSurveyEngine.js
 import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { fetchAiSummary } from '../utils/fetchAiSummary';
+import { friendlyError } from '../utils/friendlyError';
 import { readProgress, writeProgress } from './useProgress';
 import QUESTIONS from '../utils/questions_a'; // Form A — interleaved, auditable ordering
 import { calculateResults } from '../utils/calculateResults';
@@ -37,6 +38,9 @@ export function useSurveyEngine(initialIntroResponses) {
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState('');
   const [analysisMeta, setAnalysisMeta] = useState(null);
+  // User-facing message when the last report request failed (not for the
+  // report-limit case, which has its own upgrade flow).
+  const [summaryError, setSummaryError] = useState('');
   const activeRequestRef = useRef(0);
 
   useEffect(() => {
@@ -83,6 +87,7 @@ export function useSurveyEngine(initialIntroResponses) {
     activeRequestRef.current = requestId;
 
     setLoading(true);
+    setSummaryError('');
     if (force) {
       setSummary('');
       setAnalysisMeta(null);
@@ -134,6 +139,11 @@ export function useSurveyEngine(initialIntroResponses) {
       }
 
       return response;
+    } catch (err) {
+      if (activeRequestRef.current === requestId && err?.code !== 'REPORT_LIMIT_REACHED') {
+        setSummaryError(friendlyError(err, 'generate your report').message);
+      }
+      throw err;
     } finally {
       if (activeRequestRef.current === requestId) {
         setLoading(false);
@@ -152,6 +162,7 @@ export function useSurveyEngine(initialIntroResponses) {
     loading,
     summary,
     setSummary,
+    summaryError,
     analysisMeta,
     setAnalysisMeta,
     generateSummary,

@@ -63,14 +63,14 @@
 .rk-source {
   flex: 0 0 auto;
   font-size: 0.66rem;
-  color: #8a99ad;
+  color: #64748b;
   background: #f1f4f9;
   padding: 4px 9px;
   border-radius: 999px;
   white-space: nowrap;
 }
 
-.rk-state { padding: 40px 0; text-align: center; color: #7a8798; font-size: 0.9rem; }
+.rk-state { padding: 40px 0; text-align: center; color: #5e6f88; font-size: 0.9rem; }
 .rk-state--error { color: #c0392b; }
 
 .rk-controls {
@@ -89,7 +89,7 @@
 }
 .rk-sort:hover { border-color: #cddbf0; }
 .rk-sort:focus-visible { outline: 2px solid #2f6fed; outline-offset: 1px; }
-.rk-sort svg { color: #6b7a8c; }
+.rk-sort svg { color: #5e6f88; }
 .rk-tef { cursor: help; }
 
 /* The outer wrapper is the flex-shrinkable region inside the modal column, so
@@ -337,7 +337,7 @@
 }
 .rk-course-stat b { color: #1f2a37; font-weight: 700; }
 .rk-course-stat--band { align-items: center; gap: 6px; }
-.rk-course-stats__note { flex-basis: 100%; margin-top: 2px; font-size: 0.72rem; color: #8593a6; line-height: 1.4; }
+.rk-course-stats__note { flex-basis: 100%; margin-top: 2px; font-size: 0.72rem; color: #64748b; line-height: 1.4; }
 .rk-course-modal__link {
   display: inline-block;
   margin-top: 12px;
@@ -359,7 +359,7 @@
   padding: 7px 10px;
 }
 
-.rk-rank { font-weight: 700; color: #8a99ad; }
+.rk-rank { font-weight: 700; color: #64748b; }
 .rk-uni { font-weight: 600; color: #12233c; padding-right: 6px; }
 /* CareerDNA Rank as a tinted score chip, so it stands apart from the # column. */
 .rk-score {
@@ -459,9 +459,9 @@
 .rk-fig:focus-visible { box-shadow: 0 0 0 2px #dbe7fb; }
 .rk-fig--area { text-decoration: underline dotted #9fb0c8; text-underline-offset: 3px; color: #56657a; }
 .rk-fig--small { text-decoration: underline dotted #d9c48a; text-underline-offset: 3px; }
-.rk-limited { display: block; width: fit-content; margin-bottom: 4px; padding: 1px 7px; border-radius: 999px; background: #f1f4f9; color: #6b7a8c; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.01em; cursor: help; }
-.rk-sub-limited { color: #8a97ac; }
-.rk-row--limited .rk-score { color: #8a97ac; background: #f1f4f9; }
+.rk-limited { display: block; width: fit-content; margin-bottom: 4px; padding: 1px 7px; border-radius: 999px; background: #f1f4f9; color: #5e6f88; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.01em; cursor: help; }
+.rk-sub-limited { color: #64748b; }
+.rk-row--limited .rk-score { color: #64748b; background: #f1f4f9; }
 
 /* Methodology link and pop-up */
 .rk-method-link { border: 0; background: none; padding: 0; font: inherit; color: #2f6fed; font-weight: 700; cursor: pointer; }
@@ -473,3 +473,5 @@
 .rk-method p { margin: 0; }
 .rk-method b { color: #12233c; font-weight: 700; }
 .rk-via { display: block; width: fit-content; margin-bottom: 4px; padding: 1px 7px; border-radius: 999px; background: #eef4ff; color: #2f6fed; font-size: 0.66rem; font-weight: 700; cursor: help; }
+
+.rk-foot--licence { margin-top: 4px; opacity: 0.85; }

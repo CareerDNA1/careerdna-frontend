@@ -71,6 +71,20 @@ export default function AdvisorDrawer({ assessmentRunId, stage = '' }) {
     return () => { document.body.classList.remove('cdna-advisor-open'); document.documentElement.classList.remove('cdna-advisor-open'); document.body.classList.remove('cdna-advisor-lock'); };
   }, [open]);
 
+  // Move keyboard focus into the drawer when it opens and back to the tab when it closes.
+  useEffect(() => {
+    if (!open) return undefined;
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const t = window.setTimeout(() => {
+      const target = document.querySelector('.advisor-drawer textarea, .advisor-drawer input, .advisor-drawer__close');
+      if (target && !document.querySelector('[role="dialog"][aria-modal="true"]')) target.focus({ preventScroll: true });
+    }, 60);
+    return () => {
+      window.clearTimeout(t);
+      if (opener && document.contains(opener)) { try { opener.focus({ preventScroll: true }); } catch (_) { /* ignore */ } }
+    };
+  }, [open]);
+
   // Escape closes the drawer unless a modal above it is handling the key.
   useEffect(() => {
     if (!open) return undefined;
@@ -150,7 +164,7 @@ export default function AdvisorDrawer({ assessmentRunId, stage = '' }) {
       ) : null}
 
       {open ? <div className="advisor-backdrop" onClick={() => closeAdvisor()} aria-hidden="true" /> : null}
-      <aside className={`advisor-drawer${open ? ' is-open' : ''}`} aria-label="Your Advisor" aria-hidden={!open}>
+      <aside className={`advisor-drawer${open ? ' is-open' : ''}`} role="region" aria-label="Your Advisor" aria-hidden={!open} inert={open ? undefined : true}>
         <div className="advisor-drawer__handle" onTouchStart={onHandleTouchStart} onTouchEnd={onHandleTouchEnd} aria-hidden="true"><span /></div>
         <header className="advisor-drawer__head" onTouchStart={onHandleTouchStart} onTouchEnd={onHandleTouchEnd}>
           <span className="advisor-drawer__avatar career-advisor-avatar" aria-hidden="true"><BrainCircuit /></span>

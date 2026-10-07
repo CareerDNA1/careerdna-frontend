@@ -674,3 +674,7 @@
     height: clamp(28px, 2.1vw, 34px);
   }
 }
+
+/* ServiceBanner (40px, fixed at the top) is showing: push the navbar down so
+   the two never overlap. The class is set on <body> by ServiceBanner. */
+body.cdna-service-down .navbar-wrapper { top: 40px !important; }

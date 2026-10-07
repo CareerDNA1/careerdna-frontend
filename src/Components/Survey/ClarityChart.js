@@ -278,7 +278,7 @@ export default function ClarityChart({ answers: answersProp, minItems = 4, dpr, 
       <div style={{ width: "680px", maxWidth: "100%", height: isMobile ? "280px" : "340px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Bar data={data} options={options} />
       </div>
-      <p style={{ margin: "6px 0 0", textAlign: "center", fontSize: "0.72rem", fontWeight: 500, color: "#8a97a8" }}>
+      <p style={{ margin: "6px 0 0", textAlign: "center", fontSize: "0.72rem", fontWeight: 500, color: "#64748b" }}>
         {isMobile ? "Tap" : "Hover over"} a bar to see what it means
       </p>
     </div>

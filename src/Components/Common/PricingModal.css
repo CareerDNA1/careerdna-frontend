@@ -1035,7 +1035,7 @@
 .pricing-plan-button:disabled.pricing-plan-button--paused {
   border: 1.5px solid #cfd8e6 !important;
   background: #f3f6fb !important;
-  color: #7a8798 !important;
+  color: #5e6f88 !important;
   box-shadow: none !important;
   cursor: not-allowed !important;
   opacity: 1 !important;
@@ -1086,7 +1086,7 @@
   font-weight: 600;
   letter-spacing: 0;
   line-height: 1.2;
-  color: #93a1b0;
+  color: #64748b;
 }
 .pricing-plan-anchor s {
   color: inherit;
@@ -1096,5 +1096,10 @@
   font-weight: 500;
 }
 .pricing-plan-card--premium .pricing-plan-anchor {
-  color: #93a1b0;
+  color: #64748b;
 }
+
+/* Purchase confirmation tick (adult or parent, terms, immediate access). */
+.pricing-confirm-consent { display: flex; align-items: flex-start; gap: 10px; margin: 14px 0 4px; font-size: 0.84rem; line-height: 1.45; color: #4b5c6b; cursor: pointer; }
+.pricing-confirm-consent input { margin-top: 3px; width: 16px; height: 16px; accent-color: #2f6fed; flex: 0 0 auto; }
+.pricing-confirm-consent a { color: #2f6fed; font-weight: 600; }

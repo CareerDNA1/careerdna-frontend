@@ -74,6 +74,9 @@ export async function syncProfileFromAuthUser(user, overrides = {}) {
     accepted_privacy: Boolean(overrides.accepted_privacy ?? metadata.accepted_privacy ?? existingProfile?.accepted_privacy),
     legal_version: overrides.legal_version ?? metadata.legal_version ?? existingProfile?.legal_version ?? null,
   };
+  // Date of birth is asked once at signup (age check) and never overwritten.
+  const dob = existingProfile?.date_of_birth || overrides.date_of_birth || metadata.date_of_birth || null;
+  if (dob) payload.date_of_birth = dob;
 
   const { data, error } = await supabase
     .from('profiles')

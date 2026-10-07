@@ -11,6 +11,7 @@ import { fetchGradJobs } from '../../utils/fetchGradJobs';
 import { entryRouteForCard } from '../../utils/entryRouteModes';
 import { ThumbsUp, ThumbsDown, Smiley, SmileyMeh, BookmarkSimple, Info, Briefcase, Signpost, UsersThree, TrendUp, MapPin, GraduationCap, CalendarBlank, CurrencyGbp, Rocket } from 'phosphor-react';
 import { getReactions, setItemReaction } from '../../utils/savedItems';
+import InlineError, { StillWorkingNote } from '../Common/InlineError';
 import {
   FaBrain,
   FaBullseye,
@@ -461,6 +462,12 @@ let _tipCleanup = null;
 function _teardownPin() {
   if (_tipCleanup) { _tipCleanup(); _tipCleanup = null; }
   _tipPinned = false;
+}
+
+// App.js hides tooltips on route change without importing this (large) file:
+// it dispatches this event instead, and we release any pinned tooltip here.
+if (typeof window !== 'undefined') {
+  window.addEventListener('cdna:hide-tooltips', () => hideSelectionTooltip({ force: true }));
 }
 
 export function hideSelectionTooltip(opts) {
@@ -2075,7 +2082,7 @@ function DetailPanel({ item, onItemReaction, savedReactions = {}, nonUniByTitle 
   );
 }
 
-export default function SelectionInsightExplorer({ insights, loading, error, onItemReaction, savedReactions = {} }) {
+export default function SelectionInsightExplorer({ insights, loading, error, onRetry, onItemReaction, savedReactions = {} }) {
   const explorerRef = React.useRef(null);
   const validInsights = Array.isArray(insights) ? insights : [];
   const [activeId, setActiveId] = useState(validInsights[0]?.id || validInsights[0]?.title || '');
@@ -2185,6 +2192,7 @@ export default function SelectionInsightExplorer({ insights, loading, error, onI
         <div className="selection-explorer__intro">
           <h2>Your career pathways</h2>
           <p>Loading the deeper signature fit for the options you liked...</p>
+          <StillWorkingNote />
         </div>
       </section>
     );
@@ -2195,7 +2203,7 @@ export default function SelectionInsightExplorer({ insights, loading, error, onI
       <section className="selection-explorer">
         <div className="selection-explorer__intro">
           <h2>Your career pathways</h2>
-          <p className="selection-explorer__error">{error}</p>
+          <InlineError message={error} onRetry={onRetry} />
         </div>
       </section>
     );

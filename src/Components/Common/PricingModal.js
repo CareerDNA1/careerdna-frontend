@@ -18,27 +18,27 @@ const planRank = {
 const plans = [
   {
     title: 'CareerDNA Starter',
-    subtitle: 'Basic profile',
+    subtitle: 'See where you stand',
     price: 'Free',
     variant: 'starter',
     features: {
       school: [
-        'Basic CareerDNA™ profile',
-        'Your seven-profile breakdown',
+        'Your CareerDNA type and seven-profile breakdown',
         'Your top traits and how strong they are',
-        'A first look at the career worlds that suit you',
+        'How well you know yourself',
+        'A taste of what the full profile unlocks',
       ],
       university: [
-        'Basic CareerDNA™ profile',
-        'Your seven-profile breakdown',
+        'Your CareerDNA type and seven-profile breakdown',
         'Your top traits and how strong they are',
-        'A first look at the career worlds that suit you',
+        'How well you know yourself',
+        'A taste of what the full profile unlocks',
       ],
     },
   },
   {
     title: 'CareerDNA Explorer',
-    subtitle: 'Essentials, all year',
+    subtitle: 'Your full profile, all year',
     price: '£29.99',
     suffix: '/ year',
     note: 'Yearly subscription, renews annually',
@@ -46,32 +46,33 @@ const plans = [
     checkoutPlan: 'explore',
     features: {
       school: [
-        { type: 'lead', text: 'Your full CareerDNA™ profile' },
+        { type: 'lead', text: 'Your full CareerDNA profile' },
+        '1 CareerDNA report a year',
         { type: 'header', text: 'Your profile' },
         'Personal strengths insights',
         'Ideal work environment insights',
+        'Career worlds that fit who you are',
         'Personalised career pathway recommendations',
-        'A-level & university subject recommendations',
-        '1 CareerDNA report a year',
+        'University subject recommendations',
         { type: 'header', text: 'Guidance' },
-        '5 CareerDNA advisor questions a year',
+        'Your own Advisor: 10 questions a year, answered from your profile, grades and applications',
         'Track your development over time',
-        'Every new feature we add, included',
+        'Access to the CareerDNA blog: practical advice on choices, applications and careers',
         { type: 'note', text: 'Extra advisor question packs available' },
       ],
       university: [
-        { type: 'lead', text: 'Your full CareerDNA™ profile' },
+        { type: 'lead', text: 'Your full CareerDNA profile' },
+        '1 CareerDNA report a year',
         { type: 'header', text: 'Your profile' },
         'Personal strengths insights',
         'Ideal work environment insights',
+        'Career worlds that fit who you are',
         'Personalised career pathway recommendations',
         'Personalised role recommendations',
-        'Further study & postgraduate recommendations',
-        '1 CareerDNA report a year',
         { type: 'header', text: 'Guidance' },
-        '5 CareerDNA advisor questions a year',
+        'Your own Advisor: 10 questions a year, answered from your profile, grades and applications',
         'Track your development over time',
-        'Every new feature we add, included',
+        'Access to the CareerDNA blog: practical advice on choices, applications and careers',
         { type: 'note', text: 'Extra advisor question packs available' },
       ],
     },
@@ -89,22 +90,28 @@ const plans = [
     checkoutPlan: 'premium',
     features: {
       school: [
-        { type: 'lead', text: 'Everything in Explorer, plus:' },
-        '2 CareerDNA reports and 20 advisor questions a year',
+        { type: 'lead', text: 'Everything in Explorer, upgraded to' },
+        '2 CareerDNA reports a year',
+        '20 advisor questions a year',
         { type: 'header', text: 'Premium tools' },
         'Your chances of an offer, from your grades',
-        'CareerDNA Subject & University Rankings™',
+        'CareerDNA Subject & University Rankings',
         'Entry requirements and offer rates',
         'Live courses, apprenticeships and training routes',
+        'Track your applications in one place',
+        'Every new feature we add, included',
+        { type: 'note', text: 'Extra advisor question packs available' },
       ],
       university: [
-        { type: 'lead', text: 'Everything in Explorer, plus:' },
-        '2 CareerDNA reports and 20 advisor questions a year',
+        { type: 'lead', text: 'Everything in Explorer, upgraded to' },
+        '2 CareerDNA reports a year',
+        '20 advisor questions a year',
         { type: 'header', text: 'Premium tools' },
         'Live graduate jobs from LinkedIn, Indeed, Glassdoor and more',
         'Internships, graduate schemes and programmes',
-        'CareerDNA Subject & University Rankings™ for further study',
-        'Degree apprenticeships and other routes into work',
+        'Track your applications in one place',
+        'Every new feature we add, included',
+        { type: 'note', text: 'Extra advisor question packs available' },
       ],
     },
   },
@@ -153,7 +160,7 @@ function getPlanFeatures(plan, audience) {
   return [];
 }
 
-export const PAYMENTS_TEMPORARILY_PAUSED = true;
+export const PAYMENTS_TEMPORARILY_PAUSED = false;
 const PAYMENT_PAUSE_MESSAGE =
   'CareerDNA is currently undergoing beta testing, so paid plans are not available to purchase yet. They will be available very soon.';
 
@@ -260,6 +267,7 @@ function buildConfirmationCopy({ variant, checkoutPlanKey, status, effectivePlan
         'Includes 5 Your Advisor questions a year.',
         'Renews annually. You can manage or cancel your subscription from your account at any time.',
       ],
+      requiresConsent: true,
       confirmLabel: 'Continue to Stripe',
       cancelLabel: 'Not now',
     };
@@ -276,6 +284,7 @@ function buildConfirmationCopy({ variant, checkoutPlanKey, status, effectivePlan
         'Includes all premium tools: rankings, your chances, live jobs and apprenticeships.',
         'Renews annually. You can manage or cancel your subscription from your account at any time.',
       ],
+      requiresConsent: true,
       confirmLabel: 'Continue to Stripe',
       cancelLabel: 'Not now',
     };
@@ -293,6 +302,7 @@ function buildConfirmationCopy({ variant, checkoutPlanKey, status, effectivePlan
         'All premium tools unlock straight away.',
         'The change will be made using your saved Stripe payment method.',
       ],
+      requiresConsent: true,
       confirmLabel: 'Confirm upgrade',
       cancelLabel: 'Cancel',
     };
@@ -339,6 +349,11 @@ function PricingModal({
   const [checkoutPlan, setCheckoutPlan] = useState('');
   const [checkoutError, setCheckoutError] = useState('');
   const [pendingAction, setPendingAction] = useState(null);
+  // Purchase confirmation: the buyer is an adult (or a parent or guardian is
+  // completing it) and accepts that access starts straight away. Reset for
+  // every new confirmation card.
+  const [purchaseConsent, setPurchaseConsent] = useState(false);
+  useEffect(() => { setPurchaseConsent(false); }, [pendingAction]);
   const [activePlanIndex, setActivePlanIndex] = useState(() => {
     const initialIndex = plans.findIndex((plan) => normalisePlan(plan.variant) === normalisePlan(currentPlan));
     return initialIndex >= 0 ? initialIndex : 2;
@@ -577,7 +592,7 @@ function PricingModal({
     if (status === 'current' || status === 'scheduled' || status === 'included') return;
 
     if (variant === 'institution') {
-      window.location.href = 'mailto:support@mycareerdna.io?subject=CareerDNA%20Enterprise%20enquiry';
+      window.location.href = 'mailto:hello@mycareerdna.io?subject=CareerDNA%20Enterprise%20enquiry';
       return;
     }
 
@@ -839,6 +854,16 @@ function PricingModal({
                 </ul>
               ) : null}
 
+              {pendingCopy.requiresConsent ? (
+                <label className="pricing-confirm-consent">
+                  <input type="checkbox" checked={purchaseConsent} onChange={(e) => setPurchaseConsent(e.target.checked)} disabled={Boolean(checkoutPlan)} />
+                  <span>
+                    I am 18 or over, or a parent or guardian is completing this purchase, and I agree to the{' '}
+                    <a href="/terms" target="_blank" rel="noopener noreferrer">Terms of Use</a>. Access starts straight away.
+                  </span>
+                </label>
+              ) : null}
+
               <div className="pricing-confirm-actions">
                 <button
                   type="button"
@@ -853,7 +878,7 @@ function PricingModal({
                   type="button"
                   className={`pricing-confirm-primary pricing-confirm-primary--${pendingCopy.tone}`}
                   onClick={() => completePlanAction(pendingAction)}
-                  disabled={Boolean(checkoutPlan)}
+                  disabled={Boolean(checkoutPlan) || (pendingCopy.requiresConsent && !purchaseConsent)}
                 >
                   {checkoutPlan ? 'Processing…' : pendingCopy.confirmLabel}
                 </button>

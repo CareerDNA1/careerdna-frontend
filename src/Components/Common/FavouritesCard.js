@@ -13,6 +13,8 @@ import { WorldCard } from '../Survey/CareerWorldsAccordion';
 import { RoleAccordionItem, PathwayReactionRow } from '../Survey/SelectionInsightExplorer';
 import { RouteItem } from '../Survey/FurtherStudyPanel';
 import { PathwayCard as NonUniPathwayCard } from '../Survey/NonUniversityPanel';
+import InlineError from './InlineError';
+import { friendlyError } from '../../utils/friendlyError';
 import './FavouritesCard.css';
 import '../Rankings/RankingsModal.css'; // reuse the exact course-card styles (rk-course-*)
 
@@ -81,7 +83,7 @@ const REPORT_TYPES = new Set(['career_world', 'pathway', 'subject', 'role', 'app
 // or opens its external link for saved jobs/courses.
 // appliedKeys: Set of `${type}|${id}` already in the applications tracker;
 // onApply(item): mark a favourite ad/course as applied (owned by the profile page).
-export default function FavouritesCard({ runId, onExplore, initialGroups, insightCtx, appliedKeys, onApply, stage = 'university', predictedGrades = [] }) {
+export default function FavouritesCard({ runId, onExplore, onOpenReport, initialGroups, insightCtx, appliedKeys, onApply, stage = 'university', predictedGrades = [] }) {
   // Grades band for a saved course (Safe / Match / Stretch / Ambitious), same as the rankings table.
   const [chancesTip, setChancesTip] = useState('');
   const chances = (item, size = 'sm') => (item && item.type === 'course' && item.stats?.typicalGrades)
@@ -107,6 +109,13 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
   const [cascadePrompt, setCascadePrompt] = useState(null);
   const [cascadeBusy, setCascadeBusy] = useState(false);
   const [error, setError] = useState('');
+  // What "Try again" should do for the current error (null: no retry offered).
+  const [errorRetry, setErrorRetry] = useState(null);
+  const [reloadTick, setReloadTick] = useState(0);
+  const fail = (err, context, retry = null) => {
+    setError(friendlyError(err, context).message);
+    setErrorRetry(retry ? () => retry : null);
+  };
   const [applyingId, setApplyingId] = useState('');
   // Tapping an already-logged application explains where it can be changed.
   const [appliedHintId, setAppliedHintId] = useState('');
@@ -121,7 +130,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
   const handleApply = async (item) => {
     if (typeof onApply !== 'function' || isApplied(item)) return;
     try { setApplyingId(item.id); setError(''); await onApply(item); }
-    catch (e) { setError(e?.message || 'Could not save this application.'); }
+    catch (e) { fail(e, 'save this application', () => handleApply(item)); }
     finally { setApplyingId(''); }
   };
   // "Applied" control for an ad or course: a small action when not yet logged,
@@ -149,12 +158,18 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
     if (initialGroups !== undefined) { setGroups(initialGroups || []); setLoading(false); return undefined; }
     let cancelled = false;
     setLoading(true);
+    setError('');
     getFavouritesByCategory(runId)
       .then((g) => { if (!cancelled) setGroups(g); })
-      .catch(() => { if (!cancelled) setGroups([]); })
+      .catch((err) => {
+        if (cancelled) return;
+        setGroups([]);
+        fail(err, 'load your favourites', () => setReloadTick((t) => t + 1));
+      })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [runId, initialGroups]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runId, initialGroups, reloadTick]);
 
   // Escape closes the innermost thing: inline confirm, then opened card, then popup.
   const escRef = useRef(() => {});
@@ -270,7 +285,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
         } catch (_) { /* the removal itself succeeded */ }
       }
     } catch (err) {
-      setError(err?.message || 'Could not remove that favourite.');
+      fail(err, 'remove that favourite', () => handleRemove(item));
     } finally {
       setRemovingId('');
     }
@@ -286,7 +301,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
         .map((g) => ({ ...g, items: g.items.filter((it) => !goneTitles.has(`${it.type}|${it.title}`)) }))
         .filter((g) => g.items.length > 0));
     } catch (err) {
-      setError(err?.message || 'Could not remove those favourites.');
+      fail(err, 'remove those favourites', runCascadeRemove);
     } finally {
       setCascadeBusy(false);
       setCascadePrompt(null);
@@ -342,11 +357,11 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
   // popup itself or on buttons/links are left alone.
   const openFromCard = (e) => {
     if (e.target.closest('.fav-overlay, button, a, input, select, textarea')) return;
-    if (total > 0) setOpen(true);
+    setOpen(true);
   };
 
   return (
-    <section className={`fav-card${total > 0 ? ' fav-card--clickable' : ''}`} onClick={openFromCard}>
+    <section className="fav-card fav-card--clickable" onClick={openFromCard}>
       {cascadePrompt ? (
         <CascadeRemoveModal
           parent={cascadePrompt.parent}
@@ -387,7 +402,11 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
           })}
         </div>
       ) : (
-        <p className="fav-empty">Like a career world, pathway, degree or role in your results and it saves here.</p>
+        <p className="fav-empty">
+          Like a career world, pathway, degree or role in{' '}
+          {onOpenReport ? <button type="button" className="fav-inline-link" onClick={onOpenReport}>your report</button> : 'your report'}
+          {' '}and it saves here.
+        </p>
       )}
       {total > 0 ? <p className="fav-foot fav-foot--card">Like worlds, pathways, degrees, courses and routes in your report to add more.</p> : null}
 
@@ -403,7 +422,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
               /* ---- IN-PLACE CARD (exact report card) ---- */
               <div className="fav-cardview">
                 {renderTopBar(detail)}
-                {error ? <p className="fav-error">{error}</p> : null}
+                <InlineError compact message={error} onRetry={errorRetry || undefined} />
                 {cardLoading ? (
                   <div className="fav-detail-loading"><span className="fav-detail-spinner" aria-hidden="true" /> Loading card&hellip;</div>
                 ) : cardData && cardData.kind === 'role' ? (
@@ -481,7 +500,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
                 return (
                   <div className="fav-cardview">
                     {renderTopBar(detail)}
-                    {error ? <p className="fav-error">{error}</p> : null}
+                    <InlineError compact message={error} onRetry={errorRetry || undefined} />
                     <div className="fav-detail-head">
                       <span className="fav-detail-ic" aria-hidden="true"><Briefcase size={22} weight="bold" /></span>
                       <div className="fav-detail-headtext">
@@ -531,7 +550,7 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
               /* ---- SAVED LINK CARD (a specific university course or job advert) ---- */
               <div className="fav-cardview">
                 {renderTopBar(detail)}
-                {error ? <p className="fav-error">{error}</p> : null}
+                <InlineError compact message={error} onRetry={errorRetry || undefined} />
                 {/* Identical to the rankings course-save card (same classes). */}
                 <div className="fav-course-card">
                   <div className="rk-course-modal__title">{detail.title}</div>
@@ -582,8 +601,12 @@ export default function FavouritesCard({ runId, onExplore, initialGroups, insigh
             ) : (
             <>
             <div className="fav-modal-title">Your favourites</div>
-            <div className="fav-modal-sub">Saved from your latest run. Tap one to open it, or remove any you no longer want.</div>
-            {error ? <p className="fav-error">{error}</p> : null}
+            <div className="fav-modal-sub">
+              {total > 0
+                ? 'Saved from your latest run. Tap one to open it, or remove any you no longer want.'
+                : 'Nothing saved yet. Like a career world, pathway, degree or role in your report and it will appear here.'}
+            </div>
+            <InlineError compact message={error} onRetry={errorRetry || undefined} />
             {chancesTip ? <p className="fav-applied-hint">{chancesTip}</p> : null}
 
             <div className="fav-groups">

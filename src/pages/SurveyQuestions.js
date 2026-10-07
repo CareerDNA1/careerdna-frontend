@@ -2,385 +2,17 @@
 import React, { useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import SurveyWrapper from '../Components/Survey/SurveyWrapper';
+import './SurveyQuestions.css';
 import SurveyComponent from '../Components/Survey/SurveyComponent';
 import QUESTIONS from '../utils/questions_a';
 import { useSurveyEngine } from '../Hooks/useSurveyEngine';
-import { readProgress, writeProgress } from '../Hooks/useProgress';
+import { readProgress, writeProgress, clearProgress } from '../Hooks/useProgress';
+import ResumeSurveyModal from '../Components/Survey/ResumeSurveyModal';
 import { sendSurveyComplete } from '../utils/telemetry'; // <-- telemetry
 
 const TOTAL_SURVEY_MIN = 20; // evenly split across all questions
 
 // Fixed simulation built from the user's completed spreadsheet responses.
-const PERSONAL_PROFILE_ANSWERS = {
-  "Q85": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q60": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q63": {
-    "value": "B",
-    "weight": 1
-  },
-  "Q10": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q34": {
-    "value": 2,
-    "weight": 1
-  },
-  "Q27": {
-    "value": "B",
-    "weight": 1
-  },
-  "Q2": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q16": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q64": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q11": {
-    "value": "A",
-    "weight": 1
-  },
-  "Q53": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q75": {
-    "value": "A",
-    "weight": 1
-  },
-  "Q52": {
-    "value": 4,
-    "weight": 1
-  },
-  "Q90": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q50": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q42": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q31": {
-    "value": "B",
-    "weight": 1
-  },
-  "Q56": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q73": {
-    "value": 2,
-    "weight": 1
-  },
-  "Q46": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q33": {
-    "value": 4,
-    "weight": 1
-  },
-  "Q81": {
-    "value": 2,
-    "weight": 1
-  },
-  "Q68": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q92": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q9": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q38": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q77": {
-    "value": 2,
-    "weight": 1
-  },
-  "Q80": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q48": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q45": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q43": {
-    "value": "B",
-    "weight": 1
-  },
-  "Q95": {
-    "value": "A",
-    "weight": 1
-  },
-  "Q51": {
-    "value": "A",
-    "weight": 1
-  },
-  "Q83": {
-    "value": "A",
-    "weight": 1
-  },
-  "Q37": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q24": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q40": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q41": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q19": {
-    "value": "A",
-    "weight": 1
-  },
-  "Q78": {
-    "value": 4,
-    "weight": 1
-  },
-  "Q71": {
-    "value": "A",
-    "weight": 1
-  },
-  "Q57": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q8": {
-    "value": 2,
-    "weight": 1
-  },
-  "Q35": {
-    "value": "A",
-    "weight": 1
-  },
-  "Q79": {
-    "value": "A",
-    "weight": 1
-  },
-  "Q47": {
-    "value": "A",
-    "weight": 1
-  },
-  "Q3": {
-    "value": "B",
-    "weight": 1
-  },
-  "Q17": {
-    "value": 3,
-    "weight": 1
-  },
-  "Q39": {
-    "value": "B",
-    "weight": 1
-  },
-  "Q67": {
-    "value": "B",
-    "weight": 1
-  },
-  "Q23": {
-    "value": "A",
-    "weight": 1
-  },
-  "Q59": {
-    "value": "B",
-    "weight": 1
-  },
-  "Q25": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q6": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q7": {
-    "value": "B",
-    "weight": 1
-  },
-  "Q22": {
-    "value": 3,
-    "weight": 1
-  },
-  "Q49": {
-    "value": 4,
-    "weight": 1
-  },
-  "Q62": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q89": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q20": {
-    "value": 2,
-    "weight": 1
-  },
-  "Q74": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q44": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q84": {
-    "value": 3,
-    "weight": 1
-  },
-  "Q21": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q1": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q93": {
-    "value": 2,
-    "weight": 1
-  },
-  "Q58": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q91": {
-    "value": "A",
-    "weight": 1
-  },
-  "Q54": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q88": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q26": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q72": {
-    "value": 4,
-    "weight": 1
-  },
-  "Q96": {
-    "value": 4,
-    "weight": 1
-  },
-  "Q65": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q30": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q28": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q86": {
-    "value": 4,
-    "weight": 1
-  },
-  "Q94": {
-    "value": 4,
-    "weight": 1
-  },
-  "Q5": {
-    "value": 3,
-    "weight": 1
-  },
-  "Q55": {
-    "value": "B",
-    "weight": 1
-  },
-  "Q76": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q12": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q70": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q87": {
-    "value": "A",
-    "weight": 1
-  },
-  "Q14": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q18": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q29": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q32": {
-    "value": 1,
-    "weight": 1
-  },
-  "Q36": {
-    "value": 4,
-    "weight": 1
-  },
-  "Q4": {
-    "value": 5,
-    "weight": 1
-  },
-  "Q15": {
-    "value": "A",
-    "weight": 1
-  },
-  "Q82": {
-    "value": 4,
-    "weight": 1
-  }
-};
 
 export default function SurveyQuestions() {
   const navigate = useNavigate();
@@ -397,11 +29,27 @@ export default function SurveyQuestions() {
     return QUESTIONS;
   }, []);
 
-  // Index local to this page (answers are in engine)
-  const [index, setIndex] = useState(0);
+  // Index local to this page (answers are in engine). Restored from saved
+  // progress so a reload lands on the question the student was on.
+  const [index, setIndex] = useState(() => {
+    const saved = readProgress();
+    const count = saved.answers ? Object.keys(saved.answers).length : 0;
+    if (questions.length && count >= questions.length) return questions.length - 1;
+    return typeof saved.index === 'number' && saved.index >= 0 ? saved.index : 0;
+  });
+
+  // "Continue where you left off?" prompt, shown when /start found an
+  // unfinished survey for this user on this device.
+  const [askResume, setAskResume] = useState(() => Boolean(location.state && location.state.askResume));
 
   // Last-question finish flow
-  const [readyToFinish, setReadyToFinish] = useState(false);
+  // If every question already has an answer (student left at the completion
+  // screen and came back), go straight to that screen again.
+  const [readyToFinish, setReadyToFinish] = useState(() => {
+    const saved = readProgress();
+    const count = saved.answers ? Object.keys(saved.answers).length : 0;
+    return count > 0 && count >= (questions.length || Infinity);
+  });
   const [finishing, setFinishing] = useState(false);
   const [finishProgress, setFinishProgress] = useState(0);
 
@@ -412,6 +60,37 @@ export default function SurveyQuestions() {
   useEffect(() => {
     writeProgress({ step: 'questions' });
   }, []);
+
+  // Keep the saved question index in step with the one on screen.
+  useEffect(() => {
+    if (total > 0) writeProgress({ index: Math.min(index, total - 1) });
+  }, [index, total]);
+
+  const onResumeContinue = () => {
+    setAskResume(false);
+    window.history.replaceState({}, document.title, window.location.pathname);
+    if (readyToFinish) onShowResults();
+  };
+
+  // Arriving from the profile's "See my results" with every question already
+  // answered: skip the congratulations screen and generate straight away.
+  const autoFinishRef = useRef(false);
+  useEffect(() => {
+    if (autoFinishRef.current) return;
+    if (location.state && location.state.autoFinish && readyToFinish && !finishing) {
+      autoFinishRef.current = true;
+      window.history.replaceState({}, document.title, window.location.pathname);
+      onShowResults();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [readyToFinish]);
+
+  const onResumeRestart = () => {
+    setAskResume(false);
+    clearProgress();
+    setAnswers({});
+    navigate('/start?fresh=1', { replace: true });
+  };
 
   // --------- HARDENED JUMP-TO-LAST LOGIC ----------
   // 1) Route state: location.state.jumpTo === 'last'
@@ -518,14 +197,8 @@ export default function SurveyQuestions() {
     }, stepMs);
   };
 
+  // Exit keeps the saved answers so the student can resume from their profile.
   const onExitSurvey = () => {
-    try {
-      sessionStorage.removeItem('cdna_progress_v1');
-      sessionStorage.removeItem('cdna_jump_last');
-      sessionStorage.removeItem('cdna_subdims_v1');
-    } catch {}
-
-    setAnswers({});
     navigate('/profile', { replace: true });
   };
 
@@ -540,63 +213,6 @@ export default function SurveyQuestions() {
   const remainingSec = Math.max(0, perQuestionSec * (total - (index + 1)));
   const remainingMinCeil = Math.ceil(remainingSec / 60);
   const timeLeftLabel = `${remainingMinCeil} minute${remainingMinCeil === 1 ? '' : 's'} left`;
-
-  // Dev helpers
-  const isDev = process.env.NODE_ENV !== 'production';
-  const showDevButtons = false;
-
-  const getSimulationIntro = () => {
-    const p = readProgress();
-    return p.introResponses || {
-      age: 'dev',
-      status: 'dev',
-      schoolSubjects: [],
-      uniSubject: 'dev',
-      country: 'dev',
-      city: 'dev',
-    };
-  };
-
-  const runSimulation = (simulated) => {
-    setAnswers(() => simulated);
-
-    const p = readProgress();
-    const intro = getSimulationIntro();
-
-    writeProgress({
-      started: true,
-      nonce: p.nonce || `dev-${Date.now()}`,
-      introResponses: intro,
-      introDone: true,
-      instructionsDone: true,
-      questionsDone: true,
-      answers: simulated,
-      step: 'results',
-    });
-
-    navigate('/results', { replace: true, state: { introResponses: intro } });
-  };
-
-  const simulateAndGo = () => {
-    const simulated = {};
-    for (let i = 0; i < questions.length; i += 1) {
-      const q = questions[i];
-      const isForced = (q.type || '').toLowerCase() === 'forced';
-      const val = isForced ? (Math.random() < 0.5 ? 'A' : 'B') : 1 + Math.floor(Math.random() * 5);
-      simulated[q.id] = { value: val, weight: 1 };
-    }
-
-    runSimulation(simulated);
-  };
-
-  const simulatePersonalProfile = () => {
-    if (!PERSONAL_PROFILE_ANSWERS || !Object.keys(PERSONAL_PROFILE_ANSWERS).length) {
-      window.alert('No personal profile answers have been embedded yet.');
-      return;
-    }
-
-    runSimulation(PERSONAL_PROFILE_ANSWERS);
-  };
 
   // Encouragement banner visibility (outside the card at 50% and 75%)
   const showBanner =
@@ -626,26 +242,48 @@ export default function SurveyQuestions() {
 
       </SurveyWrapper>
 
+      {askResume && (
+        <ResumeSurveyModal
+          complete={readyToFinish}
+          answered={Object.keys(readProgress().answers || {}).length}
+          total={total}
+          onContinue={onResumeContinue}
+          onRestart={onResumeRestart}
+        />
+      )}
+
       {showBanner && (
-        <div
-          style={{
-            margin: '16px auto 0',
-            maxWidth: 700,
-            background: 'linear-gradient(135deg, #eef2ff, #f5f7fb)',
-            border: '1px solid #e5e7eb',
-            borderRadius: 12,
-            padding: '14px 16px',
-            textAlign: 'center',
-            color: '#374151',
-            boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
-          }}
-          role="status"
-          aria-live="polite"
-        >
-          {index === Math.floor(total / 2)
-            ? "You're halfway through. Keep going!"
-            : "You've completed 75% of the survey! You're finishing very soon."}
-        </div>
+        <>
+          <div className="survey-confetti" aria-hidden="true" key={`confetti-${index}`}>
+            {Array.from({ length: 70 }, (_, i) => (
+              <span
+                key={i}
+                className="survey-confetti__piece"
+                style={{
+                  left: `${(i * 37) % 100}%`,
+                  animationDelay: `${(i % 9) * 90}ms`,
+                  animationDuration: `${2600 + (i % 6) * 320}ms`,
+                  background: ['#2f6fed', '#f5b400', '#e63b57', '#1f9e6b', '#8b5cf6'][i % 5],
+                  transform: `rotate(${(i * 53) % 360}deg)`,
+                  width: i % 3 === 0 ? 12 : 8,
+                  height: i % 3 === 0 ? 16 : 11,
+                }}
+              />
+            ))}
+          </div>
+          <div
+            key={`milestone-${index}`}
+            className={`survey-milestone${index === Math.floor(total / 2) ? ' survey-milestone--half' : ' survey-milestone--three-quarters'}`}
+            role="status"
+            aria-live="polite"
+          >
+            {index === Math.floor(total / 2) ? (
+              <><strong>Halfway there.</strong> Your profile is already taking shape. Keep going.</>
+            ) : (
+              <><strong>Three quarters done.</strong> Only a few minutes left. Nearly there.</>
+            )}
+          </div>
+        </>
       )}
     </>
   );

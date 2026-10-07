@@ -1,5 +1,3 @@
-/* Geist Font Import */
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&display=swap');
 
 .selection-explorer {
   max-width: 100%;
@@ -224,7 +222,7 @@
 
 .selection-detail-card__subtitle {
   margin: 8px 0 0;
-  color: #7a8fa8;
+  color: #5e6f88;
   font-size: 0.92rem;
   line-height: 1.45;
 }
@@ -346,7 +344,7 @@
 .cdna-match-meter--good .cdna-match-meter__fill { background: #2f6fed; }
 .cdna-match-meter--good .cdna-match-meter__label { color: #185fa5; }
 .cdna-match-meter--lower .cdna-match-meter__fill { background: #9aa0a8; }
-.cdna-match-meter--lower .cdna-match-meter__label { color: #868d96; }
+.cdna-match-meter--lower .cdna-match-meter__label { color: #64748b; }
 
 .selection-metrics-row {
   display: flex;
@@ -373,7 +371,7 @@
 
 .selection-metric__label {
   font-size: 0.86rem;
-  color: #6f84a0;
+  color: #5e6f88;
   font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
@@ -412,7 +410,7 @@
 }
 
 .selection-section-block__toggle-icon {
-  color: #7a8fa8;
+  color: #5e6f88;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -560,7 +558,7 @@
   opacity: 0.82;
 }
 .selection-chip--tier-lower .selection-chip__icon,
-.selection-chip--tier-lower .selection-chip__band { color: #868d96; }
+.selection-chip--tier-lower .selection-chip__band { color: #64748b; }
 .selection-chip--tier-lower .selection-chip__label { color: #6f757e; }
 
 /* Collapsible below-pills narrative (career worlds pilot). */
@@ -636,13 +634,13 @@
 
 .linked-subject-item__meta {
   margin-top: 4px;
-  color: #7a8fa8;
+  color: #5e6f88;
   font-size: 0.8rem;
 }
 
 .linked-subject-item__chevron,
 .pathway-role-item__chevron {
-  color: #7a8fa8;
+  color: #5e6f88;
   flex: 0 0 auto;
 }
 
@@ -940,7 +938,7 @@
   font-size: 0.66rem;
   line-height: 1;
   font-weight: 700;
-  color: #7a8fa8;
+  color: #5e6f88;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
@@ -1403,7 +1401,7 @@
 .selection-accordion-helper {
   flex: 0 0 auto;
   margin-left: 0;
-  color: #7a8fa8;
+  color: #5e6f88;
   font-size: 0.78rem;
   font-weight: 400;
   line-height: 1.35;
@@ -1636,7 +1634,7 @@
   border-radius: 999px;
   border: 1px solid #e6ebf3;
   background: #fff;
-  color: #9aa7bd;
+  color: #64748b;
   cursor: pointer;
   transition: color 0.12s ease, border-color 0.12s ease, background 0.12s ease;
 }
@@ -1649,7 +1647,7 @@
 .role-jobcard__meta { margin-top: 4px; font-size: 0.82rem; color: #6b7788; font-weight: 700; }
 .role-jobcard__facts { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
 .role-jobcard__fact { display: inline-flex; align-items: center; gap: 5px; font-size: 0.78rem; color: #33425a; background: #f3f6fb; border: 1px solid #e6ebf3; border-radius: 8px; padding: 4px 10px; }
-.role-jobcard__fact svg { color: #8a99ad; flex: 0 0 auto; }
+.role-jobcard__fact svg { color: #64748b; flex: 0 0 auto; }
 
 /* Live-jobs modal header, matching the apprenticeship detail modal: a rounded
    tinted icon square, the field as the title, and the context as a subtitle. */

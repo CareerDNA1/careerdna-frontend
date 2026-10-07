@@ -19,7 +19,7 @@
 
 .fs-detail-world {
   margin-top: 2px;
-  color: #8a97a8;
+  color: #64748b;
   font-size: 0.78rem;
 }
 
@@ -378,7 +378,7 @@
 }
 .fs-req-caveat {
   margin: 6px 0 0;
-  color: #8a97a8;
+  color: #64748b;
   font-size: 0.78rem;
   font-style: italic;
 }

@@ -9,6 +9,8 @@ import {
   rerunAssessmentWithOutputParameters,
 } from '../utils/assessmentRuns';
 import { runIsStale } from '../utils/outputVersion';
+import InlineError from '../Components/Common/InlineError';
+import { friendlyError } from '../utils/friendlyError';
 import './ProfilePage.css';
 
 
@@ -28,7 +30,9 @@ export default function SavedResultPage() {
   const [run, setRun] = useState(() => savedRunCache.get(runId) || null);
   const [loading, setLoading] = useState(() => !savedRunCache.has(runId));
   const [loadingSummary, setLoadingSummary] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');          // the saved result could not be loaded
+  const [rerunError, setRerunError] = useState('');      // re-running a stale result failed
+  const [reloadTick, setReloadTick] = useState(0);
   const [reportLimitReached, setReportLimitReached] = useState(false);
 
   // Keep the cache in sync with whatever is currently shown.
@@ -47,7 +51,7 @@ export default function SavedResultPage() {
         const data = await getAssessmentRunById(runId);
         if (!cancelled) setRun(data || null);
       } catch (err) {
-        if (!cancelled) setErrorMsg(err.message || 'Failed to load saved result.');
+        if (!cancelled) setErrorMsg(friendlyError(err, 'load this saved result').message);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -56,7 +60,7 @@ export default function SavedResultPage() {
     return () => {
       cancelled = true;
     };
-  }, [runId]);
+  }, [runId, reloadTick]);
 
   const handleRunAnalysis = async ({ bypassQualityGate = false } = {}) => {
     const currentSaved = run?.results_json || {};
@@ -72,7 +76,6 @@ export default function SavedResultPage() {
 
     try {
       setLoadingSummary(true);
-      setErrorMsg('');
       setReportLimitReached(false);
       const updatedRun = await runAiSummaryForSavedRun(runId, { bypassQualityGate });
       setRun(updatedRun);
@@ -82,10 +85,11 @@ export default function SavedResultPage() {
       }
       if (err?.code === 'REPORT_LIMIT_REACHED' || err?.message === 'REPORT_LIMIT_REACHED') {
         setReportLimitReached(true);
-        setErrorMsg('');
         return;
       }
-      setErrorMsg(err.message || 'Failed to run CareerDNA analysis.');
+      // Anything else is shown by ResultsComponent next to the Generate button
+      // (with a retry), not as a page-level error that hides the results.
+      throw err;
     } finally {
       setLoadingSummary(false);
     }
@@ -102,11 +106,11 @@ export default function SavedResultPage() {
     if (!run) return;
     try {
       setRerunningStale(true);
-      setErrorMsg('');
+      setRerunError('');
       const newRun = await rerunAssessmentWithOutputParameters(run, run.intro_answers_json || {});
       navigate(`/results/run/${newRun.id}`);
     } catch (err) {
-      setErrorMsg(err.message || 'Failed to re-run this result.');
+      setRerunError(friendlyError(err, 're-run this result').message);
       setRerunningStale(false);
     }
   };
@@ -142,8 +146,8 @@ export default function SavedResultPage() {
           <p className="profile-runs-loading-note">Loading your results&hellip;</p>
         </div>
       ) : errorMsg ? (
-        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 20px', color: '#c0392b' }}>
-          {errorMsg}
+        <div style={{ maxWidth: 720, margin: '0 auto', padding: '32px 20px' }}>
+          <InlineError message={errorMsg} onRetry={() => setReloadTick((t) => t + 1)} />
         </div>
       ) : isStale ? (
         <div className="profile-retake-confirm-overlay">
@@ -158,6 +162,7 @@ export default function SavedResultPage() {
               This result was generated with an earlier version of CareerDNA. Re-run it to see your
               results with the latest version.
             </p>
+            <InlineError compact message={rerunError} />
 
             <div className="profile-retake-confirm-actions">
               <button

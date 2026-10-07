@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { supabase } from '../utils/supabaseClient';
-import { buildApiCandidates } from '../utils/config';
+import { apiFetch, ApiError } from '../utils/apiFetch';
 import AccountNavbar from '../Components/Common/AccountNavbar';
+import OpsPanel from '../Components/Admin/OpsPanel';
 import { canonicalItem } from '../utils/canonicalIds';
 import './AdminDashboard.css';
 
@@ -292,75 +292,39 @@ function AdminDashboard() {
     setForbidden(false);
 
     try {
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      const accessToken = sessionData?.session?.access_token;
-
-      if (sessionError) throw sessionError;
-      if (!accessToken) {
-        setForbidden(true);
-        return;
-      }
-
-      const candidates = buildApiCandidates('/api/admin/dashboard');
-      let lastError = null;
-
-      for (const url of candidates) {
-        try {
-          const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
-
-          if (response.status === 404) {
-            lastError = new Error('Admin endpoint was not found. Check that the patched backend index.js is running.');
-            continue;
-          }
-
-          if (response.status === 401 || response.status === 403) {
+      let data;
+      try {
+        data = await apiFetch('/api/admin/dashboard', { auth: 'required' });
+      } catch (e) {
+        if (e instanceof ApiError) {
+          // No token, or the backend refused: not an admin.
+          if (e.code === 'NOT_SIGNED_IN' || e.status === 401 || e.status === 403) {
             setForbidden(true);
             return;
           }
-
-          const contentType = response.headers.get('content-type') || '';
-          const responseText = await response.text();
-          const looksLikeHtml = /^\s*</.test(responseText);
-
-          if (looksLikeHtml || !contentType.toLowerCase().includes('application/json')) {
-            lastError = new Error(
-              `Admin endpoint returned HTML instead of JSON from ${url}. This usually means the frontend is hitting the React app/server instead of the backend, or the backend has not been restarted with the admin route.`
+          if (e.status === 404) {
+            throw new Error('Admin endpoint was not found. Check that the patched backend index.js is running.');
+          }
+          if (e.status) {
+            throw new Error(e.data?.message || e.data?.error || `Admin dashboard failed: ${e.status}`);
+          }
+          if (/non JSON/i.test(e.message || '')) {
+            throw new Error(
+              'Admin endpoint returned HTML instead of JSON. This usually means the frontend is hitting the React app/server instead of the backend, or the backend has not been restarted with the admin route.'
             );
-            continue;
           }
-
-          let data = null;
-          try {
-            data = responseText ? JSON.parse(responseText) : {};
-          } catch (parseError) {
-            lastError = new Error(`Admin endpoint returned invalid JSON from ${url}: ${parseError.message}`);
-            continue;
-          }
-
-          if (!response.ok) {
-            const message = data?.message || data?.error || `Admin dashboard failed: ${response.status}`;
-            throw new Error(message);
-          }
-
-          setDashboard({
-            users: Array.isArray(data?.users) ? data.users : [],
-            events: Array.isArray(data?.events) ? data.events : [],
-            runs: Array.isArray(data?.runs) ? data.runs : [],
-            feedback: Array.isArray(data?.feedback) ? data.feedback : [],
-            problemReports: Array.isArray(data?.problemReports) ? data.problemReports : [],
-          });
-          return;
-        } catch (candidateError) {
-          lastError = candidateError;
         }
+        throw e;
       }
 
-      throw lastError || new Error('Could not load admin dashboard.');
+      setDashboard({
+        totalUsers: Number(data?.totalUsers || 0),
+        users: Array.isArray(data?.users) ? data.users : [],
+        events: Array.isArray(data?.events) ? data.events : [],
+        runs: Array.isArray(data?.runs) ? data.runs : [],
+        feedback: Array.isArray(data?.feedback) ? data.feedback : [],
+        problemReports: Array.isArray(data?.problemReports) ? data.problemReports : [],
+      });
     } catch (err) {
       setError(err?.message || 'Could not load admin dashboard.');
     } finally {
@@ -628,6 +592,8 @@ return {
         </header>
 
       {error ? <div className="admin-error">{error}</div> : null}
+
+      <OpsPanel />
 
       <section className="admin-stats-grid">
         <StatCard label="Total users" value={stats.totalUsers} note={`${stats.newUsers7d} new in last 7 days`} />
@@ -905,7 +871,7 @@ return {
       <section className="admin-panel">
         <div className="admin-panel-heading">
           <h2>Recent users</h2>
-          <span>{dashboard.users.length} users</span>
+          <span>{dashboard.totalUsers || dashboard.users.length} users</span>
         </div>
 
         <div className="admin-table-wrap">

@@ -8,6 +8,8 @@ import { studentTop3Tariff, gradedAlevelCount, gradeBand, checkPrerequisites } f
 import { showSelectionTooltip, hideSelectionTooltip } from '../Survey/SelectionInsightExplorer';
 import { getReactions, setItemReaction } from '../../utils/savedItems';
 import PickMenu from '../Common/PickMenu';
+import InlineError from '../Common/InlineError';
+import { friendlyError } from '../../utils/friendlyError';
 import './RankingsModal.css';
 
 // Stable id for a saved course (prefer its provider URL; fall back to uni+title).
@@ -207,6 +209,7 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
     return next;
   });
 
+  const [reloadTick, setReloadTick] = useState(0);
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -215,13 +218,17 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
         const d = await loadSubjectRanking({ subjectId, subjectTitle });
         if (!cancelled) setData(d);
       } catch (err) {
-        if (!cancelled) setError(err?.message || 'Could not load the ranking.');
+        if (!cancelled) {
+          // "No ranking for this subject" is an answer, not a failure: no retry.
+          const noData = err?.code === 'NO_RANKING' || err?.status === 404;
+          setError({ message: friendlyError(err, 'load the ranking').message, retryable: !noData });
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
     })();
     return () => { cancelled = true; };
-  }, [subjectId, subjectTitle]);
+  }, [subjectId, subjectTitle, reloadTick]);
 
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -307,7 +314,9 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
         {(loading || !academicLoaded) ? (
           <div className="rk-state">Loading rankings…</div>
         ) : error ? (
-          <div className="rk-state rk-state--error">{error}</div>
+          <div className="rk-state rk-state--error">
+            <InlineError message={error.message} onRetry={error.retryable ? () => setReloadTick((t) => t + 1) : undefined} />
+          </div>
         ) : (
           <>
             <div className="rk-controls">
@@ -420,6 +429,9 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
               Official data: Office for Students (Discover Uni, August 2026 release) and UCAS 2025. Dotted figures rest on a broad subject area or a small cohort; hover or tap one to see why.
               {showChances ? ' Your chances use typical A-level offers only; always check each course\u2019s own requirements.' : ''}
               {' '}<button type="button" className="rk-method-link" onClick={() => setShowMethod(true)}>Full methodology</button>
+            </p>
+            <p className="rk-foot rk-foot--licence">
+              Contains public sector information licensed under the Open Government Licence v3.0. The CareerDNA Ranking is one input to your decision, not advice: always check each university’s own course pages and entry requirements before applying.
             </p>
           </>
         )}

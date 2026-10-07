@@ -9,7 +9,7 @@
   display: flex;
   flex-direction: column;
 }
-.acad-hint { font-size: 0.78rem; color: #8a97a8; font-weight: 400; margin-left: 2px; }
+.acad-hint { font-size: 0.78rem; color: #64748b; font-weight: 400; margin-left: 2px; }
 .acad-head {
   display: flex;
   align-items: center;
@@ -29,14 +29,14 @@
 .acad-error { margin: 10px 0 0; color: #c0392b; font-size: 0.86rem; }
 
 .acad-empty p {
-  margin: 6px 0 0;
+  margin: 0;
   color: #56657a;
   font-size: 0.86rem;
   line-height: 1.5;
 }
 
 .acad-view { margin-top: 22px; display: flex; flex-direction: column; gap: 14px; flex: 1; justify-content: space-between; }
-.acad-empty { margin-top: 22px; flex: 1; }
+.acad-empty { margin-top: 10px; flex: 1; }
 /* Edit / Add grades button anchored to the bottom-right, matching favourites. */
 .acad-cardfoot { margin-top: auto; display: flex; justify-content: flex-end; padding-top: 14px; }
 .acad-view-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
@@ -60,7 +60,7 @@
 }
 .acad-chip--gcse { background: #eef2f8; border-color: #dfe7f2; color: #33475b; }
 
-.acad-foot { margin: auto 0 0; padding-top: 12px; color: #8a97a8; font-size: 0.78rem; line-height: 1.45; }
+.acad-foot { margin: auto 0 0; padding-top: 12px; color: #64748b; font-size: 0.78rem; line-height: 1.45; }
 
 /* Editor popup (modal). */
 .acad-overlay {
@@ -124,15 +124,15 @@
 .acad-row .apps-menu-wrap { flex: 0 0 96px; min-width: 0; display: flex; }
 .acad-row .apps-menu-wrap:first-child { flex: 1 1 auto; }
 .acad-select { flex: 1 1 auto; width: 100%; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 6px; cursor: pointer; text-align: left; font-weight: 600; }
-.acad-select.is-empty { color: #8a97ac; font-weight: 500; }
-.acad-select svg { color: #6b7a8c; flex: 0 0 auto; }
+.acad-select.is-empty { color: #64748b; font-weight: 500; }
+.acad-select svg { color: #5e6f88; flex: 0 0 auto; }
 .acad-select:focus-visible { outline: 2px solid #2f6fed; outline-offset: 1px; border-color: #2f6fed; }
 /* Compulsory GCSE: shown as a locked field, not a picker. */
 .acad-select--fixed { cursor: default; background: #f7f9fc; color: #33475b; }
-.acad-select--fixed svg { color: #a4afc0; }
+.acad-select--fixed svg { color: #64748b; }
 .acad-row .apps-menu { min-width: 120px; }
 .acad-row-remove--blank { border-color: transparent; background: transparent; pointer-events: none; }
-.acad-section-note { margin: 6px 0 0; font-size: 0.76rem; color: #8a97a8; line-height: 1.45; }
+.acad-section-note { margin: 6px 0 0; font-size: 0.76rem; color: #64748b; line-height: 1.45; }
 .acad-row-remove {
   flex: 0 0 auto;
   display: inline-flex;
@@ -143,7 +143,7 @@
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   background: #fff;
-  color: #8a95a6;
+  color: #64748b;
   cursor: pointer;
 }
 .acad-row-remove:hover { background: #fbeaea; border-color: #f1c6c6; color: #c0392b; }
@@ -191,3 +191,5 @@
 
 /* Header action: same slim pill as Open Report on the reports list. */
 .acad-btn--head { padding: 4px 12px; min-height: 26px; font-size: 0.72rem; box-shadow: 0 2px 8px rgba(47, 111, 237, 0.15); }
+.acad-card.fav-card--clickable { cursor: pointer; transition: box-shadow 0.15s ease, border-color 0.15s ease; }
+.acad-card.fav-card--clickable:hover { border-color: #cddbf0; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07); }

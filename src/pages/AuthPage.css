@@ -5,7 +5,7 @@
 
 .auth-page {
   min-height: 100dvh;
-  padding: 54px 20px 30px;
+  padding: 24px 20px 24px;
   background: linear-gradient(180deg, #f4f7fb 0%, #eef3f9 100%);
   font-family: var(--cdna-font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
   color: var(--cdna-color-text-strong, #1f2a37);
@@ -56,12 +56,12 @@
   border: 1px solid rgba(47, 111, 237, 0.08);
   border-radius: 20px;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
-  padding: 28px 38px 30px;
+  padding: 22px 34px 24px;
 }
 
 .auth-header {
   text-align: center;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .auth-title {
@@ -76,9 +76,9 @@
 
 .auth-subtitle {
   max-width: 360px;
-  margin: 8px auto 0;
+  margin: 6px auto 0;
   font-family: var(--cdna-font-sans, inherit);
-  font-size: 0.98rem;
+  font-size: 0.92rem;
   font-weight: 400;
   line-height: 1.45;
   color: var(--cdna-color-text, #4b5c6b);
@@ -86,7 +86,7 @@
 
 .auth-form {
   display: grid;
-  gap: 13px;
+  gap: 10px;
 }
 
 .auth-row {
@@ -97,17 +97,17 @@
 
 .auth-label {
   display: grid;
-  gap: 6px;
+  gap: 4px;
   font-family: var(--cdna-font-sans, inherit);
-  font-size: 0.9rem;
+  font-size: 0.86rem;
   font-weight: 600;
   color: var(--cdna-color-text-strong, #1f2a37);
 }
 
 .auth-input {
   width: 100%;
-  min-height: 44px;
-  padding: 10px 18px;
+  min-height: 40px;
+  padding: 8px 14px;
   border: 1px solid #d2dff0;
   border-radius: 12px;
   background: #eaf2ff;
@@ -159,7 +159,7 @@
 }
 
 .auth-input::placeholder {
-  color: #9aaac0;
+  color: #64748b;
 }
 
 .auth-actions {
@@ -188,7 +188,7 @@
 
 .auth-button {
   width: 100%;
-  min-height: 44px;
+  min-height: 42px;
   margin-top: 2px;
   border: 0;
   border-radius: 12px;
@@ -235,8 +235,8 @@
 }
 
 .auth-links {
-  margin-top: 16px;
-  padding-top: 15px;
+  margin-top: 10px;
+  padding-top: 10px;
   border-top: 1px solid rgba(47, 111, 237, 0.10);
   text-align: center;
   color: var(--cdna-color-text, #4b5c6b);
@@ -358,7 +358,7 @@
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: #6f8198;
+  color: #5e6f88;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -451,7 +451,7 @@
 
 .auth-input-icon {
   left: 16px;
-  color: #6f8198;
+  color: #5e6f88;
 }
 
 .auth-input-icon svg {
@@ -472,7 +472,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  margin: 18px 0 12px;
+  margin: 12px 0 10px;
   color: #6d7d91;
   font-size: 0.86rem;
   line-height: 1;
@@ -934,4 +934,33 @@
     gap: 22px;
     padding-top: 8px;
   }
+}
+
+/* Date of birth at signup (age check). The picker is the app's own, not the browser's. */
+.auth-dob { display: flex; flex-direction: column; gap: 6px; }
+.auth-dob--google { margin: 14px 0 10px; }
+.auth-dob-picker { align-self: stretch; }
+.auth-dob-picker .dp-trigger, .auth-dob-picker > button { width: 100%; justify-content: space-between; }
+.auth-dob-hint { font-size: 0.78rem; font-weight: 500; color: #5e6f88; line-height: 1.4; }
+.auth-underage { line-height: 1.5; }
+.auth-underage strong { display: block; margin-bottom: 4px; }
+
+/* Primary action and Google side by side, so both are visible without scrolling. */
+.auth-actions {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+.auth-actions .auth-button { margin-top: 0; }
+.auth-actions-or {
+  color: #5e6f88;
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-transform: lowercase;
+}
+@media (max-width: 560px) {
+  .auth-actions { grid-template-columns: 1fr; }
+  .auth-actions-or { text-align: center; }
 }

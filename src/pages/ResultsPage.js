@@ -11,7 +11,8 @@ import QUESTIONS from '../utils/questions';
 import { computeClarityPercents } from '../utils/selfAwarenessSummary';
 import { saveAssessmentRun, updateAssessmentRun, findExistingRunForSurvey } from '../utils/assessmentRuns';
 import { useAuth } from '../context/AuthContext';
-import { readProgress } from '../Hooks/useProgress';
+import { readProgress, clearProgress } from '../Hooks/useProgress';
+import { markProfileStale } from '../utils/profileCache';
 import { calculateProfileQualityGate } from '../utils/profileQualityGate';
 
 // Safe JSON getter from localStorage
@@ -35,6 +36,7 @@ export default function ResultsPage() {
   const {
     archetypes,
     summary,
+    summaryError,
     loading,
     generateSummary,
     analysisMeta,
@@ -182,6 +184,7 @@ export default function ResultsPage() {
 
         const savedRunId = savedRun?.id || savedRun?.data?.id || savedRun?.[0]?.id || '';
         if (savedRunId) setAssessmentRunId(savedRunId);
+        markProfileStale();
         try {
           sessionStorage.setItem(saveKey, savedRunId || '1');
         } catch {}
@@ -230,7 +233,7 @@ export default function ResultsPage() {
           No CareerDNA results yet
         </h2>
         <p style={{ color: '#5b6677', marginBottom: '22px', lineHeight: 1.6 }}>
-          Please complete the survey first to view your results.
+          Please complete the assessment first to view your results.
         </p>
         <button
           type="button"
@@ -245,7 +248,7 @@ export default function ResultsPage() {
             cursor: 'pointer',
           }}
         >
-          Go to Survey
+          Go to assessment
         </button>
       </div>
     );
@@ -262,11 +265,8 @@ export default function ResultsPage() {
   // answers/progress so the survey begins blank at Q1 (via /start), rather than
   // resuming the previous — flagged-as-random — answers at the last question.
   const handleFreshRetake = () => {
-    try {
-      sessionStorage.removeItem('cdna_progress_v1');
-      sessionStorage.removeItem('cdna_jump_last');
-    } catch {}
-    navigate('/start');
+    clearProgress();
+    navigate('/start?fresh=1');
   };
 
   const handleBackHome = () => navigate('/');
@@ -276,6 +276,7 @@ export default function ResultsPage() {
       results={archetypes}
       initialAiSummary={summary}
       loadingSummary={!!loading}
+      summaryError={summaryError}
       fetchAiSummary={typeof generateSummary === 'function' ? generateSummary : undefined}
       analysisMeta={analysisMeta}
       introName={introResponses?.name || ''}

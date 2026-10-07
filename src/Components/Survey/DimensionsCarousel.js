@@ -565,7 +565,7 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
           </div>
         ))}
       </div>
-      <p style={{ margin: "8px 0 0", textAlign: "center", fontSize: "0.72rem", fontWeight: 500, color: "#8a97a8" }}>
+      <p style={{ margin: "8px 0 0", textAlign: "center", fontSize: "0.72rem", fontWeight: 500, color: "#64748b" }}>
         {isMobile ? "Tap" : "Hover over"} a bar to see what it means
       </p>
     </div>

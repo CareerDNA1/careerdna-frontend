@@ -8,11 +8,11 @@
   padding: 8px 10px; border: 1px solid #d3dbe8; border-radius: 9px; background: #fff;
   font-family: inherit; font-size: 0.86rem; font-weight: 500; color: #12233c; text-align: left; cursor: pointer;
 }
-.dp-trigger svg { color: #7385a3; flex: 0 0 auto; }
-.dp-trigger.is-empty { color: #8a97ac; }
+.dp-trigger svg { color: #5e6f88; flex: 0 0 auto; }
+.dp-trigger.is-empty { color: #64748b; }
 .dp-trigger:hover { border-color: #cddbf0; }
 .dp-trigger:focus-visible { outline: 2px solid #2f6fed; outline-offset: 1px; border-color: #2f6fed; }
-.dp-time { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 0 10px; border: 1px solid #d3dbe8; border-radius: 9px; background: #fff; color: #7385a3; }
+.dp-time { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 0 10px; border: 1px solid #d3dbe8; border-radius: 9px; background: #fff; color: #5e6f88; }
 .dp-time input { width: 3.4em; border: 0; padding: 8px 0; font-family: inherit; font-size: 0.86rem; font-weight: 600; color: #12233c; background: transparent; text-align: center; }
 .dp-time input:focus { outline: none; }
 .dp-time:focus-within { border-color: #2f6fed; outline: 2px solid #2f6fed; outline-offset: 1px; }
@@ -27,7 +27,7 @@
 .dp-nav { width: 28px; height: 28px; border-radius: 50%; border: 1px solid transparent; background: transparent; color: #56657a; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
 .dp-nav:hover { background: #eef4ff; color: #2f6fed; }
 .dp-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
-.dp-dow { font-size: 0.68rem; font-weight: 700; color: #8a97ac; text-align: center; padding: 4px 0; text-transform: uppercase; }
+.dp-dow { font-size: 0.68rem; font-weight: 700; color: #64748b; text-align: center; padding: 4px 0; text-transform: uppercase; }
 .dp-cell { height: 34px; border: 0; border-radius: 8px; background: transparent; font-family: inherit; font-size: 0.84rem; font-weight: 500; color: #243447; cursor: pointer; }
 .dp-cell:hover:not(:disabled) { background: #eef4ff; color: #2f6fed; }
 .dp-cell.is-today { font-weight: 800; color: #2f6fed; }
@@ -38,3 +38,23 @@
 .dp-foot { display: flex; justify-content: space-between; margin-top: 6px; padding-top: 6px; border-top: 1px solid #f0f3f8; }
 .dp-link { border: 0; background: none; padding: 4px 6px; font-family: inherit; font-size: 0.78rem; font-weight: 700; color: #2f6fed; cursor: pointer; border-radius: 6px; }
 .dp-link:hover { background: #eef4ff; }
+
+/* Typeable trigger: a text box plus a calendar button in one bordered row */
+.dp-trigger--typeable { padding: 0; cursor: text; }
+.dp-trigger--typeable .dp-input {
+  flex: 1 1 auto; min-width: 0; border: 0; outline: 0; background: transparent;
+  padding: 8px 10px; font: inherit; color: inherit;
+}
+.dp-trigger--typeable .dp-input::placeholder { color: #8fa0b7; }
+.dp-trigger--typeable:focus-within { border-color: #2f6fed; box-shadow: 0 0 0 2px rgba(47, 111, 237, 0.12); }
+.dp-trigger--typeable.is-invalid { border-color: #ef4444; }
+.dp-open {
+  flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+  border: 0; background: transparent; color: #5e6f88; padding: 0 10px; cursor: pointer; align-self: stretch;
+}
+.dp-open:hover { color: #2f6fed; }
+/* Clickable month and year in the header */
+.dp-month--btn { border: 0; background: transparent; padding: 2px 6px; border-radius: 6px; font: inherit; font-weight: 700; color: #12233c; cursor: pointer; }
+.dp-month--btn:hover { background: #eef4ff; color: #2f6fed; }
+.dp-grid--pick { grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.dp-cell--pick { height: 38px; font-size: 0.82rem; }

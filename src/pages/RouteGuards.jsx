@@ -137,3 +137,31 @@ export function ResultsGuard() {
   }
   return <Outlet />;
 }
+
+// Admin-only routes. Non-admins are sent to their profile before any admin
+// code or data is requested; the page is simply not there for them. The
+// backend still checks is_admin on every admin request, so this is a second
+// layer, not the only one.
+export function RequireAdmin() {
+  const { user, loading } = useAuth();
+  const [state, setState] = useState('checking'); // checking | admin | denied
+
+  useEffect(() => {
+    let cancelled = false;
+    if (loading) return undefined;
+    if (!user?.id) { setState('denied'); return undefined; }
+    (async () => {
+      try {
+        const profile = await getMyProfile();
+        if (!cancelled) setState(profile?.is_admin === true ? 'admin' : 'denied');
+      } catch (_) {
+        if (!cancelled) setState('denied');
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user?.id, loading]);
+
+  if (state === 'checking') return null;
+  if (state === 'denied') return <Navigate to="/profile" replace />;
+  return <Outlet />;
+}

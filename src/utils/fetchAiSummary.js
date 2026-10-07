@@ -1,6 +1,5 @@
 // src/utils/fetchAiSummary.js
-import { buildApiCandidates } from './config';
-import { supabase } from './supabaseClient';
+import { apiFetch, ApiError } from './apiFetch';
 
 function normalizeStatus(raw) {
   const s = String(raw || '').trim().toLowerCase();
@@ -141,72 +140,47 @@ export async function fetchAiSummary(input) {
   // Strip undefined keys
   Object.keys(payload).forEach(k => payload[k] === undefined && delete payload[k]);
 
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  const accessToken = sessionData?.session?.access_token;
+  let data;
+  try {
+    // Report generation can take over a minute, so allow a long timeout.
+    data = await apiFetch('/api/summary', {
+      method: 'POST',
+      auth: 'required',
+      timeoutMs: 120000,
+      body: payload,
+    });
+  } catch (error) {
+    if (!(error instanceof ApiError)) throw error;
 
-  if (sessionError) {
-    throw new Error(sessionError.message || 'Could not verify your login session.');
-  }
-
-  if (!accessToken) {
-    throw new Error('Please sign in again before generating your report.');
-  }
-
-  const candidates = buildApiCandidates('/api/summary');
-  let lastError = null;
-
-  for (const url of candidates) {
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (res.status === 404) {
-        lastError = new Error('Request failed: 404');
-        continue;
-      }
-
-      if (!res.ok) {
-        let msg = `Request failed: ${res.status}`;
-        try {
-          const err = await res.json();
-          const errorCode = err?.code || err?.error || '';
-
-          if (res.status === 403 && errorCode === 'REPORT_LIMIT_REACHED') {
-            const apiError = new Error('REPORT_LIMIT_REACHED');
-            apiError.status = 403;
-            apiError.code = 'REPORT_LIMIT_REACHED';
-            apiError.entitlement = err?.entitlement || null;
-            throw apiError;
-          }
-
-          msg = err?.summary || err?.message || err?.error || msg;
-          const apiError = new Error(msg);
-          apiError.status = res.status;
-          apiError.code = errorCode;
-          apiError.entitlement = err?.entitlement || null;
-          throw apiError;
-        } catch (parseError) {
-          if (parseError?.status) throw parseError;
-        }
-        throw new Error(msg);
-      }
-
-      const data = await res.json();
-      return data || { summary: '' };
-    } catch (error) {
-      if (error?.status && error.status !== 404) {
-        throw error;
-      }
-      lastError = error;
+    if (error.code === 'NOT_SIGNED_IN') {
+      throw new Error('Please sign in again before generating your report.');
     }
+
+    // 404 on every base URL, timeout or network failure: keep as is.
+    if (!error.status || error.status === 404) throw error;
+
+    const err = error.data;
+    const errorCode = err?.code || err?.error || '';
+
+    if (error.status === 403 && errorCode === 'REPORT_LIMIT_REACHED') {
+      const apiError = new Error('REPORT_LIMIT_REACHED');
+      apiError.status = 403;
+      apiError.code = 'REPORT_LIMIT_REACHED';
+      apiError.entitlement = err?.entitlement || null;
+      throw apiError;
+    }
+
+    // A 409 means a generation is already running for this user: show its
+    // plain message rather than the code carried in `summary`.
+    const fallback = `Request failed: ${error.status}`;
+    const msg = (error.status === 409 ? err?.message : '') || err?.summary || err?.message || err?.error || fallback;
+    const apiError = new Error(msg);
+    apiError.status = error.status;
+    apiError.code = errorCode;
+    apiError.entitlement = err?.entitlement || null;
+    throw apiError;
   }
 
-  throw lastError || new Error('Could not generate summary right now.');
+  return data || { summary: '' };
 }
 

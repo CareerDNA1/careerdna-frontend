@@ -110,7 +110,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #7a8798;
+  color: #5e6f88;
   margin-bottom: 3px;
 }
 .account-dropdown-header-email {
@@ -248,7 +248,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #7a8798;
+  color: #5e6f88;
   margin-bottom: 3px;
 }
 .account-mobile-header-email {
@@ -1159,3 +1159,7 @@
     width: 100%;
   }
 }
+
+/* ServiceBanner (40px, fixed at the top) is showing: push the navbar down so
+   the two never overlap. The class is set on <body> by ServiceBanner. */
+body.cdna-service-down .account-navbar-wrapper { top: 40px !important; }

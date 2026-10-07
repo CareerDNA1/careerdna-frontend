@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Fingerprint, Timer, Headphones, Brain, Scales } from 'phosphor-react';
 import Button from '../Common/Button';
-import instructionsGraphic from '../../Assets/images/instructions_graphic.jpg';
+import instructionsGraphic from '../../Assets/images/instructions_graphic.webp';
 import logo from '../../Assets/images/logo-career-dna.png';
 import './Instructions.css';
 
@@ -10,11 +10,11 @@ const iconProps = { size: 18, weight: 'duotone' };
 const instructionItems = [
   {
     icon: <Fingerprint {...iconProps} />,
-    text: <>This survey is designed to help you discover your unique <strong>Career DNA</strong>.</>,
+    text: <>This assessment is designed to help you discover your unique <strong>CareerDNA</strong>.</>,
   },
   {
     icon: <Timer {...iconProps} />,
-    text: <>There are <strong>96 short questions</strong> (1–5 or binary choices). Most people finish in <strong>20–25 mins</strong> in one sitting and your progress <strong>auto-saves</strong> as you go.</>,
+    text: <>There are <strong>100 short questions</strong>, answered on a scale or as a simple either/or choice. Most people finish in <strong>20 to 25 minutes</strong> in one sitting, and your progress <strong>saves automatically</strong> as you go.</>,
   },
   {
     icon: <Headphones {...iconProps} />,
@@ -64,8 +64,8 @@ export default function Instructions({ onStart }) {
             src={instructionsGraphic}
             alt=""
             aria-hidden="true"
-            width="1024"
-            height="1536"
+            width="900"
+            height="1350"
             loading="eager"
             decoding="sync"
             fetchPriority="high"
@@ -97,8 +97,8 @@ export default function Instructions({ onStart }) {
               className="instp-graphic"
               src={instructionsGraphic}
               alt=""
-              width="1024"
-              height="1536"
+              width="900"
+              height="1350"
               loading="eager"
               decoding="sync"
               fetchPriority="high"
@@ -114,7 +114,7 @@ export default function Instructions({ onStart }) {
           right-hand column and then snapping to the middle. */}
       <div className="instp-left-cta">
         <Button type="primary" size="xl" shine className="panel-cta" onClick={onStart}>
-          Start CareerDNA Survey <span aria-hidden="true">→</span>
+          Start the assessment <span aria-hidden="true">→</span>
         </Button>
       </div>
     </main>

@@ -1,3 +1,12 @@
-# https://www.robotstxt.org/robotstxt.html
+# CareerDNA: public pages may be indexed; signed-in areas may not.
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /profile
+Disallow: /admin
+Disallow: /results
+Disallow: /survey/
+Disallow: /start
+Disallow: /app
+Disallow: /reset-password
+
+Sitemap: https://mycareerdna.io/sitemap.xml

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../utils/supabaseClient';
 import { friendlyError } from '../utils/friendlyError';
+import { consumePostLoginPath, readOAuthErrorFromUrl, storePostLoginPath } from '../utils/postLoginPath';
 import { useAuth } from '../context/AuthContext';
 import { getMyProfile, isCompleteProfile, syncProfileFromAuthUser } from '../utils/profile';
 import logo from '../Assets/images/logo-career-dna.png';
@@ -119,6 +120,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [needsConfirmation, setNeedsConfirmation] = useState(false);
+  const [resending, setResending] = useState(false);
   const [infoMsg, setInfoMsg] = useState(location.state?.message || '');
   const [loading, setLoading] = useState(false);
   const [clearingAuthSession, setClearingAuthSession] = useState(false);
@@ -127,6 +130,14 @@ export default function LoginPage() {
   const confirmedEmailHandledRef = useRef(false);
 
   const redirectTo = location.state?.from?.pathname || '/profile';
+  const signupPending = Boolean(location.state?.signupPending);
+
+  // Google (or Supabase) can send the person back here with an error in the
+  // URL. Show it in the usual error slot and tidy the address bar.
+  useEffect(() => {
+    const oauthError = readOAuthErrorFromUrl();
+    if (oauthError) setErrorMsg(friendlyError(oauthError, 'sign you in with Google').message);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -214,7 +225,7 @@ export default function LoginPage() {
 
             if (isCompleteProfile(profile)) {
               if (typeof window !== 'undefined') window.sessionStorage.removeItem(GOOGLE_AUTH_INTENT_KEY);
-              navigate('/profile', { replace: true });
+              navigate(consumePostLoginPath('/profile'), { replace: true });
               return;
             }
 
@@ -230,7 +241,7 @@ export default function LoginPage() {
             });
           } catch (err) {
             console.error('Google account check failed:', err);
-            setErrorMsg('We could not check your Google account. Please try again.');
+            setErrorMsg(friendlyError(err, 'check your Google account').message);
           }
         }
 
@@ -250,6 +261,7 @@ export default function LoginPage() {
     if (typeof window !== 'undefined') {
       window.sessionStorage.setItem(GOOGLE_AUTH_INTENT_KEY, 'login');
     }
+    storePostLoginPath(location.state?.from?.pathname);
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -262,7 +274,7 @@ export default function LoginPage() {
     });
 
     if (error) {
-      setErrorMsg(error.message || 'Could not start Google login. Please try again.');
+      setErrorMsg(friendlyError(error, 'start Google login').message);
     }
   }
 
@@ -297,7 +309,8 @@ export default function LoginPage() {
       const msg = String(error.message || '').toLowerCase();
 
       if (msg.includes('email not confirmed')) {
-        setErrorMsg('Please confirm your email before logging in. Check your inbox for the verification link.');
+        setNeedsConfirmation(true);
+        setErrorMsg('Please confirm your email before logging in. Check your inbox (and spam folder) for the confirmation link.');
       } else if (msg.includes('invalid login credentials')) {
         const emailDomain = submittedEmail.split('@')[1]?.toLowerCase() || '';
         const isLikelyGoogleEmail =
@@ -305,8 +318,8 @@ export default function LoginPage() {
 
         setErrorMsg(
           isLikelyGoogleEmail
-            ? 'Incorrect email or password. If you signed up with Google, please use “Log in with Google”.'
-            : 'Incorrect email or password.'
+            ? 'That email and password do not match. If you signed up with Google, please use "Log in with Google".'
+            : 'That email and password do not match.'
         );
       } else {
         setErrorMsg(friendlyError(error, 'log you in').message);
@@ -319,7 +332,7 @@ export default function LoginPage() {
       const syncedProfile = await syncProfileFromAuthUser(data?.user);
 
       if (!isCompleteProfile(syncedProfile)) {
-        throw new Error('Your account profile is incomplete. Please contact support if this continues.');
+        throw new Error('Your account profile is incomplete. Please email hello@mycareerdna.io if this continues.');
       }
 
       setLoading(false);
@@ -334,7 +347,7 @@ export default function LoginPage() {
       setLoading(false);
       setErrorMsg(
         profileError?.message ||
-          'Your login succeeded, but your CareerDNA profile could not be loaded. Please contact support if this continues.'
+          'Your login succeeded, but your CareerDNA profile could not be loaded. Please email hello@mycareerdna.io if this continues.'
       );
     }
   }
@@ -363,10 +376,60 @@ export default function LoginPage() {
           </header>
 
           {infoMsg ? <p className="auth-message success">{infoMsg}</p> : null}
-          {errorMsg ? <p className="auth-message error">{errorMsg}</p> : null}
+          {infoMsg && signupPending ? (
+            <p className="auth-message" style={{ marginTop: '-4px', fontSize: '0.88rem', color: '#52667f' }}>
+              Already have an account with this email?{' '}
+              <button
+                type="button"
+                className="auth-inline-link"
+                style={{ border: 0, padding: 0, margin: 0, background: 'transparent', font: 'inherit', cursor: 'pointer', color: '#2563eb', fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: '3px' }}
+                onClick={() => { setInfoMsg(''); navigate('/login', { replace: true, state: {} }); emailInputRef.current?.focus(); }}
+              >
+                Log in
+              </button>{' '}
+              or <Link to="/reset-password">reset your password</Link> instead.
+            </p>
+          ) : null}
+          {errorMsg ? (
+            <p className="auth-message error">
+              {errorMsg}
+              {needsConfirmation ? (
+                <>
+                  {' '}
+                  <button
+                    type="button"
+                    className="auth-inline-link"
+                    style={{ border: 0, padding: 0, margin: 0, background: 'transparent', font: 'inherit', cursor: 'pointer', color: 'inherit', fontWeight: 700, textDecoration: 'underline', textUnderlineOffset: '3px' }}
+                    disabled={resending}
+                    onClick={async () => {
+                      if (resending) return;
+                      setResending(true);
+                      try {
+                        const { error: resendError } = await supabase.auth.resend({
+                          type: 'signup',
+                          email: email.trim(),
+                          options: { emailRedirectTo: `${window.location.origin}/login?confirmed=1` },
+                        });
+                        if (resendError) throw resendError;
+                        setNeedsConfirmation(false);
+                        setErrorMsg('');
+                        setInfoMsg('We have sent a new confirmation email. It can take a minute to arrive.');
+                      } catch (e) {
+                        setErrorMsg(/rate|too many|seconds/i.test(e?.message || '') ? 'Please wait a minute before requesting another email.' : friendlyError(e, 'resend the email').message);
+                      } finally {
+                        setResending(false);
+                      }
+                    }}
+                  >
+                    {resending ? 'Sending...' : 'Resend the email'}
+                  </button>
+                </>
+              ) : null}
+            </p>
+          ) : null}
           {clearingAuthSession ? <p className="auth-message success">Preparing login...</p> : null}
 
-          <form className="auth-form" onSubmit={handleSubmit} autoComplete="off">
+          <form className="auth-form" onSubmit={handleSubmit}>
             <label className="auth-label">
               Email
               <span className="auth-input-wrap">

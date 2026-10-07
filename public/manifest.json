@@ -6,10 +6,16 @@
       "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#0f172a",
-  "background_color": "#ffffff"
+  "theme_color": "#2f6fed",
+  "background_color": "#ffffff",
+  "description": "Know yourself. Choose your future with confidence."
 }

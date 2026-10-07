@@ -1,5 +1,4 @@
-import { buildApiCandidates } from './config';
-import { supabase } from './supabaseClient';
+import { apiFetch } from './apiFetch';
 
 // In-memory cache for the session: the profile is fixed for a given results run,
 // so the study routes only change when the set of liked worlds/pathways changes.
@@ -36,56 +35,7 @@ export async function fetchFurtherStudy({
     likedPathwayTitles: Array.isArray(likedPathwayTitles) ? likedPathwayTitles : [],
   };
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  const accessToken = session?.access_token || '';
-  const candidates = buildApiCandidates('/api/further-study');
-  let lastError = null;
-
-  for (const url of candidates) {
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 20000);
-      let response;
-      try {
-        response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-          },
-          body: JSON.stringify(payload),
-          signal: controller.signal,
-        });
-      } finally {
-        clearTimeout(timer);
-      }
-
-      if (response.status === 404) {
-        lastError = new Error('Request failed: 404');
-        continue;
-      }
-
-      if (!response.ok) {
-        let message = `Request failed: ${response.status}`;
-        try {
-          const error = await response.json();
-          message = error?.error || message;
-        } catch {}
-        throw new Error(message);
-      }
-
-      {
-        const data = await response.json();
-        FS_CACHE.set(cacheKey, data);
-        return data;
-      }
-    } catch (error) {
-      lastError = error;
-    }
-  }
-
-  throw lastError || new Error('Could not load your study routes right now.');
+  const data = await apiFetch('/api/further-study', { method: 'POST', body: payload, timeoutMs: 45000 });
+  FS_CACHE.set(cacheKey, data);
+  return data;
 }

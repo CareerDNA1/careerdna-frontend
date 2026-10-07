@@ -44,7 +44,7 @@
 .fav-btn--primary:disabled:hover { background: #2f6fed; }
 .fav-foot { margin: 10px 0 0; color: #56657a; font-size: 0.86rem; line-height: 1.5; }
 /* One-line note pinned to the bottom of the profile cards (favourites, applications), matching the grades card. */
-.fav-foot--card { margin-top: auto; padding-top: 12px; color: #8a97a8; font-size: 0.78rem; line-height: 1.45; }
+.fav-foot--card { margin-top: auto; padding-top: 12px; color: #64748b; font-size: 0.78rem; line-height: 1.45; }
 .fav-empty { margin: 10px 0 0; color: #56657a; font-size: 0.86rem; line-height: 1.5; }
 
 /* Popup */
@@ -110,7 +110,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #7385a3;
+  color: #5e6f88;
 }
 .fav-group-count {
   display: inline-flex;
@@ -150,8 +150,8 @@
 }
 .fav-prev-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .fav-prev-title { min-width: 0; font-size: 0.92rem; color: #243447; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.fav-prev-sub { min-width: 0; font-size: 0.75rem; color: #7385a3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.fav-prev-type { flex: 0 0 auto; font-size: 0.76rem; color: #8a97ac; }
+.fav-prev-sub { min-width: 0; font-size: 0.75rem; color: #5e6f88; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fav-prev-type { flex: 0 0 auto; font-size: 0.76rem; color: #64748b; }
 .fav-prev-closed { flex: 0 0 auto; font-size: 0.68rem; font-weight: 800; color: #b42318; background: #fdecea; border: 1px solid #f6cfca; border-radius: 999px; padding: 2px 8px; }
 .fav-prev-more {
   align-self: flex-start;
@@ -184,10 +184,10 @@
 }
 .fav-item-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .fav-item-title { font-size: 0.92rem; font-weight: 600; color: #243447; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fav-item-sub { font-size: 0.78rem; color: #8a97ac; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fav-item-sub { font-size: 0.78rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fav-item-chev { flex: 0 0 auto; color: #c2cdde; transition: color 0.15s ease, transform 0.15s ease; }
 .fav-item--tappable:hover .fav-item-chev { color: #2f6fed; transform: translateX(2px); }
-.fav-item.is-expired .fav-item-title { color: #8a97a8; }
+.fav-item.is-expired .fav-item-title { color: #64748b; }
 .fav-item-expired {
   flex: 0 0 auto;
   font-size: 0.68rem;
@@ -259,7 +259,7 @@
 
 /* Saved course / job as a compact card with a link out. */
 .fav-linkcard { border: 1px solid #e6ebf3; border-radius: 14px; padding: 18px 18px 16px; margin-top: 4px; }
-.fav-linkcard__eyebrow { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #7385a3; }
+.fav-linkcard__eyebrow { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #5e6f88; }
 .fav-linkcard__title { font-size: 1.14rem; font-weight: 700; color: #12233c; letter-spacing: -0.01em; line-height: 1.25; margin-top: 4px; }
 .fav-linkcard__sub { font-size: 0.9rem; color: #5b6b8c; margin-top: 3px; }
 .fav-linkcard__link { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; color: #2f6fed; font-weight: 700; font-size: 0.9rem; text-decoration: none; }
@@ -274,7 +274,7 @@
   font-size: 0.76rem; color: #4b5c6b;
 }
 .fav-stat b { color: #1f2a37; font-weight: 700; }
-.fav-linkcard__statsnote { flex-basis: 100%; margin-top: 2px; font-size: 0.72rem; color: #8593a6; line-height: 1.4; }
+.fav-linkcard__statsnote { flex-basis: 100%; margin-top: 2px; font-size: 0.72rem; color: #64748b; line-height: 1.4; }
 /* The report card renders open by default inside the popup. */
 .fav-cardview .cw-accordion-item { border: 1px solid #e6ebf3; border-radius: 14px; }
 .fav-detail-head { display: flex; align-items: flex-start; gap: 13px; }
@@ -287,7 +287,7 @@
   background: #eaf1fe; color: #2f6fed;
 }
 .fav-detail-headtext { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.fav-detail-eyebrow { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #7385a3; }
+.fav-detail-eyebrow { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #5e6f88; }
 .fav-detail-title { font-size: 1.2rem; font-weight: 700; color: #12233c; letter-spacing: -0.01em; line-height: 1.2; }
 .fav-detail-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 2px; }
 .fav-detail-chip { font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: #eef2fb; color: #3f5a86; border: 1px solid #dbe6f7; }
@@ -369,7 +369,7 @@
 /* Top bar of an opened favourite: back on the left, report link on the right */
 .fav-topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-right: 44px; }
 .fav-topbar .fav-back { margin: 2px 0 16px; }
-.fav-back--report { color: #6b7a8c; font-weight: 600; }
+.fav-back--report { color: #5e6f88; font-weight: 600; }
 .fav-back--report:hover { color: #2f6fed; }
 
 /* Phones: rows carry a title, a status or "Applied" tag and a chevron, which
@@ -386,3 +386,6 @@
   .fav-item-chev, .fav-item-x { order: 2; }
   .fav-item-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.3; }
 }
+
+.fav-inline-link { border: 0; background: none; padding: 0; font: inherit; color: #2f6fed; font-weight: 650; cursor: pointer; }
+.fav-inline-link:hover { text-decoration: underline; }

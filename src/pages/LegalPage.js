@@ -3,23 +3,30 @@ import { Link, useNavigate } from 'react-router-dom';
 import logo from '../Assets/images/logo-career-dna.png';
 import './AuthPage.css';
 
-export const CAREERDNA_LEGAL_VERSION = '2026-05-19-v5';
+export const CAREERDNA_LEGAL_VERSION = '2026-10-05-v6';
+
+// Company details shown in the Terms and Privacy Notice.
+export const LEGAL_ENTITY = 'CareerDNA Ltd';
+export const LEGAL_ADDRESS = '35a Priory Road, London, NW6 4NN, United Kingdom';
+export const SUPPORT_EMAIL = 'hello@mycareerdna.io';
+// Where the Supabase project (accounts, results, advisor history) is hosted.
+export const DATA_REGION = 'the European Union (Ireland)';
 
 export const LEGAL_COPY = {
   terms: {
     title: 'Terms of Use',
     intro:
-      'These Terms of Use form a legal agreement between CareerDNA and each person who accesses or uses the CareerDNA platform. By creating an account, signing in, completing a questionnaire, generating a report, using AI-supported features or otherwise accessing the service, you agree to these Terms and to the Privacy Notice below.',
+      'These Terms of Use form a legal agreement between CareerDNA and each person who accesses or uses the CareerDNA platform. By creating an account, signing in, completing an assessment, generating a report, using AI-supported features or otherwise accessing the service, you agree to these Terms and to the Privacy Notice below.',
     sections: [
       {
         heading: '1. Definitions',
         body:
-          'In these Terms, “CareerDNA”, “we”, “us” and “our” refer to the provider of the CareerDNA platform. “User”, “you” and “your” refer to any person who accesses or uses the service. “Services” means the CareerDNA website, app, questionnaires, scoring tools, reports, AI-supported explanations, advisor features, dashboards, content, recommendations and related functionality. “Partner” means any school, university, employer, training provider or other organisation that introduces, purchases, administers or supports access to CareerDNA.',
+          'In these Terms, “CareerDNA”, “we”, “us” and “our” refer to the provider of the CareerDNA platform. “User”, “you” and “your” refer to any person who accesses or uses the service. “Services” means the CareerDNA website, app, assessments, scoring tools, reports, AI-supported explanations, advisor features, dashboards, content, recommendations and related functionality. “Partner” means any school, university, employer, training provider or other organisation that introduces, purchases, administers or supports access to CareerDNA.',
       },
       {
         heading: '2. Eligibility and acceptance',
         body:
-          'You may use CareerDNA only if you are legally able to agree to these Terms or have appropriate permission from a parent, guardian, school or other responsible organisation. CareerDNA is intended primarily for students, graduates and young people exploring education and career options, including users aged approximately 14 to 21. If you are under 18, you should use CareerDNA with appropriate adult, school or institutional support where required.',
+          'You may use CareerDNA only if you are legally able to agree to these Terms or have appropriate permission from a parent, guardian, school or other responsible organisation. CareerDNA is for people aged 13 and over. You confirm you are 13 or over when you create an account, and give your date of birth when you start the assessment; we do not keep accounts for anyone under 13; a parent, guardian or school can contact us about access instead. CareerDNA is intended primarily for students, graduates and young people exploring education and career options. If you are under 18, you should use CareerDNA with appropriate adult, school or institutional support where required.',
       },
       {
         heading: '3. What CareerDNA provides',
@@ -34,7 +41,7 @@ export const LEGAL_COPY = {
       {
         heading: '5. Career profiling and interpretation of results',
         body:
-          'CareerDNA uses questionnaire answers, scoring logic, user inputs, curated information and AI-supported explanations to generate personalised outputs. These outputs are intended as guidance and reflection tools only. They should not be treated as fixed labels, formal assessments, predictions of ability, employability, mental health, personality, academic success or future performance. CareerDNA results are exploratory and developmental: they reflect current self-reported patterns, preferences and interests at the time of use, and they may change as users grow, learn, gain experience and make new choices.',
+          'CareerDNA uses assessment answers, scoring logic, user inputs, curated information and AI-supported explanations to generate personalised outputs. These outputs are intended as guidance and reflection tools only. They should not be treated as fixed labels, formal assessments, predictions of ability, employability, mental health, personality, academic success or future performance. CareerDNA results are exploratory and developmental: they reflect current self-reported patterns, preferences and interests at the time of use, and they may change as users grow, learn, gain experience and make new choices.',
       },
       {
         heading: '6. Ethical use and anti-labelling',
@@ -64,7 +71,10 @@ export const LEGAL_COPY = {
       {
         heading: '11. Plans, payments, subscriptions and credits',
         body:
-          'Some features may require payment, a subscription, a coupon, institutional access or usage credits. Unless stated otherwise at the point of purchase or allocation, credits are personal to the account, non-transferable, have no cash value and may expire. We may change pricing, packages, limits, features and usage allowances from time to time. Refunds, renewals and cancellations are governed by the information shown at checkout, applicable consumer law and any additional offer terms.',
+          'Some features may require payment, a subscription, a coupon, institutional access or usage credits. Unless stated otherwise at the point of purchase or allocation, credits are personal to the account, non-transferable, have no cash value and may expire. We may change pricing, packages, limits, features and usage allowances from time to time. Refunds, renewals and cancellations are governed by the information shown at checkout, applicable consumer law and any additional offer terms. ' +
+          'Purchases must be made by someone aged 18 or over. If you are under 18, a parent or guardian must complete the purchase for you and agrees to these Terms on your behalf. By completing a purchase you confirm this. ' +
+          'Subscriptions are billed annually in advance and renew automatically at the end of each billing year unless cancelled. You can stop a subscription from renewing at any time from your account page; you keep access until the end of the billing year you have paid for and nothing further is charged. Advisor question packs are one-off purchases and are not refundable once the questions have been added to your account. ' +
+          'Access to paid features starts as soon as your payment is confirmed. By completing checkout you ask us to start providing the service immediately and acknowledge this. Where applicable consumer law gives you a right to cancel within a period after purchase, any refund will reflect the service already provided during that period. If something has gone wrong with a purchase, contact ' + SUPPORT_EMAIL + ' and we will look into it.',
       },
       {
         heading: '12. School, university, employer or partner access',
@@ -84,7 +94,7 @@ export const LEGAL_COPY = {
       {
         heading: '15. User content and licence',
         body:
-          'You are responsible for the information you submit, including questionnaire answers, introductory responses, advisor messages, feedback, preferences and support requests. By submitting content, you grant CareerDNA and its service providers a limited licence to process that content as necessary to provide, secure, maintain, improve and support the Services, generate outputs, manage accounts and comply with legal obligations.',
+          'You are responsible for the information you submit, including assessment answers, introductory responses, advisor messages, feedback, preferences and support requests. By submitting content, you grant CareerDNA and its service providers a limited licence to process that content as necessary to provide, secure, maintain, improve and support the Services, generate outputs, manage accounts and comply with legal obligations.',
       },
       {
         heading: '16. Service availability and changes',
@@ -126,102 +136,92 @@ export const LEGAL_COPY = {
   privacy: {
     title: 'Privacy Notice',
     intro:
-      'This Privacy Notice explains how CareerDNA collects, uses, stores and shares personal information. It is intended to be clear for students, young people, parents, schools, universities and individual users, while also explaining the main legal and operational basis for our data processing.',
+      'Last updated 5 October 2026. This notice explains, in plain language, what information CareerDNA collects about you, why, who else sees it, how long we keep it and what you can ask us to do. It is written so that students, parents, teachers and university staff can all follow it. If anything is unclear, email ' + SUPPORT_EMAIL + ' and we will explain.',
     sections: [
       {
-        heading: '1. Who is responsible for your data',
+        heading: '1. Who we are',
         body:
-          'CareerDNA is responsible for personal information processed through the platform unless a separate school, university, employer or Partner agreement states otherwise. In some institutional settings, a Partner may also have responsibilities for how the service is introduced, administered or explained to users.',
+          'CareerDNA is run by ' + LEGAL_ENTITY + ', ' + LEGAL_ADDRESS + '. We are the data controller for the personal information processed through the platform, which means we decide how and why it is used and we are responsible for looking after it. Where a school, college or university gives you access to CareerDNA, it may also hold some responsibility for how the service is introduced to you; that organisation will tell you if so. You can contact us about anything in this notice at ' + SUPPORT_EMAIL + '.',
       },
       {
-        heading: '2. Information we collect',
+        heading: '2. What we collect',
         body:
-          'We may collect account details such as name, email address, password or authentication information; age range, education stage, country, school or university context; questionnaire answers; introductory responses; calculated scores; archetype results; career worlds, pathways and subject suggestions; generated reports; advisor conversations; likes, dislikes and feedback choices; plan, coupon, payment or credit information; support messages; and technical data such as device type, browser, IP address, logs, cookies and security events.',
+          'Account: your name, email address and password (stored only in encrypted form). Age: at signup you confirm you are 13 or over. Your date of birth is asked once at the start of the assessment and used to show you content for your stage. Background: whether you are at school, college or university, your year, your subjects, your school or university name, your country, and whether you plan to go to university. Questionnaire: your answers to the CareerDNA questions and the scores, archetypes and recommendations calculated from them. Your choices: career worlds, pathways, degrees, apprenticeships and roles you like, dislike or save; predicted grades you enter; applications you record and any notes you add. Advisor: the questions you ask Your Advisor and the answers you receive. Payments: your plan, coupon use and payment status (your card details go to Stripe and never reach us). Support: problem reports and messages you send us. Technical: IP address, browser type, pages visited within CareerDNA, error logs and security events.',
       },
       {
-        heading: '3. How we use information',
+        heading: '3. Why we use it',
         body:
-          'We use personal information to create and manage accounts, authenticate users, provide questionnaires, calculate scores, generate reports, personalise recommendations, operate AI-supported features, save results, provide advisor functionality, administer plans or credits, process payments, provide support, maintain security, prevent misuse, fix bugs, improve reliability, understand product usage and comply with legal, regulatory, accounting or contractual obligations.',
+          'To create your account and let you sign in. To check you are old enough to use CareerDNA and show options for your stage. To calculate your results and write your report. To tailor the degrees, apprenticeships, courses, live vacancies and advice we show you to your stage, subjects and grades. To remember what you have liked, saved and applied to. To run Your Advisor. To take payments and give you the plan you paid for. To answer your questions and fix problems. To keep the platform secure and prevent misuse. To understand, in aggregate, how CareerDNA is used so we can improve it. To meet legal, accounting and safeguarding duties.',
       },
       {
-        heading: '4. Career profiling',
+        heading: '4. Our legal reasons',
         body:
-          'CareerDNA uses questionnaire responses and related profile information to generate personalised career and education guidance. This is profiling for educational and career exploration purposes. It is not a medical, psychological, employment, admissions or legally significant automated decision-making process. Users and Partners should not treat CareerDNA outputs as the sole basis for important decisions.',
+          'UK data protection law requires a legal reason for each use. Most of what we do is necessary to provide the service you asked for (contract). Security, product improvement, aggregated statistics and defending our legal position rely on our legitimate interests, which we balance against your interests, especially if you are under 18. Payment and accounting records are kept because the law requires it. Where we ask for your consent, for example to send you optional emails, you can withdraw it at any time. Safeguarding disclosures (section 9) are made to protect a person from harm.',
       },
       {
-        heading: '5. AI processing',
+        heading: '5. Career profiling',
         body:
-          'CareerDNA may send limited user profile information, recommendations, questionnaire summaries or conversation content to trusted AI service providers to generate reports, explanations or advisor responses. We aim to limit the information shared to what is reasonably necessary for the requested feature and to use providers subject to appropriate contractual and technical safeguards.',
+          'CareerDNA turns your answers into a profile and uses that profile to suggest career worlds, pathways, degrees and routes. This is profiling for education and career exploration only. It does not make decisions about you, and nothing in CareerDNA should be used by anyone as the sole basis for an important decision such as admission, grading, hiring or funding. You can question or disagree with any result, and the platform encourages you to.',
       },
       {
-        heading: '6. Legal basis for processing',
+        heading: '6. Artificial intelligence',
         body:
-          'Depending on the situation, we process personal information because it is necessary to provide the service requested by the user, because we have legitimate interests in operating, securing, improving and supporting the platform, because we need to comply with legal obligations, because a Partner arrangement supports the use of the platform, or because the user has given consent for a specific activity where consent is required.',
+          'Your report and Your Advisor are written with the help of OpenAI, an AI provider. We send OpenAI only what is needed: your assessment scores and recommendations, your education stage, your age band (for example 16 to 17, never your date of birth), whether you are in the UK or outside it, your subjects, your year and plans, your predicted grades if you entered them, your saved and applied items, your advisor questions and, for university students only, your university name. We do not send your name, email address, exact date of birth, school name or payment details. OpenAI processes this data to generate the response and, under our API terms, does not use it to train its models and deletes it after a short retention period for abuse monitoring. Advisor conversations are stored by CareerDNA so you can see them again.',
       },
       {
-        heading: '7. Younger users and children’s data',
+        heading: '7. Who else processes your data',
         body:
-          'CareerDNA may be used by younger users, including users aged under 18. We aim to collect only proportionate information, explain the service clearly, avoid unnecessary data use and apply privacy-conscious defaults. Where the service is used through a school or Partner, that organisation may provide additional notices, consent processes or support arrangements.',
+          'We use a small number of specialist companies to run CareerDNA. Each may only use your data to provide its service to us and is bound by a data processing agreement. Supabase: database and sign-in, where your account and results are stored. OpenAI: AI generation as described in section 6. Stripe: payments; Stripe handles your card and is its own controller for fraud prevention. Render: hosting for our server. Netlify: hosting for the website you see. Resend: sending transactional emails, including safeguarding alerts to our safeguarding lead. We also use public data from UCAS, the Office for Students, Discover Uni and the Institute for Apprenticeships to show rankings and courses; this does not involve your personal data.',
       },
       {
-        heading: '8. Sharing with schools, universities or partners',
+        heading: '8. Where your data is kept',
         body:
-          'Where CareerDNA is provided through a Partner, that Partner may help administer access, support users or understand engagement. Any access to identifiable individual results should be explained through the relevant Partner arrangement or privacy information. Aggregated or anonymised information may be shared to understand usage, completion, engagement or programme impact, provided individuals are not reasonably identifiable.',
+          'Your account, results and advisor history are stored in ' + DATA_REGION + '. Some providers, notably OpenAI, Stripe and parts of our hosting, process data in the United States. Where data leaves the UK we rely on the UK International Data Transfer Agreement or the UK Addendum to the EU Standard Contractual Clauses, together with each provider’s security commitments, so your data keeps the same level of protection.',
       },
       {
-        heading: '9. Service providers and subprocessors',
+        heading: '9. Younger users and safeguarding',
         body:
-          'We may use trusted providers for hosting, cloud infrastructure, database storage, authentication, email delivery, analytics, payment processing, security monitoring, customer support and AI-supported generation. These providers are permitted to process information only as needed to provide services to CareerDNA and should be subject to appropriate confidentiality, security and data protection obligations.',
+          'CareerDNA is designed for people aged 13 and over and many of our users are 13 to 17. You confirm you are 13 or over at signup and give your date of birth at the start of the assessment; we do not knowingly keep accounts for anyone under 13, and if we learn an account belongs to a child under 13 we close it and delete the data. We collect only what the service needs, we do not show advertising, we do not sell or share data for marketing, and we do not use nudges to encourage you to give us more information. If a message to Your Advisor suggests you or someone else may be at risk of harm, the advisor responds with care and shows you where to get help. We also record the message as flagged and may alert our named safeguarding lead, and where we believe it is necessary to protect someone from serious harm we may share information with your school, a parent or guardian, or the relevant authorities. Parents and guardians of users under 16 may contact us about their child’s account; we will need to verify the relationship first.',
       },
       {
-        heading: '10. Analytics and product improvement',
+        heading: '10. Schools, colleges and universities',
         body:
-          'We may use analytics to understand how users move through the platform, whether journeys are completed, where errors occur and which features need improvement. We aim to keep analytics proportionate and avoid placing sensitive raw questionnaire content into analytics tools unless there is a clear operational, safety or reliability reason and appropriate safeguards are in place.',
+          'Where you use CareerDNA through your school, college or university, that organisation can see aggregated information about how its students use the platform, such as completion rates and which career worlds are popular. It can see an individual student’s results only where the student has been told this clearly and the organisation’s agreement with us allows it. We never share advisor conversations with institutions except in the safeguarding circumstances described in section 9.',
       },
       {
-        heading: '11. Payments and transaction data',
+        heading: '11. How long we keep it',
         body:
-          'Where paid features are used, payment information may be processed by payment providers. CareerDNA may receive limited payment status, subscription, invoice, coupon, plan or credit information. We do not intend to store full card details unless explicitly stated and handled through an appropriate payment provider.',
+          'While your account is open we keep your data so your reports, favourites and history remain available to you. Advisor conversations are kept for the life of your account. Problem reports are kept for up to 2 years. Payment and invoice records are kept for 6 years as required by UK tax law. Security logs are kept for up to 12 months. If you do not sign in for 3 years we will email you and then delete your account unless you ask us not to. Anonymised statistics that cannot identify you may be kept indefinitely.',
       },
       {
-        heading: '12. Cookies and similar technologies',
+        heading: '12. Deleting your account',
         body:
-          'CareerDNA may use cookies or similar technologies for login, security, preferences, analytics and platform performance. Where required by law, users may be given choices about non-essential cookies. Essential cookies may be required for the platform to function correctly.',
+          'You can delete your account at any time from your Profile page. We then permanently delete your name, email address, date of birth, password, school or university name, grades, favourites, applications and notes, advisor conversations and problem reports, and we cancel any subscription without a refund for the remaining period. Your assessment scores, likes and dislikes are kept in anonymised form under a random code that cannot be linked back to you, so we can improve the model and report on usage. Payment records are kept in anonymised form for the legal retention period.',
       },
       {
-        heading: '13. Data retention',
+        heading: '13. Cookies and local storage',
         body:
-          'We keep personal information for as long as reasonably necessary to provide accounts, saved results, reports, advisor history, support, payments, security records, legal records, audit trails and dispute resolution. Users may request deletion of their account or certain information, but some limited records may need to be retained for legal, accounting, security or legitimate operational reasons.',
+          'CareerDNA uses your browser’s local storage to keep you signed in and to remember your progress through the assessment. These are essential to the service. We do not use advertising cookies or third-party analytics trackers. Stripe sets its own cookies on its checkout page for fraud prevention, which are covered by Stripe’s privacy notice.',
       },
       {
-        heading: '14. User rights',
+        heading: '14. Your rights',
         body:
-          'Subject to applicable data protection law, users may have rights to access, correct, delete, restrict, object to processing of, or receive a copy of their personal information. Requests may require identity verification. Some requests may be limited where information is needed for legal, security, payment, institutional, safeguarding, audit or dispute-resolution reasons.',
+          'You have the right to ask for a copy of your data, to have mistakes corrected, to have your data deleted, to limit or object to how we use it, to receive your data in a portable format and to withdraw any consent you have given. You can see and change most of your data yourself on the Profile page, and you can delete your account there. For anything else, email ' + SUPPORT_EMAIL + '. We will respond within one month and may need to confirm your identity first. These rights apply at any age; if you are under 18 you can exercise them yourself.',
       },
       {
         heading: '15. Security',
         body:
-          'CareerDNA uses technical and organisational measures intended to protect personal information, including authentication, access controls, secure infrastructure and appropriate provider safeguards. No online service can guarantee absolute security. Users should keep passwords private, use secure devices and log out on shared devices.',
+          'All data travels over encrypted connections and is stored encrypted at rest. Passwords are never stored in readable form. Access to your data is restricted by account so that no other user can read it, and our own staff access is limited and logged. Payments are handled entirely by Stripe, which is certified to the PCI DSS standard. No online service can promise absolute security, so please keep your password private and sign out on shared devices. If we ever suffer a breach that is likely to put you at risk we will tell you and the Information Commissioner’s Office without undue delay.',
       },
       {
-        heading: '16. International transfers',
+        heading: '16. Changes to this notice',
         body:
-          'Some providers may process information in countries outside the user’s country of residence. Where required, CareerDNA aims to use appropriate safeguards such as contractual protections, adequacy mechanisms or provider commitments designed to protect transferred information.',
+          'When we make a significant change we will update the date at the top, tell you through the platform or by email and, where the change affects how your data is used, ask you to review and accept the new notice when you next sign in. Earlier versions are available on request.',
       },
       {
-        heading: '17. Data accuracy',
+        heading: '17. Questions and complaints',
         body:
-          'CareerDNA outputs depend on the accuracy and completeness of the information users provide. Users can improve the usefulness of their results by answering honestly and carefully. Users may request correction of account information or other personal data where appropriate.',
-      },
-      {
-        heading: '18. Changes to this Privacy Notice',
-        body:
-          'We may update this Privacy Notice from time to time. Where changes are material, we may notify users through the platform, by email or by requesting renewed review or acceptance.',
-      },
-      {
-        heading: '19. Contact and data requests',
-        body:
-          'Questions about privacy, data use, AI processing, school access, deletion, correction or user rights should be sent through the contact or support details provided by CareerDNA on the platform or website.',
+          'Contact us first at ' + SUPPORT_EMAIL + ' or by post at ' + LEGAL_ENTITY + ', ' + LEGAL_ADDRESS + '; we aim to resolve concerns quickly. You also have the right to complain to the UK regulator, the Information Commissioner’s Office (ICO), at ico.org.uk or on 0303 123 1113.',
       },
     ],
   },

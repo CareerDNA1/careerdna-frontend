@@ -1,0 +1,54 @@
+/* Milestone celebration at 50% and 75% of the assessment: confetti falls over
+   the whole screen for a moment, with a short message under the question card. */
+.survey-confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 900;
+}
+.survey-confetti__piece {
+  position: absolute;
+  top: -20px;
+  border-radius: 2px;
+  opacity: 0;
+  animation-name: survey-confetti-fall;
+  animation-timing-function: cubic-bezier(.25,.6,.45,1);
+  animation-fill-mode: both;
+}
+@keyframes survey-confetti-fall {
+  0%   { opacity: 0; transform: translate3d(0, 0, 0) rotate(0deg); }
+  8%   { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(calc(var(--drift, 1) * 40px), 105vh, 0) rotate(720deg); }
+}
+.survey-confetti__piece:nth-child(even) { --drift: -1; }
+.survey-confetti__piece:nth-child(3n) { border-radius: 50%; }
+
+.survey-milestone {
+  margin: 16px auto 0;
+  max-width: 700px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  text-align: center;
+  background: linear-gradient(135deg, #eef4ff 0%, #f7f9ff 100%);
+  border: 1px solid #d6e2f8;
+  box-shadow: 0 10px 26px rgba(47, 111, 237, 0.12);
+  color: #1f2a37;
+  font-size: 0.98rem;
+  line-height: 1.45;
+  animation: survey-milestone-in 520ms cubic-bezier(.2,.9,.3,1.25) both;
+}
+.survey-milestone strong { font-weight: 750; }
+.survey-milestone--three-quarters {
+  background: linear-gradient(135deg, #eafaf1 0%, #f6fcf8 100%);
+  border-color: #c6ead6;
+  box-shadow: 0 10px 26px rgba(31, 158, 107, 0.14);
+}
+@keyframes survey-milestone-in { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: none; } }
+@media (max-width: 560px) {
+  .survey-milestone { padding: 12px 14px; font-size: 0.92rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .survey-confetti { display: none; }
+  .survey-milestone { animation: none; }
+}

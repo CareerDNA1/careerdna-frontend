@@ -25,8 +25,8 @@
 .cascade-list li { display: flex; flex-direction: column; gap: 1px; padding: 4px 0; }
 .cascade-list li + li { border-top: 1px solid #e6ebf3; padding-top: 7px; }
 .cascade-item-title { font-weight: 600; color: #12233c; }
-.cascade-item-kind { font-size: 0.76rem; color: #7385a3; }
-.cascade-more { color: #7385a3; }
+.cascade-item-kind { font-size: 0.76rem; color: #5e6f88; }
+.cascade-more { color: #5e6f88; }
 .cascade-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 .cascade-btn {
   flex: 1 1 auto;

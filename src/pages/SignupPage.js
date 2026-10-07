@@ -2,28 +2,16 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../utils/supabaseClient';
 import { useAuth } from '../context/AuthContext';
+import { friendlyError } from '../utils/friendlyError';
+import { isStrongPassword, PASSWORD_RULES_TEXT } from '../utils/passwordRules';
+import { consumePostLoginPath, readOAuthErrorFromUrl, storePostLoginPath } from '../utils/postLoginPath';
+import PasswordRequirements from '../Components/Common/PasswordRequirements';
 import { getMyProfile, isCompleteProfile, syncProfileFromAuthUser } from '../utils/profile';
 import logo from '../Assets/images/logo-career-dna.png';
 import './AuthPage.css';
 import { CAREERDNA_LEGAL_VERSION, LegalModal } from './LegalPage';
 
 const GOOGLE_AUTH_INTENT_KEY = 'cdna_google_auth_intent';
-
-const PASSWORD_RULES = [
-  { id: 'length', label: 'At least 8 characters', test: (value) => String(value || '').length >= 8 },
-  { id: 'uppercase', label: 'One uppercase letter', test: (value) => /[A-Z]/.test(String(value || '')) },
-  { id: 'lowercase', label: 'One lowercase letter', test: (value) => /[a-z]/.test(String(value || '')) },
-  { id: 'number', label: 'One number', test: (value) => /\d/.test(String(value || '')) },
-  { id: 'symbol', label: 'One symbol, e.g. ! @ #', test: (value) => /[^A-Za-z0-9]/.test(String(value || '')) },
-];
-
-function getPasswordChecks(value) {
-  return PASSWORD_RULES.map((rule) => ({ ...rule, passed: rule.test(value) }));
-}
-
-function isStrongEnoughPassword(value) {
-  return getPasswordChecks(value).every((rule) => rule.passed);
-}
 
 function AuthInputIcon({ type }) {
   const icons = {
@@ -86,27 +74,6 @@ function AuthTrustStrip() {
   );
 }
 
-function PasswordRequirements({ password }) {
-  const hasStarted = Boolean(password);
-  if (!hasStarted) return null;
-  const checks = getPasswordChecks(password);
-  if (checks.every((rule) => rule.passed)) return null;
-
-  return (
-    <div style={passwordStyles.wrapper} aria-live="polite">
-      <p style={passwordStyles.intro}>Password requirements</p>
-      <div style={passwordStyles.grid}>
-        {checks.map((rule) => (
-          <span key={rule.id} style={{ ...passwordStyles.rule, ...(rule.passed ? passwordStyles.rulePassed : passwordStyles.rulePending) }}>
-            <span style={passwordStyles.icon}>{rule.passed ? '✓' : '○'}</span>
-            {rule.label}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 const googleButtonStyle = {
   width: '100%',
   minHeight: '44px',
@@ -137,16 +104,6 @@ const inlineLegalButtonStyle = {
   fontWeight: 600,
   textDecoration: 'underline',
   textUnderlineOffset: '3px',
-};
-
-const passwordStyles = {
-  wrapper: { marginTop: '8px', padding: '12px 14px', borderRadius: '16px', background: '#f8fbff', border: '1px solid #dce8ff' },
-  intro: { margin: '0 0 8px', fontSize: '0.78rem', fontWeight: 700, color: '#40516b' },
-  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '7px 10px' },
-  rule: { display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', lineHeight: 1.35, transition: 'color 0.15s ease' },
-  rulePending: { color: '#7a8798' },
-  rulePassed: { color: '#166534', fontWeight: 700 },
-  icon: { width: '16px', display: 'inline-flex', justifyContent: 'center', fontWeight: 900 },
 };
 
 const googleCompletionCardStyle = {
@@ -218,6 +175,9 @@ const googleCompletionBackButtonStyle = {
   cursor: 'pointer',
 };
 
+// Age: CareerDNA is for ages 13 and over (UK GDPR). At signup the person
+// confirms this with a tick; the date of birth is asked once in the
+// questionnaire intro, where it is used to tailor options by stage.
 export default function SignupPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -232,12 +192,20 @@ export default function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [acceptedLegal, setAcceptedLegal] = useState(false);
+  const [confirmedAge, setConfirmedAge] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [infoMsg] = useState(location.state?.message || '');
   const [loading, setLoading] = useState(false);
   const [checkingGoogleAccount, setCheckingGoogleAccount] = useState(false);
   const [googleCompletionMode, setGoogleCompletionMode] = useState(false);
   const [legalModalTab, setLegalModalTab] = useState(null);
+
+  // Google (or Supabase) can send the person back here with an error in the
+  // URL. Show it in the usual error slot and tidy the address bar.
+  useEffect(() => {
+    const oauthError = readOAuthErrorFromUrl();
+    if (oauthError) setErrorMsg(friendlyError(oauthError, 'sign you in with Google').message);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -250,7 +218,7 @@ export default function SignupPage() {
         user.identities?.some((identity) => identity.provider === 'google');
 
       if (!isGoogleUser) {
-        navigate('/profile', { replace: true });
+        navigate(consumePostLoginPath('/profile'), { replace: true });
         return;
       }
 
@@ -261,13 +229,13 @@ export default function SignupPage() {
 
         if (isCompleteProfile(profile)) {
           if (typeof window !== 'undefined') window.sessionStorage.removeItem(GOOGLE_AUTH_INTENT_KEY);
-          navigate('/profile', { replace: true });
+          navigate(consumePostLoginPath('/profile'), { replace: true });
           return;
         }
 
         setGoogleCompletionMode(true);
       } catch (err) {
-        if (!cancelled) setErrorMsg(err.message || 'Could not check your Google account. Please try again.');
+        if (!cancelled) setErrorMsg(friendlyError(err, 'check your Google account').message);
       } finally {
         if (!cancelled) setCheckingGoogleAccount(false);
       }
@@ -283,6 +251,7 @@ export default function SignupPage() {
     setErrorMsg('');
 
     setLoading(true);
+    storePostLoginPath(location.state?.from?.pathname);
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -296,12 +265,14 @@ export default function SignupPage() {
 
     if (error) {
       setLoading(false);
-      setErrorMsg(error.message);
+      setErrorMsg(friendlyError(error, 'start Google sign-in').message);
     }
   }
 
   async function handleCompleteGoogleSignup() {
     setErrorMsg('');
+
+    if (!confirmedAge) { setErrorMsg('Please confirm that you are 13 or over.'); return; }
 
     if (!acceptedLegal) {
       setErrorMsg('Please agree to the Terms of Use and confirm you have read the Privacy Notice before creating your account.');
@@ -314,11 +285,12 @@ export default function SignupPage() {
         accepted_terms: true,
         accepted_privacy: true,
         legal_version: CAREERDNA_LEGAL_VERSION,
+        age_confirmed: true,
       });
       if (typeof window !== 'undefined') window.sessionStorage.removeItem(GOOGLE_AUTH_INTENT_KEY);
-      navigate('/profile', { replace: true });
+      navigate(consumePostLoginPath('/profile'), { replace: true });
     } catch (err) {
-      setErrorMsg(err.message || 'Could not create your CareerDNA account. Please try again.');
+      setErrorMsg(friendlyError(err, 'create your CareerDNA account').message);
       setLoading(false);
     }
   }
@@ -332,6 +304,8 @@ export default function SignupPage() {
       return;
     }
 
+    if (!confirmedAge) { setErrorMsg('Please confirm that you are 13 or over.'); return; }
+
     if (!acceptedLegal) {
       setErrorMsg('Please agree to the Terms of Use and confirm you have read the Privacy Notice before creating your account.');
       return;
@@ -342,8 +316,8 @@ export default function SignupPage() {
       return;
     }
 
-    if (!isStrongEnoughPassword(password)) {
-      setErrorMsg('Please make your password stronger. Use at least 8 characters, including uppercase and lowercase letters, a number and a symbol.');
+    if (!isStrongPassword(password)) {
+      setErrorMsg(PASSWORD_RULES_TEXT);
       return;
     }
 
@@ -358,6 +332,7 @@ export default function SignupPage() {
         data: {
           first_name: firstName.trim(),
           last_name: lastName.trim(),
+          age_confirmed: true,
           accepted_terms: true,
           accepted_privacy: true,
           legal_version: CAREERDNA_LEGAL_VERSION,
@@ -371,20 +346,20 @@ export default function SignupPage() {
     setLoading(false);
 
     if (error) {
-      setErrorMsg(error.message);
+      setErrorMsg(friendlyError(error, 'create your account').message);
       return;
     }
 
     navigate('/login', {
       replace: true,
-      state: { message: 'Account created. Please check your email, confirm your account, then log in.' },
+      state: { message: 'Account created. Please check your email, confirm your account, then log in.', signupPending: true },
     });
   }
 
   const cardTitle = googleCompletionMode ? 'Complete your Google signup' : 'Create your account';
   const cardSubtitle = googleCompletionMode
     ? 'Confirm the terms below to create your CareerDNA account.'
-    : 'Set up your CareerDNA profile and start building a clearer picture of your future.';
+    : '';
 
   return (
     <main className="auth-page auth-page--split auth-page--form">
@@ -404,7 +379,7 @@ export default function SignupPage() {
         <section className="auth-card" style={googleCompletionMode ? googleCompletionCardStyle : undefined} aria-labelledby="signup-title">
           <header className="auth-header">
             <h1 id="signup-title" className="auth-title">{cardTitle}</h1>
-            <p className="auth-subtitle">{cardSubtitle}</p>
+            {cardSubtitle ? <p className="auth-subtitle">{cardSubtitle}</p> : null}
           </header>
 
           {infoMsg && !googleCompletionMode ? <p className="auth-message success">{infoMsg}</p> : null}
@@ -422,6 +397,10 @@ export default function SignupPage() {
               </div>
 
               <div style={googleLegalPanelStyle}>
+                <label className="auth-legal-check" style={{ margin: '0 0 10px', alignItems: 'flex-start' }}>
+                  <input type="checkbox" checked={confirmedAge} onChange={(e) => setConfirmedAge(e.target.checked)} />
+                  <span>I confirm that I am 13 or over.</span>
+                </label>
                 <label className="auth-legal-check" style={{ margin: 0, alignItems: 'flex-start' }}>
                   <input type="checkbox" checked={acceptedLegal} onChange={(e) => setAcceptedLegal(e.target.checked)} />
                   <span>
@@ -435,7 +414,7 @@ export default function SignupPage() {
 
               <div style={googleCompletionActionsStyle}>
                 <button className="auth-button" style={googleCompletionPrimaryButtonStyle} type="button" disabled={loading} onClick={handleCompleteGoogleSignup}>
-                  {loading ? 'Creating account…' : 'Finish creating my account'}
+                  {loading ? 'Creating account...' : 'Finish creating my account'}
                 </button>
 
                 <button
@@ -461,10 +440,16 @@ export default function SignupPage() {
 
                 <label className="auth-label">Email<span className="auth-input-wrap"><input className="auth-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" placeholder="you@example.com" required /></span></label>
 
-                <label className="auth-label">Password<span className="auth-password-wrap auth-input-wrap"><input className="auth-input auth-input--password-toggle" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setPasswordFocused(true)} onBlur={() => setPasswordFocused(false)} autoComplete="new-password" minLength={8} title="Use at least 8 characters, including uppercase and lowercase letters, a number and a symbol." required /><button type="button" className="auth-password-toggle" onClick={() => setShowPassword((current) => !current)} aria-label={showPassword ? 'Hide password' : 'Show password'}><EyeIcon hidden={!showPassword} /></button></span>{(passwordFocused || password.length > 0) && <PasswordRequirements password={password} />}</label>
+                <div className="auth-row">
+                <label className="auth-label">Password<span className="auth-password-wrap auth-input-wrap"><input className="auth-input auth-input--password-toggle" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setPasswordFocused(true)} onBlur={() => setPasswordFocused(false)} autoComplete="new-password" minLength={8} required /><button type="button" className="auth-password-toggle" onClick={() => setShowPassword((current) => !current)} aria-label={showPassword ? 'Hide password' : 'Show password'}><EyeIcon hidden={!showPassword} /></button></span>{(passwordFocused || password.length > 0) && <PasswordRequirements password={password} />}</label>
 
                 <label className="auth-label">Confirm password<span className="auth-password-wrap auth-input-wrap"><input className="auth-input auth-input--password-toggle" type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} autoComplete="new-password" minLength={8} required /><button type="button" className="auth-password-toggle" onClick={() => setShowConfirmPassword((current) => !current)} aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}><EyeIcon hidden={!showConfirmPassword} /></button></span></label>
+                </div>
 
+                <label className="auth-legal-check">
+                  <input type="checkbox" checked={confirmedAge} onChange={(e) => setConfirmedAge(e.target.checked)} />
+                  <span>I confirm that I am 13 or over.</span>
+                </label>
                 <label className="auth-legal-check">
                   <input type="checkbox" checked={acceptedLegal} onChange={(e) => setAcceptedLegal(e.target.checked)} />
                   <span>
@@ -475,14 +460,14 @@ export default function SignupPage() {
                   </span>
                 </label>
 
-                <button className="auth-button" type="submit" disabled={loading}>{loading ? 'Creating account…' : 'Create account'}</button>
+                <button className="auth-button" type="submit" disabled={loading}>{loading ? 'Creating account...' : 'Create account'}</button>
               </form>
 
               <div className="auth-divider" aria-hidden="true"><span>or</span></div>
 
               <button type="button" style={googleButtonStyle} onClick={handleGoogleSignup} disabled={loading}>
                 <GoogleIcon />
-                {loading ? 'Opening Google…' : 'Continue with Google'}
+                {loading ? 'Opening Google...' : 'Continue with Google'}
               </button>
 
               <div className="auth-links auth-links--plain">

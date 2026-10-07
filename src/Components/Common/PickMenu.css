@@ -12,7 +12,7 @@
 .profile-run-menu-item:disabled { opacity: 0.45; cursor: default; }
 .apps-pick-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pick-item-label { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-.pick-item-hint { flex: 0 0 auto; font-size: 0.72rem; font-weight: 500; color: #8a97ac; }
+.pick-item-hint { flex: 0 0 auto; font-size: 0.72rem; font-weight: 500; color: #64748b; }
 /* Standalone fallback for pages that do not load the profile stylesheet. */
 .apps-menu.profile-run-menu { padding: 4px; background: #fff; border: 1px solid #e8edf4; border-radius: 12px; box-shadow: 0 14px 34px rgba(15, 23, 42, 0.16); }
 .apps-menu .profile-run-menu-item { display: flex; align-items: center; gap: 9px; width: 100%; white-space: nowrap; border: none; background: transparent; border-radius: 8px; font-size: 0.85rem; font-family: inherit; color: #243447; cursor: pointer; text-align: left; }
@@ -20,12 +20,12 @@
 
 /* Long lists scroll inside the panel instead of running off the screen. */
 .pick-list { max-height: 262px; overflow-y: auto; overscroll-behavior: contain; }
-.pick-empty { padding: 10px 11px; font-size: 0.82rem; color: #8a97ac; }
+.pick-empty { padding: 10px 11px; font-size: 0.82rem; color: #64748b; }
 
 /* Search box at the top of a searchable picker. */
 .pick-search { display: flex; align-items: center; gap: 6px; margin: 2px 2px 6px; padding: 0 8px; border: 1px solid #d7e0ee; border-radius: 9px; background: #fff; }
 .pick-search:focus-within { border-color: #2f6fed; box-shadow: 0 0 0 2px #dbe7fb; }
-.pick-search svg { color: #8a97ac; flex: 0 0 auto; }
+.pick-search svg { color: #64748b; flex: 0 0 auto; }
 .pick-search input { flex: 1 1 auto; min-width: 0; border: 0; background: transparent; padding: 8px 0; font-family: inherit; font-size: 0.88rem; color: #1f2a37; outline: none; }
 .pick-search-clear { display: inline-flex; border: 0; background: #eef2f8; color: #56657a; border-radius: 999px; width: 20px; height: 20px; align-items: center; justify-content: center; cursor: pointer; padding: 0; }
 

@@ -16,9 +16,8 @@ export default function SurveyInstructions() {
   const started = !!progress.started;
   const introDone = !!progress.introDone;
 
-  // Compute dev flag WITHOUT a hook and BEFORE any early return
-  const qs = new URLSearchParams(location.search);
-  const isDev = process.env.NODE_ENV !== 'production' || qs.has('dev');
+  // Simulate button only exists in local development builds; never on the live site.
+  const isDev = process.env.NODE_ENV !== 'production';
 
   // Guards in an effect
   useEffect(() => {

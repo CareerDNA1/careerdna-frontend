@@ -1,25 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { buildApiCandidates } from '../../utils/config';
+import { apiFetch } from '../../utils/apiFetch';
 
 // Slim top-of-page banner shown when CareerDNA's backend or its Supabase
 // dependency is unreachable, so an outage reads as "temporary issue, we're on it"
 // instead of raw errors. Polls a lightweight health endpoint.
 async function checkHealth() {
-  const candidates = buildApiCandidates('/api/health');
-  for (const url of candidates) {
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 12000);
-      const res = await fetch(url, { signal: controller.signal });
-      clearTimeout(timer);
-      if (!res.ok) continue;
-      const data = await res.json();
-      return { reachable: true, supabase: data?.supabase !== false };
-    } catch (_) {
-      // try next candidate
-    }
+  try {
+    const data = await apiFetch('/api/health', { auth: false, timeoutMs: 12000 });
+    return { reachable: true, supabase: data?.supabase !== false };
+  } catch (_) {
+    return { reachable: false, supabase: true };
   }
-  return { reachable: false, supabase: true };
 }
 
 export default function ServiceBanner() {
@@ -55,16 +46,26 @@ export default function ServiceBanner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // While the banner is up the fixed navbars move down by its height (see the
+  // body.cdna-service-down rules in AccountNavbar.css and Navbar.css).
+  useEffect(() => {
+    if (!down) return undefined;
+    document.body.classList.add('cdna-service-down');
+    return () => document.body.classList.remove('cdna-service-down');
+  }, [down]);
+
   if (!down) return null;
 
   return (
     <div
       role="status"
       style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 4000,
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 30050,
+        height: 40, boxSizing: 'border-box', display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: '#fef3c7', color: '#7c5e10', borderBottom: '1px solid #f6d879',
-        padding: '9px 16px', textAlign: 'center', fontSize: '0.88rem', fontWeight: 600,
+        padding: '0 16px', textAlign: 'center', fontSize: '0.84rem', lineHeight: 1.2, fontWeight: 600,
         fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif",
+        overflow: 'hidden',
       }}
     >
       Some features are temporarily unavailable due to a service provider issue. Please try again shortly.

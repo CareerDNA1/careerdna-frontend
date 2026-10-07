@@ -218,7 +218,7 @@ export default function SurveyComponent({
 
         <div className="survey-complete-badge" aria-hidden="true">🎉</div>
 
-        <h3 className="survey-complete-title">Congratulations, you’ve completed the survey.</h3>
+        <h3 className="survey-complete-title">Congratulations, you have completed the assessment.</h3>
         <p className="survey-complete-text">
           Your answers are ready. Next, CareerDNA will turn your responses into your personalised profile and analysis.
         </p>
@@ -286,7 +286,7 @@ export default function SurveyComponent({
 
   return (
     <div className="survey-wrapper" ref={wrapperRef} tabIndex={-1} style={cardStyle}>
-      <h2 className="section-title">CareerDNA Survey</h2>
+      <h2 className="section-title">CareerDNA Assessment</h2>
 
       {isLast && finishing ? renderFinishingScreen() : isLast && readyToFinish && showCompletionScreen ? renderCompletionScreen() : (
         <>
@@ -336,7 +336,7 @@ export default function SurveyComponent({
               style={{
                 border: 0,
                 background: 'transparent',
-                color: '#8a95a6',
+                color: '#64748b',
                 fontSize: 12,
                 fontWeight: 600,
                 cursor: 'pointer',
@@ -345,7 +345,7 @@ export default function SurveyComponent({
                 textUnderlineOffset: 3,
               }}
             >
-              Exit survey
+              Exit assessment
             </button>
           )}
         </div>
@@ -419,19 +419,8 @@ export default function SurveyComponent({
                 letterSpacing: '-0.02em',
               }}
             >
-              Exit survey?
+              Exit assessment?
             </h3>
-
-            <p
-              style={{
-                margin: '0 0 12px',
-                color: '#52667f',
-                fontSize: 14,
-                lineHeight: 1.6,
-              }}
-            >
-              If you exit now, your current survey progress will be lost.
-            </p>
 
             <p
               style={{
@@ -441,7 +430,7 @@ export default function SurveyComponent({
                 lineHeight: 1.6,
               }}
             >
-              Alternatively, you can keep this browser tab open and complete the survey later.
+              Your answers so far are saved on this device. When you come back to the assessment from your profile, you can carry on from this question.
             </p>
 
             <div

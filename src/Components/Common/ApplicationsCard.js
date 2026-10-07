@@ -14,6 +14,8 @@ import DatePicker from './DatePicker';
 import Celebration from './Celebration';
 import PickMenu from './PickMenu';
 import './CascadeRemoveModal.css';
+import InlineError from './InlineError';
+import { friendlyError } from '../../utils/friendlyError';
 import './ApplicationsCard.css';
 
 // "Your applications" card on the profile page. Same shape as the favourites
@@ -54,6 +56,12 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
   const [eventDraft, setEventDraft] = useState('');
   const [calPrompt, setCalPrompt] = useState(false); // "Add it to your calendar?" after saving a date
   const [error, setError] = useState('');
+  // What "Try again" should do for the current error (null: no retry offered).
+  const [errorRetry, setErrorRetry] = useState(null);
+  const fail = (err, context, retry = null) => {
+    setError(friendlyError(err, context).message);
+    setErrorRetry(retry ? () => retry : null);
+  };
   const [form, setForm] = useState({ kind: isUniversity ? 'job' : 'apprenticeship', title: '', organisation: '', url: '', closingDate: '', appliedAt: '' });
   const titleRef = useRef(null);
   // A university's reply on a UCAS choice, recorded from inside the choice card.
@@ -105,7 +113,7 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
     if (typeof onApplyFavourite !== 'function') return;
     const key = `${item.type}|${item.id}`;
     try { setApplyingKey(key); setError(''); await onApplyFavourite(item); }
-    catch (e) { setError(e?.message || 'Could not add this application.'); }
+    catch (e) { fail(e, 'add this application', () => applyCandidate(item)); }
     finally { setApplyingKey(''); }
   };
   const back = () => { if (detail && isUcasChoice(detail, stage)) setUcasOpen(true); setDetailId(''); setConfirmRemove(false); setNoteEditing(false); setCondEditing(false); setChancesTip(''); setEventEditing(false); setCalPrompt(false); setError(''); };
@@ -116,20 +124,20 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
     setCondEditing(false);
     if (value === ucasOf(app)) return;
     try { setBusy(true); setError(''); replace(await ucasSetDecision(app, value)); if (value === 'offer_unconditional') celebrate(); }
-    catch (e) { setError(e?.message || 'Could not save this decision.'); }
+    catch (e) { fail(e, 'save this decision', () => setDecision(app, value)); }
     finally { setBusy(false); }
   };
   const saveConditions = async (app) => {
     if (busy) return;
     try { setBusy(true); setError(''); replace(await ucasSetDecision(app, 'offer_conditional', condDraft)); setCondEditing(false); celebrate(); }
-    catch (e) { setError(e?.message || 'Could not save this decision.'); }
+    catch (e) { fail(e, 'save this decision', () => saveConditions(app)); }
     finally { setBusy(false); }
   };
 
   const withdraw = async (app) => {
     if (busy) return;
     try { setBusy(true); setError(''); replace(await ucasWithdraw(app)); }
-    catch (e) { setError(e?.message || 'Could not withdraw this choice.'); }
+    catch (e) { fail(e, 'withdraw this choice', () => withdraw(app)); }
     finally { setBusy(false); setConfirmRemove(false); }
   };
   const setStatus = async (app, status) => {
@@ -140,25 +148,25 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
       if (status === 'interview' && !app.item_meta?.eventAt) { setEventDraft(''); setEventEditing(true); }
       if (status === 'offer' || status === 'accepted') celebrate();
     }
-    catch (e) { setError(e?.message || 'Could not update this application.'); }
+    catch (e) { fail(e, 'update this application', () => setStatus(app, status)); }
     finally { setBusy(false); }
   };
   const saveEvent = async (app) => {
     if (busy) return;
     try { setBusy(true); setError(''); replace(await updateApplicationEvent(app.id, eventDraft || null, app)); setEventEditing(false); setCalPrompt(Boolean(eventDraft)); }
-    catch (e) { setError(e?.message || 'Could not save the date.'); }
+    catch (e) { fail(e, 'save the date', () => saveEvent(app)); }
     finally { setBusy(false); }
   };
   const saveNote = async (app) => {
     if (busy) return;
     try { setBusy(true); setError(''); await updateApplicationNote(app.id, noteDraft); replace({ ...app, note: noteDraft }); setNoteEditing(false); }
-    catch (e) { setError(e?.message || 'Could not save the note.'); }
+    catch (e) { fail(e, 'save the note', () => saveNote(app)); }
     finally { setBusy(false); }
   };
   const remove = async (app) => {
     if (busy) return;
     try { setBusy(true); setError(''); await removeApplication(app.id); onChange(list.filter((a) => a.id !== app.id)); back(); }
-    catch (e) { setError(e?.message || 'Could not remove this application.'); }
+    catch (e) { fail(e, 'remove this application', () => remove(app)); }
     finally { setBusy(false); setConfirmRemove(false); }
   };
   const submitManual = async (e) => {
@@ -173,7 +181,7 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
       onChange([created, ...list]);
       setAdding(false);
       setForm({ kind: form.kind, title: '', organisation: '', url: '', closingDate: '', appliedAt: '' });
-    } catch (err) { setError(err?.message || 'Could not add this application.'); }
+    } catch (err) { fail(err, 'add this application'); }
     finally { setBusy(false); }
   };
 
@@ -275,7 +283,6 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
         </>
       ) : (
         <div className="apps-empty">
-          <div className="apps-empty-title">Nothing tracked yet</div>
           <p className="apps-empty-text">{stage === 'school'
             ? <>Tap <strong>Add to UCAS choices</strong> on a saved course, or <strong>Mark as applied</strong> on an apprenticeship ad, and follow it here.</>
             : <>Tap <strong>Mark as applied</strong> on a favourite once you have applied, and follow it here.</>}</p>
@@ -302,7 +309,7 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
                 <button type="button" className="fav-back" onClick={() => setUcasOpen(false)}>
                   <ArrowLeft size={15} weight="bold" aria-hidden="true" /> All applications
                 </button>
-                {error ? <p className="fav-error">{error}</p> : null}
+                <InlineError compact message={error} onRetry={errorRetry || undefined} />
                 <UcasPanel choices={ucasChoices} onChange={mergeRows} onOpen={(id) => setDetailId(id)} predicted={predictedGrades} schoolYear={schoolYear} onEnterGrades={onEnterGrades ? () => { closeAll(); onEnterGrades(); } : undefined} />
               </div>
             ) : detail ? (
@@ -311,7 +318,7 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
                 <button type="button" className="fav-back" onClick={back}>
                   <ArrowLeft size={15} weight="bold" aria-hidden="true" /> {ucas(detail) ? 'UCAS application' : 'All applications'}
                 </button>
-                {error ? <p className="fav-error">{error}</p> : null}
+                <InlineError compact message={error} onRetry={errorRetry || undefined} />
                 {(() => {
                   const m = (detail.item_meta && typeof detail.item_meta === 'object') ? detail.item_meta : {};
                   const { Icon } = kindStyle(detail);
@@ -374,7 +381,7 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
                                   <button type="button" className="cascade-btn cascade-btn--primary" disabled={busy || !eventDraft} onClick={() => saveEvent(detail)}>{busy ? 'Saving…' : 'Save'}</button>
                                   {m.eventAt ? (
                                     <button type="button" className="cascade-btn cascade-btn--danger" disabled={busy}
-                                      onClick={async () => { setEventDraft(''); try { setBusy(true); replace(await updateApplicationEvent(detail.id, null, detail)); setEventEditing(false); } catch (e2) { setError(e2?.message || 'Could not remove the date.'); } finally { setBusy(false); } }}>
+                                      onClick={async () => { setEventDraft(''); try { setBusy(true); replace(await updateApplicationEvent(detail.id, null, detail)); setEventEditing(false); } catch (e2) { fail(e2, 'remove the date'); } finally { setBusy(false); } }}>
                                       Remove date
                                     </button>
                                   ) : null}
@@ -443,7 +450,7 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
                           const isChoice = ucas(detail);
                           const afterSend = isChoice && ucasPhaseNow !== 'shortlisting';
                           if (afterSend && ucasOf(detail) === 'withdrawn') {
-                            return <button type="button" className="apps-remove-link" disabled={busy} onClick={async () => { if (busy) return; try { setBusy(true); setError(''); replace(await ucasUnwithdraw(detail)); } catch (e) { setError(e?.message || 'Could not restore this choice.'); } finally { setBusy(false); } }}>Withdrawn by mistake, put it back</button>;
+                            return <button type="button" className="apps-remove-link" disabled={busy} onClick={async () => { if (busy) return; try { setBusy(true); setError(''); replace(await ucasUnwithdraw(detail)); } catch (e) { fail(e, 'restore this choice'); } finally { setBusy(false); } }}>Withdrawn by mistake, put it back</button>;
                           }
                           const label = afterSend ? 'Withdraw this choice' : (isChoice ? 'Remove from choices' : 'Remove');
                           const question = afterSend
@@ -481,7 +488,7 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
                     </div>
                   </>
                 )}
-                {error ? <p className="fav-error">{error}</p> : null}
+                <InlineError compact message={error} onRetry={errorRetry || undefined} />
 
                 {picking ? (
                   <div className="apps-pick">

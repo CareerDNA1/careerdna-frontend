@@ -142,7 +142,13 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
 
   return (
     <>
-    <section className="acad-card">
+    <section
+      className="acad-card fav-card--clickable"
+      onClick={(e) => {
+        if (editing || e.target.closest('.acad-overlay, button, a, input, select, textarea')) return;
+        startEdit();
+      }}
+    >
       <div className="acad-head">
         <span className="acad-title">
           <GraduationCap size={18} weight="bold" aria-hidden="true" />
@@ -177,7 +183,7 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
         </div>
       ) : (
         <div className="acad-empty">
-          <p>Add your GCSEs and predicted A-levels to see Your chances in the rankings.</p>
+          <p>Add your GCSEs and predicted A-levels to see your chances in the rankings.</p>
         </div>
       )}
       </section>

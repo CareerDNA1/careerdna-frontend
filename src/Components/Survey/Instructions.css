@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&display=swap');
 
 /* ── Page shell ── */
 
@@ -51,6 +50,11 @@
 }
 
 .instp-copy { min-width: 0; }
+/* Desktop only: lift the text column (and its button) a touch so the block
+   sits a little higher against the illustration. */
+@media (min-width: 1101px) {
+  .instp-copy { margin-top: -14px; }
+}
 
 /* ── Illustration card ──
    align-self: stretch makes the card exactly as tall as the text column.

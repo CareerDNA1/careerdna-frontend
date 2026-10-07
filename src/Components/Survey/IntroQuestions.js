@@ -1,10 +1,78 @@
 // src/Components/Survey/IntroQuestions.js
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import Select from 'react-select';
+import { useNavigate } from 'react-router-dom';
+import Select, { components as selectComponents } from 'react-select';
 import Button from '../Common/Button';
+import DatePicker from '../Common/DatePicker';
 import './IntroQuestions.css';
 import { ageFromDOB, academicStartYear } from '../../utils/educationProgression';
 import { getIdentityProfile, IDENTITY_LOCK_ENABLED } from '../../utils/identityProfile';
+import { useAuth } from '../../context/AuthContext';
+import { clearLocalUserState } from '../../utils/clearLocalUserState';
+
+// Shown when the date of birth entered gives an age under 13. One button: it
+// signs the person out and returns them to the home page. The account itself is
+// not deleted here. Same card style as ResumeSurveyModal.
+function UnderAgeModal({ onChangeDate, onSignOut, busy }) {
+  return (
+    <div
+      style={{
+        position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center',
+        justifyContent: 'center', padding: 20, background: 'rgba(15, 23, 42, 0.34)',
+      }}
+    >
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="underAgeTitle"
+        style={{
+          width: 'min(100%, 430px)', borderRadius: 20, background: '#ffffff',
+          boxShadow: '0 22px 60px rgba(15, 23, 42, 0.22)', padding: '26px 28px 24px',
+          color: '#172033', textAlign: 'left',
+        }}
+      >
+        <h3
+          id="underAgeTitle"
+          style={{ margin: '0 0 10px', color: '#172033', fontSize: 20, lineHeight: 1.25, fontWeight: 750, letterSpacing: '-0.02em' }}
+        >
+          CareerDNA is for ages 13 and over
+        </h3>
+        <p style={{ margin: '0 0 12px', color: '#52667f', fontSize: 14, lineHeight: 1.6 }}>
+          The date of birth you entered means you are under 13. If that was a slip, go back and correct it. If it is right, we cannot continue and will sign you out.
+        </p>
+        <p style={{ margin: '0 0 22px', color: '#52667f', fontSize: 14, lineHeight: 1.6 }}>
+          A parent, guardian or your school can email hello@mycareerdna.io to ask about access.
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={onSignOut}
+            disabled={busy}
+            style={{
+              minHeight: 36, padding: '8px 16px', borderRadius: 999, border: '1px solid #dbe6f7',
+              background: '#ffffff', color: '#54657b', fontSize: 13, fontWeight: 700,
+              cursor: busy ? 'default' : 'pointer', opacity: busy ? 0.7 : 1,
+            }}
+          >
+            {busy ? 'Signing out...' : 'Sign me out'}
+          </button>
+          <button
+            type="button"
+            onClick={onChangeDate}
+            disabled={busy}
+            style={{
+              minHeight: 36, padding: '8px 18px', borderRadius: 999, border: 0,
+              background: '#2f6fed', color: '#ffffff', fontSize: 13, fontWeight: 700,
+              cursor: busy ? 'default' : 'pointer',
+            }}
+          >
+            Correct the date
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
 
 const countryOptions = [
   {
@@ -271,10 +339,10 @@ const countryOptions = [
 const flatCountryOptions = countryOptions.flatMap(group => group.options || []);
 
 const ageOptions = [
-  { value: '13-15', label: '13–15' },
-  { value: '16-18', label: '16–18' },
-  { value: '19-21', label: '19–21' },
-  { value: '22-24', label: '22–24' },
+  { value: '13-15', label: '13 to 15' },
+  { value: '16-18', label: '16 to 18' },
+  { value: '19-21', label: '19 to 21' },
+  { value: '22-24', label: '22 to 24' },
   { value: '25+', label: '25+' },
 ];
 
@@ -297,7 +365,24 @@ const statusOptions = [
 
 const universityLevelOptions = [
   { value: 'undergraduate', label: 'I’m an undergraduate student' },
+  { value: 'postgraduate', label: 'I’m a postgraduate student (coming soon)', isDisabled: true, comingSoon: true },
 ];
+
+// react-select ignores clicks on disabled options, so this wrapper lets the
+// "coming soon" postgraduate option explain itself when tapped.
+function makeLevelOption(onComingSoon) {
+  return function LevelOption(props) {
+    const { data, isDisabled } = props;
+    const handle = (e) => {
+      if (isDisabled && data?.comingSoon) { e.preventDefault(); e.stopPropagation(); onComingSoon(); }
+    };
+    return (
+      <div onMouseDown={handle} onTouchEnd={handle} onClick={handle}>
+        <selectComponents.Option {...props} />
+      </div>
+    );
+  };
+}
 
 const courseYearOptions = [
   { value: 1, label: 'Year 1' },
@@ -483,21 +568,22 @@ function subjectStartsWithFilter(option, rawInput) {
 }
 
 const schoolScopeOptions = [
-  { value: 'choose_gcse',      label: 'Choosing GCSE subjects or equivalent' },
-  { value: 'study_gcse',       label: 'Studying GCSE subjects or equivalent' },
-  { value: 'choose_alevels',   label: 'Choosing A-Levels or equivalent' },
-  { value: 'study_alevels',    label: 'Studying A-Levels or equivalent' },
-  { value: 'apply_uni',        label: 'Preparing to apply to university or college' },
-  { value: 'decide_uni',       label: 'Deciding between university offers or options' },
-  { value: 'apprenticeship',   label: 'Exploring apprenticeships or work routes' },
+  { value: 'choose_gcse',      label: 'Choosing my GCSE options' },
+  { value: 'study_gcse',       label: 'Working towards my GCSEs' },
+  { value: 'choose_alevels',   label: 'Deciding what to do after GCSEs' },
+  { value: 'study_alevels',    label: 'Studying A-levels, T-levels or at college' },
+  { value: 'decide_route',     label: 'University, apprenticeship or work?' },
+  { value: 'apply_uni',        label: 'Preparing my applications' },
+  { value: 'decide_uni',       label: 'Choosing between offers' },
+  { value: 'apprenticeship',   label: 'Looking for an apprenticeship or job' },
   { value: 'not_sure',         label: 'Not sure yet' },
 ];
 
 const schoolYearOptions = [
-  { value: 'year10', label: 'Year 10' },
-  { value: 'year11', label: 'Year 11' },
-  { value: 'year12', label: 'Year 12' },
-  { value: 'year13', label: 'Year 13' },
+  { value: 'year10', label: 'Year 10 (age 14 to 15, or equivalent)' },
+  { value: 'year11', label: 'Year 11 (age 15 to 16, or equivalent)' },
+  { value: 'year12', label: 'Year 12 (age 16 to 17, or equivalent)' },
+  { value: 'year13', label: 'Year 13 (age 17 to 18, or equivalent)' },
 ];
 
 const legacySchoolScopeMap = {
@@ -521,17 +607,19 @@ const schoolScopeMappedValues = {
 const getUniOptions = (status) => {
   if (status === 'postgraduate') {
     return [
-      { value: 'apply_further_postgrad', label: 'Apply for further postgraduate study' },
+      { value: 'explore_pathways',       label: 'Explore career pathways and roles' },
       { value: 'explore_internships',    label: 'Explore internships or placements' },
-      { value: 'explore_full_time',      label: 'Explore full-time roles' },
-      { value: 'explore_specialisms',    label: 'Explore other specialisms/subjects' },
+      { value: 'explore_full_time',      label: 'Explore graduate roles' },
+      { value: 'apply_further_postgrad', label: 'Explore further postgraduate study' },
+      { value: 'not_sure',               label: 'Not sure yet' },
     ];
   }
   return [
-    { value: 'explore_internships',  label: 'Explore internships or placements' },
-    { value: 'explore_full_time',    label: 'Explore full-time roles' },
-    { value: 'apply_postgrad',       label: 'Apply for postgraduate study' },
     { value: 'explore_pathways',     label: 'Explore career pathways and roles' },
+    { value: 'explore_internships',  label: 'Explore internships or placements' },
+    { value: 'explore_full_time',    label: 'Explore graduate roles' },
+    { value: 'apply_postgrad',       label: 'Explore postgraduate study' },
+    { value: 'not_sure',             label: 'Not sure yet' },
   ];
 };
 
@@ -545,7 +633,7 @@ const IntroQuestions = ({
   onNext,
   onBack,
   mode = 'start',
-  submitLabel = 'Discover your Career DNA!',
+  submitLabel = 'Discover your CareerDNA',
   overrideNextLabel,
   isLoading = false,
   showBackButton = false,
@@ -560,13 +648,27 @@ const IntroQuestions = ({
   const isEditMode = mode === 'edit' || embedded;
 
   const [touched, setTouched] = useState({});
+  const [showAllErrors, setShowAllErrors] = useState(false);
   const [showEarlySubjectWarning, setShowEarlySubjectWarning] = useState(false);
   const [pendingEarlySubjectWarning, setPendingEarlySubjectWarning] = useState(false);
   const [earlySubjectWarningDismissed, setEarlySubjectWarningDismissed] = useState(false);
   const [earlySubjectWarningAccepted, setEarlySubjectWarningAccepted] = useState(false);
   const [identityLocked, setIdentityLocked] = useState(false);
-  const [dobFocused, setDobFocused] = useState(false);
+  const [underAgeOpen, setUnderAgeOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
   const setFieldTouched = (name) => setTouched((t) => ({ ...t, [name]: true }));
+
+  const handleUnderAgeConfirm = async () => {
+    if (signingOut) return;
+    setSigningOut(true);
+    try { await signOut(); } catch (_) { /* local state is cleared regardless */ }
+    clearLocalUserState();
+    setSigningOut(false);
+    setUnderAgeOpen(false);
+    navigate('/', { replace: true });
+  };
 
   const errors = useMemo(() => {
     const v = introResponses || {};
@@ -579,8 +681,10 @@ const IntroQuestions = ({
         out.dateOfBirth = 'Please enter your date of birth.';
       } else {
         const yrs = ageFromDOB(v.dateOfBirth);
-        if (yrs === null || yrs < 10 || yrs > 100) {
+        if (yrs === null || yrs < 0 || yrs > 100) {
           out.dateOfBirth = 'Please enter a valid date of birth.';
+        } else if (yrs < 13) {
+          out.dateOfBirth = 'CareerDNA is for ages 13 and over.';
         }
       }
     }
@@ -711,6 +815,14 @@ const IntroQuestions = ({
     setIntroResponses(prev => ({ ...prev, dateOfBirth: value, age: ageBandFromDOB(value) }));
   };
 
+  // Under 13 by the entered date of birth. The field shows the reason inline and
+  // stays editable; the modal only appears if they try to continue regardless.
+  const underAgeByDob = (() => {
+    if (isEditMode || !introResponses?.dateOfBirth) return false;
+    const yrs = ageFromDOB(introResponses.dateOfBirth);
+    return yrs !== null && yrs >= 0 && yrs < 13;
+  })();
+
   // University course year -> stored start year (drives automatic progression).
   const handleCourseYearChange = (yearNum) => {
     const startYear = academicStartYear(new Date()) - (Number(yearNum) - 1);
@@ -839,7 +951,12 @@ const IntroQuestions = ({
     setIntroResponses(prev => ({ ...prev, statusGroup: '', status: '' }));
   };
 
+  const [postgradNotice, setPostgradNotice] = useState(false);
+  const [levelMenuOpen, setLevelMenuOpen] = useState(false);
+  const levelOptionComponent = useMemo(() => makeLevelOption(() => { setPostgradNotice(true); setLevelMenuOpen(false); }), []);
+
   const handleUniversityLevelChange = (selected) => {
+    setPostgradNotice(false);
     setIntroResponses(prev => ({
       ...prev,
       statusGroup: 'university',
@@ -854,6 +971,22 @@ const IntroQuestions = ({
 
   const status = introResponses?.status || '';
   const statusGroup = getStatusGroupValue(introResponses);
+
+  // Gentle "are you sure?" when the status is unusual for the age given. Not
+  // an error: an 18 year old in Year 13 or a 16 year old at university are
+  // both real, so this only asks them to double check.
+  const statusAgeCheck = (() => {
+    if (isEditMode || !introResponses?.dateOfBirth) return '';
+    const yrs = ageFromDOB(introResponses.dateOfBirth);
+    if (yrs === null || yrs < 13) return '';
+    if (statusGroup === 'school_college' && yrs >= 19) {
+      return `Just checking: your date of birth makes you ${yrs}. School or college is right for sixth form, resits and college courses. If you are at university, change your status above.`;
+    }
+    if (statusGroup === 'university' && yrs <= 16) {
+      return `Just checking: your date of birth makes you ${yrs}. If you are still at school or college, change your status above so we show you the right options.`;
+    }
+    return '';
+  })();
   const isSchool = status === 'school';
   const isUniversityGroup = statusGroup === 'university';
   const isUni = status === 'undergraduate' || status === 'postgraduate';
@@ -869,7 +1002,7 @@ const IntroQuestions = ({
   // modal) we surface validation errors immediately instead of waiting for the
   // field to be touched, so a missing required field is obvious rather than the
   // Re-run button being silently disabled.
-  const hasErr = (key) => !!errors[key] && (isEditMode || !!touched[key]);
+  const hasErr = (key) => !!errors[key] && (isEditMode || showAllErrors || !!touched[key]);
   const errMsg = (key) => hasErr(key) ? errors[key] : '';
 
   const hasEarlyGcseSubjectSelection = () => (
@@ -879,6 +1012,20 @@ const IntroQuestions = ({
   );
 
   const handlePrimarySubmit = () => {
+    if (underAgeByDob) { setUnderAgeOpen(true); return; }
+    // Anything still missing: show every error and scroll to the first one,
+    // rather than leaving the button silently disabled.
+    if (!isComplete) {
+      const keys = Object.keys(errors);
+      setTouched((t) => keys.reduce((acc, k) => ({ ...acc, [k]: true }), { ...t }));
+      setShowAllErrors(true);
+      const first = document.querySelector('.field.has-error') || document.querySelector(`[id$="Select"].field, #dobField`);
+      window.setTimeout(() => {
+        const el = document.querySelector('.field.has-error') || first;
+        scrollToEl(el);
+      }, 30);
+      return;
+    }
     if (hasEarlyGcseSubjectSelection() && !earlySubjectWarningAccepted) {
       setShowEarlySubjectWarning(true);
       setPendingEarlySubjectWarning(false);
@@ -924,23 +1071,19 @@ const IntroQuestions = ({
       {!isEditMode && (
         <div className={`field ${hasErr('dateOfBirth') ? 'has-error' : ''}`} id="dobField">
           <label className="required" htmlFor="dobInput">What is your date of birth?</label>
-          <input
-            id="dobInput"
-            type="date"
-            className="introDateInput"
+          <DatePicker
             value={introResponses.dateOfBirth || ''}
+            onChange={(v) => { handleDobChange(v || ''); setFieldTouched('dateOfBirth'); }}
+            placeholder="DD/MM/YYYY"
+            typeable
+            showToday={false}
+            min="1920-01-01"
             max={new Date().toISOString().slice(0, 10)}
-            onChange={(e) => handleDobChange(e.target.value)}
-            onFocus={() => setDobFocused(true)}
-            onBlur={() => { setDobFocused(false); setFieldTouched('dateOfBirth'); }}
-            aria-invalid={hasErr('dateOfBirth') ? 'true' : 'false'}
+            defaultView={`${new Date().getFullYear() - 16}-01-01`}
+            yearNav
+            className="intro-dob-picker"
           />
-          {dobFocused && (
-            <div className="field-hint">
-              Please enter your real date of birth. It is used to track your progression over time and cannot be
-              changed afterwards.
-            </div>
-          )}
+          <p className="intro-dob-note">You must be 13 or over. Enter your real date of birth; it cannot be changed later.</p>
           {hasErr('dateOfBirth') && <div className="error-text">{errMsg('dateOfBirth')}</div>}
         </div>
       )}
@@ -959,6 +1102,9 @@ const IntroQuestions = ({
               aria-invalid={hasErr('status') ? 'true' : 'false'}
         />
         {hasErr('status') && <div className="error-text">{errMsg('status')}</div>}
+        {!hasErr('status') && statusAgeCheck ? (
+          <div className="intro-check-note" role="status">{statusAgeCheck}</div>
+        ) : null}
       </div>
 
       {isUniversityGroup && (
@@ -974,9 +1120,17 @@ const IntroQuestions = ({
             onBlur={() => setFieldTouched('universityLevel')}
             placeholder="Select your university level"
             isOptionDisabled={option => option.isDisabled}
+            components={{ Option: levelOptionComponent }}
+            menuIsOpen={levelMenuOpen}
+            onMenuOpen={() => setLevelMenuOpen(true)}
+            onMenuClose={() => setLevelMenuOpen(false)}
             aria-invalid={hasErr('universityLevel') ? 'true' : 'false'}
               />
-          
+          {postgradNotice && (
+            <div className="subject-callout" role="status" aria-live="polite">
+              Postgraduate support is on its way. We are building it now and will let you know as soon as it is ready. In the meantime you are welcome to continue as an undergraduate to explore your profile.
+            </div>
+          )}
           {hasErr('universityLevel') && <div className="error-text">{errMsg('universityLevel')}</div>}
         </div>
       )}
@@ -1038,6 +1192,7 @@ const IntroQuestions = ({
           {isSchool && (
             <div className={`field ${hasErr('schoolYear') ? 'has-error' : ''}`} id="schoolYearSelect">
               <label className="required">What year group are you in?</label>
+              <p className="intro-dob-note" style={{ margin: '0 0 8px' }}>Years are as in England. If you study elsewhere, pick the year that matches your age or stage.</p>
               <Select
                 classNamePrefix="introSelect"
                 menuPlacement="bottom"
@@ -1210,7 +1365,7 @@ const IntroQuestions = ({
           size="lg"
           shine
           onClick={handlePrimarySubmit}
-          disabled={!isComplete || isLoading || typeof handleSubmit !== 'function'}
+          disabled={isLoading || typeof handleSubmit !== 'function'}
           aria-label={finalSubmitLabel}
         >
           {finalSubmitLabel}
@@ -1221,6 +1376,7 @@ const IntroQuestions = ({
           Please complete the highlighted fields above to continue.
         </p>
       )}
+      {underAgeOpen && <UnderAgeModal onChangeDate={() => setUnderAgeOpen(false)} onSignOut={handleUnderAgeConfirm} busy={signingOut} />}
     </div>
   );
 };

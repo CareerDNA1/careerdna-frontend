@@ -1,23 +1,24 @@
-import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import { AUTH_EXPIRED_EVENT } from './utils/apiFetch';
 import LandingPage from './pages/LandingPage';
 import TeamPage from './pages/TeamPage';
 
 import Start from './pages/Start';
 import SurveyIntro from './pages/SurveyIntro';
 import SurveyInstructions from './pages/SurveyInstructions';
-import SurveyQuestions from './pages/SurveyQuestions';
-import ResultsPage from './pages/ResultsPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import LegalPage, { PrivacyPage, TermsPage, LegalModal } from './pages/LegalPage';
 import ReportProblemModal from './Components/Common/ReportProblemModal';
+import LegalUpdateGate from './Components/Common/LegalUpdateGate';
+import WelcomeEmailTrigger from './Components/Common/WelcomeEmailTrigger';
+import GlobalFocusTrap from './Components/Common/GlobalFocusTrap';
 import ServiceBanner from './Components/Common/ServiceBanner';
-import RankingsModal from './Components/Rankings/RankingsModal';
 import ReportLimitModal from './Components/Common/ReportLimitModal';
 import { applyCouponCode } from './utils/applyCoupon';
 import { getMyProfile } from './utils/profile';
-import { hideSelectionTooltip } from './Components/Survey/SelectionInsightExplorer';
 import {
   PREMIUM_FEATURE_ATTR,
   PREMIUM_FEATURE_LABELS,
@@ -25,11 +26,10 @@ import {
   isPremiumPlan,
 } from './utils/premiumGate';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import ProfilePage from './pages/ProfilePage';
-import SavedResultPage from './pages/SavedResultPage';
-import AdminDashboard from './pages/AdminDashboard';
 import ErrorBoundary from './pages/ErrorBoundary';
+
 import TrustSecurityPage from './pages/TrustSecurityPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 import {
   RequireAuth,
@@ -37,7 +37,27 @@ import {
   IntroGuard,
   InstructionsGuard,
   ResultsGuard,
+  RequireAdmin,
 } from './pages/RouteGuards';
+
+// Heavy screens load on demand so the landing, login and signup pages arrive
+// first. Each becomes its own file that the browser fetches when first needed.
+const SurveyQuestions = lazy(() => import('./pages/SurveyQuestions'));
+const ResultsPage = lazy(() => import('./pages/ResultsPage'));
+const SavedResultPage = lazy(() => import('./pages/SavedResultPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const RankingsModal = lazy(() => import('./Components/Rankings/RankingsModal'));
+
+function RouteLoading() {
+  return (
+    <div className="cdna-route-loading" role="status" aria-live="polite">
+      <span className="cdna-route-loading-dot" />
+      <span className="cdna-route-loading-dot" />
+      <span className="cdna-route-loading-dot" />
+    </div>
+  );
+}
 
 // Intercepts clicks on footer Privacy/Terms links anywhere in the app and opens
 // the legal content as an in-place modal, instead of navigating to the full
@@ -135,11 +155,13 @@ function GlobalRankingsModal() {
 
   if (!target) return null;
   return (
-    <RankingsModal
-      subjectId={target.subjectId}
-      subjectTitle={target.subjectTitle}
-      onClose={() => setTarget(null)}
-    />
+    <Suspense fallback={null}>
+      <RankingsModal
+        subjectId={target.subjectId}
+        subjectTitle={target.subjectTitle}
+        onClose={() => setTarget(null)}
+      />
+    </Suspense>
   );
 }
 
@@ -188,11 +210,91 @@ function GlobalPremiumGate() {
   );
 }
 
+// Shown when the backend stops accepting the session (apiFetch raises
+// cdna:auth-expired on a 401). Only for people who were signed in during this
+// visit, and never on the auth pages themselves, so anonymous visitors on public
+// pages are left alone. Same card style as ResumeSurveyModal.
+const AUTH_PAGES = new Set(['/login', '/signup', '/reset-password']);
+
+function SessionExpiredGate() {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [open, setOpen] = useState(false);
+  const wasSignedIn = useRef(false);
+  if (user) wasSignedIn.current = true;
+
+  useEffect(() => {
+    const onExpired = () => {
+      if (!wasSignedIn.current) return;
+      if (AUTH_PAGES.has(window.location.pathname)) return;
+      setOpen(true);
+    };
+    window.addEventListener(AUTH_EXPIRED_EVENT, onExpired);
+    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, onExpired);
+  }, []);
+
+  // Fresh sign-in clears it.
+  useEffect(() => { if (user) setOpen(false); }, [user]);
+
+  if (!open) return null;
+
+  const goToLogin = async () => {
+    const from = { pathname: location.pathname, search: location.search };
+    setOpen(false);
+    wasSignedIn.current = false;
+    try { await signOut(); } catch (_) { /* the session is already gone */ }
+    navigate('/login', { replace: true, state: { from } });
+  };
+
+  return (
+    <div
+      style={{
+        position: 'fixed', inset: 0, zIndex: 1200, display: 'flex', alignItems: 'center',
+        justifyContent: 'center', padding: 20, background: 'rgba(15, 23, 42, 0.34)',
+      }}
+    >
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sessionExpiredTitle"
+        style={{
+          width: 'min(100%, 430px)', borderRadius: 20, background: '#ffffff',
+          boxShadow: '0 22px 60px rgba(15, 23, 42, 0.22)', padding: '26px 28px 24px',
+          color: '#172033', textAlign: 'left',
+        }}
+      >
+        <h3
+          id="sessionExpiredTitle"
+          style={{ margin: '0 0 10px', color: '#172033', fontSize: 20, lineHeight: 1.25, fontWeight: 750, letterSpacing: '-0.02em' }}
+        >
+          Your session has ended
+        </h3>
+        <p style={{ margin: '0 0 22px', color: '#52667f', fontSize: 14, lineHeight: 1.6 }}>
+          Your session has ended. Log in again to carry on where you were.
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button
+            type="button"
+            onClick={goToLogin}
+            style={{
+              minHeight: 36, padding: '8px 18px', borderRadius: 999, border: 0,
+              background: '#2f6fed', color: '#ffffff', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+            }}
+          >
+            Log in
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 // Body-level tooltips (archetype, trait, clarity, feedback and the pinned
 // definition boxes) live outside React, so a page change would otherwise leave
 // one floating on the next page. Hide them all whenever the route changes.
 export function hideAllFloatingTooltips() {
-  try { hideSelectionTooltip({ force: true }); } catch (_) { /* ignore */ }
+  try { window.dispatchEvent(new Event('cdna:hide-tooltips')); } catch (_) { /* ignore */ }
   document
     .querySelectorAll('.cdna-archetype-tooltip, .cdna-clarity-tooltip, .cdna-subdim-tooltip, .cdna-feedback-tooltip, .selection-floating-tooltip')
     .forEach((el) => { el.style.opacity = '0'; el.classList.remove('is-pinned'); });
@@ -210,10 +312,15 @@ export default function App() {
       <RouteChangeCleanup />
       <ServiceBanner />
       <GlobalLegalModal />
+      <LegalUpdateGate />
+      <SessionExpiredGate />
+      <WelcomeEmailTrigger />
+      <GlobalFocusTrap />
       <GlobalReportProblemModal />
       <GlobalPremiumGate />
       <GlobalRankingsModal />
       <ErrorBoundary>
+        <Suspense fallback={<RouteLoading />}>
         <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/team" element={<TeamPage />} />
@@ -227,7 +334,9 @@ export default function App() {
 
         <Route element={<RequireAuth />}>
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route element={<RequireAdmin />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+          </Route>
           <Route path="/start" element={<Start />} />
           <Route path="/app" element={<Navigate to="/start" replace />} />
           <Route path="/results/run/:runId" element={<SavedResultPage />} />
@@ -249,8 +358,9 @@ export default function App() {
           </Route>
         </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        </Suspense>
       </ErrorBoundary>
     </Router>
   );

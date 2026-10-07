@@ -6,6 +6,8 @@ import { OptionDropdown, showSelectionTooltip, hideSelectionTooltip, SignalBadge
 import { getSubjectIcon } from '../../utils/iconMap';
 import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank } from './ResultsFilter';
 import { loadRankingSubjectIndex } from '../../utils/rankings';
+import InlineError, { StillWorkingNote } from '../Common/InlineError';
+import { friendlyError } from '../../utils/friendlyError';
 
 // Format the structured GCSE minimums object into a short readable string,
 // e.g. { maths: 7, english: 5, science: 6 } -> "Maths 7, English 5, Science 6".
@@ -262,6 +264,8 @@ export function RouteItem({ route, open = false, onToggle, reaction = '', onReac
 export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles = [], archetypes = {}, subdimensions = [], savedReactions = {}, onItemReaction }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  // Bumped by "Try again" to re-run the load effect.
+  const [reloadTick, setReloadTick] = useState(0);
   // Seed from the session cache so re-opening the tab shows instantly (no spinner).
   const [groups, setGroups] = useState(() => {
     const cached = peekFurtherStudyCache(likedWorlds, likedPathwayTitles);
@@ -408,7 +412,7 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
         });
       } catch (err) {
         if (!cancelled) {
-          setError(err?.message || 'Could not load your study routes right now.');
+          setError(friendlyError(err, 'load your study routes').message);
           setGroups([]);
         }
       } finally {
@@ -419,7 +423,7 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [likedKey]);
+  }, [likedKey, reloadTick]);
 
   if (!likedWorlds.length) {
     return (
@@ -452,9 +456,12 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
       </div>
 
       {loading ? (
-        <p className="fs-none">Finding your study routes&hellip;</p>
+        <>
+          <p className="fs-none">Finding your study routes&hellip;</p>
+          <StillWorkingNote />
+        </>
       ) : error ? (
-        <p className="fs-error">{error}</p>
+        <InlineError message={error} onRetry={() => setReloadTick((t) => t + 1)} />
       ) : (
         <div className="selection-explorer__layout selection-explorer__layout--stacked">
           {/* Desktop / iPad: dropdown selector (the pill tabs below are hidden on

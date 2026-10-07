@@ -1,17 +1,15 @@
 // src/utils/telemetry.js
+import { apiFetch } from './apiFetch';
 
-// Generic POST helper (safe, non-blocking, logs warnings on failure)
-export async function postJson(url, payload) {
+// Generic POST helper (safe, non-blocking, logs warnings on failure).
+// `path` is a backend path such as '/api/cdna/complete'; apiFetch resolves the
+// base URL. No token is sent and keepalive lets it go out on page unload.
+export async function postJson(path, payload) {
   try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      keepalive: true, // allows sending on page unload
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) console.warn('telemetry non-OK', res.status);
+    await apiFetch(path, { method: 'POST', body: payload, auth: false, keepalive: true });
   } catch (e) {
-    console.warn('telemetry failed', e);
+    if (e?.status) console.warn('telemetry non-OK', e.status);
+    else console.warn('telemetry failed', e);
   }
 }
 

@@ -1,5 +1,21 @@
-import { buildApiCandidates } from './config';
-import { supabase } from './supabaseClient';
+import { apiFetch, ApiError } from './apiFetch';
+
+// Signed-in POST to a Stripe route. Maps apiFetch errors to the wording each
+// caller used before: a sign-in prompt when there is no token, a "service was
+// not found" message when every base URL answers 404, and the server's own
+// message (or a numbered fallback) for other errors.
+async function stripePost(path, { body, signInMessage, notFoundMessage, failPrefix }) {
+  try {
+    return await apiFetch(path, { method: 'POST', auth: 'required', body, timeoutMs: 30000 });
+  } catch (err) {
+    if (err instanceof ApiError) {
+      if (err.code === 'NOT_SIGNED_IN') throw new Error(signInMessage);
+      if (err.status === 404) throw new Error(notFoundMessage);
+      if (err.status) throw new Error(err.data?.message || err.data?.error || `${failPrefix} (${err.status}).`);
+    }
+    throw err;
+  }
+}
 
 export async function createCheckoutSession(plan) {
   const selectedPlan = String(plan || '').trim().toLowerCase();
@@ -8,109 +24,33 @@ export async function createCheckoutSession(plan) {
     throw new Error('Please choose a plan.');
   }
 
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  const accessToken = sessionData?.session?.access_token;
+  const data = await stripePost('/api/stripe/create-checkout-session', {
+    body: { plan: selectedPlan },
+    signInMessage: 'Please sign in again before continuing to checkout.',
+    notFoundMessage: 'Checkout service was not found.',
+    failPrefix: 'Could not start checkout',
+  });
 
-  if (sessionError) {
-    throw new Error(sessionError.message || 'Could not verify your login session.');
+  if (!data?.url) {
+    throw new Error('Stripe checkout did not return a checkout URL.');
   }
 
-  if (!accessToken) {
-    throw new Error('Please sign in again before continuing to checkout.');
-  }
-
-  const candidates = buildApiCandidates('/api/stripe/create-checkout-session');
-  let lastError = null;
-
-  for (const url of candidates) {
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ plan: selectedPlan }),
-      });
-
-      if (res.status === 404) {
-        lastError = new Error('Checkout service was not found.');
-        continue;
-      }
-
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        throw new Error(data?.message || data?.error || `Could not start checkout (${res.status}).`);
-      }
-
-      if (!data?.url) {
-        throw new Error('Stripe checkout did not return a checkout URL.');
-      }
-
-      return data;
-    } catch (err) {
-      if (err?.message && !String(err.message).includes('not found')) {
-        throw err;
-      }
-      lastError = err;
-    }
-  }
-
-  throw lastError || new Error('Could not start checkout right now.');
+  return data;
 }
 
 
 export async function createBillingPortalSession() {
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  const accessToken = sessionData?.session?.access_token;
+  const data = await stripePost('/api/stripe/create-billing-portal-session', {
+    signInMessage: 'Please sign in again before managing your plan.',
+    notFoundMessage: 'Billing portal service was not found.',
+    failPrefix: 'Could not open billing portal',
+  });
 
-  if (sessionError) {
-    throw new Error(sessionError.message || 'Could not verify your login session.');
+  if (!data?.url) {
+    throw new Error('Stripe billing portal did not return a URL.');
   }
 
-  if (!accessToken) {
-    throw new Error('Please sign in again before managing your plan.');
-  }
-
-  const candidates = buildApiCandidates('/api/stripe/create-billing-portal-session');
-  let lastError = null;
-
-  for (const url of candidates) {
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (res.status === 404) {
-        lastError = new Error('Billing portal service was not found.');
-        continue;
-      }
-
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        throw new Error(data?.message || data?.error || `Could not open billing portal (${res.status}).`);
-      }
-
-      if (!data?.url) {
-        throw new Error('Stripe billing portal did not return a URL.');
-      }
-
-      return data;
-    } catch (err) {
-      if (err?.message && !String(err.message).includes('not found')) {
-        throw err;
-      }
-      lastError = err;
-    }
-  }
-
-  throw lastError || new Error('Could not open billing portal right now.');
+  return data;
 }
 
 export async function changeSubscriptionPlan(plan) {
@@ -120,150 +60,41 @@ export async function changeSubscriptionPlan(plan) {
     throw new Error('Please choose either Explorer or Premium.');
   }
 
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  const accessToken = sessionData?.session?.access_token;
-
-  if (sessionError) {
-    throw new Error(sessionError.message || 'Could not verify your login session.');
-  }
-
-  if (!accessToken) {
-    throw new Error('Please sign in again before changing your plan.');
-  }
-
-  const candidates = buildApiCandidates('/api/stripe/change-subscription-plan');
-  let lastError = null;
-
-  for (const url of candidates) {
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ plan: selectedPlan }),
-      });
-
-      if (res.status === 404) {
-        lastError = new Error('Subscription change service was not found.');
-        continue;
-      }
-
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        throw new Error(data?.message || data?.error || `Could not change subscription (${res.status}).`);
-      }
-
-      return data;
-    } catch (err) {
-      if (err?.message && !String(err.message).includes('not found')) {
-        throw err;
-      }
-      lastError = err;
-    }
-  }
-
-  throw lastError || new Error('Could not change your subscription right now.');
+  return stripePost('/api/stripe/change-subscription-plan', {
+    body: { plan: selectedPlan },
+    signInMessage: 'Please sign in again before changing your plan.',
+    notFoundMessage: 'Subscription change service was not found.',
+    failPrefix: 'Could not change subscription',
+  });
 }
 
 export async function cancelScheduledDowngrade() {
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  const accessToken = sessionData?.session?.access_token;
-
-  if (sessionError) {
-    throw new Error(sessionError.message || 'Could not verify your login session.');
-  }
-
-  if (!accessToken) {
-    throw new Error('Please sign in again before changing your plan.');
-  }
-
-  const candidates = buildApiCandidates('/api/stripe/cancel-scheduled-downgrade');
-  let lastError = null;
-
-  for (const url of candidates) {
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (res.status === 404) {
-        lastError = new Error('Cancel downgrade service was not found.');
-        continue;
-      }
-
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        throw new Error(data?.message || data?.error || `Could not cancel scheduled downgrade (${res.status}).`);
-      }
-
-      return data;
-    } catch (err) {
-      if (err?.message && !String(err.message).includes('not found')) {
-        throw err;
-      }
-      lastError = err;
-    }
-  }
-
-  throw lastError || new Error('Could not cancel the scheduled downgrade right now.');
+  return stripePost('/api/stripe/cancel-scheduled-downgrade', {
+    signInMessage: 'Please sign in again before changing your plan.',
+    notFoundMessage: 'Cancel downgrade service was not found.',
+    failPrefix: 'Could not cancel scheduled downgrade',
+  });
 }
 
 // Advisor question packs (one-off purchases on top of the plan allowance).
-async function getAccessTokenOrThrow() {
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  if (sessionError) throw new Error(sessionError.message || 'Could not verify your login session.');
-  const accessToken = sessionData?.session?.access_token;
-  if (!accessToken) throw new Error('Please sign in again before continuing.');
-  return accessToken;
-}
-
 export async function fetchAdvisorPacks() {
-  const candidates = buildApiCandidates('/api/stripe/advisor-packs');
-  for (const url of candidates) {
-    try {
-      const res = await fetch(url, { headers: { Accept: 'application/json' } });
-      if (!res.ok) continue;
-      // The CRA dev server answers unknown GET paths with the app's HTML and a
-      // 200, so only accept a real JSON pack list; otherwise try the next URL.
-      const type = String(res.headers.get('content-type') || '');
-      if (!/json/i.test(type)) continue;
-      const data = await res.json().catch(() => null);
-      if (data && Array.isArray(data.packs)) return data.packs;
-    } catch (_) { /* try next */ }
-  }
+  // Public list; any failure just means no packs to show.
+  try {
+    const data = await apiFetch('/api/stripe/advisor-packs', { auth: false, timeoutMs: 30000 });
+    if (data && Array.isArray(data.packs)) return data.packs;
+  } catch (_) { /* no packs */ }
   return [];
 }
 
 export async function createAdvisorPackCheckout(pack) {
-  const accessToken = await getAccessTokenOrThrow();
-  const candidates = buildApiCandidates('/api/stripe/create-advisor-pack-checkout');
-  let lastError = null;
-  for (const url of candidates) {
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
-        body: JSON.stringify({ pack: String(pack) }),
-      });
-      if (res.status === 404) { lastError = new Error('Checkout service was not found.'); continue; }
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data?.message || data?.error || `Could not start checkout (${res.status}).`);
-      if (!data?.url) throw new Error('Stripe checkout did not return a checkout URL.');
-      return data;
-    } catch (err) {
-      if (err?.message && !String(err.message).includes('not found')) throw err;
-      lastError = err;
-    }
-  }
-  throw lastError || new Error('Could not start checkout right now.');
+  const data = await stripePost('/api/stripe/create-advisor-pack-checkout', {
+    body: { pack: String(pack) },
+    signInMessage: 'Please sign in again before continuing.',
+    notFoundMessage: 'Checkout service was not found.',
+    failPrefix: 'Could not start checkout',
+  });
+  if (!data?.url) throw new Error('Stripe checkout did not return a checkout URL.');
+  return data;
 }
 
 export function formatPackPrice(pack) {
@@ -279,24 +110,10 @@ export function formatPackPrice(pack) {
 // Cancel the paid plan at the end of the billing year (cancel: true), or undo
 // that (cancel: false). Handled in-app; no Stripe portal.
 export async function setCancelAtPeriodEnd(cancel) {
-  const accessToken = await getAccessTokenOrThrow();
-  const candidates = buildApiCandidates('/api/stripe/set-cancel-at-period-end');
-  let lastError = null;
-  for (const url of candidates) {
-    try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
-        body: JSON.stringify({ cancel: Boolean(cancel) }),
-      });
-      if (res.status === 404) { lastError = new Error('Plan service was not found.'); continue; }
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data?.message || data?.error || `Could not update your plan (${res.status}).`);
-      return data;
-    } catch (err) {
-      if (err?.message && !String(err.message).includes('not found')) throw err;
-      lastError = err;
-    }
-  }
-  throw lastError || new Error('Could not update your plan right now.');
+  return stripePost('/api/stripe/set-cancel-at-period-end', {
+    body: { cancel: Boolean(cancel) },
+    signInMessage: 'Please sign in again before continuing.',
+    notFoundMessage: 'Plan service was not found.',
+    failPrefix: 'Could not update your plan',
+  });
 }

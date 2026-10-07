@@ -128,7 +128,7 @@
   transform: translateY(-50%);
   width: 19px;
   height: 19px;
-  color: #6f8198;
+  color: #5e6f88;
   pointer-events: none;
   z-index: 1;
 }
@@ -161,7 +161,7 @@
 }
 
 .report-limit-modal__input::placeholder {
-  color: #9aaac0;
+  color: #64748b;
 }
 
 .report-limit-modal__input:focus {
@@ -353,7 +353,7 @@
 /* AI Advisor question packs */
 .report-limit-modal__packs {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
   gap: 10px;
   margin: 14px 0 4px;
 }
@@ -382,4 +382,87 @@
   color: #2f6fed !important;
   border: 1.5px solid #2f6fed !important;
   box-shadow: none !important;
+}
+
+.report-limit-modal__consent { margin: 6px 0 10px; }
+
+/* ===== House modal style (matches Exit assessment, Welcome back, Sign out) ===== */
+.report-limit-modal-overlay { background: rgba(15, 23, 42, 0.34); backdrop-filter: none; }
+.report-limit-modal {
+  width: min(100%, 430px);
+  padding: 24px 28px 14px;
+  border: 0;
+  border-radius: 20px;
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.22);
+  color: #172033;
+}
+.report-limit-modal__header { margin: 0 0 6px; }
+.report-limit-modal .report-limit-modal__title {
+  margin: 0 40px 16px 0;
+  font-size: 1.25rem !important;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: #172033;
+}
+.report-limit-modal__subtitle { color: #52667f; font-size: 0.9rem; line-height: 1.6; }
+.report-limit-modal__benefits {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.report-limit-modal__benefits li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  color: #52667f;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.report-limit-modal__benefits svg { flex: 0 0 auto; color: #2f6fed; margin-top: 3px; }
+.report-limit-modal__body { gap: 0; }
+.report-limit-modal__actions {
+  flex-direction: row;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+.report-limit-modal__actions .report-limit-modal__primary-btn {
+  width: auto;
+  min-height: 36px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: none;
+}
+.report-limit-modal__actions .report-limit-modal__primary-btn:hover:not(:disabled) { transform: none; box-shadow: none; }
+.report-limit-modal__actions .report-limit-modal__secondary-link {
+  order: -1;
+  margin: 0;
+  min-height: 36px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #dbe6f7;
+  background: #fff;
+  color: #54657b;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.report-limit-modal__actions .report-limit-modal__secondary-link:hover { background: #f4f8ff; text-decoration: none; }
+.report-limit-modal__coupon-card { margin-top: 12px; padding-top: 10px; border-top: 1px solid #eef2f7; gap: 8px; }
+.report-limit-modal__code-line { margin: 0; font-size: 0.82rem; color: #5e6f88; }
+.report-limit-modal__code-link { border: 0; background: none; padding: 0; font: inherit; font-weight: 650; color: #2f6fed; cursor: pointer; }
+.report-limit-modal__code-link:hover { text-decoration: underline; }
+.report-limit-modal__label { font-size: 0.82rem; }
+.report-limit-modal__input { min-height: 40px; border-radius: 12px; font-size: 0.9rem; }
+.report-limit-modal__apply-btn { min-height: 40px; border-radius: 999px; font-size: 13px; }
+.report-limit-modal__close { top: 14px; right: 14px; }
+@media (max-width: 520px) {
+  .report-limit-modal { padding: 24px 20px 16px; border-radius: 20px; }
+  .report-limit-modal__apply-btn { width: 100%; }
 }

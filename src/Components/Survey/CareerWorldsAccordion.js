@@ -371,7 +371,7 @@ export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = 
           className="cw-def-modal"
           role="dialog"
           aria-modal="true"
-          aria-label={`${world.title} — full definition`}
+          aria-label={`${world.title}: full definition`}
           onClick={(e) => { if (e.target === e.currentTarget) setDefOpen(false); }}
         >
           <div className="cw-def-modal__box">

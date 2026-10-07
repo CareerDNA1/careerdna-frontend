@@ -6,6 +6,7 @@ import logo from '../../Assets/images/logo-career-dna.png';
 import { useAuth } from '../../context/AuthContext';
 import { clearLocalUserState } from '../../utils/clearLocalUserState';
 import PricingModal from '../Common/PricingModal';
+import '../Common/AccountNavbar.css';
 
 
 const CloseIcon = () => (
@@ -67,16 +68,16 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
   const displayFirstName = getDisplayFirstName(user);
 
   const [pricingOpen, setPricingOpen] = useState(false);
+  const [signOutConfirmOpen, setSignOutConfirmOpen] = useState(false);
 
   const toggleMenu = useCallback(() => setMenuOpen((prev) => !prev), [setMenuOpen]);
   const closeMenu = useCallback(() => setMenuOpen(false), [setMenuOpen]);
   const openPricing = useCallback(() => { setPricingOpen(true); closeMenu(); }, [closeMenu]);
-  const noop = (e) => e.preventDefault();
+
+  const requestSignOut = () => { setSignOutConfirmOpen(true); closeMenu(); };
 
   const handleSignOut = async () => {
-    const confirmed = window.confirm('Are you sure you want to sign out?');
-    if (!confirmed) return;
-
+    setSignOutConfirmOpen(false);
     try {
       clearLocalUserState();
       await signOut();
@@ -181,7 +182,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
             <button
               type="button"
               className="nav-account-link nav-account-signout"
-              onClick={handleSignOut}
+              onClick={requestSignOut}
             >
               <SignOutIcon />
               Sign out
@@ -284,6 +285,26 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
           </ul>
         </div>
       </div>
+
+      {signOutConfirmOpen ? (
+        <div className="account-signout-confirm-overlay" onClick={() => setSignOutConfirmOpen(false)}>
+          <section
+            className="account-signout-confirm-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="landingSignOutTitle"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button type="button" className="account-signout-confirm-close" onClick={() => setSignOutConfirmOpen(false)} aria-label="Close sign out confirmation">×</button>
+            <h3 id="landingSignOutTitle">Sign out?</h3>
+            <p>Are you sure you want to sign out of your CareerDNA account?</p>
+            <div className="account-signout-confirm-actions">
+              <button type="button" className="account-signout-confirm-secondary" onClick={() => setSignOutConfirmOpen(false)}>Cancel</button>
+              <button type="button" className="account-signout-confirm-primary" onClick={handleSignOut}>Sign out</button>
+            </div>
+          </section>
+        </div>
+      ) : null}
 
       <PricingModal
         isOpen={pricingOpen}

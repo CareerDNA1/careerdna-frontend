@@ -108,6 +108,8 @@ export default function CtaSection() {
             <span aria-hidden="true">·</span>
             <a href="/legal#terms">Terms of Use</a>
             <span aria-hidden="true">·</span>
+            <a href="/trust-security#accessibility">Accessibility</a>
+            <span aria-hidden="true">·</span>
             <a href="mailto:hello@mycareerdna.io">Contact</a>
             <span aria-hidden="true">·</span>
             <a href="#report-problem">Report a problem</a>

@@ -10,6 +10,8 @@ import ChancesPill, { chancesFor, chancesForConditions } from './ChancesPill';
 import DatePicker from './DatePicker';
 import Celebration from './Celebration';
 import './CascadeRemoveModal.css';
+import InlineError from './InlineError';
+import { friendlyError } from '../../utils/friendlyError';
 import './UcasPanel.css';
 
 // One UCAS application, shown inside the applications popup for school
@@ -30,6 +32,8 @@ export default function UcasPanel({ choices: rawChoices = [], onChange, onOpen, 
   const live = ucasLive(choices);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  // Re-runs the action that failed when "Try again" is pressed.
+  const [errorRetry, setErrorRetry] = useState(null);
   const [modal, setModal] = useState(null); // 'send' | 'unsend' | 'reply' | 'place' | 'unplace'
   const [sentDraft, setSentDraft] = useState(new Date().toISOString().slice(0, 10));
   const [firmId, setFirmId] = useState('');
@@ -74,7 +78,10 @@ export default function UcasPanel({ choices: rawChoices = [], onChange, onOpen, 
   const run = async (fn, { celebrate = false } = {}) => {
     if (busy) return;
     try { setBusy(true); setError(''); const rows = await fn(); onChange(rows); setModal(null); if (celebrate) setParty((n) => n + 1); }
-    catch (e) { setError(e?.message || 'Something went wrong.'); }
+    catch (e) {
+      setError(friendlyError(e, 'save that change').message);
+      setErrorRetry(() => () => run(fn, { celebrate }));
+    }
     finally { setBusy(false); }
   };
 
@@ -121,7 +128,7 @@ export default function UcasPanel({ choices: rawChoices = [], onChange, onOpen, 
           ? <>Enter your predicted grades to see how each choice compares with its typical offer. <button type="button" className="ucas-link ucas-link--inline" onClick={onEnterGrades}>Enter your grades</button></>
           : 'Enter your predicted grades in Your grades to see how each choice compares with its typical offer.'}</p>
       ) : null}
-      {error ? <p className="fav-error">{error}</p> : null}
+      <InlineError compact message={error} onRetry={errorRetry || undefined} />
 
       <ol className="ucas-slots">
         {Array.from({ length: Math.max(UCAS_MAX_CHOICES, choices.length) }).map((_, i) => {

@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { writeProgress } from '../Hooks/useProgress';
-
-const KEY = 'cdna_progress_v1';
+import { useAuth } from '../context/AuthContext';
+import { writeProgress, clearProgress, resumableProgress } from '../Hooks/useProgress';
 
 function makeNonce(len = 16) {
   const bytes = new Uint8Array(len);
@@ -10,27 +9,34 @@ function makeNonce(len = 16) {
   return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+// Entry point for the survey. If this user has an unfinished survey saved on
+// this device, send them straight to the questions with a resume prompt;
+// otherwise start a clean run.
 export default function Start() {
   const navigate = useNavigate();
   const { search } = useLocation();
+  const { user } = useAuth();
 
   useEffect(() => {
-    // Always reset when starting (unless you add your own resume logic here)
-    sessionStorage.removeItem(KEY);
-
     const qs = new URLSearchParams(search);
-    const resume = qs.get('resume') === '1';
+    const fresh = qs.get('fresh') === '1';
 
-    const nonce = makeNonce();
+    if (!fresh && resumableProgress(user?.id)) {
+      navigate('/survey/questions', { replace: true, state: { askResume: true } });
+      return;
+    }
+
+    clearProgress();
     writeProgress({
       started: true,
       startedAt: Date.now(),
-      nonce,
-      resume
+      nonce: makeNonce(),
+      ownerId: user?.id || null,
+      index: 0,
     });
 
     navigate('/survey/intro', { replace: true });
-  }, [navigate, search]);
+  }, [navigate, search, user?.id]);
 
   return null;
 }

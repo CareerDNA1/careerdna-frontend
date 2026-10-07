@@ -1,5 +1,5 @@
 // src/Components/Survey/ResultsComponent.js
-import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import './ResultsComponent.css';
 import ReportLimitModal from '../Common/ReportLimitModal';
@@ -33,6 +33,9 @@ import { findChildFavourites, deleteFavouriteRows, pathwayParentMeta } from '../
 import { normaliseFavouriteType } from '../../utils/favourites';
 import { canonicalItem } from '../../utils/canonicalIds';
 import CascadeRemoveModal from '../Common/CascadeRemoveModal';
+import InlineError, { StillWorkingNote } from '../Common/InlineError';
+import Notice from '../Common/Notice';
+import { friendlyError } from '../../utils/friendlyError';
 
 // Which advisor context each part of the report maps to. The titles and
 // suggested questions live in utils/advisorQuestions.js (one shared config).
@@ -130,10 +133,13 @@ function LoadingSpinnerWithProgress() {
         <p className="staged-loader-text">
           This may take up to a minute or two. Please don’t leave or refresh this page. Your report will appear here as soon as it’s ready.
         </p>
+        <StillWorkingNote />
       </div>
     </div>
   );
 }
+
+const SAVE_FAILED_NOTICE = 'Could not save that. Check your connection and try again.';
 
 function normaliseName(raw) {
   if (!raw || typeof raw !== 'string') return '';
@@ -1455,6 +1461,7 @@ export default function ResultsComponent({
   initialAiSummary,
   fetchAiSummary,
   loadingSummary,
+  summaryError = '',
   chartRef,
   pdfRef,
   introName,
@@ -1536,6 +1543,7 @@ export default function ResultsComponent({
   const [itemReactionMeta, setItemReactionMeta] = useState({});
   const [selectionInsights, setSelectionInsights] = useState([]);
   const [selectionInsightsLoading, setSelectionInsightsLoading] = useState(false);
+  const [selectionInsightsReloadTick, setSelectionInsightsReloadTick] = useState(0);
   const [selectionInsightsError, setSelectionInsightsError] = useState('');
   // True once we have insights on screen. Liking a pathway/role adds it to the
   // fetch set, but we must NOT show the full-screen "loading deeper signature
@@ -1570,6 +1578,12 @@ export default function ResultsComponent({
   const [overallFeedbackDraftComment, setOverallFeedbackDraftComment] = useState('');
   const [overallFeedbackSaveState, setOverallFeedbackSaveState] = useState('idle');
   const [analysisQualityMessage, setAnalysisQualityMessage] = useState('');
+  // Friendly message when generating the report failed (anything except the
+  // report-limit case). Shown next to the Generate button with a retry.
+  const [analysisError, setAnalysisError] = useState('');
+  // Brief notice when a favourite or reaction could not be saved.
+  const [saveNotice, setSaveNotice] = useState('');
+  const dismissSaveNotice = useCallback(() => setSaveNotice(''), []);
 
   const localChartsWrapperRef = useRef(null);
   const skipNextReactionPersistRef = useRef(false);
@@ -2042,6 +2056,7 @@ export default function ResultsComponent({
     if (typeof fetchAiSummary !== 'function') return;
     setAnalysisQualityMessage('');
     setUpgradePrompt(null);
+    setAnalysisError('');
 
     try {
       await fetchAiSummary({ force: true, bypassQualityGate });
@@ -2052,9 +2067,14 @@ export default function ResultsComponent({
       }
 
       console.error(err);
-      throw err;
+      setAnalysisError(friendlyError(err, 'generate your report').message);
     }
   };
+
+  // The hook behind fetchAiSummary reports its own failure too (summaryError);
+  // either source shows the same inline message.
+  const visibleAnalysisError = !loadingSummary ? (analysisError || summaryError || '') : '';
+  const retryAnalysis = () => { setAnalysisError(''); runAnalysisNow(); };
 
   const hasResults = Object.keys(computedResults).length > 0;
   const canGenerate = typeof fetchAiSummary === 'function';
@@ -2280,13 +2300,25 @@ export default function ResultsComponent({
       } catch (err) {
         console.warn('Could not save overall feedback:', err?.message || err);
         setOverallFeedbackSaveState('idle');
+        setSaveNotice(SAVE_FAILED_NOTICE);
       }
     }, 500);
 
     return () => window.clearTimeout(t);
   }, [overallFeedback.rating, overallFeedback.comment, overallFeedbackStorageKey, profileUserId, effectiveAssessmentRunId]);
 
-  const persistItemReaction = async ({ itemId, reaction, remove = false }) => {
+  // Puts a reaction back to what it was before an optimistic update that did
+  // not reach the database.
+  const rollbackItemReaction = (itemId, previous) => {
+    setItemReactions((prev) => {
+      const next = { ...prev };
+      if (previous) next[itemId] = previous;
+      else delete next[itemId];
+      return next;
+    });
+  };
+
+  const persistItemReaction = async ({ itemId, reaction, remove = false, previous = '' }) => {
     const item = selectableMaps.byId.get(itemId);
     if (!item || !profileUserId || !effectiveAssessmentRunId) return;
 
@@ -2311,6 +2343,8 @@ export default function ResultsComponent({
       }
     } catch (err) {
       console.warn('Could not save item feedback:', err?.message || err);
+      rollbackItemReaction(itemId, previous);
+      setSaveNotice(SAVE_FAILED_NOTICE);
     }
   };
 
@@ -2364,6 +2398,8 @@ export default function ResultsComponent({
 
     // Keep local reaction state in sync so nested pills (e.g. Discover More
     // pathways) persist across tab switches, not just after a full reload.
+    const previousReaction = itemReactions[itemId] || '';
+    const previousMeta = itemReactionMeta[itemId];
     setItemReactions((prev) => {
       const next = { ...prev };
       if (remove) delete next[itemId];
@@ -2404,6 +2440,14 @@ export default function ResultsComponent({
       }
     } catch (err) {
       console.warn('Could not save nested item feedback:', err?.message || err);
+      rollbackItemReaction(itemId, previousReaction);
+      setItemReactionMeta((prev) => {
+        const next = { ...prev };
+        if (previousMeta) next[itemId] = previousMeta;
+        else delete next[itemId];
+        return next;
+      });
+      setSaveNotice(SAVE_FAILED_NOTICE);
     }
   };
 
@@ -2477,7 +2521,8 @@ export default function ResultsComponent({
       const reaction = button.dataset.reaction;
       if (!itemId || !reaction) return;
 
-      const shouldRemove = (resolvedItemReactions[itemId] || itemReactions[itemId] || '') === reaction;
+      const previousReaction = resolvedItemReactions[itemId] || itemReactions[itemId] || '';
+      const shouldRemove = previousReaction === reaction;
       setItemReactions((prev) => {
         if (shouldRemove) {
           const next = { ...prev };
@@ -2487,7 +2532,7 @@ export default function ResultsComponent({
         return { ...prev, [itemId]: reaction };
       });
 
-      persistItemReaction({ itemId, reaction, remove: shouldRemove });
+      persistItemReaction({ itemId, reaction, remove: shouldRemove, previous: previousReaction });
 
       window.requestAnimationFrame(() => {
         const refreshedButton = root.querySelector(`.cdna-item-action[data-item-id="${CSS.escape(itemId)}"][data-reaction="${CSS.escape(reaction)}"]`);
@@ -2725,7 +2770,7 @@ export default function ResultsComponent({
           setSelectionInsightsError('');
         } else {
           setSelectionInsights([]);
-          setSelectionInsightsError(err?.message || 'Could not load deeper insights right now.');
+          setSelectionInsightsError(friendlyError(err, 'load your deeper insights').message);
         }
       } finally {
         if (!cancelled) setSelectionInsightsLoading(false);
@@ -2736,7 +2781,7 @@ export default function ResultsComponent({
     return () => {
       cancelled = true;
     };
-  }, [selectedInsightItems, computedResults, subdimensionRows, precomputedSelectionInsightMap]);
+  }, [selectedInsightItems, computedResults, subdimensionRows, precomputedSelectionInsightMap, selectionInsightsReloadTick]);
 
   // Fetch band + signature pills for the worlds the backend doesn't precompute:
   // the lower-match academic worlds (always) and the 7 vocational worlds (only
@@ -2993,6 +3038,7 @@ export default function ResultsComponent({
                 insights={selectionInsights}
                 loading={selectionInsightsLoading}
                 error={selectionInsightsError}
+                onRetry={() => setSelectionInsightsReloadTick((t) => t + 1)}
                 onItemReaction={handleNestedItemReaction}
                 savedReactions={resolvedItemReactions}
               />
@@ -3152,6 +3198,7 @@ export default function ResultsComponent({
   return (
     <div id="results-root">
       {canShowAdvisor ? <AdvisorDrawer assessmentRunId={effectiveAssessmentRunId} stage={normalizeViewerStatus(viewerStatus) === 'school' ? 'school' : 'university'} /> : null}
+      <Notice message={saveNotice} onDismiss={dismissSaveNotice} />
       {cascadePrompt ? (
         <CascadeRemoveModal
           parent={cascadePrompt.parent}
@@ -3164,6 +3211,7 @@ export default function ResultsComponent({
       {upgradePrompt && (
         <ReportLimitModal
           mode={upgradePrompt.mode || (isFreeViewer ? 'starter' : 'exhausted')}
+          audience={normalizeViewerStatus(viewerStatus) === 'school' ? 'school' : 'university'}
           currentPlan={reportPlan || 'free'}
           entitlement={{ plan: reportPlan || 'free' }}
           onClose={() => setUpgradePrompt(null)}
@@ -3198,11 +3246,34 @@ export default function ResultsComponent({
                     <div className="analysis-box analysis-box--tabbed is-ready">
                       <div className="analysis-tabs-layout">
                         <aside className="analysis-tabs-sidebar">
-                          <div className="analysis-tabs-sidebar__list" ref={profileTabsListRef}>
+                          <div
+                            className="analysis-tabs-sidebar__list"
+                            ref={profileTabsListRef}
+                            role="tablist"
+                            aria-label="Results sections"
+                            aria-orientation="vertical"
+                            onKeyDown={(e) => {
+                              // Arrow keys move between tabs; Home/End jump to the ends.
+                              if (!['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) return;
+                              const tabs = Array.from(e.currentTarget.querySelectorAll('[role="tab"]'));
+                              const i = tabs.indexOf(document.activeElement);
+                              if (i < 0) return;
+                              e.preventDefault();
+                              let next = i;
+                              if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next = (i + 1) % tabs.length;
+                              else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
+                              else if (e.key === 'Home') next = 0;
+                              else next = tabs.length - 1;
+                              tabs[next].focus();
+                              tabs[next].click();
+                            }}
+                          >
                             {profileTabs.map((tab) => (
                               <button
                                 key={tab.key}
                                 type="button"
+                                role="tab"
+                                aria-selected={openTopSection === 'profile' && tab.key === activeProfileTab}
                                 className={`analysis-tab-button ${openTopSection === 'profile' && tab.key === activeProfileTab ? 'is-active' : ''}`}
                                 onClick={() => { setActiveProfileTab(tab.key); setOpenTopSection('profile'); scrollResultsTabIntoView(18); }}
                               >
@@ -3220,6 +3291,8 @@ export default function ResultsComponent({
                                   <button
                                     key={tab.key}
                                     type="button"
+                                    role="tab"
+                                    aria-selected={isActive}
                                     className={`analysis-tab-button ${isActive ? 'is-active' : ''} ${analysisLocked ? 'analysis-tab-button--locked' : ''}`}
                                     onClick={() => { if (analysisLocked) { setLockedPreviewTab(tab.key); setOpenTopSection('analysis'); scrollResultsTabIntoView(18); } else { handleAnalysisTabClick(tab.key); } }}
                                   >
@@ -3282,6 +3355,7 @@ export default function ResultsComponent({
                                 Generating uses one report. You have {reportsRemaining} report{reportsRemaining === 1 ? '' : 's'} left.
                               </p>
                             ) : null}
+                            <InlineError message={visibleAnalysisError} onRetry={retryAnalysis} />
                           </div>
                         ) : isFreeViewer ? (
                           <div className="results-actions">
@@ -3382,6 +3456,7 @@ export default function ResultsComponent({
                     {!computedSummary && !loadingSummary && !(hasResults && canGenerate) && !upgradePrompt && (
                       <div className="analysis-box__body">
                         <p>Your deeper CareerDNA analysis will appear here once it has been generated.</p>
+                        <InlineError message={visibleAnalysisError} onRetry={canGenerate ? retryAnalysis : undefined} />
                       </div>
                     )}
 
@@ -3413,7 +3488,7 @@ export default function ResultsComponent({
                     </div>
                   ) : (
                     <div className="analysis-box">
-                      <p>No results found. Please complete the survey first.</p>
+                      <p>No results found. Please complete the assessment first.</p>
                     </div>
                   )}
                 </div>
@@ -3428,6 +3503,8 @@ export default function ResultsComponent({
             <a href="/legal#privacy">Privacy Policy</a>
             <span aria-hidden="true">·</span>
             <a href="/legal#terms">Terms of Use</a>
+            <span aria-hidden="true">·</span>
+            <a href="/trust-security#accessibility">Accessibility</a>
             <span aria-hidden="true">·</span>
             <a href="mailto:hello@mycareerdna.io">Contact</a>
             <span aria-hidden="true">·</span>

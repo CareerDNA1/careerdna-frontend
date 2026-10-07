@@ -7,6 +7,8 @@ import ReportLimitModal from '../Common/ReportLimitModal';
 import { applyCouponCode } from '../../utils/applyCoupon';
 import { loadAdvisorConversation, sendAdvisorMessage } from '../../utils/careerAdvisor';
 import { clearAdvisorPrefill } from '../../utils/advisorPanel';
+import InlineError, { StillWorkingNote } from '../Common/InlineError';
+import { friendlyError } from '../../utils/friendlyError';
 
 const FALLBACK_STARTER_PROMPTS = [
   'How did you decide which career worlds are better matches for me?',
@@ -69,6 +71,9 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  // Earlier conversation could not be fetched (the advisor still works).
+  const [loadError, setLoadError] = useState('');
+  const [reloadTick, setReloadTick] = useState(0);
   const [entitlement, setEntitlement] = useState(null);
   const [limitReached, setLimitReached] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
@@ -99,6 +104,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
       try {
         setLoading(true);
         setErrorMsg('');
+        setLoadError('');
         const data = await loadAdvisorConversation({ assessmentRunId });
         if (cancelled) return;
         const loadedMessages = Array.isArray(data?.messages) ? data.messages : [];
@@ -109,14 +115,17 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
         setLimitReached(false);
         setStarterPrompts(loadedStarterPrompts);
         setUsedStarterPrompts(deriveUsedStarterPrompts(loadedMessages, loadedStarterPrompts));
-      } catch {
-        // A failed background history load must NOT show a scary error just for
-        // opening the tab. Fall back to the starter questions so the advisor is
-        // still usable; a real error only surfaces if a question the user
-        // actually sends fails.
+      } catch (err) {
+        // A failed history load must not block the advisor: fall back to the
+        // starter questions so it is still usable, and show a small, calm note
+        // with a retry so the earlier conversation can be fetched again.
         if (!cancelled) {
           setStarterPrompts(FALLBACK_STARTER_PROMPTS);
           setUsedStarterPrompts(deriveUsedStarterPrompts([], FALLBACK_STARTER_PROMPTS));
+          const friendly = friendlyError(err, 'load your earlier conversation');
+          setLoadError(friendly.kind === 'user'
+            ? 'We could not load your earlier advisor conversation. You can still ask a question.'
+            : friendly.message);
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -128,7 +137,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
     return () => {
       cancelled = true;
     };
-  }, [assessmentRunId]);
+  }, [assessmentRunId, reloadTick]);
 
   // A question handed over from a section button: send it, or place it in the
   // box, once the conversation has loaded.
@@ -260,7 +269,11 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
       }
       setMessages((prev) => {
         const withoutOptimistic = prev.filter((msg) => msg.id !== optimisticUserMessage.id);
-        return [...withoutOptimistic, ...returnedMessages];
+        // A safeguarding reply carries the helpline card with it.
+        const withCard = data?.safeguarding
+          ? returnedMessages.map((m) => (m.role === 'assistant' ? { ...m, safeguarding: data.safeguarding } : m))
+          : returnedMessages;
+        return [...withoutOptimistic, ...withCard];
       });
     } catch (err) {
       const isAdvisorLimit = err?.code === 'ADVISOR_LIMIT_REACHED' || err?.error === 'ADVISOR_LIMIT_REACHED' || /advisor questions/i.test(err?.message || '');
@@ -271,7 +284,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
         setErrorMsg('');
         setInput(text);
       } else {
-        setErrorMsg(err.message || 'Could not send your question.');
+        setErrorMsg(friendlyError(err, 'send your question').message);
         setInput(text);
       }
       setMessages((prev) => prev.filter((msg) => msg.id !== optimisticUserMessage.id));
@@ -381,10 +394,25 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
                       ) : 'You'}
                     </div>
                     {message.role === 'assistant' ? (
-                      <div
-                        className="career-advisor-message-content career-advisor-markdown"
-                        dangerouslySetInnerHTML={renderSafeMarkdown(message.content)}
-                      />
+                      <>
+                        <div
+                          className="career-advisor-message-content career-advisor-markdown"
+                          dangerouslySetInnerHTML={renderSafeMarkdown(message.content)}
+                        />
+                        {message.safeguarding ? (
+                          <div className="career-advisor-helplines" role="note" aria-label="Where to get support">
+                            <div className="career-advisor-helplines__title">If you need someone to talk to right now</div>
+                            {(message.safeguarding.helplines || []).map((h) => (
+                              <div className="career-advisor-helplines__row" key={h.name}>
+                                <strong>{h.name}</strong>
+                                <span>{h.detail}</span>
+                                {h.url ? <a href={h.url} target="_blank" rel="noopener noreferrer">Visit</a> : null}
+                              </div>
+                            ))}
+                            <div className="career-advisor-helplines__foot">You can also tell a parent, carer, teacher or your school's safeguarding lead. They are there for exactly this.</div>
+                          </div>
+                        ) : null}
+                      </>
                     ) : (
                       <div className="career-advisor-message-content">
                         {renderPlainText(message.content)}
@@ -403,6 +431,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
                     <span>Your Advisor</span>
                   </div>
                   <div className="career-advisor-message-content muted career-advisor-thinking"><span className="cdna-load-spinner" aria-hidden="true" /><span>Thinking…</span></div>
+                  <StillWorkingNote />
                 </div>
               ) : null}
               <div ref={bottomRef} />
@@ -434,6 +463,9 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
               </div>
             ) : null}
 
+            {loadError && !loading ? (
+              <InlineError compact message={loadError} onRetry={() => setReloadTick((t) => t + 1)} />
+            ) : null}
             {errorMsg ? <div className="career-advisor-error">{errorMsg}</div> : null}
 
             <div className="career-advisor-input-row">
@@ -444,6 +476,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
                 onKeyDown={handleKeyDown}
                 placeholder={placeholder}
                 disabled={disableAdvisorInput}
+                maxLength={3000}
                 rows={1}
               />
               <button

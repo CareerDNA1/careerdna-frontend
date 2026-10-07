@@ -1,8 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { BrainCircuit, Send } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AccountNavbar from '../Components/Common/AccountNavbar';
 import { useAuth } from '../context/AuthContext';
+import { resumableProgress } from '../Hooks/useProgress';
+import { takeProfileStale } from '../utils/profileCache';
 import { supabase } from '../utils/supabaseClient';
 import {
   deleteAssessmentRun,
@@ -14,7 +17,7 @@ import {
   rerunAssessmentWithOutputParameters,
 } from '../utils/assessmentRuns';
 import { getMyProfile, updateMyProfileDetails } from '../utils/profile';
-import { buildApiCandidates } from '../utils/config';
+import { apiFetch, ApiError } from '../utils/apiFetch';
 import IntroQuestions from '../Components/Survey/IntroQuestions';
 import PricingModal from '../Components/Common/PricingModal';
 import SatisfactionCard from '../Components/Common/SatisfactionCard';
@@ -30,6 +33,8 @@ import { cancelScheduledDowngrade, setCancelAtPeriodEnd } from '../utils/stripeC
 import './ProfilePage.css';
 import { ageFromDOB, ukSchoolYearGroup } from '../utils/educationProgression';
 import AdvisorDrawer from '../Components/Advisor/AdvisorDrawer';
+import InlineError from '../Components/Common/InlineError';
+import { friendlyError } from '../utils/friendlyError';
 import { setAdvisorContext } from '../utils/advisorPanel';
 
 const defaultIntroResponses = {
@@ -84,20 +89,25 @@ function nextStepLabel(run) {
   const status = intro.status;
 
   const schoolMap = {
-    gcse: 'Choose GCSEs',
-    alevels: 'Choose A-Levels',
-    apply_uni: 'Apply to university or college',
-    apprenticeship: 'Explore apprenticeships',
-    full_time_jobs: 'Explore full-time jobs',
+    choose_gcse: 'Choose GCSE options',
+    study_gcse: 'Work towards GCSEs',
+    choose_alevels: 'Decide what to do after GCSEs',
+    study_alevels: 'Study A-levels, T-levels or college',
+    decide_route: 'Decide between university, apprenticeship or work',
+    apply_uni: 'Prepare applications',
+    decide_uni: 'Choose between offers',
+    apprenticeship: 'Find an apprenticeship or job',
     not_sure: 'Not sure yet',
   };
 
   const uniMap = {
-    apply_postgrad: 'Apply for postgraduate study',
-    apply_further_postgrad: 'Apply for further postgraduate study',
+    explore_pathways: 'Explore career pathways and roles',
+    apply_postgrad: 'Explore postgraduate study',
+    apply_further_postgrad: 'Explore further postgraduate study',
     explore_internships: 'Explore internships or placements',
-    explore_full_time: 'Explore full-time roles',
+    explore_full_time: 'Explore graduate roles',
     explore_specialisms: 'Explore other specialisms or subjects',
+    not_sure: 'Not sure yet',
   };
 
   if (status === 'school' || status === 'other') return schoolMap[intro.schoolScope] || '—';
@@ -314,7 +324,7 @@ const btnDanger = {
   borderRadius: '0',
   fontSize: '0.82rem',
   background: 'transparent',
-  color: '#8a95a6',
+  color: '#64748b',
   border: 'none',
   textDecoration: 'underline',
   textUnderlineOffset: '3px',
@@ -406,6 +416,11 @@ const PlayIcon = () => (
 );
 
 /* Trash icon */
+const RerunIcon = () => (
+  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 4v4h4" />
+  </svg>
+);
 const PinIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 17v5"/>
@@ -436,18 +451,24 @@ const MoreIcon = () => (
 // It still re-fetches in the background to stay current (stale-while-revalidate).
 let profileBundleCache = null;
 
+function takeProfileCache() {
+  if (takeProfileStale()) profileBundleCache = null;
+  return profileBundleCache;
+}
+
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [profile, setProfile] = useState(() => profileBundleCache?.profileData || null);
-  const [runs, setRuns] = useState(() => profileBundleCache?.runData || []);
-  const [currentRun, setCurrentRun] = useState(() => profileBundleCache?.currentRun || null);
+  const [initialCache] = useState(() => takeProfileCache());
+  const [profile, setProfile] = useState(() => initialCache?.profileData || null);
+  const [runs, setRuns] = useState(() => initialCache?.runData || []);
+  const [currentRun, setCurrentRun] = useState(() => initialCache?.currentRun || null);
   const [settingCurrentId, setSettingCurrentId] = useState(null);
-  const [totalRuns, setTotalRuns] = useState(() => Number(profileBundleCache?.runCount) || 0);
-  const [totalSurveys, setTotalSurveys] = useState(() => Number(profileBundleCache?.surveyCount) || 0);
-  const [loadingRuns, setLoadingRuns] = useState(() => !profileBundleCache);
+  const [totalRuns, setTotalRuns] = useState(() => Number(initialCache?.runCount) || 0);
+  const [totalSurveys, setTotalSurveys] = useState(() => Number(initialCache?.surveyCount) || 0);
+  const [loadingRuns, setLoadingRuns] = useState(() => !initialCache);
   // Which item types the user has reacted to (liked/disliked) on the latest run.
   // Drives the journey timeline: a step counts as done only once the user has
   // actually interacted with that section.
@@ -461,6 +482,12 @@ export default function ProfilePage() {
   const [academicLoaded, setAcademicLoaded] = useState(false);
   const [academicProfileData, setAcademicProfileData] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
+  // What "Try again" should do for the current error (null: no retry offered).
+  const [errorRetry, setErrorRetry] = useState(null);
+  const failWith = (err, context, retry = null) => {
+    setErrorMsg(friendlyError(err, context).message);
+    setErrorRetry(retry ? () => retry : null);
+  };
   // Phone flag — used to shorten the run action label so the buttons fit on one
   // line beside the run number.
   const [isPhone, setIsPhone] = useState(
@@ -765,9 +792,10 @@ export default function ProfilePage() {
       if (isAuthLockNoise(err)) return; // transient — a concurrent request handled it
       setErrorMsg(
         isTransientDbError(err)
-          ? 'We had trouble loading your profile just then. Please refresh in a moment.'
-          : (err.message || 'Failed to load profile.')
+          ? 'We had trouble loading your profile just then. Please try again in a moment.'
+          : friendlyError(err, 'load your profile').message
       );
+      setErrorRetry(() => loadPageData);
     } finally {
       setLoadingRuns(false);
     }
@@ -783,38 +811,14 @@ export default function ProfilePage() {
     if (sessionError) throw sessionError;
     if (!session?.access_token) throw new Error('You need to be logged in to refresh your subscription.');
 
-    let response = null;
-    let lastError = null;
-
-    for (const candidate of buildApiCandidates('/api/account/sync-stripe-subscription')) {
-      try {
-        response = await fetch(candidate, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${session.access_token}`,
-          },
-        });
-
-        if (response.ok || response.status !== 404) break;
-      } catch (err) {
-        lastError = err;
-      }
-    }
-
-    if (!response) {
-      throw lastError || new Error('Failed to connect to subscription refresh service.');
-    }
-
     let payload = null;
     try {
-      payload = await response.json();
-    } catch (_) {
-      payload = null;
-    }
-
-    if (!response.ok) {
-      throw new Error(payload?.message || payload?.error || 'Failed to refresh subscription status.');
+      payload = await apiFetch('/api/account/sync-stripe-subscription', { method: 'POST', auth: 'required' });
+    } catch (err) {
+      if (err instanceof ApiError && err.status) {
+        throw new Error(err.data?.message || err.data?.error || 'Failed to refresh subscription status.');
+      }
+      throw err;
     }
 
     if (payload?.profile) {
@@ -888,9 +892,10 @@ export default function ProfilePage() {
           if (isAuthLockNoise(err)) return; // transient — a concurrent request handled it
           setErrorMsg(
             isTransientDbError(err)
-              ? 'We had trouble loading your profile just then. Please refresh in a moment.'
-              : (err.message || 'Failed to load profile.')
+              ? 'We had trouble loading your profile just then. Please try again in a moment.'
+              : friendlyError(err, 'load your profile').message
           );
+          setErrorRetry(() => loadPageData);
         }
       } finally {
         if (!cancelled) setLoadingRuns(false);
@@ -933,9 +938,7 @@ export default function ProfilePage() {
   const pendingPlanDate = useMemo(() => formatPendingPlanDate(profile), [profile]);
   const pendingPlanName = useMemo(() => formatPlanNameFromKey(profile?.pending_plan_change), [profile?.pending_plan_change]);
   const currentPlanKey = String(profile?.plan || 'free').toLowerCase();
-  const isAdminProfile =
-    Boolean(profile?.is_admin) ||
-    String(profile?.email || user?.email || '').toLowerCase() === 'georgealexandridis@hotmail.com';
+  const isAdminProfile = Boolean(profile?.is_admin);
   const isRecurringPlan = ['explore', 'premium'].includes(currentPlanKey);
   const planIconType = currentPlanKey === 'premium' ? 'crown' : currentPlanKey === 'explore' ? 'sparkles' : 'shield';
   const authProvider = String(user?.app_metadata?.provider || '').toLowerCase();
@@ -1122,7 +1125,7 @@ export default function ProfilePage() {
       setEditingProfile(false);
       setProfileNotice('Your account details were updated.');
     } catch (err) {
-      setErrorMsg(err.message || 'Failed to update account details.');
+      failWith(err, 'update your account details');
     } finally {
       setSavingProfile(false);
     }
@@ -1150,7 +1153,7 @@ export default function ProfilePage() {
       setEditIntroResponses(defaultIntroResponses);
       navigate(`/results/run/${newRun.id}`);
     } catch (err) {
-      setErrorMsg(err.message || 'Failed to re-run output.');
+      failWith(err, 're-run this result');
     } finally {
       setRerunning(false);
     }
@@ -1170,7 +1173,7 @@ export default function ProfilePage() {
       setEngagedForRun(null);
       setFavForRun(null);
     } catch (err) {
-      setErrorMsg(err.message || 'Could not set the current report.');
+      failWith(err, 'set the current report');
     } finally {
       setSettingCurrentId(null);
     }
@@ -1187,7 +1190,7 @@ export default function ProfilePage() {
       await loadPageData();
       setDeleteConfirmRunId(null);
     } catch (err) {
-      setErrorMsg(err.message || 'Failed to delete saved result.');
+      failWith(err, 'delete that saved result');
     } finally {
       setDeletingRunId(null);
     }
@@ -1204,7 +1207,7 @@ export default function ProfilePage() {
       if (result?.profile) setProfile(result.profile);
       setProfileNotice(`Your cancellation has been removed. ${formatPlanName(result?.profile || profile)} will renew as normal.`);
     } catch (err) {
-      setProfileNotice(err?.message || 'Could not resume your plan. Please try again.');
+      failWith(err, 'resume your plan', handleResumePlan);
     } finally {
       setResumingPlan(false);
     }
@@ -1246,7 +1249,7 @@ export default function ProfilePage() {
       }, 900);
     } catch (err) {
       console.error(err);
-      setErrorMsg(err?.message || 'Could not cancel the scheduled downgrade. Please try again.');
+      failWith(err, 'cancel the scheduled downgrade', handleCancelScheduledDowngrade);
     } finally {
       setCancellingDowngrade(false);
     }
@@ -1281,7 +1284,7 @@ export default function ProfilePage() {
 
       if (error) throw error;
     } catch (err) {
-      setErrorMsg(err.message || 'Could not start Google confirmation. Please try again.');
+      failWith(err, 'start Google confirmation');
     }
   };
 
@@ -1293,6 +1296,7 @@ export default function ProfilePage() {
 
     if (!usesExternalAuth && !deleteAccountPassword) {
       setErrorMsg('Please enter your password to confirm account deletion.');
+      setErrorRetry(null);
       return;
     }
 
@@ -1313,45 +1317,21 @@ export default function ProfilePage() {
       if (sessionError) throw sessionError;
       if (!session?.access_token) throw new Error('You need to be logged in to delete your account.');
 
-      let response = null;
-      let lastDeleteAccountError = null;
-
-      for (const candidate of buildApiCandidates('/api/delete-account')) {
-        try {
-          response = await fetch(candidate, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${session.access_token}`,
-            },
-            body: JSON.stringify({
-              confirmation: 'DELETE',
-              password: usesExternalAuth ? '' : deleteAccountPassword,
-              authMode: usesExternalAuth ? 'oauth' : 'password',
-            }),
-          });
-
-          if (response.ok || response.status !== 404) {
-            break;
-          }
-        } catch (err) {
-          lastDeleteAccountError = err;
-        }
-      }
-
-      if (!response) {
-        throw lastDeleteAccountError || new Error('Failed to connect to delete-account service.');
-      }
-
-      let payload = null;
       try {
-        payload = await response.json();
-      } catch (_) {
-        payload = null;
-      }
-
-      if (!response.ok) {
-        throw new Error(payload?.message || payload?.error || 'Failed to delete account.');
+        await apiFetch('/api/delete-account', {
+          method: 'POST',
+          auth: 'required',
+          body: {
+            confirmation: 'DELETE',
+            password: usesExternalAuth ? '' : deleteAccountPassword,
+            authMode: usesExternalAuth ? 'oauth' : 'password',
+          },
+        });
+      } catch (err) {
+        if (err instanceof ApiError && err.status) {
+          throw new Error(err.data?.message || err.data?.error || 'Failed to delete account.');
+        }
+        throw err;
       }
 
       try {
@@ -1363,7 +1343,7 @@ export default function ProfilePage() {
       window.location.assign('/');
     } catch (err) {
       if (await handleInvalidSession(err)) return;
-      setErrorMsg(err.message || 'Failed to delete account.');
+      failWith(err, 'delete your account');
       setDeleteAccountFinalConfirm(false);
       setDeletingAccount(false);
     }
@@ -1406,8 +1386,17 @@ export default function ProfilePage() {
   };
   // Students (school) get extra steps: explore university/training, enter grades,
   // and finally apply. University leavers keep the shorter roadmap.
+  // An assessment saved on this device but not yet turned into a report.
+  const draft = resumableProgress(user?.id);
+  const draftTotal = 100;
+  const draftComplete = !!draft && draft.answered >= draftTotal;
+  const draftLabel = draft
+    ? (draftComplete ? 'See your results' : `Continue your assessment (${draft.answered} of ${draftTotal} answered)`)
+    : 'Take your assessment';
+  const continueDraft = () => navigate('/survey/questions', { state: draftComplete ? { autoFinish: true } : undefined });
+
   const journeySteps = [
-    { key: 'survey', label: 'Take your survey' },
+    { key: 'survey', label: draftLabel },
     { key: 'profile', label: 'Meet your CareerDNA' },
     { key: 'strengths', label: 'Explore your strengths' },
     { key: 'environments', label: 'Explore your ideal environments' },
@@ -1430,12 +1419,69 @@ export default function ProfilePage() {
   // (e.g. 2/9 then 8/9, or a "—" favourites count) while loading. We require the
   // user to be resolved, the academic profile loaded, and both the engaged-types
   // and favourites effects to have finished for this exact run id.
+  // First-time milestones: when a stat tile goes from 0 to 1 the first time this
+  // user sees it, the tile gets a short celebration. Remembered per user in
+  // localStorage so it only ever happens once per milestone.
+  const [celebrate, setCelebrate] = useState({});
+  const milestoneCounts = useMemo(() => ({
+    assessments: Number(totalSurveys) || 0,
+    reports: Number(totalRuns) || 0,
+    questions: Number(profile?.advisor_questions_used || 0),
+    favourites: favCount == null ? null : Number(favCount) || 0,
+    applications: applicationTracked == null ? null : Number(applicationTracked) || 0,
+  }), [totalSurveys, totalRuns, profile?.advisor_questions_used, favCount, applicationTracked]);
+
   const overviewReady = !loadingRuns
     && !!user?.id
     && academicLoaded
     && (latestRun
       ? (engagedForRun === latestRun.id && favForRun === latestRun.id)
       : (engagedForRun === 'none' && favForRun === 'none'));
+
+  useEffect(() => {
+    if (!overviewReady || !user?.id) return;
+    const key = `cdna_firsts_${user.id}`;
+    let seen = {};
+    try { seen = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch (_) { seen = {}; }
+    const fresh = {};
+    const next = { ...seen };
+    Object.entries(milestoneCounts).forEach(([k, n]) => {
+      if (n == null) return;
+      if (n >= 1 && !seen[k]) { fresh[k] = true; next[k] = true; }
+      // A user who already has counts the first time this feature runs is not
+      // celebrated retrospectively for everything at once: only the first
+      // visit after this feature ships records the baseline.
+      if (n === 0) next[k] = false;
+    });
+    if (!seen.__init) {
+      // Baseline visit: record current state, celebrate nothing.
+      Object.keys(next).forEach((k) => { if (milestoneCounts[k] >= 1) next[k] = true; });
+      next.__init = true;
+      try { localStorage.setItem(key, JSON.stringify(next)); } catch (_) { /* ignore */ }
+      return;
+    }
+    if (Object.keys(fresh).length) {
+      setCelebrate(fresh);
+      try { localStorage.setItem(key, JSON.stringify(next)); } catch (_) { /* ignore */ }
+      const t = window.setTimeout(() => setCelebrate({}), 5200);
+      return () => window.clearTimeout(t);
+    }
+    try { localStorage.setItem(key, JSON.stringify(next)); } catch (_) { /* ignore */ }
+    return undefined;
+  }, [overviewReady, user?.id, milestoneCounts]);
+
+  const MILESTONE_COPY = {
+    assessments: 'Well done, your first assessment is complete',
+    reports: 'Your first report is ready',
+    questions: 'First question asked. Keep them coming',
+    favourites: 'First favourite saved',
+    applications: 'First application tracked',
+  };
+  const statTileProps = (k) => ({
+    className: celebrate[k] ? ' is-celebrating' : '',
+    note: celebrate[k] ? <span className="profile-stat-celebrate" role="status">{MILESTONE_COPY[k]}</span> : null,
+  });
+
   // The satisfaction prompt appears once the exploration steps are done. Advisor,
   // grades and apply are optional/terminal, so they don't gate the prompt.
   const JOURNEY_OPTIONAL = new Set(['advisor', 'grades', 'apply']);
@@ -1470,9 +1516,34 @@ export default function ProfilePage() {
 
   // Central click handler for a roadmap step: survey starts the assessment, grades
   // opens the grades popup, everything else deep-links to its report tab.
-  const goToStep = (step) => {
+  // Steps that read from the report are locked until the assessment is done.
+  // Hovering shows the reason; tapping (phones have no hover) shows it briefly.
+  // The hint floats at fixed viewport coordinates (same approach as the
+  // report tooltips) so the sideways-scrolling rail cannot clip it.
+  const [lockedHint, setLockedHint] = useState(null);
+  const stepLocked = (step) => !latestRun && step.key !== 'survey' && step.key !== 'grades';
+  const showLockedHint = (step, el, sticky) => {
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    setLockedHint({ key: step.key, x: r.left + r.width / 2, y: r.top - 8, sticky: !!sticky });
+  };
+  const hideLockedHint = (step) => setLockedHint((h) => (h && h.key === step.key && !h.sticky ? null : h));
+  useEffect(() => {
+    if (!lockedHint?.sticky) return undefined;
+    const t = window.setTimeout(() => setLockedHint(null), 2200);
+    return () => window.clearTimeout(t);
+  }, [lockedHint]);
+  useEffect(() => {
+    if (!lockedHint) return undefined;
+    const clear = () => setLockedHint(null);
+    window.addEventListener('scroll', clear, true);
+    window.addEventListener('resize', clear);
+    return () => { window.removeEventListener('scroll', clear, true); window.removeEventListener('resize', clear); };
+  }, [lockedHint]);
+  const goToStep = (step, el) => {
     if (!step) return;
-    if (step.key === 'survey') { navigate('/start'); return; }
+    if (stepLocked(step)) { showLockedHint(step, el, true); return; }
+    if (step.key === 'survey') { if (draft) continueDraft(); else navigate('/start'); return; }
     if (step.key === 'grades') { setGradesOpenSignal((n) => n + 1); return; }
     openRunAt(journeyStepTarget[step.key]);
   };
@@ -1547,7 +1618,7 @@ export default function ProfilePage() {
   }, [journeyCurrentKey, overviewReady, journeySteps.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const JOURNEY_SHORT = {
-    survey: 'Survey',
+    survey: 'Assessment',
     profile: 'My CareerDNA',
     strengths: 'Strengths',
     environments: 'Work styles',
@@ -1555,7 +1626,7 @@ export default function ProfilePage() {
     discovermore: isUniversity ? 'Roles' : 'Pathways',
     exploreuni: 'University or training',
     grades: 'Your grades',
-    apply: 'Apply',
+    apply: 'Applications',
   };
   const renderJourneyIcon = (key) => (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -1606,7 +1677,7 @@ export default function ProfilePage() {
 
         </header>
 
-        {errorMsg ? <p className="profile-error">{errorMsg}</p> : null}
+        <InlineError message={errorMsg} onRetry={errorRetry || undefined} />
         {profileNotice ? <p className="profile-notice">{profileNotice}</p> : null}
 
         {!overviewReady ? (
@@ -1618,8 +1689,14 @@ export default function ProfilePage() {
 
         {overviewReady ? (
           <>
+            {Object.keys(celebrate).length ? (
+              <div className="profile-stats-celebrate" role="status">
+                {Object.keys(celebrate).map((k) => MILESTONE_COPY[k]).join('. ')}.
+              </div>
+            ) : null}
             <div className="profile-stats">
-              <div className="profile-stat profile-stat--journey">
+              <div className={`profile-stat profile-stat--journey${statTileProps('assessments').className}`}>
+                {statTileProps('assessments').note}
                 <span className="profile-stat-ic" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg>
                 </span>
@@ -1628,7 +1705,8 @@ export default function ProfilePage() {
                   <span className="profile-stat-label">Assessments</span>
                 </div>
               </div>
-              <div className="profile-stat profile-stat--runs">
+              <div className={`profile-stat profile-stat--runs${statTileProps('reports').className}`}>
+                {statTileProps('reports').note}
                 <span className="profile-stat-ic" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 4v4h4" /><path d="M12 8v4l3 2" /></svg>
                 </span>
@@ -1637,7 +1715,8 @@ export default function ProfilePage() {
                   <span className="profile-stat-label">Reports</span>
                 </div>
               </div>
-              <div className="profile-stat profile-stat--advisor">
+              <div className={`profile-stat profile-stat--advisor${statTileProps('questions').className}`}>
+                {statTileProps('questions').note}
                 <span className="profile-stat-ic" aria-hidden="true">
                   <BrainCircuit size={20} aria-hidden="true" focusable="false" />
                 </span>
@@ -1646,7 +1725,8 @@ export default function ProfilePage() {
                   <span className="profile-stat-label">Questions asked</span>
                 </div>
               </div>
-              <div className="profile-stat profile-stat--fav">
+              <div className={`profile-stat profile-stat--fav${statTileProps('favourites').className}`}>
+                {statTileProps('favourites').note}
                 <span className="profile-stat-ic" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 21s-7-4.5-9.5-8.5C.5 8.5 3 5 6.5 5 8.5 5 10 6 12 8c2-2 3.5-3 5.5-3C21 5 23.5 8.5 21.5 12.5 19 16.5 12 21 12 21z" /></svg>
                 </span>
@@ -1655,7 +1735,8 @@ export default function ProfilePage() {
                   <span className="profile-stat-label">Favourites</span>
                 </div>
               </div>
-              <div className="profile-stat profile-stat--apps">
+              <div className={`profile-stat profile-stat--apps${statTileProps('applications').className}`}>
+                {statTileProps('applications').note}
                 <span className="profile-stat-ic" aria-hidden="true">
                   <Send size={19} aria-hidden="true" focusable="false" />
                 </span>
@@ -1668,29 +1749,28 @@ export default function ProfilePage() {
 
             <section className="profile-jcard" aria-label={journeyNextStep ? `Your journey. Next step: ${journeyNextStep.label}` : 'Your journey'}>
               <div className="profile-jcard-head">
-                <div className="profile-jcard-headtext">
-                  <span className="profile-jcard-title">
-                    Your journey
-                    <span className="profile-jcard-pill">{journeyDoneCount} of {journeyTotal} steps done</span>
-                  </span>
-                  <span className="profile-jcard-nextname">
-                    <span className="profile-jcard-nextlabel">{journeyNextStep ? 'Next step:' : 'All steps done.'}</span>
-                    <button
-                      type="button"
-                      className="profile-jcard-go"
-                      onClick={() => (journeyNextStep ? goToStep(journeyNextStep) : setAppsOpenSignal((n) => n + 1))}
-                    >
-                      {journeyNextStep ? journeyNextStep.label : 'Keep your applications up to date'}
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="M13 6l6 6-6 6" /></svg>
-                    </button>
-                  </span>
-                </div>
-                {latestRun?.id ? (
-                  <button type="button" className="profile-jcard-open" onClick={() => openRun(latestRun.id)}>
-                    Open current report
-                  </button>
-                ) : null}
+                <span className="profile-jcard-title">
+                  Your journey
+                  <span className="profile-jcard-pill">{journeyDoneCount} of {journeyTotal} steps done</span>
+                </span>
               </div>
+              <div className="profile-jcard-bar" aria-hidden="true">
+                <div className="profile-jcard-bar__fill" style={{ width: `${journeyTotal ? Math.round((journeyDoneCount / journeyTotal) * 100) : 0}%` }} />
+              </div>
+              <button
+                type="button"
+                className="profile-jcard-next"
+                onClick={() => (journeyNextStep ? goToStep(journeyNextStep) : setAppsOpenSignal((n) => n + 1))}
+              >
+                <span className="profile-jcard-next__ic" aria-hidden="true">
+                  {journeyNextStep ? renderJourneyIcon(journeyNextStep.key) : renderJourneyIcon('apply')}
+                </span>
+                <span className="profile-jcard-next__text">
+                  <span className="profile-jcard-next__label">{journeyNextStep ? 'Next step' : 'All steps done'}</span>
+                  <span className="profile-jcard-next__name">{journeyNextStep ? journeyNextStep.label : 'Keep your applications up to date'}</span>
+                </span>
+                <svg className="profile-jcard-next__chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+              </button>
               <div className={`profile-jrail-wrap${journeyRailEdges.left ? ' can-left' : ''}${journeyRailEdges.right ? ' can-right' : ''}`}>
                 <button type="button" className="profile-jrail-arrow profile-jrail-arrow--left" aria-label="Earlier steps" onClick={() => scrollJourneyRail(-1)}>
                   <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -1702,8 +1782,17 @@ export default function ProfilePage() {
                 {journeySteps.map((step, i) => {
                   const isCurrent = journeyNextStep && journeyNextStep.key === step.key;
                   return (
-                    <li key={step.key} className={`profile-jrail-step${step.done ? ' is-done' : ''}${isCurrent ? ' is-current' : ''}`} data-current={isCurrent ? '1' : undefined}>
-                      <button type="button" className="profile-jrail-btn" onClick={() => goToStep(step)} aria-label={`${step.done ? 'Done: ' : isCurrent ? 'Next: ' : ''}${step.label}`}>
+                    <li key={step.key} className={`profile-jrail-step${step.done ? ' is-done' : ''}${isCurrent ? ' is-current' : ''}${stepLocked(step) ? ' is-locked' : ''}`} data-current={isCurrent ? '1' : undefined}>
+                      <button
+                        type="button"
+                        className="profile-jrail-btn"
+                        onClick={(e) => goToStep(step, e.currentTarget)}
+                        onMouseEnter={(e) => { if (stepLocked(step)) showLockedHint(step, e.currentTarget, false); }}
+                        onMouseLeave={() => hideLockedHint(step)}
+                        onFocus={(e) => { if (stepLocked(step)) showLockedHint(step, e.currentTarget, false); }}
+                        onBlur={() => hideLockedHint(step)}
+                        aria-label={`${stepLocked(step) ? 'Locked until you complete your assessment: ' : step.done ? 'Done: ' : isCurrent ? 'Next: ' : ''}${step.label}`}
+                      >
                         <span className="profile-jrail-dot" aria-hidden="true">
                           {step.done
                             ? <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12l5 5L20 7" /></svg>
@@ -1716,6 +1805,20 @@ export default function ProfilePage() {
                 })}
               </ol>
               </div>
+              {latestRun?.id ? (
+                <div className="profile-jcard-foot">
+                  <button type="button" className="profile-jcard-openlink" onClick={() => openRun(latestRun.id)}>
+                    Open current report
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="M13 6l6 6-6 6" /></svg>
+                  </button>
+                </div>
+              ) : null}
+              {lockedHint ? createPortal(
+                <span className="profile-jrail-hint is-floating" role="tooltip" style={{ left: lockedHint.x, top: lockedHint.y }}>
+                  Complete your assessment first
+                </span>,
+                document.body,
+              ) : null}
             </section>
 
           </>
@@ -1735,7 +1838,7 @@ export default function ProfilePage() {
         {/* Favourites (left) + grades (right, school only) from the latest run. */}
         {overviewReady && latestRun ? (
           <div className={`profile-favrow${latestStatus === 'school' ? ' profile-favrow--three' : ''}`}>
-            <FavouritesCard runId={latestRun.id} onExplore={exploreFavourite} initialGroups={favGroups} appliedKeys={appliedKeys} onApply={handleApplyFromFavourite} stage={applicationStage} predictedGrades={academicProfileData?.predicted_alevels || []} insightCtx={{
+            <FavouritesCard runId={latestRun.id} onExplore={exploreFavourite} onOpenReport={() => openRun(latestRun.id)} initialGroups={favGroups} appliedKeys={appliedKeys} onApply={handleApplyFromFavourite} stage={applicationStage} predictedGrades={academicProfileData?.predicted_alevels || []} insightCtx={{
               archetypes: latestRun?.results_json?.archetypes || null,
               subdimensions: latestRun?.results_json?.subdimensionRows || [],
               summaryMarkdown: latestRun?.summary_markdown || '',
@@ -1776,10 +1879,12 @@ export default function ProfilePage() {
                   : `${totalRuns} total`}
               </span>
             </div>
-            <button type="button" className="profile-btn-hover-primary" style={btnPrimarySm} onClick={handleRetake}>
-              <PlayIcon />
-              New assessment
-            </button>
+            {totalRuns > 0 ? (
+              <button type="button" className="profile-btn-hover-primary" style={btnPrimarySm} onClick={handleRetake}>
+                <PlayIcon />
+                New assessment
+              </button>
+            ) : null}
           </div>
 
           {loadingRuns ? (
@@ -1789,97 +1894,117 @@ export default function ProfilePage() {
             </div>
           ) : runs.length === 0 ? (
             <div className="profile-empty">
-              <p>You do not have any saved CareerDNA results yet.</p>
-              <button type="button" className="profile-btn-hover-primary" style={btnPrimary} onClick={handleRetake}>
-                Start your first assessment
-              </button>
+              {draft ? (
+                <>
+                  <p>
+                    {draftComplete
+                      ? 'You have answered all 100 questions. Your answers are saved and your results are one click away.'
+                      : `You have an assessment in progress: ${draft.answered} of ${draftTotal} questions answered. Your answers are saved on this device.`}
+                  </p>
+                  <button type="button" className="profile-btn-hover-primary" style={btnPrimary} onClick={continueDraft}>
+                    {draftComplete ? 'See my results' : 'Continue my assessment'}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p>You do not have any saved CareerDNA results yet.</p>
+                  <button type="button" className="profile-btn-hover-primary" style={btnPrimary} onClick={handleRetake}>
+                    Start your first assessment
+                  </button>
+                </>
+              )}
             </div>
           ) : (
             <div className="profile-runs">
               {(showAllRuns ? runs : runs.slice(0, 3)).map((run, idx) => (
                 <div
                   key={run.id}
-                  className="profile-run-row"
+                  className={`profile-run-row${latestRun?.id === run.id ? ' is-current' : ''}`}
+                  role="button"
+                  tabIndex={0}
+                  onClick={(e) => { if (e.target.closest('.profile-run-menu-wrap')) return; openRun(run.id); }}
+                  onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('.profile-run-menu-wrap')) { e.preventDefault(); openRun(run.id); } }}
+                  aria-label={`Open report ${totalRuns - idx}`}
                 >
-                  {/* Run Number */}
-                  <div className="profile-run-id">
-                    <span className={`profile-run-number ${idx === 0 ? 'profile-run-number--latest' : ''}`}>
-                      #{totalRuns - idx}
-                    </span>
-                    {latestRun?.id === run.id && <span className="profile-run-badge">Current</span>}
+                  <div className="profile-run-chip" aria-hidden="true">#{totalRuns - idx}</div>
+
+                  <div className="profile-run-main">
+                    <div className="profile-run-titleline">
+                      <span className="profile-run-title">Report {totalRuns - idx}</span>
+                      {latestRun?.id === run.id && <span className="profile-run-badge">Current</span>}
+                    </div>
+                    <div className="profile-run-details">
+                      <span>{compactDate(run.created_at)}</span>
+                      <span className="profile-run-sep">|</span>
+                      <span><strong>{ageValue(run)}</strong> yrs</span>
+                      <span className="profile-run-sep">|</span>
+                      <span>{statusLabel(run.intro_answers_json?.status)}</span>
+                      {nextStepLabel(run) !== '—' && (
+                        <>
+                          <span className="profile-run-sep profile-run-sep--hide-tablet">|</span>
+                          <span className="profile-run-detail--hide-tablet">{nextStepLabel(run)}</span>
+                        </>
+                      )}
+                      {subjectLabel(run) !== '—' && (
+                        <>
+                          <span className="profile-run-sep">|</span>
+                          <span className="profile-run-subject">{subjectLabel(run)}</span>
+                        </>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Date */}
-                  <div className="profile-run-date">{compactDate(run.created_at)}</div>
+                  <svg className="profile-run-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
 
-                  {/* Details inline */}
-                  <div className="profile-run-details">
-                    <span><strong>{ageValue(run)}</strong> yrs</span>
-                    <span className="profile-run-sep">|</span>
-                    <span>{statusLabel(run.intro_answers_json?.status)}</span>
-                    {nextStepLabel(run) !== '—' && (
-                      <>
-                        <span className="profile-run-sep profile-run-sep--hide-tablet">|</span>
-                        <span className="profile-run-detail--hide-tablet">{nextStepLabel(run)}</span>
-                      </>
-                    )}
-                    {subjectLabel(run) !== '—' && (
-                      <>
-                        <span className="profile-run-sep">|</span>
-                        <span className="profile-run-subject">{subjectLabel(run)}</span>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Actions */}
-                  <div className="profile-run-actions">
-                    <button type="button" className="profile-btn-hover-primary" style={btnPrimarySm} onClick={() => openRun(run.id)}>
-                      Open Report
+                  <div className="profile-run-menu-wrap">
+                    <button
+                      type="button"
+                      className="profile-run-menu-btn"
+                      aria-label="More actions"
+                      aria-haspopup="true"
+                      aria-expanded={openRunMenuId === run.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenRunMenuId(openRunMenuId === run.id ? null : run.id);
+                      }}
+                    >
+                      <MoreIcon />
                     </button>
-                    <button type="button" className="profile-btn-hover-outline" style={btnOutlineSm} onClick={() => openOutputParametersModal(run)}>
-                      Re-run
-                    </button>
-                    <div className="profile-run-menu-wrap">
-                      <button
-                        type="button"
-                        className="profile-run-menu-btn"
-                        aria-label="More actions"
-                        aria-haspopup="true"
-                        aria-expanded={openRunMenuId === run.id}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setOpenRunMenuId(openRunMenuId === run.id ? null : run.id);
-                        }}
-                      >
-                        <MoreIcon />
-                      </button>
-                      {openRunMenuId === run.id ? (
-                        <div className="profile-run-menu" role="menu" onClick={(e) => e.stopPropagation()}>
-                          {latestRun?.id !== run.id ? (
-                            <button
-                              type="button"
-                              role="menuitem"
-                              className="profile-run-menu-item"
-                              onClick={() => { setOpenRunMenuId(null); handleSetCurrentRun(run.id); }}
-                              disabled={settingCurrentId === run.id}
-                            >
-                              <PinIcon />
-                              {settingCurrentId === run.id ? 'Setting…' : 'Set as current report'}
-                            </button>
-                          ) : null}
+                    {openRunMenuId === run.id ? (
+                      <div className="profile-run-menu" role="menu" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          className="profile-run-menu-item"
+                          onClick={() => { setOpenRunMenuId(null); openOutputParametersModal(run); }}
+                        >
+                          <RerunIcon />
+                          Re-run with new settings
+                        </button>
+                        {latestRun?.id !== run.id ? (
                           <button
                             type="button"
                             role="menuitem"
-                            className="profile-run-menu-item profile-run-menu-item--danger"
-                            onClick={() => { setOpenRunMenuId(null); setDeleteConfirmRunId(run.id); }}
-                            disabled={deletingRunId === run.id}
+                            className="profile-run-menu-item"
+                            onClick={() => { setOpenRunMenuId(null); handleSetCurrentRun(run.id); }}
+                            disabled={settingCurrentId === run.id}
                           >
-                            <TrashIcon />
-                            {deletingRunId === run.id ? 'Deleting…' : 'Delete'}
+                            <PinIcon />
+                            {settingCurrentId === run.id ? 'Setting...' : 'Set as current report'}
                           </button>
-                        </div>
-                      ) : null}
-                    </div>
+                        ) : null}
+                        <button
+                          type="button"
+                          role="menuitem"
+                          className="profile-run-menu-item profile-run-menu-item--danger"
+                          onClick={() => { setOpenRunMenuId(null); setDeleteConfirmRunId(run.id); }}
+                          disabled={deletingRunId === run.id}
+                        >
+                          <TrashIcon />
+                          {deletingRunId === run.id ? 'Deleting...' : 'Delete report'}
+                        </button>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               ))}
@@ -2036,6 +2161,7 @@ export default function ProfilePage() {
                     </label>
                   </div>
 
+                  {(profile?.date_of_birth || runs?.[0]?.intro_answers_json?.dateOfBirth) ? (
                   <div className="profile-account-field profile-account-field--full">
                     <span>Date of birth</span>
                     <div
@@ -2049,7 +2175,7 @@ export default function ProfilePage() {
                         type="text"
                         value={(() => {
                           const dob = profile?.date_of_birth || runs?.[0]?.intro_answers_json?.dateOfBirth;
-                          return dob ? compactDate(dob) : '—';
+                          return dob ? compactDate(dob) : '';
                         })()}
                         readOnly
                         style={{ cursor: 'not-allowed' }}
@@ -2070,6 +2196,7 @@ export default function ProfilePage() {
                       )}
                     </div>
                   </div>
+                  ) : null}
 
                   <div className="profile-account-field profile-account-field--full">
                     <span>Email address</span>
@@ -2215,7 +2342,7 @@ export default function ProfilePage() {
                 <span className="profile-account-help-icon"><AccountMiniIcon type="help" /></span>
                 <p>
                   For any issues with your account, contact us at{' '}
-                  <a href="mailto:support@mycareerdna.io">support@mycareerdna.io</a>
+                  <a href="mailto:hello@mycareerdna.io">hello@mycareerdna.io</a>
                 </p>
               </div>
 
@@ -2346,34 +2473,49 @@ export default function ProfilePage() {
             </div>
 
             <p className="profile-modal-subtitle">
-              This will permanently delete your account, profile details and all saved CareerDNA results.
-              This action cannot be undone.
+              This permanently deletes your account. It cannot be undone.
             </p>
 
+            <ul className="profile-delete-list">
+              <li>
+                <span className="profile-delete-list-label">Deleted</span>
+                <span>Your profile, reports, favourites, applications and advisor conversations.</span>
+              </li>
+              {profile?.stripe_subscription_id ? (
+                <li>
+                  <span className="profile-delete-list-label">Cancelled</span>
+                  <span>Your subscription. Access ends now and the rest of the paid year is not refunded.</span>
+                </li>
+              ) : null}
+              <li>
+                <span className="profile-delete-list-label">Kept</span>
+                <span>Your assessment answers and results, anonymised so nothing identifies you, to improve CareerDNA.</span>
+              </li>
+            </ul>
+
             {usesExternalAuth && !deleteAccountFinalConfirm ? (
-            <div className="profile-delete-final-warning" role="note">
-              This account is connected to Google. To protect your account, confirm with Google before deleting it.
-            </div>
-          ) : !usesExternalAuth ? (
-            <label className="profile-form-field">
-              <span>Enter your password</span>
-              <input
-                type="password"
-                style={inputStyle}
-                value={deleteAccountPassword}
-                onChange={(e) => {
-                  setDeleteAccountPassword(e.target.value);
-                  setDeleteAccountFinalConfirm(false);
-                }}
-                autoComplete="current-password"
-              />
-            </label>
+              <p className="profile-modal-subtitle profile-delete-note">
+                Your account is connected to Google, so you will be asked to sign in with Google to confirm.
+              </p>
+            ) : !usesExternalAuth ? (
+              <label className="profile-form-field">
+                <span>Enter your password to continue</span>
+                <input
+                  type="password"
+                  style={inputStyle}
+                  value={deleteAccountPassword}
+                  onChange={(e) => {
+                    setDeleteAccountPassword(e.target.value);
+                    setDeleteAccountFinalConfirm(false);
+                  }}
+                  autoComplete="current-password"
+                />
+              </label>
             ) : null}
 
             {deleteAccountFinalConfirm ? (
               <div className="profile-delete-final-warning" role="alert">
-                Are you absolutely sure? This permanently deletes your account and all saved CareerDNA results.
-                Click the red button one more time to delete your account.
+                Last check: this deletes your account{profile?.stripe_subscription_id ? ' and cancels your subscription' : ''} permanently. Click the red button once more to confirm.
               </div>
             ) : null}
 

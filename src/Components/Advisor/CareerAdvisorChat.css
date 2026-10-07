@@ -52,7 +52,7 @@
 
 .career-advisor-loading,
 .career-advisor-empty-note {
-  color: #6f84a0;
+  color: #5e6f88;
   font-size: 0.92rem;
   padding: 12px 2px 4px;
 }
@@ -150,7 +150,7 @@
 }
 
 .career-advisor-message-label {
-  color: #8a9bb0;
+  color: #64748b;
   font-size: 0.7rem;
   font-weight: 750;
   letter-spacing: 0.025em;
@@ -180,7 +180,7 @@
 }
 
 .career-advisor-message-content.muted {
-  color: #6f84a0;
+  color: #5e6f88;
   font-style: italic;
 }
 

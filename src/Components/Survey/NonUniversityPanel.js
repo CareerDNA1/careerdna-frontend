@@ -8,6 +8,8 @@ import { OptionDropdown, showSelectionTooltip, hideSelectionTooltip, PathwayReac
 import { getReactions, setItemReaction } from '../../utils/savedItems';
 import { getSubjectIcon, getPathwayIcon } from '../../utils/iconMap';
 import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank } from './ResultsFilter';
+import InlineError from '../Common/InlineError';
+import { friendlyError } from '../../utils/friendlyError';
 
 // Strip the option in parentheses and the word 'apprenticeship'/level tag from a
 // standard name so the Find an Apprenticeship search matches the parent standard
@@ -467,7 +469,7 @@ function StandardRow({ route, liveVacancies, showTitle, reaction = '', onReact }
           className="cw-def-modal cw-def-modal--wayin"
           role="dialog"
           aria-modal="true"
-          aria-label={`${title} — details`}
+          aria-label={`${title}: details`}
           onClick={(e) => { if (e.target === e.currentTarget) setModalOpen(false); }}
         >
           <div className="cw-def-modal__box">
@@ -873,6 +875,7 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
   const mainRef = useRef(null);
   const hasSelectedRef = useRef(false);
 
+  const [reloadTick, setReloadTick] = useState(0);
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -882,13 +885,13 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
         const d = await fetchNonUniRoutes();
         if (!cancelled) setData(d);
       } catch (err) {
-        if (!cancelled) setError(err?.message || 'Could not load non-university routes right now.');
+        if (!cancelled) setError(friendlyError(err, 'load the training and work routes').message);
       } finally {
         if (!cancelled) setLoading(false);
       }
     })();
     return () => { cancelled = true; };
-  }, []);
+  }, [reloadTick]);
 
   // Delegated white floating tooltips for the like/dislike buttons (matches other tabs).
   useEffect(() => {
@@ -1050,7 +1053,7 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
       {loading ? (
         <p className="fs-none">Finding your non-university routes&hellip;</p>
       ) : error ? (
-        <p className="fs-error">{error}</p>
+        <InlineError message={error} onRetry={() => setReloadTick((t) => t + 1)} />
       ) : allWorlds.length ? (
         <div className="selection-explorer__layout selection-explorer__layout--stacked">
           <div className="selection-explorer__selector-select-wrap">
@@ -1142,6 +1145,9 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
           under &ldquo;Explore other career worlds&rdquo;, to see their non-university routes.
         </p>
       )}
+      <p className="nu-source-note">
+        Apprenticeship standards: Institute for Apprenticeships and Technical Education, under the Open Government Licence v3.0. Live openings come from Find an Apprenticeship and partner job boards and change daily; always check the employer&rsquo;s own listing before applying.
+      </p>
     </section>
   );
 }

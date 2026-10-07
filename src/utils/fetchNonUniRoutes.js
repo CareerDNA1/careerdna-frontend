@@ -1,33 +1,12 @@
-import { buildApiCandidates } from './config';
+import { apiFetch } from './apiFetch';
 
 // Load + cache the full non-university routes list once per session, and fetch
 // live apprenticeship vacancies per standard (LARS code) on demand.
 
-async function getJson(path) {
-  const candidates = buildApiCandidates(path);
-  let lastError = null;
-  for (const url of candidates) {
-    try {
-      const res = await fetch(url, { method: 'GET' });
-      if (res.status === 404) { lastError = new Error('404'); lastError.status = 404; continue; }
-      // A relative path on the dev server (or a SPA host) answers 200 with the
-      // app's HTML, not JSON. Treat that as "not this candidate".
-      const ctype = String(res.headers.get('content-type') || '');
-      if (res.ok && !/json/i.test(ctype)) { lastError = new Error('Not JSON'); continue; }
-      let data = null;
-      try { data = await res.json(); } catch (_) { data = null; }
-      if (!res.ok) {
-        const e = new Error(data?.message || `Request failed: ${res.status}`);
-        e.status = res.status;
-        throw e;
-      }
-      return data;
-    } catch (error) {
-      if (error?.status && error.status !== 404) throw error;
-      lastError = error;
-    }
-  }
-  throw lastError || new Error('Could not load non-university routes right now.');
+// Premium data routes check the plan on the server; apiFetch sends the session
+// token when signed in. No timeout: these endpoints can be slow on first call.
+function getJson(path) {
+  return apiFetch(path, { timeoutMs: 0 });
 }
 
 let routesCache = null;

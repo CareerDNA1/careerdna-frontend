@@ -1,30 +1,13 @@
-import { buildApiCandidates } from './config';
+import { apiFetch } from './apiFetch';
 
 // Live graduate-jobs lookup (university flow). Talks to our own backend, which
 // fetches + caches from Reed/Adzuna. Results are cached client-side per role
 // title so re-opening a card doesn't re-hit the backend.
 
-async function getJson(path) {
-  const candidates = buildApiCandidates(path);
-  let lastError = null;
-  for (const url of candidates) {
-    try {
-      const res = await fetch(url, { method: 'GET' });
-      if (res.status === 404) { lastError = new Error('404'); lastError.status = 404; continue; }
-      let data = null;
-      try { data = await res.json(); } catch (_) { data = null; }
-      if (!res.ok) {
-        const e = new Error(data?.message || `Request failed: ${res.status}`);
-        e.status = res.status;
-        throw e;
-      }
-      return data;
-    } catch (error) {
-      if (error?.status && error.status !== 404) throw error;
-      lastError = error;
-    }
-  }
-  throw lastError || new Error('Could not load graduate jobs right now.');
+// Premium data routes check the plan on the server; apiFetch sends the session
+// token when signed in. No timeout: upstream job boards can be slow.
+function getJson(path) {
+  return apiFetch(path, { timeoutMs: 0 });
 }
 
 // Is the feature switched on at all (are the API keys configured on the server)?

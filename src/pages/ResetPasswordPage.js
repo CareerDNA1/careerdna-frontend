@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../utils/supabaseClient';
 import { useAuth } from '../context/AuthContext';
+import { friendlyError } from '../utils/friendlyError';
+import { isStrongPassword, PASSWORD_RULES_TEXT } from '../utils/passwordRules';
+import PasswordRequirements from '../Components/Common/PasswordRequirements';
 import logo from '../Assets/images/logo-career-dna.png';
 import './AuthPage.css';
 
@@ -175,7 +178,7 @@ export default function ResetPasswordPage() {
     setLoading(false);
 
     if (error) {
-      setErrorMsg(error.message);
+      setErrorMsg(friendlyError(error, 'send the reset link').message);
       return;
     }
 
@@ -232,8 +235,8 @@ export default function ResetPasswordPage() {
       return;
     }
 
-    if (password.length < 8) {
-      setErrorMsg('Please use a password with at least 8 characters.');
+    if (!isStrongPassword(password)) {
+      setErrorMsg(PASSWORD_RULES_TEXT);
       return;
     }
 
@@ -260,7 +263,7 @@ export default function ResetPasswordPage() {
         state: { message: 'Your password has been updated. Please log in with your new password.' },
       });
     } catch (error) {
-      setErrorMsg(error.message || 'Could not update your password. Please request a new reset link.');
+      setErrorMsg(friendlyError(error, 'update your password').message);
     } finally {
       setLoading(false);
     }
@@ -371,6 +374,7 @@ export default function ResetPasswordPage() {
                     <EyeIcon hidden={!showPassword} />
                   </button>
                 </span>
+                <PasswordRequirements password={password} />
               </label>
 
               <label className="auth-label">

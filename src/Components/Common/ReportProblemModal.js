@@ -49,7 +49,7 @@ export default function ReportProblemModal({ onClose, assessmentRunId = '', pref
         {sent ? (
           <div className="report-problem-done">
             <div className="report-problem-done-icon" aria-hidden="true">✓</div>
-            <h2 id="report-problem-title">Thanks — we've got it</h2>
+            <h2 id="report-problem-title">Thanks, we have it</h2>
             <p>Your report has been sent to our team. We'll look into it.</p>
             <button type="button" className="report-problem-primary" onClick={onClose}>
               Close

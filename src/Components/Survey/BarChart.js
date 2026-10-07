@@ -252,7 +252,7 @@ const BarChart = ({ archetypes }) => {
       >
         <Bar data={data} options={options} />
       </div>
-      <p style={{ margin: "6px 0 0", textAlign: "center", fontSize: "0.72rem", fontWeight: 500, color: "#8a97a8" }}>
+      <p style={{ margin: "6px 0 0", textAlign: "center", fontSize: "0.72rem", fontWeight: 500, color: "#64748b" }}>
         {isMobile ? "Tap" : "Hover over"} a bar to see what it means
       </p>
     </>
