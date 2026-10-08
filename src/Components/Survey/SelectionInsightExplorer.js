@@ -555,9 +555,9 @@ function fillFromBlocks(blocks = 0) {
   return { 4: 100, 3: 75, 2: 50, 1: 25 }[Number(blocks) || 0] || 0;
 }
 
-export function SignalBadge({ label }) {
+export function SignalBadge({ label, tooltipBody: tooltipOverride = '' }) {
   if (!label) return null;
-  const tooltipBody = getMatchTooltipBody(label);
+  const tooltipBody = tooltipOverride || getMatchTooltipBody(label);
 
   // The world/detail header signal now uses the new tier pill (Palette A),
   // matching the pill labelling used throughout — not the old fill bar.
@@ -1853,7 +1853,7 @@ export function ItemPills({ item, defaultOpen = false, narrativeLead = '', narra
         <SectionAccordion
           title={
             <div className="selection-accordion-title-stack">
-              <MetricTitle aligned={alignedArchetypeCount} total={totalArchetypeCount} label="Signature profiles match" />
+              <MetricTitle aligned={alignedArchetypeCount} total={totalArchetypeCount} label="Signature profiles present" />
               <div className="selection-accordion-helper">Which of your profiles align with this option?</div>
             </div>
           }
@@ -1883,7 +1883,7 @@ export function ItemPills({ item, defaultOpen = false, narrativeLead = '', narra
         <SectionAccordion
           title={
             <div className="selection-accordion-title-stack">
-              <MetricTitle aligned={alignedTraitCount} total={totalTraitCount} label="Signature traits match" />
+              <MetricTitle aligned={alignedTraitCount} total={totalTraitCount} label="Signature traits present" />
               <div className="selection-accordion-helper">Which of your traits align with this option?</div>
             </div>
           }
@@ -1984,7 +1984,12 @@ function DetailPanel({ item, onItemReaction, savedReactions = {}, nonUniByTitle 
         <div className="selection-definition-card__header">
           <SelectionTitle item={item} definition={selectionDefinition} />
           <div className="selection-detail-card__signal-wrap">
-            <SignalBadge label={matchSignal.label} blocks={matchSignal.blocks} pct={item?.signalPct || item?.fitPct} />
+            <SignalBadge
+              label={matchSignal.label}
+              blocks={matchSignal.blocks}
+              pct={item?.signalPct || item?.fitPct}
+              tooltipBody={`${getMatchTooltipBody(matchSignal.label)} Each pathway below is scored on its own profile, so some sit above or below the world as a whole.`}
+            />
           </div>
         </div>
         {worldPathways.length > 0 ? (

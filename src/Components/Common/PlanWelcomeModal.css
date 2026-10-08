@@ -1,0 +1,90 @@
+/* Plan welcome dialog (after checkout). House modal frame. */
+.plan-welcome-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 98000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.34);
+}
+.plan-welcome {
+  position: relative;
+  width: min(100%, 430px);
+  padding: 24px 28px 18px;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 22px 60px rgba(15, 23, 42, 0.22);
+  color: #172033;
+  text-align: left;
+  outline: none;
+}
+.plan-welcome__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: #eef2f7;
+  color: #3b4a61;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.plan-welcome__close:hover { background: #e3e9f2; }
+.plan-welcome__title {
+  margin: 0 40px 14px 0;
+  font-size: 1.25rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: #172033;
+}
+.plan-welcome__accent { color: #2f6fed; }
+.plan-welcome__body { margin: 0; color: #52667f; font-size: 0.9rem; line-height: 1.6; }
+.plan-welcome__list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.plan-welcome__list li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  color: #52667f;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.plan-welcome__list svg { flex: 0 0 auto; color: #2f6fed; margin-top: 3px; }
+.plan-welcome__actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+.plan-welcome__btn {
+  min-height: 36px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.plan-welcome__btn--primary { border: 0; background: #2f6fed; color: #fff; }
+.plan-welcome__btn--primary:hover { background: #255fd4; }
+.plan-welcome__btn--secondary { border: 1px solid #dbe6f7; background: #fff; color: #54657b; }
+.plan-welcome__btn--secondary:hover { background: #f4f8ff; }
+.plan-welcome__btn:focus { outline: none; }
+.plan-welcome__btn:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
+.plan-welcome__close:focus { outline: none; }
+.plan-welcome__close:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
+@media (max-width: 520px) {
+  .plan-welcome { padding: 22px 20px 16px; }
+}

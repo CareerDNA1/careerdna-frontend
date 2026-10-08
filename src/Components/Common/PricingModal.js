@@ -264,7 +264,7 @@ function buildConfirmationCopy({ variant, checkoutPlanKey, status, effectivePlan
       body: 'You will be taken to Stripe Checkout to start CareerDNA Explorer at £29.99 a year.',
       bullets: [
         'Includes 1 full CareerDNA report a year.',
-        'Includes 5 Your Advisor questions a year.',
+        'Includes 10 Advisor questions a year.',
         'Renews annually. You can manage or cancel your subscription from your account at any time.',
       ],
       requiresConsent: true,
@@ -280,7 +280,7 @@ function buildConfirmationCopy({ variant, checkoutPlanKey, status, effectivePlan
       body: 'You will be taken to Stripe Checkout to start CareerDNA Premium at £39.99 a year.',
       bullets: [
         'Includes 2 full CareerDNA reports a year.',
-        'Includes 20 Your Advisor questions a year.',
+        'Includes 20 Advisor questions a year.',
         'Includes all premium tools: rankings, your chances, live jobs and apprenticeships.',
         'Renews annually. You can manage or cancel your subscription from your account at any time.',
       ],

@@ -78,7 +78,7 @@ export function calculateProfileQualityGate({
 }
 
 export function getProfileQualityGateMessage(gate = {}) {
-  return 'Your results do not yet show a clear enough CareerDNA pattern for a meaningful analysis. Please retake the assessment and answer as thoughtfully and honestly as possible.';
+  return 'Your answers point in several directions at once, so a report would not tell you anything reliable yet. This usually happens when questions are answered quickly, or the middle option is chosen more often than not.';
 }
 
 export default calculateProfileQualityGate;

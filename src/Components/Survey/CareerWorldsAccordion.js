@@ -101,6 +101,11 @@ function RouteChips({ chips }) {
 }
 
 // Normalised key so a favourite on the profile can deep-link to this exact card.
+// True on devices with a real pointer (hover works), false on touch.
+function canHover() {
+  try { return window.matchMedia('(hover: hover) and (pointer: fine)').matches; } catch (_) { return false; }
+}
+
 const favKey = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
 export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = getCareerWorldIcon, pilotDefinition = false, itemType = 'career_world' }) {
@@ -189,9 +194,17 @@ export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = 
         className="cw-accordion-item__head"
         onClick={(e) => {
           // Let the whole header open/close the card, but ignore clicks on the
-          // real controls (toggle/chevron buttons, like/dislike) and on the
-          // tooltip pills — those handle themselves.
-          if (e.target.closest('button, [data-selection-tooltip]')) return;
+          // real controls (toggle/chevron buttons, like/dislike). The match
+          // pill shows its definition on hover, so on a mouse a click on it
+          // opens the card like the rest of the header; on touch (no hover)
+          // the tap pins the definition instead.
+          if (e.target.closest('button')) return;
+          const pill = e.target.closest('[data-selection-tooltip]');
+          if (pill) {
+            const isMatchPill = pill.classList.contains('cw-accordion-item__band') || pill.classList.contains('cw-accordion-item__pilotbadge');
+            if (!isMatchPill || !canHover()) return;
+            hideSelectionTooltip();
+          }
           onToggle();
         }}
       >
@@ -451,6 +464,9 @@ export default function CareerWorldsAccordion({
     const onClick = (event) => {
       const t = getTarget(event);
       if (!(t instanceof HTMLElement)) return;
+      // Match pills on a mouse device open the card instead (see header onClick).
+      const isMatchPill = t.classList.contains('cw-accordion-item__band') || t.classList.contains('cw-accordion-item__pilotbadge');
+      if (isMatchPill && canHover()) return;
       showSelectionTooltip(t, { pinned: true });
     };
     root.addEventListener('pointerover', onOver);

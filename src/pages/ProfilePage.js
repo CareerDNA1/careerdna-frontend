@@ -35,7 +35,9 @@ import { ageFromDOB, ukSchoolYearGroup } from '../utils/educationProgression';
 import AdvisorDrawer from '../Components/Advisor/AdvisorDrawer';
 import InlineError from '../Components/Common/InlineError';
 import { friendlyError } from '../utils/friendlyError';
-import { setAdvisorContext } from '../utils/advisorPanel';
+import { setAdvisorContext, openAdvisor } from '../utils/advisorPanel';
+import PlanWelcomeModal from '../Components/Common/PlanWelcomeModal';
+import PlanBadge from '../Components/Common/PlanBadge';
 
 const defaultIntroResponses = {
   name: '',
@@ -82,6 +84,26 @@ function statusLabel(value) {
   if (value === 'postgraduate') return 'Postgraduate student';
   if (value === 'other') return 'Other';
   return '—';
+}
+
+// One-line description of who the student is, from the current report:
+// "At school, Year 12" or "Undergraduate, Year 2, Economics".
+function studentStatusLine(run) {
+  const intro = run?.intro_answers_json || {};
+  const status = String(intro.status || '').toLowerCase();
+  const parts = [];
+  if (status === 'school') {
+    parts.push('At school');
+    const yr = String(intro.schoolYear || '').match(/(\d+)/);
+    if (yr) parts.push(`Year ${yr[1]}`);
+  } else if (status === 'undergraduate' || status === 'postgraduate') {
+    parts.push(status === 'undergraduate' ? 'Undergraduate' : 'Postgraduate');
+    if (intro.courseYear) parts.push(`Year ${intro.courseYear}`);
+    if (intro.uniSubject) parts.push(String(intro.uniSubject));
+  } else if (status === 'other') {
+    parts.push('Exploring options');
+  }
+  return parts.join(', ');
 }
 
 function nextStepLabel(run) {
@@ -632,6 +654,10 @@ export default function ProfilePage() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState({ firstName: '', lastName: '', email: '' });
   const [profileNotice, setProfileNotice] = useState('');
+  // Welcome dialog after a successful checkout: { kind: 'explore' | 'premium' | 'pack' }
+  const [planWelcome, setPlanWelcome] = useState(null);
+  const [runMenuUp, setRunMenuUp] = useState(false);
+  const checkoutReturnStartedRef = useRef(false);
   const [deleteAccountOpen, setDeleteAccountOpen] = useState(false);
   const [deleteAccountPassword, setDeleteAccountPassword] = useState('');
   const [deleteAccountFinalConfirm, setDeleteAccountFinalConfirm] = useState(false);
@@ -940,7 +966,6 @@ export default function ProfilePage() {
   const currentPlanKey = String(profile?.plan || 'free').toLowerCase();
   const isAdminProfile = Boolean(profile?.is_admin);
   const isRecurringPlan = ['explore', 'premium'].includes(currentPlanKey);
-  const planIconType = currentPlanKey === 'premium' ? 'crown' : currentPlanKey === 'explore' ? 'sparkles' : 'shield';
   const authProvider = String(user?.app_metadata?.provider || '').toLowerCase();
   const authIdentityProviders = Array.isArray(user?.identities)
     ? user.identities.map((identity) => String(identity?.provider || '').toLowerCase()).filter(Boolean)
@@ -996,7 +1021,20 @@ export default function ProfilePage() {
     // Notices below only appear once, straight after an action.
 
     if (checkoutSuccess) {
-      setProfileNotice('Your payment was successful and your CareerDNA access has been updated.');
+      // Confirm the entitlement with Stripe directly rather than waiting on the
+      // webhook, then open the welcome dialog for the plan or pack bought.
+      if (checkoutReturnStartedRef.current) return;
+      checkoutReturnStartedRef.current = true;
+      const boughtPack = params.get('purchase') === 'advisor_pack';
+      const showWelcome = (p) => {
+        const plan = String(p?.plan || profile?.plan || 'free').toLowerCase();
+        const kind = boughtPack ? 'pack' : plan === 'premium' ? 'premium' : 'explore';
+        setPlanWelcome({ kind });
+      };
+      syncStripeSubscriptionFromBackend()
+        .then(showWelcome)
+        .catch(() => showWelcome(null));
+      window.history.replaceState({}, '', '/profile');
       return;
     }
 
@@ -1012,29 +1050,14 @@ export default function ProfilePage() {
 
   const reportLimitTitle = isRecurringPlan ? 'Reports this year' : 'Reports left';
   const reportLimitSubtitle = isRecurringPlan ? 'Included in your plan each year' : 'Explore career reports';
-  const reportLimitValue = reportUsage?.unlimited
-    ? '∞'
-    : isRecurringPlan
-      ? toNumber(profile?.report_limit)
-      : toNumber(reportUsage?.remaining);
-  const reportLimitSuffix = reportUsage?.unlimited
-    ? 'included'
-    : isRecurringPlan
-      ? 'per year'
-      : 'left';
+  // Shown as "remaining of total left" so the student can see what is used.
+  const reportLimitValue = reportUsage?.unlimited ? '∞' : toNumber(reportUsage?.remaining);
+  const reportLimitSuffix = reportUsage?.unlimited ? 'included' : `of ${toNumber(reportUsage?.total)} left`;
 
   const advisorLimitTitle = isRecurringPlan ? 'Advisor questions this year' : 'Advisor questions left';
   const advisorLimitSubtitle = isRecurringPlan ? 'Included in your plan each year' : 'Chat with Your Advisor';
-  const advisorLimitValue = advisorUsage?.unlimited
-    ? '∞'
-    : isRecurringPlan
-      ? toNumber(profile?.advisor_questions_limit)
-      : toNumber(advisorUsage?.remaining);
-  const advisorLimitSuffix = advisorUsage?.unlimited
-    ? 'included'
-    : isRecurringPlan
-      ? 'per year'
-      : 'left';
+  const advisorLimitValue = advisorUsage?.unlimited ? '∞' : toNumber(advisorUsage?.remaining);
+  const advisorLimitSuffix = advisorUsage?.unlimited ? 'included' : `of ${toNumber(advisorUsage?.total)} left`;
 
 
   const profileHasChanges = useMemo(() => {
@@ -1470,16 +1493,22 @@ export default function ProfilePage() {
     return undefined;
   }, [overviewReady, user?.id, milestoneCounts]);
 
-  const MILESTONE_COPY = {
-    assessments: 'Well done, your first assessment is complete',
-    reports: 'Your first report is ready',
-    questions: 'First question asked. Keep them coming',
-    favourites: 'First favourite saved',
-    applications: 'First application tracked',
+  // Copy for the first-time celebration; plural when the first visit after
+  // the milestone already shows more than one (several favourites at once).
+  const milestoneCopy = (k) => {
+    const n = Number(milestoneCounts[k] || 0);
+    switch (k) {
+      case 'assessments': return 'Well done, your first assessment is complete';
+      case 'reports': return n > 1 ? 'Your reports are ready' : 'Your first report is ready';
+      case 'questions': return n > 1 ? `${n} questions asked. Keep them coming` : 'First question asked. Keep them coming';
+      case 'favourites': return n > 1 ? `${n} favourites saved` : 'First favourite saved';
+      case 'applications': return n > 1 ? `${n} applications tracked` : 'First application tracked';
+      default: return '';
+    }
   };
   const statTileProps = (k) => ({
     className: celebrate[k] ? ' is-celebrating' : '',
-    note: celebrate[k] ? <span className="profile-stat-celebrate" role="status">{MILESTONE_COPY[k]}</span> : null,
+    note: celebrate[k] ? <span className="profile-stat-celebrate" role="status">{milestoneCopy(k)}</span> : null,
   });
 
   // The satisfaction prompt appears once the exploration steps are done. Advisor,
@@ -1638,6 +1667,20 @@ export default function ProfilePage() {
     <div className="profile-page">
       <AccountNavbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
       {latestRun?.id && latestRun?.summary_markdown ? <AdvisorDrawer assessmentRunId={latestRun.id} stage={isUniversity ? 'university' : 'school'} /> : null}
+      {planWelcome ? (
+        <PlanWelcomeModal
+          kind={planWelcome.kind}
+          audience={isUniversity ? 'university' : 'school'}
+          hasReport={Boolean(latestRun?.id)}
+          onClose={() => setPlanWelcome(null)}
+          onPrimary={() => {
+            setPlanWelcome(null);
+            if (planWelcome.kind === 'pack') { openAdvisor(); return; }
+            if (latestRun?.id) navigate(`/results/run/${latestRun.id}`);
+            else navigate('/start');
+          }}
+        />
+      ) : null}
 
       <div className="profile-shell">
         {/* Accent hero: identity + live journey progress + continue action */}
@@ -1658,7 +1701,21 @@ export default function ProfilePage() {
                   })()}
                 </h1>
                 <div className="profile-hero-meta">
-                  <span className="profile-hero-email">{profile?.email || user?.email || '—'}</span>
+                  {profile ? <PlanBadge plan={currentPlanKey} /> : null}
+                  {studentStatusLine(latestRun) ? (
+                    <span className="profile-hero-status">
+                      {String(latestRun?.intro_answers_json?.status || '') === 'school' ? (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6" /></svg>
+                      ) : (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M2 9l10-4 10 4-10 4z" /><path d="M6 11v4c0 1.5 3 3 6 3s6-1.5 6-3v-4" /><path d="M22 9v6" /></svg>
+                      )}
+                      {studentStatusLine(latestRun).split(', ').map((part, i) => (
+                        <React.Fragment key={part}>{i > 0 ? <i className="profile-hero-status-dot" aria-hidden="true" /> : null}{part}</React.Fragment>
+                      ))}
+                    </span>
+                  ) : (
+                    <span className="profile-hero-email">{profile?.email || user?.email || ''}</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -1691,7 +1748,7 @@ export default function ProfilePage() {
           <>
             {Object.keys(celebrate).length ? (
               <div className="profile-stats-celebrate" role="status">
-                {Object.keys(celebrate).map((k) => MILESTONE_COPY[k]).join('. ')}.
+                {Object.keys(celebrate).map((k) => milestoneCopy(k)).join('. ')}.
               </div>
             ) : null}
             <div className="profile-stats">
@@ -1965,13 +2022,16 @@ export default function ProfilePage() {
                       aria-expanded={openRunMenuId === run.id}
                       onClick={(e) => {
                         e.stopPropagation();
+                        // The reports list is the last thing on the page, so the
+                        // menu always opens upwards over the row.
+                        setRunMenuUp(true);
                         setOpenRunMenuId(openRunMenuId === run.id ? null : run.id);
                       }}
                     >
                       <MoreIcon />
                     </button>
                     {openRunMenuId === run.id ? (
-                      <div className="profile-run-menu" role="menu" onClick={(e) => e.stopPropagation()}>
+                      <div className={`profile-run-menu${runMenuUp ? ' profile-run-menu--up' : ''}`} role="menu" onClick={(e) => e.stopPropagation()}>
                         <button
                           type="button"
                           role="menuitem"
@@ -2242,10 +2302,9 @@ export default function ProfilePage() {
                     </div>
 
                     <div className="profile-account-summary-item profile-account-summary-item--plan">
-                      <span className={`profile-account-summary-icon profile-account-summary-icon--${planIconType}`}><AccountMiniIcon type={planIconType} /></span>
                       <div>
                         <span>Plan</span>
-                        <strong>{planName}</strong>
+                        <strong className="profile-account-plan-line"><PlanBadge plan={currentPlanKey} /></strong>
                         {renewalDate || pendingPlanDate ? (
                           <div className="profile-account-plan-note">
                             {profile?.cancel_at_period_end && renewalDate
@@ -2342,7 +2401,7 @@ export default function ProfilePage() {
                 <span className="profile-account-help-icon"><AccountMiniIcon type="help" /></span>
                 <p>
                   For any issues with your account, contact us at{' '}
-                  <a href="mailto:hello@mycareerdna.io">hello@mycareerdna.io</a>
+                  <a href="mailto:support@mycareerdna.io">support@mycareerdna.io</a>
                 </p>
               </div>
 

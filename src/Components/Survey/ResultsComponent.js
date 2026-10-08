@@ -2060,6 +2060,10 @@ export default function ResultsComponent({
 
     try {
       await fetchAiSummary({ force: true, bypassQualityGate });
+      // A freshly generated report always opens on the overview, even if the
+      // page was reached through a deep link to a specific tab.
+      initialTabAppliedRef.current = true;
+      setActiveAnalysisTab('summary');
     } catch (err) {
       if (err?.code === 'REPORT_LIMIT_REACHED') {
         setUpgradePrompt({ reason: 'REPORT_LIMIT_REACHED' });
@@ -3416,19 +3420,17 @@ export default function ResultsComponent({
 
                               <div className="analysis-quality-modal-icon" aria-hidden="true">!</div>
 
-                              <h3 id="analysisQualityTitle">Retake recommended</h3>
+                              <h3 id="analysisQualityTitle">We recommend a <span className="analysis-quality-modal-accent">retake</span></h3>
 
                               <p>{analysisQualityMessage}</p>
+                              <ul className="analysis-quality-modal-list">
+                                <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg><span>Take your time on each question and go with your honest first reaction</span></li>
+                                <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg><span>Use the Not sure? guidance under a question if its meaning is unclear</span></li>
+                                <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg><span>Choose the middle option only when it is true for you</span></li>
+                              </ul>
+                              <p className="analysis-quality-modal-note"><strong>Retaking is free</strong> and does not use one of your reports. If you generate a report now, it will be based on these unreliable answers and will use one of your reports.</p>
 
                               <div className="analysis-quality-modal-actions">
-                                <button
-                                  type="button"
-                                  className="analysis-quality-modal-secondary"
-                                  onClick={() => setAnalysisQualityMessage('')}
-                                >
-                                  Close
-                                </button>
-
                                 <button
                                   type="button"
                                   className="analysis-quality-modal-secondary"

@@ -12,6 +12,7 @@
 .profile-shell {
   max-width: 1100px;
   margin: 0 auto;
+  padding-bottom: 40px;
 }
 
 /* =============================================
@@ -117,7 +118,7 @@
   margin-top: 2px; font-size: 0.85rem; color: #5b6b8c;
   display: flex; align-items: center; gap: 7px; min-width: 0;
 }
-.profile-hero-email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 260px; }
+.profile-hero-email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 420px; }
 .profile-hero-runs { color: #2f6fed; font-weight: 700; }
 .profile-hero-sep { color: #b7c8e4; }
 .profile-hero-actions { display: flex; gap: 8px; flex: 0 0 auto; }
@@ -3873,4 +3874,46 @@
   .profile-run-chip { width: 36px; height: 36px; font-size: 0.78rem; }
   .profile-run-chev { display: none; }
   .profile-run-detail--hide-tablet, .profile-run-sep--hide-tablet { display: none; }
+}
+
+/* Plan badge inside the account modal plan row (replaces the plan name text) */
+.profile-account-summary-item--plan { grid-template-columns: minmax(0, 1fr) max-content !important; }
+.profile-account-plan-line { display: flex !important; align-items: center; margin: 3px 0 2px !important; }
+.profile-account-summary-item span.plan-badge {
+  display: inline-flex !important;
+  height: 22px;
+  margin: 0;
+  padding: 0 9px 0 6px;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+.profile-account-summary-item span.plan-badge svg { width: 12px; height: 12px; }
+.profile-account-summary-item span.plan-badge--starter { color: #5e6f88 !important; }
+.profile-account-summary-item span.plan-badge--explore { color: #1f4fc2 !important; }
+.profile-account-summary-item span.plan-badge--premium { color: #9a6b00 !important; }
+
+/* Report row menu opening upwards near the bottom of the page */
+.profile-run-menu--up { top: auto; bottom: calc(100% + 6px); z-index: 96000; box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.14); }
+
+/* Student status chip in the hero (from the current report) */
+.profile-hero-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 24px;
+  padding: 0 10px 0 8px;
+  border-radius: 999px;
+  border: 1px solid #d9e2ef;
+  background: #fff;
+  color: #3d4d66;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+.profile-hero-status svg { width: 14px; height: 14px; color: #2f6fed; flex: 0 0 auto; }
+.profile-hero-status-dot { display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: #9aa7b8; margin: 0 1px; }
+@media (max-width: 520px) {
+  .profile-hero-status { font-size: 12px; height: 23px; }
 }
