@@ -3228,11 +3228,11 @@ export default function ResultsComponent({
         <p className="one-liner">
           {displayName ? (
             <>
-              <strong>Hi, {displayName}!</strong>{' '}
+              <strong>Hi {displayName}.</strong>{' '}
             </>
           ) : (
             <>
-              <strong>Hi!</strong>{' '}
+              <strong>Hi.</strong>{' '}
             </>
           )}
           CareerDNA combines insights from behavioural science and AI to help you understand what drives you and how you work,

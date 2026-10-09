@@ -57,13 +57,6 @@ export default function LegalUpdateGate() {
 
   const visible = needsAcceptance && !sessionExpired;
 
-  useEffect(() => {
-    if (!visible) return undefined;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prevOverflow; };
-  }, [visible]);
-
   if (!visible) return null;
 
   const accept = async () => {

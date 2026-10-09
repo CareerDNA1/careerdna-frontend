@@ -87,13 +87,8 @@ function GlobalLegalModal() {
   useEffect(() => {
     if (!tab) return undefined;
     const onKey = (e) => { if (e.key === 'Escape') setTab(null); };
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prevOverflow;
-    };
+    return () => { document.removeEventListener('keydown', onKey); };
   }, [tab]);
 
   if (!tab) return null;
@@ -120,13 +115,8 @@ function GlobalReportProblemModal() {
   useEffect(() => {
     if (!open) return undefined;
     const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prevOverflow;
-    };
+    return () => { document.removeEventListener('keydown', onKey); };
   }, [open]);
 
   if (!open) return null;

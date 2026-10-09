@@ -178,10 +178,8 @@ export default function FavouritesCard({ runId, onExplore, onOpenReport, initial
   useEffect(() => {
     if (!open) return undefined;
     const onKey = (e) => { if (e.key === 'Escape') escRef.current(); };
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', onKey);
-    return () => { document.body.style.overflow = prev; document.removeEventListener('keydown', onKey); };
+    return () => { document.removeEventListener('keydown', onKey); };
   }, [open]);
 
   // Assemble the exact report card when a world/pathway/role favourite is opened.

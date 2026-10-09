@@ -687,18 +687,6 @@ export default function ProfilePage() {
   // Click-to-toggle info popover for locked account fields (date of birth, email).
   const [openLockedField, setOpenLockedField] = useState('');
 
-  // Lock background page scroll while any modal is open, so there is only the
-  // modal's own scrollbar (not a second one on the page behind it).
-  useEffect(() => {
-    const anyModalOpen = Boolean(
-      editingRun || editingProfile || deleteAccountOpen || retakeConfirmOpen ||
-      deleteConfirmRunId || pricingModalOpen || cancelDowngradeOpen
-    );
-    if (!anyModalOpen) return undefined;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = previous; };
-  }, [editingRun, editingProfile, deleteAccountOpen, retakeConfirmOpen, deleteConfirmRunId, pricingModalOpen, cancelDowngradeOpen]);
 
   // Close the run "..." menu on any outside click or Escape.
   useEffect(() => {
@@ -1699,9 +1687,9 @@ export default function ProfilePage() {
                     if (!profile && !user) return <span className="profile-skel profile-skel--title" aria-label="Loading" />;
                     return `Welcome back${first ? `, ${first}` : ''}`;
                   })()}
+                  {profile ? <PlanBadge plan={currentPlanKey} /> : null}
                 </h1>
                 <div className="profile-hero-meta">
-                  {profile ? <PlanBadge plan={currentPlanKey} /> : null}
                   {studentStatusLine(latestRun) ? (
                     <span className="profile-hero-status">
                       {String(latestRun?.intro_answers_json?.status || '') === 'school' ? (
@@ -1709,9 +1697,17 @@ export default function ProfilePage() {
                       ) : (
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M2 9l10-4 10 4-10 4z" /><path d="M6 11v4c0 1.5 3 3 6 3s6-1.5 6-3v-4" /><path d="M22 9v6" /></svg>
                       )}
-                      {studentStatusLine(latestRun).split(', ').map((part, i) => (
-                        <React.Fragment key={part}>{i > 0 ? <i className="profile-hero-status-dot" aria-hidden="true" /> : null}{part}</React.Fragment>
-                      ))}
+                      {(() => {
+                        const parts = studentStatusLine(latestRun).split(', ');
+                        const course = parts.length === 3 ? parts[2] : '';
+                        const stage = course ? parts.slice(0, 2).join(', ') : parts.join(', ');
+                        return (
+                          <>
+                            <span className="profile-hero-status-stage">{stage}</span>
+                            {course ? <><i className="profile-hero-status-dot" aria-hidden="true" /><span className="profile-hero-status-course">{course}</span></> : null}
+                          </>
+                        );
+                      })()}
                     </span>
                   ) : (
                     <span className="profile-hero-email">{profile?.email || user?.email || ''}</span>
@@ -1720,9 +1716,9 @@ export default function ProfilePage() {
               </div>
             </div>
             <div className="profile-hero-actions">
-              <button type="button" className="profile-hero-btn" onClick={openProfileEditor}>
+              <button type="button" className="profile-hero-btn profile-hero-btn--manage" onClick={openProfileEditor} aria-label="Manage account">
                 <SettingsIcon />
-                Manage account
+                <span className="profile-hero-btn__text">Manage account</span>
               </button>
               {isAdminProfile ? (
                 <button type="button" className="profile-hero-btn profile-hero-btn--muted" onClick={() => navigate('/admin')}>

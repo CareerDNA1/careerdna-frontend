@@ -81,10 +81,8 @@ export default function SatisfactionCard({ userId, assessmentRunId, asModal = fa
   useEffect(() => {
     if (!willShow) return undefined;
     const onKey = (e) => { if (e.key === 'Escape' && onClose) onClose(); };
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', onKey);
-    return () => { document.body.style.overflow = prev; document.removeEventListener('keydown', onKey); };
+    return () => { document.removeEventListener('keydown', onKey); };
   }, [willShow, onClose]);
 
   // Auto-dismiss the popup shortly after the thank-you.

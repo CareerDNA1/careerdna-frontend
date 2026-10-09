@@ -70,6 +70,10 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Phones: nothing may widen the page. Clipping on <html> as well as <body>
+   stops iOS Safari zooming out to fit an element that overflows the screen. */
+html { overflow-x: clip; }
+
 *,
 *::before,
 *::after {
@@ -196,3 +200,18 @@ textarea:focus-visible {
 .cdna-route-loading-dot:nth-child(2) { animation-delay: 0.15s; }
 .cdna-route-loading-dot:nth-child(3) { animation-delay: 0.3s; }
 @keyframes cdna-route-pulse { 0%, 100% { opacity: 0.25; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
+
+/* ---- Modal scroll containment (touch devices) ----
+   While a dialog is open the page is pinned by utils/scrollLock.js. These rules
+   stop a finger inside the dialog from scrolling or panning the page: scroll
+   chaining is cut at the dialog, and horizontal pans inside it are ignored. */
+[role="dialog"][aria-modal="true"] {
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+[role="dialog"][aria-modal="true"] * {
+  overscroll-behavior: contain;
+}
+html.cdna-scroll-locked {
+  overscroll-behavior: none;
+}

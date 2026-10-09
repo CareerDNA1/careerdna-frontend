@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
+import { lockPageScroll, unlockPageScroll } from '../../utils/scrollLock';
 
-// Keyboard accessibility for every modal in the app, in one place.
+// Keyboard accessibility and page scroll locking for every modal in the app,
+// in one place.
 //
 // Any element with role="dialog" and aria-modal="true" is treated as an open
 // modal. While one is open: focus moves into it when it appears, Tab and
@@ -32,9 +34,17 @@ export default function GlobalFocusTrap() {
     let current = null;        // topmost dialog element
     let opener = null;         // element focused before the dialog opened
 
+    let locked = false;
+
     const sync = () => {
       const dialogs = openDialogs();
       const top = dialogs[dialogs.length - 1] || null;
+
+      // Page scroll: locked while at least one dialog is open (touch-safe, see
+      // utils/scrollLock.js). Components no longer set body overflow themselves.
+      if (dialogs.length > 0 && !locked) { lockPageScroll(); locked = true; }
+      else if (dialogs.length === 0 && locked) { unlockPageScroll(); locked = false; }
+
       if (top === current) return;
 
       if (top && !current) {
@@ -84,6 +94,7 @@ export default function GlobalFocusTrap() {
     sync();
 
     return () => {
+      if (locked) { unlockPageScroll(); locked = false; }
       observer.disconnect();
       document.removeEventListener('keydown', onKeyDown, true);
       document.removeEventListener('focusin', onFocusIn);

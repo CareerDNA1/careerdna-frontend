@@ -147,3 +147,6 @@
 .career-advisor-helplines__row strong { color: #12233c; }
 .career-advisor-helplines__row a { margin-left: auto; color: #2f6fed; font-weight: 700; text-decoration: none; }
 .career-advisor-helplines__foot { margin-top: 8px; padding-top: 8px; border-top: 1px solid #fde8d0; color: #6b5a3f; }
+
+/* Hide the Advisor launcher while any dialog is open (the page is scroll locked). */
+html.cdna-scroll-locked .advisor-tab { display: none; }

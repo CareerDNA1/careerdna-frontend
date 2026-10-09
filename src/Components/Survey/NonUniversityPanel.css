@@ -633,3 +633,9 @@ a.nu-standard__link:hover { text-decoration: underline; }
 }
 
 .nu-source-note { margin: 18px 0 0; color: #5e6f88; font-size: 0.78rem; line-height: 1.5; }
+
+/* Loading state for live openings: same spinner as the live jobs boxes. */
+.nu-vac-loading { display: inline-flex; align-items: center; gap: 7px; }
+.nu-spinner { width: 13px; height: 13px; border-radius: 50%; border: 2px solid #cdd9ec; border-top-color: #2f6fed; flex: 0 0 auto; display: inline-block; animation: nu-spin 0.7s linear infinite; }
+@keyframes nu-spin { to { transform: rotate(360deg); } }
+.nu-wayin-box__label .fs-premium-badge { margin-left: 4px; }

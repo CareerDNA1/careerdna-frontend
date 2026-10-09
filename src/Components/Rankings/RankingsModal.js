@@ -232,10 +232,8 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
 
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', onKey);
-    return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = prev; };
+    return () => { document.removeEventListener('keydown', onKey); };
   }, [onClose]);
 
   // Recompute arrow visibility whenever the rendered table can change size.

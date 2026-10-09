@@ -86,13 +86,6 @@ export default function PickMenu({
     if (open && searchable && (sheet || pos) && searchRef.current) searchRef.current.focus({ preventScroll: true });
   }, [open, searchable, sheet, pos]);
 
-  // Lock page scroll behind the sheet.
-  useEffect(() => {
-    if (!(open && sheet)) return undefined;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prev; };
-  }, [open, sheet]);
 
   useEffect(() => {
     if (open && active >= 0 && panelRef.current) {

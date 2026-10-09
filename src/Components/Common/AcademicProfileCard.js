@@ -68,10 +68,8 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
   useEffect(() => {
     if (!editing) return undefined;
     const onKey = (e) => { if (e.key === 'Escape' && !saving) { setEditing(false); setDraft(null); } };
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
     document.addEventListener('keydown', onKey);
-    return () => { document.body.style.overflow = prev; document.removeEventListener('keydown', onKey); };
+    return () => { document.removeEventListener('keydown', onKey); };
   }, [editing, saving]);
 
   const startEdit = () => {

@@ -201,7 +201,7 @@ function VacancyBlock({ larsCode, keyword, applyVia, searchFallback }) {
   return (
     <div className="nu-vacancies">
       {loading ? (
-        <p className="nu-vac-note">Checking for live openings&hellip;</p>
+        <p className="nu-vac-note nu-vac-loading"><span className="nu-spinner" aria-hidden="true" />Checking for live openings&hellip;</p>
       ) : count && count > 0 ? (
         <p className="nu-vac-line">
           <span className="nu-vac-dot" aria-hidden="true" />
@@ -545,6 +545,8 @@ function StandardRow({ route, liveVacancies, showTitle, reaction = '', onReact }
                   </div>
                   {paused ? (
                     <p className="nu-vac-count-inline nu-vac-count-inline--muted">Approved, but not taking new starts right now.</p>
+                  ) : vac.loading ? (
+                    <p className="nu-vac-count-inline nu-vac-count-inline--muted nu-vac-loading"><span className="nu-spinner" aria-hidden="true" />Checking for live openings&hellip;</p>
                   ) : vCount != null && vCount > 0 && vac.data && Array.isArray(vac.data.vacancies) && vac.data.vacancies.length ? (
                     <>
                       <button
@@ -765,7 +767,7 @@ export function PathwayCard({ pathway, routes, open, onToggle, reaction, onReact
             </div>
             <div className="fs-degree-section nu-wayin-cell nu-span2">
               <button type="button" className="nu-wayin-box" onClick={() => setWaysOpen(true)}>
-                <span className="nu-wayin-box__label"><Briefcase size={14} weight="bold" aria-hidden="true" /> Ways in &amp; live openings</span>
+                <span className="nu-wayin-box__label"><Briefcase size={14} weight="bold" aria-hidden="true" /> Ways in &amp; live openings <span className="fs-premium-badge">Premium</span></span>
                 {(() => {
                   const chips = waysInChips(routes);
                   return chips.length ? (
@@ -787,7 +789,7 @@ export function PathwayCard({ pathway, routes, open, onToggle, reaction, onReact
                     </span>
                     {liveVacancies ? (
                       liveTotal.loading ? (
-                        <span className="nu-wayin-box__stat nu-wayin-box__stat--muted">Checking for live openings&hellip;</span>
+                        <span className="nu-wayin-box__stat nu-wayin-box__stat--muted nu-vac-loading"><span className="nu-spinner" aria-hidden="true" />Checking for live openings&hellip;</span>
                       ) : liveTotal.count > 0 ? (
                         <span className="nu-wayin-box__stat nu-wayin-box__stat--live">
                           <span className="nu-vac-dot" aria-hidden="true" /> {liveTotal.count}{liveTotal.capped ? '+' : ''} live apprenticeship {liveTotal.count === 1 ? 'opening' : 'openings'}
