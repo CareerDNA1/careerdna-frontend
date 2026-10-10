@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { CaretDown, Check, MagnifyingGlass, X } from 'phosphor-react';
 import './PickMenu.css';
+import { lockPageScroll, unlockPageScroll } from '../../utils/scrollLock';
 
 // Picker in the app's own menu style (same panel as the three dots menu on the
 // reports list), never the browser's native dropdown.
@@ -74,7 +75,12 @@ export default function PickMenu({
       else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((a) => Math.max(0, a - 1)); }
       else if (e.key === 'Enter' && active >= 0 && shown[active]) { e.preventDefault(); choose(shown[active]); }
     };
-    const onMove = () => { if (!isPhone()) place(); };
+    // Reposition when the page moves, but not when the list itself scrolls
+    // (that was re-placing the panel on every flick and jumping the list).
+    const onMove = (e) => {
+      if (e && e.type === 'scroll' && panelRef.current && e.target instanceof Node && panelRef.current.contains(e.target)) return;
+      if (!isPhone()) place();
+    };
     document.addEventListener('mousedown', onDoc);
     document.addEventListener('keydown', onKey, true);
     window.addEventListener('resize', onMove);
@@ -94,12 +100,25 @@ export default function PickMenu({
   }, [open, searchable, sheet, pos]);
 
 
+  // Once per open: bring the current option into view.
+  const scrolledRef = useRef(false);
   useEffect(() => {
-    if (!open || !scrollToCurrent || !panelRef.current) return;
+    if (!open) { scrolledRef.current = false; return; }
+    if (!scrollToCurrent || scrolledRef.current || !panelRef.current) return;
+    if (!sheet && !pos) return; // panel not placed yet
     const el = panelRef.current.querySelector('[role="menuitemradio"].is-current');
-    if (el) el.scrollIntoView({ block: 'center' });
+    if (el) { el.scrollIntoView({ block: 'center' }); scrolledRef.current = true; }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, sheet, pos]);
+
+  // Phones, panel mode: the page must not scroll under an open menu. The panel
+  // is fixed to the viewport, so a page scroll would drag the field away from
+  // it; choose something or close the menu first.
+  useEffect(() => {
+    if (!open || sheet || !window.matchMedia(PHONE).matches) return undefined;
+    lockPageScroll();
+    return () => unlockPageScroll();
+  }, [open, sheet]);
 
   useEffect(() => {
     if (open && active >= 0 && panelRef.current) {
