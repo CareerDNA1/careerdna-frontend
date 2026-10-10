@@ -88,3 +88,6 @@
 @media (max-width: 520px) {
   .plan-welcome { padding: 22px 20px 16px; }
 }
+
+/* Tall dialog on a short screen: scroll inside the card, never the page. */
+.plan-welcome { max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }

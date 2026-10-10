@@ -38,3 +38,6 @@
 .cascade-btn--primary { background: #2f6fed; border-color: #2f6fed; color: #fff; }
 .cascade-btn--primary:hover { background: #245fd6; }
 .cascade-btn:disabled { opacity: 0.6; cursor: default; }
+
+/* Tall dialog on a short screen: scroll inside the card, never the page. */
+.cascade-box { max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }

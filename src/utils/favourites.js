@@ -1,6 +1,7 @@
 import { supabase } from './supabaseClient';
 import { canonicalItem, pathwayWorld, canonicalWorldId } from './canonicalIds';
 import { notifyFavouritesChanged } from './savedItems';
+import { apiFetch } from './apiFetch';
 
 // The insights engine labels pathway families as type "role" in the university
 // flow, so a liked PATHWAY can be stored with item_type 'role'. Recognise those
@@ -159,6 +160,11 @@ export async function getFavouritesByCategory(runId) {
     });
   });
 
+  // Saved apprenticeship adverts: re-check the live advert. Employers extend
+  // or withdraw adverts after a student saves one, so the stored closing date
+  // can be wrong in either direction.
+  await refreshApprenticeshipAds(byType.get('apprenticeship_advert') || [], { userId: user.id, runId, today });
+
   const groups = [];
   FAV_CATEGORIES.forEach((c) => {
     const k = c.key || c.type;
@@ -166,6 +172,53 @@ export async function getFavouritesByCategory(runId) {
   });
   byType.forEach((items, type) => groups.push({ type, key: type, label: 'Other', items }));
   return groups;
+}
+
+// The vacancy reference is the long number in the Find an Apprenticeship URL
+// (.../apprenticeship/reference/2000050530 or .../apprenticeship/1000123456).
+export function apprenticeshipReferenceFromUrl(url = '') {
+  const m = String(url || '').match(/findapprenticeship\.service\.gov\.uk\/apprenticeship\/(?:reference\/)?(\d{6,12})/i);
+  return m ? m[1] : '';
+}
+
+const sameDay = (a, b) => String(a || '').slice(0, 10) === String(b || '').slice(0, 10);
+
+async function refreshApprenticeshipAds(items, { userId, runId, today }) {
+  const targets = items.map((it) => ({ it, ref: apprenticeshipReferenceFromUrl(it.url) })).filter((t) => t.ref);
+  if (!targets.length) return;
+  await Promise.allSettled(targets.map(async ({ it, ref }) => {
+    let live;
+    try { live = await apiFetch(`/api/nonuni/vacancy/${ref}`, { timeoutMs: 8000 }); } catch (_) { return; }
+    if (!live || live.found === null || live.found === undefined) return; // lookup unavailable: keep the snapshot
+    const meta = { ...(it.meta || {}) };
+    let changed = false;
+    if (live.found === false) {
+      // Advert withdrawn or removed: treat as closed from today.
+      if (!meta.withdrawn) { meta.withdrawn = true; changed = true; }
+      it.expired = true;
+    } else {
+      if (meta.withdrawn) { delete meta.withdrawn; changed = true; }
+      if (live.closingDate && !sameDay(live.closingDate, meta.closingDate)) {
+        meta.closingDate = live.closingDate;
+        const d = new Date(live.closingDate);
+        if (!Number.isNaN(d.getTime())) meta.deadline = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        changed = true;
+      }
+      const d = meta.closingDate ? new Date(meta.closingDate) : null;
+      it.expired = !!(d && !Number.isNaN(d.getTime()) && d < today);
+    }
+    if (!changed) return;
+    it.meta = meta;
+    // Persist the corrected snapshot on the favourite and on any application for it.
+    try {
+      await supabase.from('result_feedback').update({ item_meta: meta })
+        .eq('user_id', userId).eq('assessment_run_id', runId).eq('feedback_scope', 'item_reaction').eq('item_id', it.id);
+      if (!meta.withdrawn && meta.closingDate) {
+        await supabase.from('applications').update({ closing_date: String(meta.closingDate).slice(0, 10) })
+          .eq('user_id', userId).eq('item_id', it.id);
+      }
+    } catch (_) { /* best effort */ }
+  }));
 }
 
 // Remove one favourite (delete that like row for this run).

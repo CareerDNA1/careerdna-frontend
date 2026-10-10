@@ -30,8 +30,13 @@ export function AuthProvider({ children }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    } = supabase.auth.onAuthStateChange((event, newSession) => {
       if (!mounted) return;
+      // Any sign-out (this tab or another) must drop every per-user in-memory
+      // cache, or the next account sees the previous account's data for a moment.
+      if (event === 'SIGNED_OUT' || !newSession) {
+        try { window.dispatchEvent(new Event('cdna:signed-out')); } catch (_) { /* ignore */ }
+      }
       setSession(newSession ?? null);
       setLoading(false);
     });
@@ -48,6 +53,7 @@ export function AuthProvider({ children }) {
       user: session?.user ?? null,
       loading,
       signOut: async () => {
+        try { window.dispatchEvent(new Event('cdna:signed-out')); } catch (_) { /* ignore */ }
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
         setSession(null);

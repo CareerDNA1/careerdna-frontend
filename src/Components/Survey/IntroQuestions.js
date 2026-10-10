@@ -1068,7 +1068,7 @@ const IntroQuestions = ({
       {/* Date of birth is only asked on the first assessment. It is fixed after
           that (shown, non-editable, in Manage Account), so it does not appear
           when editing output parameters. */}
-      {!isEditMode && (
+      {!isEditMode && !identityLocked && (
         <div className={`field ${hasErr('dateOfBirth') ? 'has-error' : ''}`} id="dobField">
           <label className="required" htmlFor="dobInput">What is your date of birth?</label>
           <DatePicker

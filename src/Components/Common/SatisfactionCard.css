@@ -222,3 +222,6 @@
   }
   .satisfaction-modal .satisfaction-face-label { font-size: 0.9rem; }
 }
+
+/* Tall dialog on a short screen: scroll inside the card, never the page. */
+.satisfaction-modal { max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }

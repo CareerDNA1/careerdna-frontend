@@ -195,20 +195,33 @@
 /* Premium tag on paid-package features (rankings, live jobs, live openings).
    A restrained dark chip with soft gold text reads more premium than a bright
    gold gradient. */
+/* Same look as the Premium plan badge on the profile: white, gold border,
+   crown, uppercase. */
 .fs-premium-badge {
   margin-left: auto;
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 3px 10px;
+  height: 22px;
+  padding: 0 9px 0 7px;
   border-radius: 999px;
-  background: #fbf3df;
-  border: 1px solid #ecd9a6;
-  color: #8a6d1f;
-  font-size: 0.64rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  background: #fff;
+  border: 1px solid #f5b301;
+  color: #9a6b00;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+}
+.fs-premium-badge::before {
+  content: "";
+  width: 12px; height: 12px; flex: 0 0 auto;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 18h18l-1.5-9-4.5 4-3-7-3 7-4.5-4z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 18h18l-1.5-9-4.5 4-3-7-3 7-4.5-4z'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 .fs-premium-badge__star { flex: 0 0 auto; margin-top: -1px; }
 .fs-rank-live {
@@ -404,4 +417,51 @@
   background: #22c55e;
   box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
   flex: 0 0 auto;
+}
+
+/* Pathway picker (Role Explorer): a field showing the chosen pathway with its
+   match and role count, opening the app's own menu / bottom sheet. */
+.pw-pick { margin: 0 0 18px; }
+.pw-pick .apps-menu-wrap { display: block; }
+.pw-pick__trigger {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 11px 16px; border: 1.5px solid #cddbf0; border-radius: 14px; background: #fff;
+  font-family: inherit; color: #12233c; cursor: pointer; text-align: left;
+}
+.pw-pick__trigger:hover { border-color: #b9cbe6; }
+.pw-pick__trigger:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
+.pw-pick__trigger > svg { margin-left: auto; color: #2f6fed; flex: 0 0 auto; }
+.pw-pick__current { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 auto; }
+.pw-pick__icon { width: 30px; height: 30px; border-radius: 9px; background: #e8f0ff; color: #2f6fed; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.pw-pick__text { min-width: 0; display: flex; flex-direction: column; }
+.pw-pick__name { font-weight: 700; font-size: 0.95rem; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pw-pick__meta { font-size: 0.78rem; color: #6b7788; margin-top: 2px; }
+.pw-pick__option { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 auto; }
+.pw-pick__option .pw-pick__icon { width: 26px; height: 26px; border-radius: 8px; }
+.pw-pick__option-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pw-pick__option-right { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; margin-left: 12px; }
+.pw-pick__count { font-size: 0.74rem; font-weight: 600; color: #8a97ad; white-space: nowrap; }
+.pw-pick .apps-menu { min-width: 360px; width: var(--pw-pick-w, auto) !important; max-width: calc(100vw - 16px); }
+.pw-pick .apps-menu .profile-run-menu-item { padding: 9px 11px; }
+@media (max-width: 560px) {
+  .pw-pick__trigger { max-width: none; }
+  .pw-pick__option-name { white-space: normal; }
+}
+.pw-pick__icon svg { width: 16px; height: 16px; }
+/* Phone bottom sheet: badge and role count sit under the name, so the name
+   keeps the full width instead of wrapping word by word. */
+.pick-sheet .pw-pick__option { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; row-gap: 4px; align-items: center; }
+.pick-sheet .pw-pick__option .pw-pick__icon { grid-row: 1 / span 2; }
+.pick-sheet .pw-pick__option-name { white-space: normal; font-size: 0.92rem; line-height: 1.3; }
+.pick-sheet .pw-pick__option-right { grid-column: 2; margin-left: 0; }
+.pick-sheet .profile-run-menu-item.is-current .pw-pick__option-name { color: #2f6fed; }
+
+/* Phones, panel mode: the panel is the field's width and scrolls inside. */
+@media (max-width: 560px) {
+  .pw-pick .apps-menu { min-width: 0; }
+  .pw-pick .apps-menu .pw-pick__option { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; row-gap: 3px; align-items: center; }
+  .pw-pick .apps-menu .pw-pick__option .pw-pick__icon { grid-row: 1 / span 2; }
+  .pw-pick .apps-menu .pw-pick__option-name { white-space: normal; line-height: 1.3; }
+  .pw-pick .apps-menu .pw-pick__option-right { grid-column: 2; margin-left: 0; }
+  .pw-pick .apps-menu .pick-list { max-height: min(60vh, 420px); }
 }

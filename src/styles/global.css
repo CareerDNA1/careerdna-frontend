@@ -215,3 +215,61 @@ textarea:focus-visible {
 html.cdna-scroll-locked {
   overscroll-behavior: none;
 }
+
+/* ---- Scrollbars inside pop-up cards ----
+   A full-width system scrollbar squares off the card's right-hand corners.
+   Dialog cards that scroll get a slim scrollbar with a transparent track that
+   stops short of the corners, so the rounded frame stays intact. */
+/* Standard properties only where ::-webkit-scrollbar is unsupported (Firefox).
+   In Chrome they would switch the custom styling below off. */
+@supports not selector(::-webkit-scrollbar) {
+  .profile-modal, .profile-account-modal, .acad-modal, .fav-modal, .pricing-modal-panel,
+  .cw-def-modal__box, .report-limit-modal, .plan-welcome, .report-problem-modal,
+  .satisfaction-modal, .analysis-quality-modal, .cascade-box, .rk-panel, .rk-body,
+  .pick-sheet-list, .account-nav-panel {
+    scrollbar-width: thin;
+    scrollbar-color: #c3cfe0 transparent;
+  }
+}
+.profile-modal::-webkit-scrollbar, .profile-account-modal::-webkit-scrollbar, .acad-modal::-webkit-scrollbar,
+.fav-modal::-webkit-scrollbar, .pricing-modal-panel::-webkit-scrollbar, .cw-def-modal__box::-webkit-scrollbar,
+.report-limit-modal::-webkit-scrollbar, .plan-welcome::-webkit-scrollbar, .report-problem-modal::-webkit-scrollbar,
+.satisfaction-modal::-webkit-scrollbar, .analysis-quality-modal::-webkit-scrollbar, .cascade-box::-webkit-scrollbar,
+.rk-panel::-webkit-scrollbar, .rk-body::-webkit-scrollbar, .pick-sheet-list::-webkit-scrollbar, .account-nav-panel::-webkit-scrollbar {
+  width: 8px; height: 8px;
+}
+.profile-modal::-webkit-scrollbar-track, .profile-account-modal::-webkit-scrollbar-track, .acad-modal::-webkit-scrollbar-track,
+.fav-modal::-webkit-scrollbar-track, .pricing-modal-panel::-webkit-scrollbar-track, .cw-def-modal__box::-webkit-scrollbar-track,
+.report-limit-modal::-webkit-scrollbar-track, .plan-welcome::-webkit-scrollbar-track, .report-problem-modal::-webkit-scrollbar-track,
+.satisfaction-modal::-webkit-scrollbar-track, .analysis-quality-modal::-webkit-scrollbar-track, .cascade-box::-webkit-scrollbar-track,
+.rk-panel::-webkit-scrollbar-track, .rk-body::-webkit-scrollbar-track, .pick-sheet-list::-webkit-scrollbar-track, .account-nav-panel::-webkit-scrollbar-track {
+  background: transparent; margin: 18px 0;
+}
+.profile-modal::-webkit-scrollbar-thumb, .profile-account-modal::-webkit-scrollbar-thumb, .acad-modal::-webkit-scrollbar-thumb,
+.fav-modal::-webkit-scrollbar-thumb, .pricing-modal-panel::-webkit-scrollbar-thumb, .cw-def-modal__box::-webkit-scrollbar-thumb,
+.report-limit-modal::-webkit-scrollbar-thumb, .plan-welcome::-webkit-scrollbar-thumb, .report-problem-modal::-webkit-scrollbar-thumb,
+.satisfaction-modal::-webkit-scrollbar-thumb, .analysis-quality-modal::-webkit-scrollbar-thumb, .cascade-box::-webkit-scrollbar-thumb,
+.rk-panel::-webkit-scrollbar-thumb, .rk-body::-webkit-scrollbar-thumb, .pick-sheet-list::-webkit-scrollbar-thumb, .account-nav-panel::-webkit-scrollbar-thumb {
+  background: #c3cfe0; border-radius: 999px; border: 2px solid #fff;
+}
+.profile-modal::-webkit-scrollbar-button, .profile-account-modal::-webkit-scrollbar-button, .acad-modal::-webkit-scrollbar-button,
+.fav-modal::-webkit-scrollbar-button, .pricing-modal-panel::-webkit-scrollbar-button, .cw-def-modal__box::-webkit-scrollbar-button,
+.report-limit-modal::-webkit-scrollbar-button, .plan-welcome::-webkit-scrollbar-button, .report-problem-modal::-webkit-scrollbar-button,
+.satisfaction-modal::-webkit-scrollbar-button, .analysis-quality-modal::-webkit-scrollbar-button, .cascade-box::-webkit-scrollbar-button,
+.rk-panel::-webkit-scrollbar-button, .rk-body::-webkit-scrollbar-button, .pick-sheet-list::-webkit-scrollbar-button, .account-nav-panel::-webkit-scrollbar-button {
+  display: none; width: 0; height: 0;
+}
+
+/* iOS Safari zooms the page when a field with text smaller than 16px gets
+   focus, and stays zoomed after. Keep every field at 16px or more on phones. */
+@media (max-width: 600px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
+/* Shared loading line: small round spinner followed by one sentence. */
+.cdna-loading { display: flex; align-items: flex-start; gap: 9px; color: #64748b; font-size: 0.9rem; line-height: 1.5; }
+.cdna-spinner { width: 15px; height: 15px; margin-top: 2px; border-radius: 50%; border: 2px solid #cdd9ec; border-top-color: #2f6fed; flex: 0 0 auto; display: inline-block; animation: cdna-spin 0.7s linear infinite; }
+@keyframes cdna-spin { to { transform: rotate(360deg); } }
+.cdna-still-working.cdna-still-working--inline { display: inline; margin: 0; padding: 0; font: inherit; font-size: inherit; line-height: inherit; color: inherit; }

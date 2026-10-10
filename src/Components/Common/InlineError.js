@@ -29,7 +29,7 @@ export default function InlineError({ message, onRetry, compact = false, retryLa
 
 // Second line shown under a loading indicator once a slow (LLM-backed) call has
 // been running for a while. Renders nothing until `afterMs` has passed.
-export function StillWorkingNote({ active = true, afterMs = 8000, children, className = '' }) {
+export function StillWorkingNote({ active = true, afterMs = 8000, children, className = '', inline = false }) {
   const [show, setShow] = useState(false);
   useEffect(() => {
     if (!active) { setShow(false); return undefined; }
@@ -37,9 +37,14 @@ export function StillWorkingNote({ active = true, afterMs = 8000, children, clas
     return () => clearTimeout(t);
   }, [active, afterMs]);
   if (!active || !show) return null;
+  const text = children || 'This can take a little longer the first time. Still working.';
+  // Inline: continues the loading sentence instead of starting a new paragraph.
+  if (inline) {
+    return <span className={`cdna-still-working cdna-still-working--inline${className ? ` ${className}` : ''}`} role="status" aria-live="polite"> {text}</span>;
+  }
   return (
     <p className={`cdna-still-working${className ? ` ${className}` : ''}`} role="status" aria-live="polite">
-      {children || 'This can take a little longer the first time. Still working.'}
+      {text}
     </p>
   );
 }

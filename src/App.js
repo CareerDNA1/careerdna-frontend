@@ -24,6 +24,7 @@ import {
   PREMIUM_FEATURE_LABELS,
   getCurrentPlan,
   isPremiumPlan,
+  isPlanLoaded,
 } from './utils/premiumGate';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ErrorBoundary from './pages/ErrorBoundary';
@@ -162,6 +163,16 @@ function GlobalRankingsModal() {
 // and the rankings listener above. Mounted once.
 function GlobalPremiumGate() {
   const [gate, setGate] = useState(null); // { feature }
+  const { user } = useAuth();
+
+  // Make sure the plan is known as soon as someone is signed in, so Premium
+  // boxes can decide between a live lookup and a locked row without waiting
+  // for some other page to load the profile first.
+  useEffect(() => {
+    if (!user) return;
+    if (isPlanLoaded()) return;
+    getMyProfile().catch(() => {});
+  }, [user]);
 
   useEffect(() => {
     const onClickCapture = (e) => {

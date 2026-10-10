@@ -7,6 +7,9 @@ import { supabase } from './supabaseClient';
 // them through one cached, de-duplicated call avoids that entirely.
 let cached = { token: '', at: 0 };
 let inflight = null;
+if (typeof window !== 'undefined') {
+  window.addEventListener('cdna:signed-out', () => { cached = { token: '', at: 0 }; });
+}
 const TTL_MS = 8000;
 
 export async function getAccessToken() {

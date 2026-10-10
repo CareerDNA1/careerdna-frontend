@@ -131,9 +131,9 @@ function LoadingSpinnerWithProgress() {
         </div>
 
         <p className="staged-loader-text">
-          This may take up to a minute or two. Please don’t leave or refresh this page. Your report will appear here as soon as it’s ready.
+          This takes a minute or two. Keep this page open and your report will appear here.
+          <StillWorkingNote inline>{' '}The first one can take a little longer.</StillWorkingNote>
         </p>
-        <StillWorkingNote />
       </div>
     </div>
   );
@@ -1943,10 +1943,18 @@ export default function ResultsComponent({
   // locked mirror of the full tab list the viewer will get once they generate.
   const lockedAnalysisTabs = useMemo(() => {
     const isSchoolViewer = normalizeViewerStatus(viewerStatus) === 'school';
+    // School: no University Subjects tab (University and Training & Work
+    // cover it). University: no Career Worlds tab (the report has no Career
+    // Worlds section for undergraduates; they go straight to pathways).
     const base = (isSchoolViewer
       ? ANALYSIS_TAB_BASE_DEFS.filter((tab) => tab.key !== 'pathways')
-      : ANALYSIS_TAB_BASE_DEFS
-    ).map((tab) => ({ key: tab.key, label: tab.label }));
+      : ANALYSIS_TAB_BASE_DEFS.filter((tab) => tab.key !== 'careerworlds')
+    ).map((tab) => ({
+      key: tab.key,
+      // University students get Career Pathways where the base list says
+      // University Subjects (the unlocked report labels it the same way).
+      label: tab.key === 'pathways' && !isSchoolViewer ? 'Career Pathways' : tab.label,
+    }));
     const extra = isSchoolViewer
       ? [
           { key: 'discovermore', label: 'Career Pathways' },
@@ -3025,10 +3033,34 @@ export default function ResultsComponent({
     // run have loaded, show a brief placeholder instead of a stale list.
     const likeDriven = ['furtherstudy', 'nonuni', 'roleexplorer'].includes(tab.key);
     if (likeDriven && !reactionsLoaded) {
+      // Same heading and intro as the tab itself renders, so the text is on
+      // screen from the first frame and only the content below it loads.
+      const intro = tab.key === 'furtherstudy' ? {
+        title: 'Your university routes',
+        text: 'The university degrees that lead into the career worlds you liked. Pick a career world to see its range of degrees and how well each one fits you. Prefer to earn while you learn? The Training & Work tab shows the apprenticeship and work routes instead.',
+        loading: 'Finding your university routes',
+      } : tab.key === 'nonuni' ? {
+        title: 'Your training & work routes',
+        text: 'Ways into a career that do not need a university degree. With an apprenticeship you have a real job, get paid, and train at the same time, so you earn while you learn instead of paying tuition fees. Some even include a full, funded university degree. Pick a career world you liked to see the ways in, what you would do, and where each one leads. Each one shows how advanced it is, the qualification you come out with, and what you need to start.',
+        loading: 'Finding your training and work routes',
+      } : {
+        title: 'Role Explorer',
+        text: 'The individual job roles inside the career pathways you liked. Pick a pathway to see its roles, then open any role to read what the work involves and how it fits you.',
+        loading: 'Finding your roles',
+      };
       return (
         <div className="analysis-tab-body">
           <div className="analysis-tabs-panel analysis-tabs-panel--full">
-            <p className="fs-none" aria-busy="true">Loading your favourites&hellip;</p>
+            <section className="selection-explorer">
+              <div className="selection-explorer__intro selection-explorer__intro--active">
+                <h2>{intro.title}</h2>
+                <p className="selection-explorer__intro-text">{intro.text}</p>
+              </div>
+              <p className="fs-none cdna-loading" aria-busy="true">
+                <span className="cdna-spinner" aria-hidden="true" />
+                <span>{intro.loading}&hellip;</span>
+              </p>
+            </section>
           </div>
         </div>
       );

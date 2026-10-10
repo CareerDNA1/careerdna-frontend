@@ -8,6 +8,8 @@ import DIMENSIONS from '../../utils/Dimensions';
 import { getCareerWorldIcon, getPathwayIcon } from '../../utils/iconMap';
 import { fetchNonUniRoutes, peekNonUniRoutes } from '../../utils/fetchNonUniRoutes';
 import { fetchGradJobs } from '../../utils/fetchGradJobs';
+import PathwayPicker, { readRemembered } from './PathwayPicker';
+import { usePremiumAccess } from '../../utils/premiumGate';
 import { entryRouteForCard } from '../../utils/entryRouteModes';
 import { ThumbsUp, ThumbsDown, Smiley, SmileyMeh, BookmarkSimple, Info, Briefcase, Signpost, UsersThree, TrendUp, MapPin, GraduationCap, CalendarBlank, CurrencyGbp, Rocket } from 'phosphor-react';
 import { getReactions, setItemReaction } from '../../utils/savedItems';
@@ -555,9 +557,14 @@ function fillFromBlocks(blocks = 0) {
   return { 4: 100, 3: 75, 2: 50, 1: 25 }[Number(blocks) || 0] || 0;
 }
 
-export function SignalBadge({ label, tooltipBody: tooltipOverride = '' }) {
+export function SignalBadge({ label, tooltipBody: tooltipOverride = '', plain = false }) {
   if (!label) return null;
   const tooltipBody = tooltipOverride || getMatchTooltipBody(label);
+  // plain: the pill only, no tooltip hooks (for use inside menus, where a tap
+  // on the badge must select the row rather than pin a tooltip).
+  if (plain) {
+    return <span className={`cdna-band-pill cdna-band-pill--${bandKey(label)} cdna-band-pill--header`}>{label}</span>;
+  }
 
   // The world/detail header signal now uses the new tier pill (Palette A),
   // matching the pill labelling used throughout — not the old fill bar.
@@ -1253,6 +1260,17 @@ export function JobsModal({ open, onClose, title, heading, lead, data, kindNoun,
   );
 }
 
+// Locked row shown to non-Premium students instead of a live lookup. The
+// button carries the premium gate attribute, so a click opens the upgrade prompt.
+function PremiumLockedRow({ text }) {
+  return (
+    <div className="role-jobs__foot-row">
+      <span className="role-jobs__stat role-jobs__stat--muted">{text}</span>
+      <button type="button" className="role-jobs__go" data-premium-feature="jobs">Unlock <span aria-hidden="true">→</span></button>
+    </div>
+  );
+}
+
 // Live graduate-JOBS block for a ROLE (university flow). Individual live
 // vacancies for this exact role, searched by the role title. Internships and
 // graduate schemes are handled at the PATHWAY level (see PathwayJobsLine).
@@ -1260,6 +1278,9 @@ export function JobsModal({ open, onClose, title, heading, lead, data, kindNoun,
 function GradJobsLine({ title, advisory = null }) {
   const [state, setState] = useState({ loading: true, data: null });
   const [modalOpen, setModalOpen] = useState(false);
+  const { premium, loaded: planLoaded } = usePremiumAccess();
+  // Non-Premium: no lookup at all (the server would refuse it); a locked row instead.
+  const locked = planLoaded && !premium;
 
   // Some routes are not entered by applying to advertised jobs, so we don't run a
   // live search at all — just show the guidance:
@@ -1269,13 +1290,14 @@ function GradJobsLine({ title, advisory = null }) {
 
   useEffect(() => {
     let cancelled = false;
-    if (!title || noSearchAdvisory) { setState({ loading: false, data: null }); return undefined; }
+    if (!title || noSearchAdvisory || !planLoaded) { setState({ loading: !planLoaded && !!title && !noSearchAdvisory, data: null }); return undefined; }
+    if (locked) { setState({ loading: false, data: null }); return undefined; }
     (async () => {
       const gradData = await fetchGradJobs(title, 'grad');
       if (!cancelled) setState({ loading: false, data: gradData });
     })();
     return () => { cancelled = true; };
-  }, [title, noSearchAdvisory]);
+  }, [title, noSearchAdvisory, planLoaded, locked]);
 
   const { loading, data } = state;
   // Only hide when the whole feature is switched off (no API keys on the server).
@@ -1327,20 +1349,23 @@ function GradJobsLine({ title, advisory = null }) {
 
   return (
     <div className={`role-jobs${isAdvisory ? ' role-jobs--advisory' : ''}`}>
-      {loading ? (
-        <p className="role-jobs__line role-jobs__line--muted role-jobs__loading">
-          <span className="role-jobs__spinner" aria-hidden="true" />
-          <span>{isAdvisory ? 'Checking live roles…' : 'Checking live graduate jobs…'}</span>
-        </p>
-      ) : (
         <>
+          {/* Heading and blurb are always on screen; only the foot loads. */}
           <div className="role-jobs__eyebrow">
             <EyebrowIcon size={15} weight="bold" aria-hidden="true" /> {eyebrowText}
             {isAdvisory ? null : <span className="fs-premium-badge">Premium</span>}
           </div>
           <p className="role-jobs__blurb">{blurb}</p>
           <div className="role-jobs__foot">
-            {count && count > 0 ? (
+            {loading ? (
+              <div className="role-jobs__foot-row">
+                <span className="role-jobs__stat role-jobs__stat--muted">
+                  <span className="role-jobs__spinner" aria-hidden="true" /> {isAdvisory ? 'Checking live roles…' : 'Checking live graduate jobs…'}
+                </span>
+              </div>
+            ) : locked && !isAdvisory ? (
+              <PremiumLockedRow text="Live graduate jobs for this role are included with Premium." />
+            ) : count && count > 0 ? (
               <div className="role-jobs__foot-row">
                 <span className="role-jobs__stat">
                   <span className="role-jobs__dot" aria-hidden="true" />
@@ -1380,7 +1405,6 @@ function GradJobsLine({ title, advisory = null }) {
             }
           />
         </>
-      )}
     </div>
   );
 }
@@ -1398,8 +1422,134 @@ const SCHEME_SITES = (title) => {
   ];
 };
 
+
+// One box for every kind of live opening on a role card: graduate jobs,
+// internships and placements, graduate schemes and programmes. Three rows,
+// one heading, one Premium badge; each row loads on its own.
+function OpeningRow({ label, loading, locked, count, noun, hasList, onOpen, feature = 'jobs', emptyText }) {
+  const n = typeof count === 'number' ? count : null;
+  return (
+    <div className="lo-row">
+      <div className="lo-row__main">
+        <div className="lo-row__title">{label}</div>
+        {locked ? (
+          <div className="lo-row__stat lo-row__stat--muted">Included with Premium</div>
+        ) : loading ? (
+          <div className="lo-row__stat lo-row__stat--muted"><span className="role-jobs__spinner" aria-hidden="true" /> Checking&hellip;</div>
+        ) : n && n > 0 ? (
+          <div className="lo-row__stat"><span className="role-jobs__dot" aria-hidden="true" />{n.toLocaleString('en-GB')} live in the UK</div>
+        ) : (
+          <div className="lo-row__stat lo-row__stat--muted">{emptyText || 'None advertised right now'}</div>
+        )}
+      </div>
+      {locked ? (
+        <button type="button" className="role-jobs__go" data-premium-feature={feature}>Unlock <span aria-hidden="true">→</span></button>
+      ) : (
+        <button
+          type="button"
+          className={`role-jobs__go${(!hasList || loading) ? ' role-jobs__go--off' : ''}`}
+          data-premium-feature={feature}
+          disabled={!hasList || loading}
+          onClick={onOpen}
+          aria-label={`See ${noun}`}
+        >
+          See <span aria-hidden="true">→</span>
+        </button>
+      )}
+    </div>
+  );
+}
+
+export function LiveOpeningsBox({ title, pathwayTitle = '' }) {
+  const { premium, loaded: planLoaded } = usePremiumAccess();
+  const locked = planLoaded && !premium;
+  const schemeKey = (pathwayTitle && pathwayTitle.trim()) || title;
+  const [grad, setGrad] = useState({ loading: true, data: null });
+  const [intern, setIntern] = useState({ loading: true, data: null });
+  const [scheme, setScheme] = useState({ loading: true, data: null });
+  const [openKind, setOpenKind] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!title || locked) {
+      setGrad({ loading: false, data: null }); setIntern({ loading: false, data: null }); setScheme({ loading: false, data: null });
+      return undefined;
+    }
+    if (!planLoaded) return undefined;
+    setGrad({ loading: true, data: null }); setIntern({ loading: true, data: null }); setScheme({ loading: true, data: null });
+    // Each row resolves on its own, so the first result shows while the others load.
+    fetchGradJobs(title, 'grad').then((d) => { if (!cancelled) setGrad({ loading: false, data: d }); });
+    fetchGradJobs(title, 'internship').then((d) => { if (!cancelled) setIntern({ loading: false, data: d }); });
+    fetchGradJobs(schemeKey, 'scheme').then((d) => { if (!cancelled) setScheme({ loading: false, data: d }); });
+    return () => { cancelled = true; };
+  }, [title, schemeKey, planLoaded, locked]);
+
+  // Whole feature off (no keys on the server): render nothing, like before.
+  if (!grad.loading && grad.data && grad.data.error === 'NO_API_KEY') return null;
+
+  const countOf = (st) => (st.data && typeof st.data.count === 'number' ? st.data.count : null);
+  const listOf = (st) => ((st.data && Array.isArray(st.data.jobs)) ? st.data.jobs : []);
+  const schemeSites = SCHEME_SITES(title);
+
+  return (
+    <div className="role-jobs lo-box">
+      <div className="role-jobs__eyebrow">
+        <Briefcase size={15} weight="bold" aria-hidden="true" /> Live openings for this role
+        <span className="fs-premium-badge">Premium</span>
+      </div>
+      <p className="role-jobs__blurb">
+        Real adverts for this role right now: graduate jobs, internships and graduate schemes, gathered from LinkedIn,
+        Indeed, Reed, Adzuna, Glassdoor and other UK job boards and refreshed daily.
+      </p>
+      <div className="lo-rows">
+        <OpeningRow label="Graduate jobs" noun="graduate jobs" loading={grad.loading} locked={locked} count={countOf(grad)} hasList={listOf(grad).length > 0} onOpen={() => setOpenKind('grad')} />
+        <OpeningRow label="Internships & placements" noun="internships" loading={intern.loading} locked={locked} count={countOf(intern)} hasList={listOf(intern).length > 0} onOpen={() => setOpenKind('intern')} />
+        <OpeningRow label="Graduate schemes & programmes" noun="graduate schemes" loading={scheme.loading} locked={locked} count={countOf(scheme)} hasList={listOf(scheme).length > 0} onOpen={() => setOpenKind('scheme')} />
+      </div>
+      <div className="lo-sites">
+        <span className="lo-sites__label">Other graduate scheme sites</span>
+        <div className="role-jobs__links">
+          {schemeSites.map((l) => (
+            <a key={l.name} className="role-jobs__schemelink" href={l.url} target="_blank" rel="noopener noreferrer">{l.name} <span aria-hidden="true">→</span></a>
+          ))}
+        </div>
+      </div>
+
+      <JobsModal
+        open={openKind === 'grad'}
+        onClose={() => setOpenKind('')}
+        title={title}
+        heading="Live graduate jobs"
+        kindNoun="grad"
+        data={grad.data}
+        lead={'Graduate roles currently advertised for this job, gathered from LinkedIn, Indeed, Reed, Adzuna, Glassdoor and other UK job boards. Tap any to open it and apply.'}
+      />
+      <JobsModal
+        open={openKind === 'intern'}
+        onClose={() => setOpenKind('')}
+        title={title}
+        heading="Live internships & placements"
+        kindNoun="internship"
+        data={intern.data}
+        lead={'Internships and placements currently advertised for this role, gathered from LinkedIn, Indeed, Reed, Adzuna and other UK job boards. Tap any to open it and apply.'}
+      />
+      <JobsModal
+        open={openKind === 'scheme'}
+        onClose={() => setOpenKind('')}
+        title={schemeKey}
+        heading="Live graduate schemes & programmes"
+        kindNoun="scheme"
+        data={scheme.data}
+        lead={'Graduate schemes and programmes currently advertised in this field, gathered from LinkedIn, Indeed, Reed, Adzuna and other UK job boards. Tap any to open it and apply.'}
+      />
+    </div>
+  );
+}
+
 export function PathwayJobsLine({ title, pathwayTitle = '' }) {
   const [loading, setLoading] = useState(true);
+  const { premium, loaded: planLoaded } = usePremiumAccess();
+  const locked = planLoaded && !premium;
   const [internData, setInternData] = useState(null);
   const [schemeData, setSchemeData] = useState(null);
   const [internOpen, setInternOpen] = useState(false);
@@ -1410,7 +1560,8 @@ export function PathwayJobsLine({ title, pathwayTitle = '' }) {
 
   useEffect(() => {
     let cancelled = false;
-    if (!title) { setLoading(false); return undefined; }
+    if (!title || locked) { setLoading(false); return undefined; }
+    if (!planLoaded) { setLoading(true); return undefined; }
     setLoading(true);
     (async () => {
       const [intern, scheme] = await Promise.all([
@@ -1420,7 +1571,7 @@ export function PathwayJobsLine({ title, pathwayTitle = '' }) {
       if (!cancelled) { setInternData(intern); setSchemeData(scheme); setLoading(false); }
     })();
     return () => { cancelled = true; };
-  }, [title, schemeKey]);
+  }, [title, schemeKey, planLoaded, locked]);
 
   const iCount = internData && typeof internData.count === 'number' ? internData.count : null;
   const iCountText = iCount != null ? iCount.toLocaleString('en-GB') : '';
@@ -1443,7 +1594,9 @@ export function PathwayJobsLine({ title, pathwayTitle = '' }) {
       </p>
 
       <div className="role-jobs__foot">
-        {loading ? (
+        {locked ? (
+          <PremiumLockedRow text="Live internships for this role are included with Premium." />
+        ) : loading ? (
           <div className="role-jobs__foot-row">
             <span className="role-jobs__stat role-jobs__stat--muted">
               <span className="role-jobs__spinner" aria-hidden="true" /> Checking live internships&hellip;
@@ -1468,7 +1621,15 @@ export function PathwayJobsLine({ title, pathwayTitle = '' }) {
 
       <div className="role-jobs__schemes">
         <span className="role-jobs__schemes-label">Graduate schemes &amp; programmes</span>
-        {hasLiveSchemes && sJobs.length ? (
+        {locked ? (
+          <PremiumLockedRow text="Live graduate schemes are included with Premium." />
+        ) : loading ? (
+          <div className="role-jobs__foot-row">
+            <span className="role-jobs__stat role-jobs__stat--muted">
+              <span className="role-jobs__spinner" aria-hidden="true" /> Checking live graduate schemes&hellip;
+            </span>
+          </div>
+        ) : hasLiveSchemes && sJobs.length ? (
           <div className="role-jobs__foot-row">
             <span className="role-jobs__stat">
               <span className="role-jobs__dot" aria-hidden="true" />
@@ -1620,10 +1781,7 @@ export function RoleAccordionItem({ item, onItemReaction, savedReactions = {}, s
                 <GradJobsLine title={item?.title} advisory={entryRoute} />
               </div>
             ) : (
-              <div className="role-jobs-cols">
-                <GradJobsLine title={item?.title} />
-                <PathwayJobsLine title={item?.title} pathwayTitle={pathwayTitle} />
-              </div>
+              <LiveOpeningsBox title={item?.title} pathwayTitle={pathwayTitle} />
             )
           ) : null}
           <PathwayReactionRow
@@ -1981,17 +2139,6 @@ function DetailPanel({ item, onItemReaction, savedReactions = {}, nonUniByTitle 
   if (isCareerWorld) {
     return (
       <article className="selection-detail-card">
-        <div className="selection-definition-card__header">
-          <SelectionTitle item={item} definition={selectionDefinition} />
-          <div className="selection-detail-card__signal-wrap">
-            <SignalBadge
-              label={matchSignal.label}
-              blocks={matchSignal.blocks}
-              pct={item?.signalPct || item?.fitPct}
-              tooltipBody={`${getMatchTooltipBody(matchSignal.label)} Each pathway below is scored on its own profile, so some sit above or below the world as a whole.`}
-            />
-          </div>
-        </div>
         {worldPathways.length > 0 ? (
           <div className="selection-explorer__toolbar">
             <ResultsFilterBar
@@ -2090,7 +2237,8 @@ function DetailPanel({ item, onItemReaction, savedReactions = {}, nonUniByTitle 
 export default function SelectionInsightExplorer({ insights, loading, error, onRetry, onItemReaction, savedReactions = {} }) {
   const explorerRef = React.useRef(null);
   const validInsights = Array.isArray(insights) ? insights : [];
-  const [activeId, setActiveId] = useState(validInsights[0]?.id || validInsights[0]?.title || '');
+  // Starts empty; the effect below picks the top match (or the remembered one).
+  const [activeId, setActiveId] = useState('');
 
   // Load non-university routes so each pathway can show its ways in without a
   // degree alongside its degree routes (the unified pathway model).
@@ -2178,7 +2326,12 @@ export default function SelectionInsightExplorer({ insights, loading, error, onR
   }, [loading, error, validInsights.length]);
 
   useEffect(() => {
-    const nextDefault = validInsights[0]?.id || validInsights[0]?.title || '';
+    // Default: the strongest match among the standard worlds (vocational worlds
+    // sit last, as in the picker), or the world chosen earlier this session.
+    const isVocId = (c) => String(c?.careerWorldId || c?.id || '').startsWith('voc_');
+    const sorted = validInsights.slice().sort((a, b) => (isVocId(a) - isVocId(b)) || (bandRank(b?.signalLabel) - bandRank(a?.signalLabel)));
+    const keys = sorted.map((c) => c?.id || c?.title);
+    const nextDefault = readRemembered('pathways', keys) || keys[0] || '';
     if (!validInsights.length) {
       setActiveId('');
       return;
@@ -2196,8 +2349,10 @@ export default function SelectionInsightExplorer({ insights, loading, error, onR
       <section className="selection-explorer selection-explorer--loading">
         <div className="selection-explorer__intro">
           <h2>Your career pathways</h2>
-          <p>Loading the deeper signature fit for the options you liked...</p>
-          <StillWorkingNote />
+          <p className="cdna-loading" aria-busy="true">
+            <span className="cdna-spinner" aria-hidden="true" />
+            <span>Loading the deeper signature fit for the options you liked&hellip;<StillWorkingNote inline /></span>
+          </p>
         </div>
       </section>
     );
@@ -2240,14 +2395,9 @@ export default function SelectionInsightExplorer({ insights, loading, error, onR
             The career pathways and graduate roles most aligned with the options you liked. Pick a tab to see each pathway, how well it fits your CareerDNA, and the ways you can get in.
           </p>
         ) : (
-          <>
-            <p className="selection-explorer__intro-text">
-              A career pathway is a more specific direction within a career world, a family of related jobs that share similar skills and training. Pick one of the career worlds you liked to see its pathways, then open any pathway to read what the work involves, how strongly it matches your profile, and the ways you can get in.
-            </p>
-            <p className="selection-explorer__intro-text">
-              Every pathway shows both kinds of route where they exist: the university degrees that lead to it, and the apprenticeships and other ways in that do not need a degree, so you can explore it whether or not you have decided on university.
-            </p>
-          </>
+          <p className="selection-explorer__intro-text">
+            A career pathway is a more specific direction within a career world: a family of related jobs that share similar skills and training. Pick a career world you liked to see its pathways, then open any pathway to read what the work involves, how well it matches you, and the ways in, through university degrees or routes that do not need a degree. Each pathway is scored on its own profile, so some sit above or below the world as a whole. Only the career worlds you liked appear here, so to explore more, like a few more in Career Worlds.
+          </p>
         )}
       </div>
 
@@ -2260,41 +2410,29 @@ export default function SelectionInsightExplorer({ insights, loading, error, onR
       const byStrength = (a, b) => bandRank(b?.signalLabel) - bandRank(a?.signalLabel);
       const academicInsights = validInsights.filter((c) => !isVoc(c)).sort(byStrength);
       const vocInsights = validInsights.filter((c) => isVoc(c)).sort(byStrength);
-      const orderedInsights = [...academicInsights, ...vocInsights];
       const activeKey = activeItem?.id || activeItem?.title;
-      const renderChip = (candidate) => {
-        const key = candidate?.id || candidate?.title;
-        return (
-          <SelectionListButton
-            key={key}
-            item={candidate}
-            active={key === activeKey}
-            onClick={() => setActiveId(key)}
-          />
-        );
-      };
+      const toOption = (candidate, group) => ({
+        value: candidate?.id || candidate?.title,
+        label: candidate?.title,
+        group,
+        band: String(candidate?.signalLabel || '').trim(),
+        count: Array.isArray(candidate?.pathways) ? candidate.pathways.length : undefined,
+        countNoun: 'pathway',
+        icon: getCareerWorldIcon(candidate?.title || ''),
+      });
       return (
       <div className="selection-explorer__layout selection-explorer__layout--stacked">
-        {/* Desktop / iPad: a modern custom dropdown (shown via CSS on larger screens). */}
-        <div className="selection-explorer__selector-select-wrap">
-          <OptionDropdown
-            options={orderedInsights.map((candidate) => ({
-              key: candidate?.id || candidate?.title,
-              title: candidate?.title,
-            }))}
-            activeKey={activeKey || ''}
-            onSelect={setActiveId}
-          />
-        </div>
-
-        {/* Desktop / tablet: equal-width pills in a tidy grid. */}
-        <div className="selection-explorer__selector-tabs" role="tablist" aria-label="Selected options">
-          {academicInsights.map(renderChip)}
-          {vocInsights.length ? (
-            <div className="nu-voc-label">No degree needed</div>
-          ) : null}
-          {vocInsights.map(renderChip)}
-        </div>
+        <PathwayPicker
+          options={[
+            ...academicInsights.map((c) => toOption(c, vocInsights.length ? 'Career worlds' : '')),
+            ...vocInsights.map((c) => toOption(c, 'No degree needed')),
+          ]}
+          value={activeKey || ''}
+          onSelect={setActiveId}
+          storageKey="pathways"
+          ariaLabel="Choose a career world"
+          title="Your career worlds"
+        />
 
         <div ref={mainRef} className="selection-explorer__main selection-explorer__main--full">
           <DetailPanel item={activeItem} onItemReaction={onItemReaction} savedReactions={savedReactions} nonUniByTitle={nonUniByTitle} />

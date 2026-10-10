@@ -342,12 +342,18 @@ function PricingModal({
   entitlement = null,
   onManageSubscription,
   audience: audienceProp = '',
+  // Signed-out visitors (landing page): nobody is "on" a plan yet, so no card
+  // is marked current and every button leads to sign-up.
+  signedIn = true,
+  onRequireSignIn = null,
 }) {
   // School vs university feature wording. Defaults to the student's own stage if
   // we know it, otherwise 'school'; the toggle lets anyone switch.
   const [audience, setAudience] = useState(() => normaliseAudience(audienceProp || entitlement?.status || 'school'));
   const [checkoutPlan, setCheckoutPlan] = useState('');
   const [checkoutError, setCheckoutError] = useState('');
+  const [devTipFor, setDevTipFor] = useState('');
+  const devTipTimer = useRef(null);
   const [pendingAction, setPendingAction] = useState(null);
   // Purchase confirmation: the buyer is an adult (or a parent or guardian is
   // completing it) and accepts that access starts straight away. Reset for
@@ -367,6 +373,10 @@ function PricingModal({
   });
 
   const effectivePlan = normalisePlan(currentPlan || entitlement?.plan || 'free');
+  // Developer accounts are set by the team, not through Stripe: nothing here
+  // can be bought, changed or cancelled.
+  const isDevAccount = effectivePlan === 'dev';
+  const DEV_MESSAGE = 'Developer accounts are managed by the CareerDNA team. To change this account, email support@mycareerdna.io.';
   const isCancellingAtPeriodEnd = Boolean(entitlement?.cancelAtPeriodEnd || entitlement?.cancel_at_period_end);
   const pendingPlan = isCancellingAtPeriodEnd
     ? ''
@@ -383,7 +393,9 @@ function PricingModal({
     entitlement?.advisor_period_end ||
     ''
   );
-  const hasSubscription = isSubscriptionPlan(effectivePlan);
+  // Developers see the cards exactly as a new user does; only the clicks differ.
+  const hasSubscription = !isDevAccount && isSubscriptionPlan(effectivePlan);
+  const displayPlan = isDevAccount ? 'free' : effectivePlan;
 
   const pendingCopy = useMemo(() => {
     if (!pendingAction) return null;
@@ -586,6 +598,16 @@ function PricingModal({
 
   const handlePlanClick = (plan) => {
     const variant = String(plan?.variant || '').toLowerCase();
+    if (!signedIn && variant !== 'institution') {
+      if (typeof onRequireSignIn === 'function') onRequireSignIn(variant);
+      return;
+    }
+    if (isDevAccount && variant !== 'institution') {
+      setDevTipFor(variant);
+      window.clearTimeout(devTipTimer.current);
+      devTipTimer.current = window.setTimeout(() => setDevTipFor(''), 3500);
+      return;
+    }
     const checkoutPlanKey = String(plan?.checkoutPlan || '').toLowerCase();
     const status = getPlanStatus(plan, effectivePlan, pendingPlan, isCancellingAtPeriodEnd);
 
@@ -640,7 +662,9 @@ function PricingModal({
 
         <header className="pricing-modal-header">
           <h2>{hasSubscription ? 'Manage your plan' : 'Choose your plan'}</h2>
-          {hasSubscription ? (
+          {isDevAccount ? (
+            <p>You are on a developer account.</p>
+          ) : hasSubscription ? (
             <p>
               {isCancellingAtPeriodEnd && cancellationDate
                 ? `Your ${effectivePlan === 'premium' ? 'Premium' : 'Explorer'} plan will end on ${cancellationDate}.`
@@ -695,10 +719,17 @@ function PricingModal({
             onPointerLeave={handlePricingPointerCancel}
           >
           {plans.map((plan, index) => {
-            const status = getPlanStatus(plan, effectivePlan, pendingPlan, isCancellingAtPeriodEnd);
+            const status = !signedIn ? 'available'
+              : isDevAccount ? (plan.variant === 'starter' ? 'available' : getPlanStatus(plan, displayPlan, '', false))
+              : getPlanStatus(plan, effectivePlan, pendingPlan, isCancellingAtPeriodEnd);
             const isCurrent = status === 'current';
             const isScheduled = status === 'scheduled';
-            const buttonLabel = getPlanButtonLabel(plan, effectivePlan, pendingPlan, isCancellingAtPeriodEnd);
+            const isDevLocked = isDevAccount && plan.variant !== 'institution';
+            const buttonLabel = isDevLocked
+              ? (plan.variant === 'starter' ? 'Free plan' : getPlanButtonLabel(plan, displayPlan, '', false))
+              : signedIn
+              ? getPlanButtonLabel(plan, effectivePlan, pendingPlan, isCancellingAtPeriodEnd)
+              : (plan.variant === 'starter' ? 'Get started free' : plan.variant === 'institution' ? 'Contact us' : 'Subscribe');
             const loadingKey = String(plan.checkoutPlan || plan.variant || '').toLowerCase();
             const loading = checkoutPlan && checkoutPlan === loadingKey;
             const isPaymentActionPaused =
@@ -773,6 +804,10 @@ function PricingModal({
                   </ul>
                 </div>
 
+                <div className="pricing-plan-button-wrap">
+                {isDevLocked && devTipFor === plan.variant ? (
+                  <span className="pricing-plan-tip" role="tooltip">{DEV_MESSAGE}</span>
+                ) : null}
                 <button
                   type="button"
                   className={`pricing-plan-button pricing-plan-button--${plan.variant} ${isCurrent || isScheduled ? 'pricing-plan-button--current' : ''} ${isPaymentActionPaused ? 'pricing-plan-button--paused' : ''}`}
@@ -782,9 +817,11 @@ function PricingModal({
                   }}
                   disabled={Boolean(checkoutPlan) || isCurrent || isScheduled || isPaymentActionPaused}
                   title={isPaymentActionPaused ? PAYMENT_PAUSE_MESSAGE : undefined}
+                  aria-disabled={isDevLocked ? true : undefined}
                 >
                   {loading ? 'Opening…' : isPaymentActionPaused ? 'Coming soon' : isCurrent ? '✓ Current plan' : buttonLabel}
                 </button>
+                </div>
               </article>
             );
           })}

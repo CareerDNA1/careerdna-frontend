@@ -21,6 +21,10 @@ import { supabase } from './supabaseClient';
 let activeRunId = null;
 let runCache = { id: null, at: 0 };
 
+if (typeof window !== 'undefined') {
+  window.addEventListener('cdna:signed-out', () => { activeRunId = null; runCache = { id: null, at: 0 }; });
+}
+
 export function setActiveRunId(runId) {
   activeRunId = runId ? String(runId) : null;
 }

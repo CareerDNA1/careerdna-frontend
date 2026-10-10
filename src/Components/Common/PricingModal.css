@@ -1103,3 +1103,19 @@
 .pricing-confirm-consent { display: flex; align-items: flex-start; gap: 10px; margin: 14px 0 4px; font-size: 0.84rem; line-height: 1.45; color: #4b5c6b; cursor: pointer; }
 .pricing-confirm-consent input { margin-top: 3px; width: 16px; height: 16px; accent-color: #2f6fed; flex: 0 0 auto; }
 .pricing-confirm-consent a { color: #2f6fed; font-weight: 600; }
+
+/* Small tooltip above a locked plan button (developer accounts). */
+.pricing-plan-button-wrap { position: relative; }
+.pricing-plan-tip {
+  position: absolute; left: 50%; bottom: calc(100% + 10px); transform: translateX(-50%);
+  width: max-content; max-width: 260px; z-index: 5;
+  background: #fff; color: #12233c; border: 1px solid #dbe3ef; border-radius: 12px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14);
+  padding: 9px 12px; font-size: 12.5px; font-weight: 500; line-height: 1.4; text-align: left;
+  animation: pricing-tip-in 0.16s ease-out;
+}
+.pricing-plan-tip::after {
+  content: ""; position: absolute; left: 50%; top: 100%; transform: translateX(-50%);
+  border: 7px solid transparent; border-top-color: #fff; filter: drop-shadow(0 1px 0 #dbe3ef);
+}
+@keyframes pricing-tip-in { from { opacity: 0; transform: translate(-50%, 4px); } to { opacity: 1; transform: translate(-50%, 0); } }

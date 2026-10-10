@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './FurtherStudyPanel.css';
 import { Info, BookOpen, Compass, UsersThree, GraduationCap, BookmarkSimple, TrendUp, TrendDown } from 'phosphor-react';
 import { fetchFurtherStudy, peekFurtherStudyCache } from '../../utils/fetchFurtherStudy';
-import { OptionDropdown, showSelectionTooltip, hideSelectionTooltip, SignalBadge, PathwayReactionRow, SelectionTitle } from './SelectionInsightExplorer';
-import { getSubjectIcon } from '../../utils/iconMap';
+import { showSelectionTooltip, hideSelectionTooltip, PathwayReactionRow } from './SelectionInsightExplorer';
+import PathwayPicker, { readRemembered } from './PathwayPicker';
+import { getSubjectIcon, getCareerWorldIcon } from '../../utils/iconMap';
 import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank } from './ResultsFilter';
 import { loadRankingSubjectIndex } from '../../utils/rankings';
 import InlineError, { StillWorkingNote } from '../Common/InlineError';
@@ -407,8 +408,12 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
         const g = Array.isArray(data?.groups) ? data.groups : [];
         setGroups(g);
         setActiveKey((prev) => {
-          const keys = g.map((x) => x.pathwayId || x.pathwayTitle);
-          return keys.includes(prev) ? prev : keys[0] || '';
+          // Default to the top match (the list is sorted by match strength), or
+          // the world chosen earlier this session.
+          const sorted = g.slice().sort((a, b) => bandRank(b?.signalLabel) - bandRank(a?.signalLabel));
+          const keys = sorted.map((x) => x.pathwayId || x.pathwayTitle);
+          if (keys.includes(prev)) return prev;
+          return readRemembered('university', keys) || keys[0] || '';
         });
       } catch (err) {
         if (!cancelled) {
@@ -456,41 +461,33 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
       </div>
 
       {loading ? (
-        <>
-          <p className="fs-none">Finding your study routes&hellip;</p>
-          <StillWorkingNote />
-        </>
+        <p className="fs-none cdna-loading" aria-busy="true">
+          <span className="cdna-spinner" aria-hidden="true" />
+          <span>Finding your university routes&hellip;<StillWorkingNote inline /></span>
+        </p>
       ) : error ? (
         <InlineError message={error} onRetry={() => setReloadTick((t) => t + 1)} />
       ) : (
         <div className="selection-explorer__layout selection-explorer__layout--stacked">
-          {/* Desktop / iPad: dropdown selector (the pill tabs below are hidden on
-              larger screens by the shared CSS, so this is what lets you switch). */}
-          <div className="selection-explorer__selector-select-wrap">
-            <OptionDropdown
-              options={orderedGroups.map((g) => ({ key: g.pathwayId || g.pathwayTitle, title: g.pathwayTitle }))}
-              activeKey={active?.pathwayId || active?.pathwayTitle || ''}
-              onSelect={setActiveKey}
-            />
-          </div>
-
-          <div className="selection-explorer__selector-tabs" role="tablist" aria-label="Liked pathways">
-            {orderedGroups.map((g) => {
-              const key = g.pathwayId || g.pathwayTitle;
-              const isActive = key === (active?.pathwayId || active?.pathwayTitle);
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  role="tab"
-                  className={`selection-list-button ${isActive ? 'is-active' : ''}`}
-                  onClick={() => setActiveKey(key)}
-                >
-                  <span className="selection-list-button__title">{g.pathwayTitle}</span>
-                </button>
-              );
+          <PathwayPicker
+            options={orderedGroups.map((g) => {
+              const degrees = (Array.isArray(g.relevantRoutes) ? g.relevantRoutes.length : 0)
+                + (Array.isArray(g.otherRoutes) ? g.otherRoutes.length : (Array.isArray(g.routes) ? g.routes.length : 0));
+              return {
+                value: g.pathwayId || g.pathwayTitle,
+                label: g.pathwayTitle,
+                band: String(g.signalLabel || '').trim(),
+                count: degrees,
+                countNoun: 'degree',
+                icon: getCareerWorldIcon(g.pathwayTitle || ''),
+              };
             })}
-          </div>
+            value={active?.pathwayId || active?.pathwayTitle || ''}
+            onSelect={setActiveKey}
+            storageKey="university"
+            ariaLabel="Choose a career world"
+            title="Your career worlds"
+          />
 
           <div ref={mainRef} className="selection-explorer__main selection-explorer__main--full">
             {active ? (() => {
@@ -503,20 +500,8 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
               const hasRelevant = relevant.length > 0;
               const hasAny = relevant.length + other.length > 0;
               const hasAnyUnfiltered = relevantAll.length + otherAll.length > 0;
-              const bandWord = active.signalLabel
-                || ((likedWorlds || []).find((w) => String(w?.title || '') === String(active.pathwayTitle || ''))?.signalLabel)
-                || '';
-              const headerLabel = bandWord
-                ? (/match$/i.test(bandWord) ? bandWord : `${bandWord} match`)
-                : '';
               return (
                 <article className="selection-detail-card">
-                  <div className="selection-definition-card__header">
-                    <SelectionTitle item={{ title: active.pathwayTitle, type: 'career_world' }} />
-                    {headerLabel ? (
-                      <div className="selection-detail-card__signal-wrap"><SignalBadge label={headerLabel} /></div>
-                    ) : null}
-                  </div>
                   {hasAnyUnfiltered ? (
                     <div className="selection-explorer__toolbar">
                       <ResultsFilterBar filter={studyFilter} onChange={setStudyFilter} groups={['favourites']} />

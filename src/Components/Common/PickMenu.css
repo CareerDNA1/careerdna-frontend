@@ -46,3 +46,6 @@
 .pick-sheet .profile-run-menu-item:active { background: #f4f7fb; }
 .pick-sheet .pick-search { margin: 0 0 6px; }
 .pick-sheet .pick-search input { font-size: 16px; padding: 10px 0; } /* 16px stops iOS zooming the page on focus */
+
+.pick-group-label { padding: 8px 11px 4px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #8a97ad; border-top: 1px solid #eef2f7; margin-top: 4px; }
+.pick-group-label:first-child { border-top: 0; margin-top: 0; }

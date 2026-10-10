@@ -18,6 +18,13 @@ const MAX_PANEL = 320;
 export default function PickMenu({
   options, value, triggerClass, disabled, onSelect, ariaLabel,
   title, searchable = false, searchPlaceholder = 'Search', placeholder,
+  // Optional rich rendering: renderOption(o) for each row, renderTrigger(current)
+  // for the closed control. Both fall back to the plain label.
+  renderOption = null, renderTrigger = null,
+  // sheetOnPhone=false keeps the floating panel under the field on phones too.
+  sheetOnPhone = true,
+  // Bring the current option into view when the list opens (long lists).
+  scrollToCurrent = false,
 }) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState(null);
@@ -26,7 +33,7 @@ export default function PickMenu({
   const wrapRef = useRef(null);
   const panelRef = useRef(null);
   const searchRef = useRef(null);
-  const isPhone = () => window.matchMedia(PHONE).matches;
+  const isPhone = () => sheetOnPhone && window.matchMedia(PHONE).matches;
   const [sheet, setSheet] = useState(false);
 
   const shown = useMemo(() => {
@@ -88,6 +95,13 @@ export default function PickMenu({
 
 
   useEffect(() => {
+    if (!open || !scrollToCurrent || !panelRef.current) return;
+    const el = panelRef.current.querySelector('[role="menuitemradio"].is-current');
+    if (el) el.scrollIntoView({ block: 'center' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, sheet, pos]);
+
+  useEffect(() => {
     if (open && active >= 0 && panelRef.current) {
       const el = panelRef.current.querySelectorAll('[role="menuitemradio"]')[active];
       if (el) el.scrollIntoView({ block: 'nearest' });
@@ -111,14 +125,21 @@ export default function PickMenu({
       ) : null}
       <div className="pick-list" role="menu">
         {shown.length ? shown.map((s, i) => (
-          <button type="button" role="menuitemradio" aria-checked={s.value === value} key={String(s.value)} disabled={s.disabled}
+          <React.Fragment key={String(s.value)}>
+          {s.startsGroup && s.group ? <div className="pick-group-label">{s.group}</div> : null}
+          <button type="button" role="menuitemradio" aria-checked={s.value === value} disabled={s.disabled}
             className={`profile-run-menu-item${s.value === value ? ' is-current' : ''}${i === active ? ' is-active' : ''}`}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => choose(s)}>
             <span className="apps-menu-check" aria-hidden="true">{s.value === value ? <Check size={14} weight="bold" /> : null}</span>
-            <span className="pick-item-label">{s.label}</span>
-            {s.hint ? <span className="pick-item-hint">{s.hint}</span> : null}
+            {renderOption ? renderOption(s) : (
+              <>
+                <span className="pick-item-label">{s.label}</span>
+                {s.hint ? <span className="pick-item-hint">{s.hint}</span> : null}
+              </>
+            )}
           </button>
+          </React.Fragment>
         )) : <div className="pick-empty">No matches</div>}
       </div>
     </>
@@ -128,7 +149,7 @@ export default function PickMenu({
     <div className="apps-menu-wrap" ref={wrapRef}>
       <button type="button" className={triggerClass} disabled={disabled} aria-haspopup="menu" aria-expanded={open} aria-label={ariaLabel}
         onClick={() => (open ? close() : setOpen(true))}>
-        <span className="apps-pick-label">{label}</span>
+        {renderTrigger ? renderTrigger(current) : <span className="apps-pick-label">{label}</span>}
         <CaretDown size={12} weight="bold" aria-hidden="true" />
       </button>
       {open && sheet ? (

@@ -3,10 +3,12 @@ import './FurtherStudyPanel.css';
 import './NonUniversityPanel.css';
 import { Info, Compass, Briefcase, BookmarkSimple, GraduationCap, BookOpen, UsersThree, CaretDown, CaretRight, Signpost } from 'phosphor-react';
 import { fetchNonUniRoutes, peekNonUniRoutes, fetchRouteVacancies } from '../../utils/fetchNonUniRoutes';
+import { usePremiumAccess } from '../../utils/premiumGate';
 import { PATHWAY_DEFINITIONS } from '../../utils/selectionDefinitions';
-import { OptionDropdown, showSelectionTooltip, hideSelectionTooltip, PathwayReactionRow, SignalBadge, SelectionTitle, JobCard, JobDetailModal } from './SelectionInsightExplorer';
+import { showSelectionTooltip, hideSelectionTooltip, PathwayReactionRow, SignalBadge, JobCard, JobDetailModal } from './SelectionInsightExplorer';
+import PathwayPicker, { readRemembered } from './PathwayPicker';
 import { getReactions, setItemReaction } from '../../utils/savedItems';
-import { getSubjectIcon, getPathwayIcon } from '../../utils/iconMap';
+import { getSubjectIcon, getPathwayIcon, getCareerWorldIcon } from '../../utils/iconMap';
 import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank } from './ResultsFilter';
 import InlineError from '../Common/InlineError';
 import { friendlyError } from '../../utils/friendlyError';
@@ -181,15 +183,18 @@ function durationLabel(months) {
 // Live-vacancy lookup for a single apprenticeship standard.
 function VacancyBlock({ larsCode, keyword, applyVia, searchFallback }) {
   const [state, setState] = useState({ loading: true, data: null });
+  const { premium, loaded: planLoaded } = usePremiumAccess();
+  const locked = planLoaded && !premium;
   useEffect(() => {
     let cancelled = false;
-    if (!larsCode) { setState({ loading: false, data: null }); return undefined; }
+    if (!larsCode || locked) { setState({ loading: false, data: null }); return undefined; }
+    if (!planLoaded) { setState({ loading: true, data: null }); return undefined; }
     (async () => {
       const data = await fetchRouteVacancies(larsCode, keyword);
       if (!cancelled) setState({ loading: false, data });
     })();
     return () => { cancelled = true; };
-  }, [larsCode, keyword]);
+  }, [larsCode, keyword, planLoaded, locked]);
 
   const { loading, data } = state;
   const count = data && typeof data.count === 'number' ? data.count : null;
@@ -200,7 +205,12 @@ function VacancyBlock({ larsCode, keyword, applyVia, searchFallback }) {
   // stays tidy. The full list lives on Find an Apprenticeship behind the link.
   return (
     <div className="nu-vacancies">
-      {loading ? (
+      {locked ? (
+        <p className="nu-vac-line">
+          <span className="nu-vac-count-inline nu-vac-count-inline--muted">Live openings are included with Premium.</span>
+          {' '}<button type="button" className="nu-vac-link nu-vac-link--btn" data-premium-feature="apprenticeships">Unlock <span aria-hidden="true">→</span></button>
+        </p>
+      ) : loading ? (
         <p className="nu-vac-note nu-vac-loading"><span className="nu-spinner" aria-hidden="true" />Checking for live openings&hellip;</p>
       ) : count && count > 0 ? (
         <p className="nu-vac-line">
@@ -379,16 +389,19 @@ function StandardRow({ route, liveVacancies, showTitle, reaction = '', onReact }
   const hasStandard = !!(route.standardName || route.standardLarsCode);
   // Live-openings count for the collapsed summary row and the expanded detail.
   const [vac, setVac] = useState({ loading: true, data: null });
+  const { premium: vacPremium, loaded: vacPlanLoaded } = usePremiumAccess();
+  const vacLocked = vacPlanLoaded && !vacPremium;
   useEffect(() => {
     let cancelled = false;
     const lars = (hasStandard && liveVacancies) ? route.standardLarsCode : '';
-    if (!lars) { setVac({ loading: false, data: null }); return undefined; }
+    if (!lars || vacLocked) { setVac({ loading: false, data: null }); return undefined; }
+    if (!vacPlanLoaded) { setVac({ loading: true, data: null }); return undefined; }
     (async () => {
       const d = await fetchRouteVacancies(lars, route.standardName || route.pathway);
       if (!cancelled) setVac({ loading: false, data: d });
     })();
     return () => { cancelled = true; };
-  }, [route.standardLarsCode, liveVacancies, hasStandard, route.standardName, route.pathway]);
+  }, [route.standardLarsCode, liveVacancies, hasStandard, route.standardName, route.pathway, vacPlanLoaded, vacLocked]);
   const vCount = vac.data && typeof vac.data.count === 'number' ? vac.data.count : null;
   const vCapped = !!(vac.data && vac.data.countCapped);
   if (!hasStandard) {
@@ -545,6 +558,11 @@ function StandardRow({ route, liveVacancies, showTitle, reaction = '', onReact }
                   </div>
                   {paused ? (
                     <p className="nu-vac-count-inline nu-vac-count-inline--muted">Approved, but not taking new starts right now.</p>
+                  ) : vacLocked ? (
+                    <p className="nu-vac-line">
+                      <span className="nu-vac-count-inline nu-vac-count-inline--muted">Live openings for this apprenticeship are included with Premium.</span>
+                      {' '}<button type="button" className="nu-vac-link nu-vac-link--btn" data-premium-feature="apprenticeships">Unlock <span aria-hidden="true">→</span></button>
+                    </p>
                   ) : vac.loading ? (
                     <p className="nu-vac-count-inline nu-vac-count-inline--muted nu-vac-loading"><span className="nu-spinner" aria-hidden="true" />Checking for live openings&hellip;</p>
                   ) : vCount != null && vCount > 0 && vac.data && Array.isArray(vac.data.vacancies) && vac.data.vacancies.length ? (
@@ -666,9 +684,12 @@ export function PathwayCard({ pathway, routes, open, onToggle, reaction, onReact
   const [waysOpen, setWaysOpen] = useState(false);
   // Total live openings across every apprenticeship way in, for the panel summary.
   const [liveTotal, setLiveTotal] = useState({ loading: true, count: 0, capped: false });
+  const { premium: totPremium, loaded: totPlanLoaded } = usePremiumAccess();
+  const totLocked = totPlanLoaded && !totPremium;
   useEffect(() => {
     let cancelled = false;
-    if (!open || !liveVacancies) { setLiveTotal({ loading: false, count: 0, capped: false }); return undefined; }
+    if (!open || !liveVacancies || totLocked) { setLiveTotal({ loading: false, count: 0, capped: false }); return undefined; }
+    if (!totPlanLoaded) { setLiveTotal((st) => ({ ...st, loading: true })); return undefined; }
     const withLars = standardRoutes.filter((r) => r.standardLarsCode);
     if (!withLars.length) { setLiveTotal({ loading: false, count: 0, capped: false }); return undefined; }
     setLiveTotal((st) => ({ ...st, loading: true }));
@@ -682,7 +703,7 @@ export function PathwayCard({ pathway, routes, open, onToggle, reaction, onReact
     })();
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, liveVacancies, pathway]);
+  }, [open, liveVacancies, pathway, totPlanLoaded, totLocked]);
   // Plain-English "How you get in" summary covering EVERY way in this pathway has
   // (apprenticeship, college / T Level, and on-the-job routes), not just one.
   const entrySummary = useMemo(() => {
@@ -788,7 +809,9 @@ export function PathwayCard({ pathway, routes, open, onToggle, reaction, onReact
                       <GraduationCap size={14} weight="bold" aria-hidden="true" /> {waysCount} {waysCount === 1 ? 'way in' : 'ways in'}
                     </span>
                     {liveVacancies ? (
-                      liveTotal.loading ? (
+                      totLocked ? (
+                        <span className="nu-wayin-box__stat nu-wayin-box__stat--muted">Live openings with Premium</span>
+                      ) : liveTotal.loading ? (
                         <span className="nu-wayin-box__stat nu-wayin-box__stat--muted nu-vac-loading"><span className="nu-spinner" aria-hidden="true" />Checking for live openings&hellip;</span>
                       ) : liveTotal.count > 0 ? (
                         <span className="nu-wayin-box__stat nu-wayin-box__stat--live">
@@ -967,7 +990,7 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
   }, [activeKey]);
 
   useEffect(() => {
-    setActiveKey((prev) => (allWorlds.includes(prev) ? prev : allWorlds[0] || ''));
+    setActiveKey((prev) => (allWorlds.includes(prev) ? prev : (readRemembered('training', allWorlds) || allWorlds[0] || '')));
   }, [allWorlds]);
 
   const handleReact = (pathway, next) => {
@@ -1006,11 +1029,6 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
   );
   // Group into one card per pathway; liked pathways first.
   const groups = useMemo(() => groupByPathway(worldRoutes), [worldRoutes]);
-  // Match band for the active world, shown as a pill in the header (like Pathways).
-  const activeWorldBand = (likedWorlds || []).find((w) => String(w?.title || '') === activeWorld)?.signalLabel || '';
-  const activeWorldBandLabel = activeWorldBand
-    ? (/match$/i.test(activeWorldBand) ? activeWorldBand : `${activeWorldBand} match`)
-    : '';
   const relevantGroupsAll = groups.filter((g) => likedPathwaySet.has(g.pathway));
   const otherGroupsAll = groups.filter((g) => !likedPathwaySet.has(g.pathway));
   // Favourites filter: only the training/work pathways the student has liked here.
@@ -1053,55 +1071,37 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
       </div>
 
       {loading ? (
-        <p className="fs-none">Finding your non-university routes&hellip;</p>
+        <p className="fs-none cdna-loading" aria-busy="true">
+          <span className="cdna-spinner" aria-hidden="true" />
+          <span>Finding your training and work routes&hellip;</span>
+        </p>
       ) : error ? (
         <InlineError message={error} onRetry={() => setReloadTick((t) => t + 1)} />
       ) : allWorlds.length ? (
         <div className="selection-explorer__layout selection-explorer__layout--stacked">
-          <div className="selection-explorer__selector-select-wrap">
-            <OptionDropdown
-              options={allWorlds.map((w) => ({ key: w, title: w }))}
-              activeKey={activeWorld}
-              onSelect={setActiveKey}
-            />
-          </div>
-          <div className="selection-explorer__selector-tabs" role="tablist" aria-label="Career worlds and vocational routes">
-            {academicWorlds.map((w) => (
-              <button
-                key={w}
-                type="button"
-                role="tab"
-                className={`selection-list-button ${w === activeWorld ? 'is-active' : ''}`}
-                onClick={() => setActiveKey(w)}
-              >
-                <span className="selection-list-button__title">{w}</span>
-              </button>
-            ))}
-            {vocationalWorlds.length ? (
-              <div className="nu-voc-label">No degree needed</div>
-            ) : null}
-            {vocationalWorlds.map((w) => (
-              <button
-                key={w}
-                type="button"
-                role="tab"
-                className={`selection-list-button ${w === activeWorld ? 'is-active' : ''}`}
-                onClick={() => setActiveKey(w)}
-              >
-                <span className="selection-list-button__title">{w}</span>
-              </button>
-            ))}
-          </div>
+          <PathwayPicker
+            options={[
+              ...academicWorlds.map((w) => ({ group: vocationalWorlds.length ? 'Career worlds' : '', world: w })),
+              ...vocationalWorlds.map((w) => ({ group: 'No degree needed', world: w })),
+            ].map(({ group, world: w }) => ({
+              value: w,
+              label: w,
+              group,
+              band: String((likedWorlds || []).find((lw) => String(lw?.title || '') === w)?.signalLabel || '').trim(),
+              count: groupByPathway(routes.filter((r) => r.careerWorld === w)).length,
+              countNoun: 'pathway',
+              icon: getCareerWorldIcon(w),
+            }))}
+            value={activeWorld}
+            onSelect={setActiveKey}
+            storageKey="training"
+            ariaLabel="Choose a career world"
+            title="Your career worlds"
+          />
 
           <div ref={mainRef} className="selection-explorer__main selection-explorer__main--full">
             {activeWorld ? (
               <article className="selection-detail-card">
-                <div className="selection-definition-card__header">
-                  <SelectionTitle item={{ title: activeWorld, type: 'career_world' }} />
-                  {activeWorldBandLabel ? (
-                    <div className="selection-detail-card__signal-wrap"><SignalBadge label={activeWorldBandLabel} /></div>
-                  ) : null}
-                </div>
                 {groups.length ? (
                   <div className="selection-explorer__toolbar">
                     <ResultsFilterBar filter={workFilter} onChange={setWorkFilter} groups={['favourites']} />

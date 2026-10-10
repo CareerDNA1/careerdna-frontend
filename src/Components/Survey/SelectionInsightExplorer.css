@@ -1674,3 +1674,26 @@
 @media (max-width: 560px) {
   .cdna-react-row--three .cdna-react-btn--applied { flex-basis: 100%; }
 }
+
+/* One "Live openings" box: three rows (jobs, internships, schemes) + sites footer. */
+.lo-box { margin: 16px 0 4px; }
+.lo-rows { border-top: 1px solid #e3ecfb; }
+.lo-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid #e3ecfb; }
+.lo-row__main { min-width: 0; flex: 1 1 auto; }
+.lo-row__title { font-size: 0.86rem; font-weight: 700; color: #14233c; }
+.lo-row__stat { display: flex; align-items: center; gap: 7px; margin-top: 2px; font-size: 0.8rem; font-weight: 700; color: #1f9e6b; white-space: nowrap; }
+.lo-row .role-jobs__go { flex: 0 0 auto; }
+.lo-row__stat--muted { color: #6b7788; font-weight: 500; }
+.role-jobs__go--off { background: #f3f6fb !important; border-color: #e3eaf5 !important; color: #9aa7b8 !important; cursor: default; }
+.lo-sites { margin-top: 12px; }
+.lo-sites__label { display: block; font-size: 0.82rem; font-weight: 700; color: #6b7788; margin-bottom: 5px; }
+.lo-sites .role-jobs__links { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+@media (max-width: 600px) {
+  .lo-row { padding: 10px 0; gap: 10px; }
+  .lo-row__title { font-size: 0.84rem; }
+  .lo-row__stat { white-space: normal; }
+  .lo-row .role-jobs__go { padding: 7px 11px; font-size: 0.85rem; }
+}
+
+/* Space between consecutive intro paragraphs. */
+.selection-explorer__intro-text + .selection-explorer__intro-text { margin-top: 10px; }

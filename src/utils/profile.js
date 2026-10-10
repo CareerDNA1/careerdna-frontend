@@ -95,7 +95,7 @@ export async function getMyProfile() {
   } = await supabase.auth.getUser();
 
   if (userError) throw userError;
-  if (!user) return null;
+  if (!user) { setCurrentPlan('free'); return null; }
 
   const { data, error } = await supabase
     .from('profiles')

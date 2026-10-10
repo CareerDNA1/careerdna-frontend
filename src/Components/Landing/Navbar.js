@@ -312,6 +312,8 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
         currentPlan="free"
         entitlement={{ plan: 'free', status: '' }}
         onManageSubscription={() => {}}
+        signedIn={!!user}
+        onRequireSignIn={() => { setPricingOpen(false); navigate('/signup'); }}
       />
     </>
   );

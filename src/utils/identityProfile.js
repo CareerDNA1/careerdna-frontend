@@ -20,7 +20,7 @@ import { supabase } from './supabaseClient';
 
 // Master switch for the anti-sharing lock. Set to false to run experiments
 // with freely editable DOB/country; set back to true to re-enable locking.
-export const IDENTITY_LOCK_ENABLED = false;
+export const IDENTITY_LOCK_ENABLED = true;
 
 const IDENTITY_COLUMNS =
   'date_of_birth, country, identity_correction_used, education_level, course_start_year, upgrade_claimed_version';

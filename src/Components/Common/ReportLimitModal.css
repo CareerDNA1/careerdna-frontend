@@ -466,3 +466,6 @@
   .report-limit-modal { padding: 24px 20px 16px; border-radius: 20px; }
   .report-limit-modal__apply-btn { width: 100%; }
 }
+
+/* Tall dialog on a short screen: scroll inside the card, never the page. */
+.report-limit-modal { max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }

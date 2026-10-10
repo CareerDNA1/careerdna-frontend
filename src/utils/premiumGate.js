@@ -9,6 +9,8 @@
 // The current plan is kept here as a tiny module-level store so the gate works
 // on every page (results, profile, favourites) without threading props.
 
+import { useEffect, useState } from 'react';
+
 export const PREMIUM_PLANS = new Set(['premium', 'premium_school', 'premium_university', 'dev']);
 
 export const PREMIUM_FEATURE_ATTR = 'data-premium-feature';
@@ -20,6 +22,10 @@ export function isPremiumPlan(plan = '') {
 let currentPlan = '';
 let planLoaded = false;
 const listeners = new Set();
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('cdna:signed-out', () => { currentPlan = ''; planLoaded = false; });
+}
 
 export function setCurrentPlan(plan = '') {
   currentPlan = String(plan || '').trim().toLowerCase();
@@ -47,3 +53,14 @@ export const PREMIUM_FEATURE_LABELS = {
   jobs: 'Live graduate jobs and internships',
   apprenticeships: 'Live apprenticeship and training openings',
 };
+
+// React hook: { premium, loaded }. `loaded` is false until the profile's plan
+// has been read, so callers can avoid flashing a locked state at a paying user.
+export function usePremiumAccess() {
+  const [state, setState] = useState(() => ({ premium: isPremiumPlan(currentPlan), loaded: planLoaded }));
+  useEffect(() => {
+    setState({ premium: isPremiumPlan(currentPlan), loaded: planLoaded });
+    return onPlanChange((plan) => setState({ premium: isPremiumPlan(plan), loaded: true }));
+  }, []);
+  return state;
+}

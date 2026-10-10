@@ -2842,3 +2842,6 @@ body:has(#results-root),
   overflow-wrap: normal !important;
   word-break: keep-all !important;
 }
+
+/* Tall dialog on a short screen: scroll inside the card, never the page. */
+.analysis-quality-modal { max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }

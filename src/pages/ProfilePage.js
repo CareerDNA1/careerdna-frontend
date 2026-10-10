@@ -217,8 +217,6 @@ function getAdvisorUsage(profile = {}) {
 function getAccountEntitlementNote(profile = {}, reportUsage, advisorUsage) {
   const plan = String(profile?.plan || 'free').toLowerCase();
 
-  if (plan === 'dev') return 'Developer access active';
-
   // Access codes/coupons are now credit events, not active plan identities.
   // Do not show an “Access code active” banner for paid subscribers.
   if (['explore', 'premium', 'premium_school', 'premium_university'].includes(plan)) {
@@ -472,9 +470,14 @@ const MoreIcon = () => (
 // shows your saved runs instantly instead of "Loading saved runs…" every time.
 // It still re-fetches in the background to stay current (stale-while-revalidate).
 let profileBundleCache = null;
+if (typeof window !== 'undefined') {
+  window.addEventListener('cdna:signed-out', () => { profileBundleCache = null; });
+}
 
-function takeProfileCache() {
+// Only ever hand back a cache that belongs to the signed-in user.
+function takeProfileCache(userId) {
   if (takeProfileStale()) profileBundleCache = null;
+  if (!profileBundleCache || !userId || profileBundleCache.userId !== userId) return null;
   return profileBundleCache;
 }
 
@@ -483,7 +486,7 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [initialCache] = useState(() => takeProfileCache());
+  const [initialCache] = useState(() => takeProfileCache(user?.id));
   const [profile, setProfile] = useState(() => initialCache?.profileData || null);
   const [runs, setRuns] = useState(() => initialCache?.runData || []);
   const [currentRun, setCurrentRun] = useState(() => initialCache?.currentRun || null);
@@ -873,8 +876,9 @@ export default function ProfilePage() {
   // Keep the module cache in step with what's on screen, so the next visit (and
   // state after deletes/re-runs) shows the correct runs instantly.
   useEffect(() => {
-    profileBundleCache = { profileData: profile, runData: runs, runCount: totalRuns, surveyCount: totalSurveys, currentRun };
-  }, [profile, runs, totalRuns, totalSurveys, currentRun]);
+    if (!user?.id) return;
+    profileBundleCache = { userId: user.id, profileData: profile, runData: runs, runCount: totalRuns, surveyCount: totalSurveys, currentRun };
+  }, [user?.id, profile, runs, totalRuns, totalSurveys, currentRun]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1459,10 +1463,9 @@ export default function ProfilePage() {
     Object.entries(milestoneCounts).forEach(([k, n]) => {
       if (n == null) return;
       if (n >= 1 && !seen[k]) { fresh[k] = true; next[k] = true; }
-      // A user who already has counts the first time this feature runs is not
-      // celebrated retrospectively for everything at once: only the first
-      // visit after this feature ships records the baseline.
-      if (n === 0) next[k] = false;
+      // Never reset a milestone once seen: counts can read 0 for a moment (a
+      // different report made current, favourites reloading), and resetting
+      // here is what made celebrations replay on later visits.
     });
     if (!seen.__init) {
       // Baseline visit: record current state, celebrate nothing.
@@ -1709,7 +1712,7 @@ export default function ProfilePage() {
                         );
                       })()}
                     </span>
-                  ) : (
+                  ) : loadingRuns ? null : (
                     <span className="profile-hero-email">{profile?.email || user?.email || ''}</span>
                   )}
                 </div>
@@ -2172,7 +2175,7 @@ export default function ProfilePage() {
 
       {/* Manage Account Modal */}
       {editingProfile ? (
-        <div className="profile-modal-overlay profile-account-modal-overlay" onClick={closeProfileEditor}>
+        <div className="profile-modal-overlay profile-account-modal-overlay" role="dialog" aria-modal="true" aria-label="Manage account" onClick={closeProfileEditor}>
           <div className="profile-account-modal" onClick={(e) => e.stopPropagation()}>
             <div className="profile-account-modal-header">
               <h2 className="profile-account-modal-title">Manage Account</h2>
@@ -2520,7 +2523,7 @@ export default function ProfilePage() {
 
       {/* Delete Account Modal */}
       {deleteAccountOpen ? (
-        <div className="profile-modal-overlay" onClick={closeDeleteAccountModal}>
+        <div className="profile-modal-overlay" role="dialog" aria-modal="true" aria-label="Delete account" onClick={closeDeleteAccountModal}>
           <div className="profile-modal profile-modal--compact" onClick={(e) => e.stopPropagation()}>
             <div className="profile-modal-header">
               <h2 className="profile-modal-title profile-modal-title--danger">Delete Account</h2>
@@ -2594,7 +2597,7 @@ export default function ProfilePage() {
 
       {/* Output Parameters Modal */}
       {editingRun ? (
-        <div className="profile-modal-overlay profile-output-modal-overlay" onClick={closeOutputParametersModal}>
+        <div className="profile-modal-overlay profile-output-modal-overlay" role="dialog" aria-modal="true" aria-label="Change output parameters" onClick={closeOutputParametersModal}>
           <div className="profile-modal profile-output-modal" onClick={(e) => e.stopPropagation()}>
             <div className="profile-modal-header">
               <h2 className="profile-modal-title">Change Output Parameters</h2>
