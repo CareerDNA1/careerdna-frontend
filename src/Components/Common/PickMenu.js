@@ -52,11 +52,15 @@ export default function PickMenu({
     const menuH = Math.min(MAX_PANEL, shown.length * ROW + (searchable ? 54 : 10));
     const below = window.innerHeight - r.bottom;
     const above = r.top;
-    const top = (below >= menuH + 8 || below >= above) ? r.bottom + 6 : Math.max(8, r.top - menuH - 6);
+    const goBelow = below >= menuH + 8 || below >= above;
+    const top = goBelow ? r.bottom + 6 : Math.max(8, r.top - menuH - 6);
+    // The panel never runs off the screen: cap its height to the room on the
+    // side it opens, so the last option is always reachable by scrolling inside.
+    const maxH = Math.max(140, goBelow ? window.innerHeight - top - 12 : r.top - 6 - 8);
     // Keep the panel inside the viewport horizontally.
     const width = panelRef.current ? panelRef.current.offsetWidth : 0;
     const left = Math.max(8, Math.min(r.left, window.innerWidth - width - 8));
-    setPos({ top, left });
+    setPos({ top, left, maxH });
   };
 
   const close = () => { setOpen(false); setQ(''); setActive(-1); };
@@ -184,7 +188,7 @@ export default function PickMenu({
       ) : null}
       {open && !sheet && pos ? (
         <div ref={panelRef} className={`profile-run-menu apps-menu${searchable ? ' apps-menu--search' : ''}`}
-          style={{ position: 'fixed', top: pos.top, left: pos.left, right: 'auto', bottom: 'auto', width: 'max-content' }}>
+          style={{ position: 'fixed', top: pos.top, left: pos.left, right: 'auto', bottom: 'auto', width: 'max-content', maxHeight: pos.maxH, display: 'flex', flexDirection: 'column' }}>
           {list}
         </div>
       ) : null}

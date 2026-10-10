@@ -49,3 +49,7 @@
 
 .pick-group-label { padding: 8px 11px 4px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #8a97ad; border-top: 1px solid #eef2f7; margin-top: 4px; }
 .pick-group-label:first-child { border-top: 0; margin-top: 0; }
+
+/* Floating panel: the list takes the remaining height and scrolls inside. */
+.apps-menu .pick-list { flex: 1 1 auto; min-height: 0; -webkit-overflow-scrolling: touch; }
+.apps-menu .pick-search { flex: 0 0 auto; }
