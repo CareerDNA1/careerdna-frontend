@@ -13,7 +13,8 @@ import {
   getCurrentAssessmentRun,
   setCurrentRunId,
   listAssessmentRuns,
-  getDistinctSurveyCount,
+  listAssessmentSittings,
+  assessmentOfRun,
   rerunAssessmentWithOutputParameters,
 } from '../utils/assessmentRuns';
 import { getMyProfile, updateMyProfileDetails } from '../utils/profile';
@@ -136,6 +137,15 @@ function compactDate(value) {
     return new Date(value).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
   } catch {
     return '—';
+  }
+}
+
+// 09/07/26
+function shortDate(value) {
+  try {
+    return new Date(value).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
+  } catch {
+    return '';
   }
 }
 
@@ -463,6 +473,9 @@ export default function ProfilePage() {
   const [settingCurrentId, setSettingCurrentId] = useState(null);
   const [totalRuns, setTotalRuns] = useState(() => Number(initialCache?.runCount) || 0);
   const [totalSurveys, setTotalSurveys] = useState(() => Number(initialCache?.surveyCount) || 0);
+  // Sittings of the survey (Assessment 1, 2, 3 ...) so each report can say
+  // which set of answers it is based on.
+  const [sittings, setSittings] = useState(() => initialCache?.sittings || []);
   const [loadingRuns, setLoadingRuns] = useState(() => !initialCache);
   // Which item types the user has reacted to (liked/disliked) on the latest run.
   // Drives the journey timeline: a step counts as done only once the user has
@@ -744,13 +757,14 @@ export default function ProfilePage() {
     // The page follows one "current" report: the run pinned on the profile
     // (profiles.current_run_id) or, when nothing is pinned, the newest run.
     const profileData = await getMyProfile();
-    const [runData, runCount, currentFull, surveyCount] = await Promise.all([
-      listAssessmentRuns(20, 'id, created_at, intro_answers_json, output_version'),
+    const [runData, runCount, currentFull, sittingList] = await Promise.all([
+      listAssessmentRuns(20, 'id, created_at, survey_taken_at, intro_answers_json, output_version'),
       getAssessmentRunCount(),
       getCurrentAssessmentRun(profileData?.current_run_id || null),
-      getDistinctSurveyCount().catch((e) => { console.warn('Assessment count failed:', e?.message || e); return null; }),
+      listAssessmentSittings().catch((e) => { console.warn('Assessment count failed:', e?.message || e); return null; }),
     ]);
-    return { profileData, runData, runCount, surveyCount, currentRun: currentFull || null };
+    const surveyCount = sittingList == null ? null : sittingList.length;
+    return { profileData, runData, runCount, surveyCount, sittings: sittingList || [], currentRun: currentFull || null };
   }
 
   async function loadPageData() {
@@ -774,6 +788,7 @@ export default function ProfilePage() {
       setTotalRuns(Number(bundle.runCount) || 0);
       // If the distinct count could not be computed, fall back to the run count rather than showing 0.
       setTotalSurveys(bundle.surveyCount == null ? (Number(bundle.runCount) || 0) : Number(bundle.surveyCount) || 0);
+      setSittings(bundle.sittings || []);
     } catch (err) {
       if (await handleInvalidSession(err)) return;
       if (isAuthLockNoise(err)) return; // transient — a concurrent request handled it
@@ -847,8 +862,8 @@ export default function ProfilePage() {
   // state after deletes/re-runs) shows the correct runs instantly.
   useEffect(() => {
     if (!user?.id) return;
-    profileBundleCache = { userId: user.id, profileData: profile, runData: runs, runCount: totalRuns, surveyCount: totalSurveys, currentRun };
-  }, [user?.id, profile, runs, totalRuns, totalSurveys, currentRun]);
+    profileBundleCache = { userId: user.id, profileData: profile, runData: runs, runCount: totalRuns, surveyCount: totalSurveys, sittings, currentRun };
+  }, [user?.id, profile, runs, totalRuns, totalSurveys, sittings, currentRun]);
 
   useEffect(() => {
     let cancelled = false;
@@ -873,6 +888,7 @@ export default function ProfilePage() {
           setCurrentRun(bundle.currentRun || null);
           setTotalRuns(Number(bundle.runCount) || 0);
           setTotalSurveys(bundle.surveyCount == null ? (Number(bundle.runCount) || 0) : Number(bundle.surveyCount) || 0);
+          setSittings(bundle.sittings || []);
         }
       } catch (err) {
         if (!cancelled) {
@@ -1999,6 +2015,14 @@ export default function ProfilePage() {
                           <span className="profile-run-subject">{subjectLabel(run)}</span>
                         </>
                       )}
+                      {(() => {
+                        const sitting = assessmentOfRun(run, sittings);
+                        return sitting ? (
+                          <span className="profile-run-assessment">
+                            Assessment {sitting.number} ({shortDate(sitting.takenAt)})
+                          </span>
+                        ) : null;
+                      })()}
                     </div>
                   </div>
 

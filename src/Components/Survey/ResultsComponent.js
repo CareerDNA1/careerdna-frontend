@@ -1478,6 +1478,9 @@ export default function ResultsComponent({
   initialSection,
   initialTab,
   initialFocus,
+  // Saved result pages pass the sitting the report is based on, e.g.
+  // "Assessment 2, answered 14 Oct 2026". Fresh results pass nothing.
+  basedOnLabel = '',
 }) {
   // The vocational ("Explore other career worlds") section is only relevant to
   // students who are unsure about university or not planning to go. The intro asks
@@ -3269,6 +3272,9 @@ export default function ResultsComponent({
       )}
       <section className="results-container section-intro">
         <h1>Your Unique CareerDNA</h1>
+        {basedOnLabel ? (
+          <p className="results-based-on">Based on {basedOnLabel}</p>
+        ) : null}
         <p className="one-liner">
           {displayName ? (
             <>

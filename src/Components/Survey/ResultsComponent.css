@@ -114,6 +114,16 @@ body:has(#results-root),
   line-height: 1.7;
 }
 
+/* Saved reports: which sitting of the survey the report is based on */
+.results-based-on {
+  max-width: 800px;
+  margin: -6px auto 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1e3a8a;
+  text-align: left;
+}
+
 .one-liner {
   max-width: 800px;
   margin: 0 auto;

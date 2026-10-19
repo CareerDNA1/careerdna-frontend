@@ -205,15 +205,17 @@ export default function SurveyQuestions() {
     if (index > 0) setIndex(i => i - 1);
   };
 
-  const onFinish = () => {
+  const onFinish = async () => {
     // Mark complete locally
     writeProgress({ questionsDone: true, step: 'results' });
 
     // Save the finished answer set to the database now, so it exists even if
     // the student never reaches the results page. The results page updates
-    // this same row with the full results and the report.
+    // this same row with the full results and the report. Awaited, otherwise
+    // the results page can look the row up before this insert has landed and
+    // save a second copy (seen 19 Oct 2026: two rows 650 ms apart).
     const p = readProgress();
-    saveSurveyAnswersOnFinish({
+    await saveSurveyAnswersOnFinish({
       nonce: p.nonce,
       introAnswers: p.introResponses || {},
       surveyAnswers: p.answers || {},

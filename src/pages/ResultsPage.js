@@ -159,6 +159,8 @@ export default function ResultsPage() {
           try {
             await updateAssessmentRun(existingRun.id, {
               results_json: resultsPayload,
+              // Keep the stored answers in step with the results they produced.
+              survey_answers_json: answersFallback || {},
               ...(trimmedSummary ? { summary_markdown: trimmedSummary } : {}),
             });
             if (trimmedSummary) {

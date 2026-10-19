@@ -36,6 +36,24 @@ export function friendlyError(err, context = '') {
     if (rule.test(raw)) return { kind: rule.kind, message: rule.message };
   }
 
+  // Database or API layer not ready: PostgREST while it restarts or rebuilds
+  // its schema cache, Postgres refusing connections, pooler full. These read
+  // as internal plumbing ("schema cache", "PGRST...") and must never reach a
+  // student verbatim.
+  if (
+    raw.includes('schema cache') ||
+    raw.includes('could not query the database') ||
+    raw.includes('pgrst') || String(err?.code || '').toUpperCase().startsWith('PGRST') ||
+    raw.includes('connection refused') || raw.includes('too many connections') ||
+    raw.includes('remaining connection slots') || raw.includes('terminating connection') ||
+    raw.includes('upstream') || raw.includes('bad gateway') || raw.includes('gateway time')
+  ) {
+    return {
+      kind: 'network',
+      message: "We're having trouble reaching CareerDNA right now. This is usually brief. Please try again in a moment.",
+    };
+  }
+
   // Network / provider unreachable (fetch failed, timeouts, 502/503/504).
   if (
     raw.includes('failed to fetch') ||
@@ -77,10 +95,14 @@ export function friendlyError(err, context = '') {
     };
   }
 
-  // Otherwise show the real (usually validation) message, or a safe default.
+  // Otherwise show the real message only if it reads like something written
+  // for a person (short, no code-like tokens); anything else gets the default.
+  const looksTechnical = !err?.message || raw.includes('fetch') || raw.length > 160
+    || /[{}<>\[\]_]|\b(null|undefined|json|sql|postgres|relation|column|syntax|token|jwt|uuid|stack)\b/.test(raw);
   return {
     kind: 'user',
-    message: err?.message && !raw.includes('fetch') ? err.message
-      : `We couldn't ${context || 'complete that'} just now. Please try again.`,
+    message: looksTechnical
+      ? `We couldn't ${context || 'complete that'} just now. Please try again.`
+      : err.message,
   };
 }

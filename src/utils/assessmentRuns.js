@@ -29,6 +29,42 @@ export function rescoreRunFromAnswers(run) {
   return { archetypes: archetypeScores, subdimensionRows, claritySummary, versions };
 }
 
+// When the answers behind a run were given. Rows saved before 19 October 2026
+// were backfilled by sql/13; the fallback covers anything the backfill missed.
+export function surveyTakenAtOf(run) {
+  return run?.survey_taken_at || run?.created_at || null;
+}
+
+// Number each distinct sitting of the survey ("Assessment 1, 2, 3 ...") in
+// date order across a user's runs. Re-runs share a sitting, so they get the
+// same number. Returns a map runId -> { number, takenAt, total }.
+export function assessmentNumbersFor(runs) {
+  const list = Array.isArray(runs) ? runs : [];
+  const sittings = new Map(); // key -> takenAt ISO
+  const keyOf = (run) => {
+    const t = surveyTakenAtOf(run);
+    // Rows from one sitting carry the same timestamp; round to the second so
+    // a stray millisecond difference never splits a sitting in two.
+    return t ? String(Math.floor(new Date(t).getTime() / 1000)) : `id:${run?.id}`;
+  };
+  list.forEach((run) => {
+    const k = keyOf(run);
+    if (!sittings.has(k)) sittings.set(k, surveyTakenAtOf(run));
+  });
+  const ordered = [...sittings.entries()].sort((a, b) => {
+    const ta = a[1] ? new Date(a[1]).getTime() : 0;
+    const tb = b[1] ? new Date(b[1]).getTime() : 0;
+    return ta - tb;
+  });
+  const numberOfKey = new Map(ordered.map(([k], i) => [k, i + 1]));
+  const out = {};
+  list.forEach((run) => {
+    const k = keyOf(run);
+    out[run.id] = { number: numberOfKey.get(k), takenAt: sittings.get(k), total: ordered.length };
+  });
+  return out;
+}
+
 // Called the moment the last question is answered, before the results page
 // exists, so a closed tab or a lost connection never loses a finished survey.
 // Writes the answers plus the scores they produce under the current bank. The
@@ -75,6 +111,10 @@ export async function saveAssessmentRun({
   // Which bank the answers belong to. A fresh survey takes the current
   // versions; a re-run passes the versions of the run it came from.
   versions = null,
+  // When the student finished answering. A fresh survey leaves this null
+  // (stamped now); a re-run passes the sitting time of the run it came from,
+  // so every report from one sitting shows the same assessment date.
+  surveyTakenAt = null,
 }) {
   const {
     data: { user },
@@ -95,6 +135,7 @@ export async function saveAssessmentRun({
     bank_version: stamp.bank,
     scoring_version: stamp.scoring,
     form: stamp.form,
+    survey_taken_at: surveyTakenAt || new Date().toISOString(),
   };
 
   const { data, error } = await supabase
@@ -158,19 +199,35 @@ export async function findExistingRunForSurvey({ nonce = '', surveyAnswers = nul
   if (error) throw error;
   const rows = Array.isArray(data) ? data : [];
 
-  const cleanNonce = String(nonce || '').trim();
-  if (cleanNonce && cleanNonce !== 'no-nonce') {
-    const byNonce = rows.find((r) => String(r?.results_json?.surveyNonce || '') === cleanNonce);
-    if (byNonce) return byNonce;
-  }
-
+  // Compare answer SETS by value, so {value, weight} objects and plain
+  // numbers compare equal.
   const answerKey = (obj) => {
     if (!obj || typeof obj !== 'object') return '';
     const keys = Object.keys(obj).sort();
     if (!keys.length) return '';
-    return keys.map((k) => `${k}=${String(obj[k])}`).join('|');
+    return keys.map((k) => {
+      const v = obj[k];
+      const val = v && typeof v === 'object' && 'value' in v ? v.value : v;
+      return `${k}=${String(val)}`;
+    }).join('|');
   };
   const wanted = answerKey(surveyAnswers);
+
+  // A row is the same survey only if its ANSWERS are the same. The session
+  // key (nonce) alone is not enough: if a student starts a new survey without
+  // the key rotating, matching on the key would overwrite the old run's
+  // results while leaving its old answers in place, and every later re-run
+  // would then score the wrong answers (seen 18 Oct 2026). A key match with
+  // different answers is treated as a new survey.
+  const cleanNonce = String(nonce || '').trim();
+  if (cleanNonce && cleanNonce !== 'no-nonce') {
+    const byNonce = rows.find((r) => String(r?.results_json?.surveyNonce || '') === cleanNonce);
+    if (byNonce) {
+      const stored = answerKey(byNonce.survey_answers_json);
+      if (!wanted || !stored || stored === wanted) return byNonce;
+      return null;
+    }
+  }
   if (!wanted) return null;
   return rows.find((r) => answerKey(r?.survey_answers_json) === wanted) || null;
 }
@@ -287,33 +344,43 @@ export async function getAssessmentRunCount() {
   return Number(count) || 0;
 }
 
-// Number of distinct surveys the user has completed. A report can be re-run
-// (same answers, new output), so distinct surveys are counted by the survey
-// nonce stamped into results_json, falling back to a hash of the answers for
-// runs saved before the nonce existed.
-export async function getDistinctSurveyCount() {
+// Every sitting of the survey the user has completed, oldest first, as
+// { key, takenAt, number }. A report can be re-run (same answers, new output),
+// so sittings are counted by survey_taken_at (sql/13), which re-runs inherit.
+// Light query: three small columns for all of the user's runs.
+export async function listAssessmentSittings() {
   const {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
   if (userError) throw userError;
-  if (!user) return 0;
+  if (!user) return [];
   const { data, error } = await supabase
     .from('assessment_runs')
-    .select('id, survey_answers_json')
+    .select('id, created_at, survey_taken_at')
     .eq('user_id', user.id)
     .limit(1000);
   if (error) throw error;
-  const keys = new Set();
-  (data || []).forEach((r) => {
-    const a = r?.survey_answers_json;
-    if (a && typeof a === 'object' && Object.keys(a).length) {
-      keys.add('a:' + Object.keys(a).sort().map((k) => `${k}=${String(a[k])}`).join('|'));
-    } else {
-      keys.add(`id:${r?.id}`);
-    }
+  const map = assessmentNumbersFor(data || []);
+  const byKey = new Map();
+  Object.values(map).forEach((v) => {
+    if (!byKey.has(v.number)) byKey.set(v.number, { number: v.number, takenAt: v.takenAt });
   });
-  return keys.size;
+  return [...byKey.values()].sort((a, b) => a.number - b.number);
+}
+
+// The sitting a run belongs to, from a listAssessmentSittings() result.
+export function assessmentOfRun(run, sittings) {
+  const t = surveyTakenAtOf(run);
+  if (!t || !Array.isArray(sittings)) return null;
+  const sec = Math.floor(new Date(t).getTime() / 1000);
+  return sittings.find((s) => s.takenAt && Math.floor(new Date(s.takenAt).getTime() / 1000) === sec) || null;
+}
+
+// Number of distinct surveys the user has completed.
+export async function getDistinctSurveyCount() {
+  const sittings = await listAssessmentSittings();
+  return sittings.length;
 }
 
 export async function getAssessmentRunById(runId) {
@@ -427,6 +494,7 @@ export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswe
     },
     summaryMarkdown: '',
     versions: runVersions(run),
+    surveyTakenAt: surveyTakenAtOf(run),
   });
 
   return newRun;

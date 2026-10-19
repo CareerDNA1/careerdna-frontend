@@ -8,6 +8,8 @@ import {
   runAiSummaryForSavedRun,
   rerunAssessmentWithOutputParameters,
   rescoreRunFromAnswers,
+  listAssessmentSittings,
+  assessmentOfRun,
 } from '../utils/assessmentRuns';
 import { runIsStale } from '../utils/outputVersion';
 import InlineError from '../Components/Common/InlineError';
@@ -43,6 +45,24 @@ export default function SavedResultPage() {
     return () => clearTimeout(t);
   }, [loading, reloadTick]);
   const [reportLimitReached, setReportLimitReached] = useState(false);
+
+  // Which sitting of the survey this report is based on ("Assessment 2,
+  // answered 14 Oct 2026"). Best effort: no label if the lookup fails.
+  const [basedOnLabel, setBasedOnLabel] = useState('');
+  useEffect(() => {
+    let cancelled = false;
+    if (!run) { setBasedOnLabel(''); return undefined; }
+    (async () => {
+      try {
+        const sittings = await listAssessmentSittings();
+        const s = assessmentOfRun(run, sittings);
+        if (cancelled || !s) return;
+        const when = new Date(s.takenAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
+        setBasedOnLabel(`Assessment ${s.number} (${when})`);
+      } catch (_) { /* no label */ }
+    })();
+    return () => { cancelled = true; };
+  }, [run]);
 
   // Keep the cache in sync with whatever is currently shown.
   useEffect(() => {
@@ -222,6 +242,7 @@ export default function SavedResultPage() {
             initialSection={initialSection}
             initialTab={initialTab}
             initialFocus={initialFocus}
+            basedOnLabel={basedOnLabel}
           />
         </>
       )}

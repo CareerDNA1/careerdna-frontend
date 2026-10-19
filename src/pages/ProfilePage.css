@@ -3851,6 +3851,9 @@
   grid-template-areas: none !important;
 }
 .profile-run-row + .profile-run-row { margin-top: 10px; }
+/* The rows are bordered cards, so keep them inside the card's padding
+   rather than touching its edges. */
+.profile-card > .profile-runs { padding: 12px 16px; }
 .profile-run-row:hover { border-color: #cddbf0; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07); }
 .profile-run-row:focus-visible { outline: 3px solid rgba(47, 111, 237, 0.35); outline-offset: 2px; }
 .profile-run-row.is-current { border-color: #d6e2f8; }
@@ -3867,6 +3870,12 @@
 .profile-run-main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .profile-run-titleline { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .profile-run-title { font-size: 0.95rem; font-weight: 700; color: #14233c; white-space: nowrap; }
+/* Which sitting of the survey the report is based on (re-runs share one) */
+.profile-run-assessment {
+  flex: 0 0 100%; /* always its own line, under the school details */
+  font-size: 0.74rem;
+  color: #7a8aa3;
+}
 .profile-run-row .profile-run-details {
   display: flex !important;
   flex-wrap: wrap;
