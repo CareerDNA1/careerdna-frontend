@@ -7,13 +7,16 @@ import ResultsComponent from '../Components/Survey/ResultsComponent';
 import { useSurveyEngine } from '../Hooks/useSurveyEngine';
 
 import scoreSubdimensions from '../utils/scoreSubdimensions';
-import QUESTIONS from '../utils/questions';
+import { getBankQuestions, CURRENT_BANK_VERSION } from '../utils/banks';
 import { computeClarityPercents } from '../utils/selfAwarenessSummary';
 import { saveAssessmentRun, updateAssessmentRun, findExistingRunForSurvey } from '../utils/assessmentRuns';
 import { useAuth } from '../context/AuthContext';
 import { readProgress, clearProgress } from '../Hooks/useProgress';
 import { markProfileStale } from '../utils/profileCache';
 import { calculateProfileQualityGate } from '../utils/profileQualityGate';
+
+// A fresh survey landing here was answered on the current bank.
+const QUESTIONS = getBankQuestions(CURRENT_BANK_VERSION);
 
 // Safe JSON getter from localStorage
 function getJSON(key, fallback = {}) {
@@ -73,6 +76,7 @@ export default function ResultsPage() {
     archetypes,
     subdimensionRows,
     claritySummary,
+    surveyAnswers: answersFallback,
   });
 
   useEffect(() => {

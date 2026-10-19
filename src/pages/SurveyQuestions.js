@@ -4,13 +4,24 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import SurveyWrapper from '../Components/Survey/SurveyWrapper';
 import './SurveyQuestions.css';
 import SurveyComponent from '../Components/Survey/SurveyComponent';
-import QUESTIONS from '../utils/questions_a';
+import { getBankForm, CURRENT_BANK_VERSION, CURRENT_FORM } from '../utils/banks';
 import { useSurveyEngine } from '../Hooks/useSurveyEngine';
 import { readProgress, writeProgress, clearProgress } from '../Hooks/useProgress';
 import ResumeSurveyModal from '../Components/Survey/ResumeSurveyModal';
-import { sendSurveyComplete } from '../utils/telemetry'; // <-- telemetry
+import StraightLineNudgeModal from '../Components/Survey/StraightLineNudgeModal';
+import { saveSurveyAnswersOnFinish } from '../utils/assessmentRuns';
 
-const TOTAL_SURVEY_MIN = 20; // evenly split across all questions
+// New surveys always run on the current bank in its current form.
+const QUESTIONS = getBankForm(CURRENT_BANK_VERSION, CURRENT_FORM);
+
+const TOTAL_SURVEY_MIN = 15; // evenly split across all questions; matches the "about 15 minutes" shown on the landing page and instructions
+
+// In-survey straight-line check: after this many identical answers in a row
+// (in the order shown) a gentle nudge appears. Below the quality gate's
+// thresholds (severe 12, block 25 in utils/responseStyle.js) so the student
+// hears about it early rather than at the end. Shown at most twice per survey.
+const STRAIGHT_LINE_NUDGE_RUN = 10;
+const STRAIGHT_LINE_NUDGE_MAX_SHOWS = 2;
 
 // Fixed simulation built from the user's completed spreadsheet responses.
 
@@ -52,6 +63,12 @@ export default function SurveyQuestions() {
   });
   const [finishing, setFinishing] = useState(false);
   const [finishProgress, setFinishProgress] = useState(0);
+
+  // Straight-line nudge state: how many times shown, and the position where it
+  // was last shown (so the same run cannot trigger it twice).
+  const [nudgeOpen, setNudgeOpen] = useState(false);
+  const nudgeShowsRef = useRef(0);
+  const nudgeLastIndexRef = useRef(-1);
 
   const total = questions.length;
   const currentQuestion = total > 0 ? questions[index] : null;
@@ -132,9 +149,8 @@ export default function SurveyQuestions() {
 
     // Persist answers to progress (session/local storage)
     const existing = readProgress().answers || {};
-    writeProgress({
-      answers: { ...existing, [id]: { value, weight: 1 } },
-    });
+    const merged = { ...existing, [id]: { value, weight: 1 } };
+    writeProgress({ answers: merged });
 
     // If last question: reveal CTA (do not auto-finish)
     if (isLast) {
@@ -142,10 +158,42 @@ export default function SurveyQuestions() {
       return;
     }
 
+    // Straight-line check: count identical answers ending at this question,
+    // in the order the questions are shown. Raw values only; reverse keying
+    // is irrelevant here because the check is about the option clicked.
+    if (nudgeShowsRef.current < STRAIGHT_LINE_NUDGE_MAX_SHOWS && index - nudgeLastIndexRef.current >= STRAIGHT_LINE_NUDGE_RUN) {
+      let run = 0;
+      for (let j = index; j >= 0; j -= 1) {
+        const prev = merged[questions[j]?.id];
+        const v = prev && typeof prev === 'object' && 'value' in prev ? prev.value : prev;
+        if (v !== value) break;
+        run += 1;
+      }
+      if (run >= STRAIGHT_LINE_NUDGE_RUN) {
+        nudgeShowsRef.current += 1;
+        nudgeLastIndexRef.current = index;
+        setNudgeOpen(true);
+        // Stay on this question until the student chooses; advance on Carry on.
+        return;
+      }
+    }
+
     // Otherwise advance
     if (index < total - 1) {
       setIndex(i => i + 1);
     }
+  };
+
+  const onNudgeCarryOn = () => {
+    setNudgeOpen(false);
+    if (index < total - 1) setIndex(i => i + 1);
+  };
+
+  // Jump back to the first question of the run so the student can re-read
+  // them; their answers are kept and shown, so changing one is a single click.
+  const onNudgeLookBack = () => {
+    setNudgeOpen(false);
+    setIndex(i => Math.max(0, i - (STRAIGHT_LINE_NUDGE_RUN - 1)));
   };
 
   const onBack = () => {
@@ -161,15 +209,14 @@ export default function SurveyQuestions() {
     // Mark complete locally
     writeProgress({ questionsDone: true, step: 'results' });
 
-    // Snapshot latest for telemetry
+    // Save the finished answer set to the database now, so it exists even if
+    // the student never reaches the results page. The results page updates
+    // this same row with the full results and the report.
     const p = readProgress();
-
-    // Fire-and-forget completion telemetry (name is redacted in helper)
-    sendSurveyComplete({
+    saveSurveyAnswersOnFinish({
       nonce: p.nonce,
-      introResponses: p.introResponses || {},
-      answers: p.answers || {},
-      finishedAt: new Date().toISOString(),
+      introAnswers: p.introResponses || {},
+      surveyAnswers: p.answers || {},
     });
 
     // Go to results
@@ -241,6 +288,14 @@ export default function SurveyQuestions() {
         />
 
       </SurveyWrapper>
+
+      {nudgeOpen && (
+        <StraightLineNudgeModal
+          run={STRAIGHT_LINE_NUDGE_RUN}
+          onCarryOn={onNudgeCarryOn}
+          onLookBack={onNudgeLookBack}
+        />
+      )}
 
       {askResume && (
         <ResumeSurveyModal

@@ -97,6 +97,26 @@ export async function createAdvisorPackCheckout(pack) {
   return data;
 }
 
+// Report top-ups (one-off purchases on top of the plan's yearly reports).
+export async function fetchReportPacks() {
+  try {
+    const data = await apiFetch('/api/stripe/report-packs', { auth: false, timeoutMs: 30000 });
+    if (data && Array.isArray(data.packs)) return data.packs;
+  } catch (_) { /* no packs */ }
+  return [];
+}
+
+export async function createReportPackCheckout(pack) {
+  const data = await stripePost('/api/stripe/create-report-pack-checkout', {
+    body: { pack: String(pack) },
+    signInMessage: 'Please sign in again before continuing.',
+    notFoundMessage: 'Checkout service was not found.',
+    failPrefix: 'Could not start checkout',
+  });
+  if (!data?.url) throw new Error('Stripe checkout did not return a checkout URL.');
+  return data;
+}
+
 export function formatPackPrice(pack) {
   const amount = Number(pack?.amount || 0) / 100;
   const currency = String(pack?.currency || 'gbp').toUpperCase();

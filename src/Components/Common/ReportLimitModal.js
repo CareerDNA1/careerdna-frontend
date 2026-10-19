@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import './ReportLimitModal.css';
 import PricingModal, { PAYMENTS_TEMPORARILY_PAUSED } from './PricingModal';
-import { fetchAdvisorPacks, createAdvisorPackCheckout, formatPackPrice } from '../../utils/stripeCheckout';
+import {
+  fetchAdvisorPacks,
+  createAdvisorPackCheckout,
+  fetchReportPacks,
+  createReportPackCheckout,
+  formatPackPrice,
+} from '../../utils/stripeCheckout';
 
 function AccessCodeIcon() {
   return (
@@ -44,23 +50,29 @@ export default function ReportLimitModal({
   const isPaidPlan = ['explore', 'premium', 'premium_school', 'premium_university', 'dev'].includes(planKey);
   const canUpgradeToPremium = planKey === 'explore';
 
-  // Advisor question packs (loaded only for the advisor mode, paid plans).
+  // One-off top-ups for paid plans: advisor question packs in the advisor
+  // mode, extra reports in the exhausted mode. Same checkout pattern.
+  const showPacks = isPaidPlan && !PAYMENTS_TEMPORARILY_PAUSED && (isAdvisor || isExhausted);
   const [packs, setPacks] = useState([]);
   const [packLoading, setPackLoading] = useState('');
   const [packError, setPackError] = useState('');
   const [packConsent, setPackConsent] = useState(false);
   useEffect(() => {
-    if (!isAdvisor || !isPaidPlan || PAYMENTS_TEMPORARILY_PAUSED) return undefined;
+    if (!showPacks) return undefined;
     let cancelled = false;
-    fetchAdvisorPacks().then((rows) => { if (!cancelled) setPacks(rows); });
+    const load = isAdvisor ? fetchAdvisorPacks : fetchReportPacks;
+    load().then((rows) => { if (!cancelled) setPacks(rows); });
     return () => { cancelled = true; };
-  }, [isAdvisor, isPaidPlan]);
+  }, [showPacks, isAdvisor]);
+  const hasPacks = showPacks && packs.length > 0;
 
   const buyPack = async (pack) => {
     setPackError('');
     setPackLoading(pack.key);
     try {
-      const data = await createAdvisorPackCheckout(pack.key);
+      const data = isAdvisor
+        ? await createAdvisorPackCheckout(pack.key)
+        : await createReportPackCheckout(pack.key);
       window.location.href = data.url;
     } catch (err) {
       setPackError(err?.message || 'Could not start checkout.');
@@ -114,12 +126,16 @@ export default function ReportLimitModal({
     : isExhausted
     ? {
         title: ['You have used your reports ', 'for this year'],
-        subtitle: 'Choose a plan or buy another report to keep going. Plans include:',
-        benefits: [
+        subtitle: !isPaidPlan
+          ? 'Choose a plan to keep going. Plans include:'
+          : hasPacks
+          ? 'Add an extra report to generate a new one now. More reports also come with your next billing year.'
+          : 'More reports come with your next billing year, or enter an access code if you have one.',
+        benefits: !isPaidPlan ? [
           'Up to 2 full reports a year, with re-runs when your plans change',
           'Your Advisor, trained on your profile, grades and applications',
           'University rankings, entry requirements and live job openings',
-        ],
+        ] : [],
       }
     : {
         title: ['Unlock your full ', 'CareerDNA profile'],
@@ -210,16 +226,16 @@ export default function ReportLimitModal({
           </header>
 
           <div className="report-limit-modal__body">
-            {isAdvisor && isPaidPlan && packs.length ? (
+            {hasPacks ? (
               <label className="pricing-confirm-consent report-limit-modal__consent">
                 <input type="checkbox" checked={packConsent} onChange={(e) => setPackConsent(e.target.checked)} disabled={Boolean(packLoading)} />
                 <span>
                   I am 18 or over, or a parent or guardian is completing this purchase, and I agree to the{' '}
-                  <a href="/terms" target="_blank" rel="noopener noreferrer">Terms of Use</a>. Questions are added straight away.
+                  <a href="/terms" target="_blank" rel="noopener noreferrer">Terms of Use</a>. {isAdvisor ? 'Questions are' : 'The report is'} added straight away.
                 </span>
               </label>
             ) : null}
-            {isAdvisor && isPaidPlan && packs.length ? (
+            {hasPacks ? (
               <div className="report-limit-modal__packs">
                 {packs.map((pack) => (
                   <button
@@ -230,7 +246,11 @@ export default function ReportLimitModal({
                     disabled={Boolean(packLoading) || !packConsent}
                     title={packConsent ? undefined : 'Tick the confirmation above first'}
                   >
-                    <span className="report-limit-modal__pack-qty">{pack.questions} questions</span>
+                    <span className="report-limit-modal__pack-qty">
+                      {isAdvisor
+                        ? `${pack.questions} questions`
+                        : `${pack.reports} extra report${Number(pack.reports) === 1 ? '' : 's'}`}
+                    </span>
                     <span className="report-limit-modal__pack-price">{packLoading === pack.key ? 'Opening checkout…' : formatPackPrice(pack)}</span>
                   </button>
                 ))}
@@ -248,10 +268,10 @@ export default function ReportLimitModal({
               >
                 Not now
               </button>
-              {isAdvisor && isPaidPlan && !canUpgradeToPremium ? null : (
+              {(isAdvisor || isExhausted) && isPaidPlan && !canUpgradeToPremium ? null : (
                 <button
                   type="button"
-                  className={`report-limit-modal__primary-btn${isAdvisor && isPaidPlan && packs.length ? ' report-limit-modal__primary-btn--secondary' : ''}`}
+                  className={`report-limit-modal__primary-btn${hasPacks ? ' report-limit-modal__primary-btn--secondary' : ''}`}
                   onClick={handleSeePackages}
                 >
                   {isAdvisor && canUpgradeToPremium ? 'Upgrade to Premium' : 'See plans'}

@@ -7,6 +7,7 @@ import {
   getAssessmentRunById,
   runAiSummaryForSavedRun,
   rerunAssessmentWithOutputParameters,
+  rescoreRunFromAnswers,
 } from '../utils/assessmentRuns';
 import { runIsStale } from '../utils/outputVersion';
 import InlineError from '../Components/Common/InlineError';
@@ -33,6 +34,14 @@ export default function SavedResultPage() {
   const [errorMsg, setErrorMsg] = useState('');          // the saved result could not be loaded
   const [rerunError, setRerunError] = useState('');      // re-running a stale result failed
   const [reloadTick, setReloadTick] = useState(0);
+  // A load that neither finishes nor fails (slow or unhealthy database) gets
+  // a line of text and a Try again after a while, instead of an endless spinner.
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    if (!loading) { setSlow(false); return undefined; }
+    const t = setTimeout(() => setSlow(true), 10000);
+    return () => clearTimeout(t);
+  }, [loading, reloadTick]);
   const [reportLimitReached, setReportLimitReached] = useState(false);
 
   // Keep the cache in sync with whatever is currently shown.
@@ -68,9 +77,10 @@ export default function SavedResultPage() {
       archetypes: currentSaved?.archetypes || {},
       subdimensionRows: Array.isArray(currentSaved?.subdimensionRows) ? currentSaved.subdimensionRows : [],
       claritySummary: currentSaved?.claritySummary || null,
+      surveyAnswers: run?.survey_answers_json || null,
     });
 
-    if (!bypassQualityGate && currentGate.shouldBlockAnalysis) {
+    if ((!bypassQualityGate && currentGate.shouldBlockAnalysis) || currentGate.hardBlock) {
       return;
     }
 
@@ -120,16 +130,21 @@ export default function SavedResultPage() {
   }
 
   const saved = run?.results_json || {};
-  const savedArchetypes = saved?.archetypes || {};
+  // Type and trait levels are always re-scored from the saved answers with the
+  // current matrix, so a weight change shows on every run without a retake.
+  const rescored = run ? rescoreRunFromAnswers(run) : null;
+  const savedArchetypes = rescored?.archetypes || saved?.archetypes || {};
   const savedSummary = reportLimitReached ? 'REPORT_LIMIT_REACHED' : (run?.summary_markdown || '');
   const savedAnalysisMeta = saved?.analysisMeta || null;
   const savedIntroName = saved?.introName || '';
-  const savedSubdimensionRows = Array.isArray(saved?.subdimensionRows) ? saved.subdimensionRows : [];
-  const savedClaritySummary = saved?.claritySummary || null;
+  const savedSubdimensionRows = rescored?.subdimensionRows
+    || (Array.isArray(saved?.subdimensionRows) ? saved.subdimensionRows : []);
+  const savedClaritySummary = rescored?.claritySummary || saved?.claritySummary || null;
   const savedProfileQualityGate = calculateProfileQualityGate({
     archetypes: savedArchetypes,
     subdimensionRows: savedSubdimensionRows,
     claritySummary: savedClaritySummary,
+    surveyAnswers: run?.survey_answers_json || null,
   });
 
   // Non-blocking: if this result was generated under an older output version,
@@ -141,9 +156,15 @@ export default function SavedResultPage() {
       <AccountNavbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
 
       {loading ? (
-        <div className="profile-runs-loading" style={{ minHeight: '50vh' }} aria-label="Loading your results" aria-busy="true">
+        <div className="profile-runs-loading" style={{ minHeight: '50vh' }} aria-label="Loading your results" aria-busy={!slow}>
           <span className="profile-spinner" aria-hidden="true" />
           <p className="profile-runs-loading-note">Loading your results&hellip;</p>
+          {slow ? (
+            <>
+              <p className="profile-runs-loading-note">This is taking longer than usual. Give it a moment, or try again.</p>
+              <button type="button" className="profile-btn profile-btn--xs" onClick={() => setReloadTick((t) => t + 1)}>Try again</button>
+            </>
+          ) : null}
         </div>
       ) : errorMsg ? (
         <div style={{ maxWidth: 720, margin: '0 auto', padding: '32px 20px' }}>

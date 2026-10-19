@@ -8,6 +8,74 @@ function hasValidStart(p) {
   return !!(p && p.started && p.nonce);
 }
 
+// Full-page wait shown while the sign-in and profile checks run. If the
+// database or the auth service is slow or unhealthy those checks can hang,
+// and a spinner that never ends tells the student nothing. After a short
+// while the spinner gains a line of text and a Try again button that
+// reloads the page, which restarts every check from scratch.
+const SLOW_LOAD_AFTER_MS = 10000;
+
+function RouteWait() {
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setSlow(true), SLOW_LOAD_AFTER_MS);
+    return () => clearTimeout(t);
+  }, []);
+  return (
+    <div
+      style={{
+        minHeight: '60vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '14px',
+        padding: '0 20px',
+        textAlign: 'center',
+      }}
+      role="status"
+      aria-live="polite"
+      aria-busy={!slow}
+    >
+      <span
+        style={{
+          width: '38px',
+          height: '38px',
+          borderRadius: '50%',
+          border: '3px solid #dbe6fb',
+          borderTopColor: '#2f6fed',
+          animation: 'cdna-route-spin 0.75s linear infinite',
+        }}
+      />
+      <style>{'@keyframes cdna-route-spin{to{transform:rotate(360deg)}}'}</style>
+      {slow ? (
+        <>
+          <p style={{ margin: '6px 0 0', color: '#4b5c6b', fontSize: '0.95rem', maxWidth: '36ch' }}>
+            This is taking longer than usual. Give it a moment, or try again.
+          </p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            style={{
+              marginTop: '2px',
+              padding: '9px 18px',
+              borderRadius: '999px',
+              border: '1px solid #2f6fed',
+              background: '#ffffff',
+              color: '#2f6fed',
+              fontWeight: 700,
+              fontSize: '0.9rem',
+              cursor: 'pointer',
+            }}
+          >
+            Try again
+          </button>
+        </>
+      ) : null}
+    </div>
+  );
+}
+
 export function RequireAuth() {
   const { user, loading } = useAuth();
   const location = useLocation();
@@ -60,32 +128,7 @@ export function RequireAuth() {
   }, [userId, loading]);
 
   if (loading || (userId && profileState === 'checking')) {
-    return (
-      <div
-        style={{
-          minHeight: '60vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '14px',
-        }}
-        aria-label="Loading"
-        aria-busy="true"
-      >
-        <span
-          style={{
-            width: '38px',
-            height: '38px',
-            borderRadius: '50%',
-            border: '3px solid #dbe6fb',
-            borderTopColor: '#2f6fed',
-            animation: 'cdna-route-spin 0.75s linear infinite',
-          }}
-        />
-        <style>{'@keyframes cdna-route-spin{to{transform:rotate(360deg)}}'}</style>
-      </div>
-    );
+    return <RouteWait />;
   }
 
   if (!userId) {

@@ -3,9 +3,12 @@ import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { fetchAiSummary } from '../utils/fetchAiSummary';
 import { friendlyError } from '../utils/friendlyError';
 import { readProgress, writeProgress } from './useProgress';
-import QUESTIONS from '../utils/questions_a'; // Form A — interleaved, auditable ordering
+import { getBankForm, currentVersions, CURRENT_BANK_VERSION, CURRENT_FORM } from '../utils/banks';
 import { calculateResults } from '../utils/calculateResults';
 import scoreSubdimensions from '../utils/scoreSubdimensions';
+
+// New surveys always run on the current bank in its current form.
+const QUESTIONS = getBankForm(CURRENT_BANK_VERSION, CURRENT_FORM);
 
 function normalizeStatus(raw) {
   const s = String(raw || '').trim().toLowerCase();
@@ -108,7 +111,7 @@ export function useSurveyEngine(initialIntroResponses) {
       }
 
       const payload = {
-        surveyForm: 'A',  // counterbalanced form version
+        versions: currentVersions(), // a fresh survey is always on the current bank
         archetypes: archetypes || {},
         age: ageValue || undefined,
         status: normStatus || undefined,

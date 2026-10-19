@@ -1052,9 +1052,14 @@ const IntroQuestions = ({
       <div className={`field ${hasErr('country') ? 'has-error' : ''}`} id="countrySelect">
         <label className="required">Which country are you currently living in?</label>
         <Select
+          aria-label="Which country are you currently living in?"
           classNamePrefix="introSelect"
-          menuPlacement="bottom"
-          menuShouldScrollIntoView={false}
+          menuPlacement="auto"
+          menuPosition="fixed"
+              maxMenuHeight={260}
+              minMenuHeight={200}
+          menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+          closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
           options={countryOptions}
           value={flatCountryOptions.find(opt => opt.value === introResponses.country) || null}
           onChange={selected => handleChange('country', selected ? selected.value : '')}
@@ -1091,9 +1096,14 @@ const IntroQuestions = ({
       <div className={`field ${hasErr('status') ? 'has-error' : ''}`} id="statusSelect">
         <label className="required" htmlFor="statusSelect">What’s your current status?</label>
         <Select
+            aria-label={"What’s your current status?"}
             classNamePrefix="introSelect"
-          menuPlacement="bottom"
-          menuShouldScrollIntoView={false}
+          menuPlacement="auto"
+          menuPosition="fixed"
+              maxMenuHeight={260}
+              minMenuHeight={200}
+          menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+          closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
             options={statusOptions}
             value={statusOptions.find(opt => opt.value === statusGroup) || null}
             onChange={handleStatusGroupChange}
@@ -1111,9 +1121,14 @@ const IntroQuestions = ({
         <div className={`field ${hasErr('universityLevel') ? 'has-error' : ''}`} id="universityLevelSelect">
           <label className="required">Are you an undergraduate or postgraduate student?</label>
           <Select
+            aria-label="Are you an undergraduate or postgraduate student?"
             classNamePrefix="introSelect"
-          menuPlacement="bottom"
-          menuShouldScrollIntoView={false}
+          menuPlacement="auto"
+          menuPosition="fixed"
+              maxMenuHeight={260}
+              minMenuHeight={200}
+          menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+          closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
             options={universityLevelOptions}
             value={universityLevelOptions.find(opt => opt.value === status) || null}
             onChange={handleUniversityLevelChange}
@@ -1139,9 +1154,14 @@ const IntroQuestions = ({
         <div className={`field ${hasErr('courseYear') ? 'has-error' : ''}`} id="courseYearSelect">
           <label className="required">Which year of your course are you in?</label>
           <Select
+            aria-label="Which year of your course are you in?"
             classNamePrefix="introSelect"
-            menuPlacement="bottom"
-            menuShouldScrollIntoView={false}
+            menuPlacement="auto"
+            menuPosition="fixed"
+              maxMenuHeight={260}
+              minMenuHeight={200}
+            menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+            closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
             options={courseYearOptions}
             value={courseYearOptions.find(opt => opt.value === introResponses.courseYear) || null}
             onChange={selected => handleCourseYearChange(selected.value)}
@@ -1194,9 +1214,14 @@ const IntroQuestions = ({
               <label className="required">What year group are you in?</label>
               <p className="intro-dob-note" style={{ margin: '0 0 8px' }}>Years are as in England. If you study elsewhere, pick the year that matches your age or stage.</p>
               <Select
+                aria-label="What year group are you in?"
                 classNamePrefix="introSelect"
-                menuPlacement="bottom"
-                menuShouldScrollIntoView={false}
+                menuPlacement="auto"
+                menuPosition="fixed"
+              maxMenuHeight={260}
+              minMenuHeight={200}
+                menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+                closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
                 options={schoolYearOptions}
                 value={schoolYearOptions.find(opt => opt.value === introResponses.schoolYear) || null}
                 onChange={selected => handleChange('schoolYear', selected.value)}
@@ -1211,9 +1236,14 @@ const IntroQuestions = ({
           <div className={`field ${hasErr('planUniversity') ? 'has-error' : ''}`}>
             <label className="required">Do you plan to go to university?</label>
             <Select
+              aria-label="Do you plan to go to university?"
               classNamePrefix="introSelect"
-          menuPlacement="bottom"
-          menuShouldScrollIntoView={false}
+          menuPlacement="auto"
+          menuPosition="fixed"
+              maxMenuHeight={260}
+              minMenuHeight={200}
+          menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+          closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
                       options={[
                 { value: 'yes', label: 'Yes' },
                 { value: 'no', label: 'No' },
@@ -1242,9 +1272,14 @@ const IntroQuestions = ({
           <div className={`field ${hasErr('schoolScope') ? 'has-error' : ''}`} id="schoolScopeSelect">
             <label className="required">What’s your next step right now?</label>
             <Select
+              aria-label={"What’s your next step right now?"}
               classNamePrefix="introSelect"
-          menuPlacement="bottom"
-          menuShouldScrollIntoView={false}
+          menuPlacement="auto"
+          menuPosition="fixed"
+              maxMenuHeight={260}
+              minMenuHeight={200}
+          menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+          closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
                       options={schoolScopeOptions}
               value={schoolScopeOptions.find(opt => opt.value === introResponses.schoolScope) || null}
               onChange={selected => handleChange('schoolScope', selected.value)}
@@ -1258,10 +1293,15 @@ const IntroQuestions = ({
           <div className={`field ${hasErr('schoolSubjects') ? 'has-error' : ''}`} id="schoolSubjects">
             <label>Which subjects interest you most? <span style={{ fontWeight: 400, color: '#6b7280' }}>(optional, choose up to two)</span></label>
             <Select
+              aria-label="Which subjects interest you most?"
               classNamePrefix="introSelect"
-          menuPlacement="auto"
-          menuShouldScrollIntoView
-          filterOption={subjectStartsWithFilter}
+              menuPlacement="auto"
+              menuPosition="fixed"
+              maxMenuHeight={260}
+              minMenuHeight={200}
+              menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
+              closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest('.introSelect__menu-list'))}
+              filterOption={subjectStartsWithFilter}
                       isMulti
               options={schoolSubjectOptions}
               value={schoolSubjectOptions.filter(opt =>
@@ -1315,9 +1355,14 @@ const IntroQuestions = ({
           <div className={`field ${hasErr('uniNeed') ? 'has-error' : ''}`} id="uniScopeSelect">
             <label className="required">What’s your next step right now?</label>
             <Select
+              aria-label={"What’s your next step right now?"}
               classNamePrefix="introSelect"
-          menuPlacement="bottom"
-          menuShouldScrollIntoView={false}
+          menuPlacement="auto"
+          menuPosition="fixed"
+              maxMenuHeight={260}
+              minMenuHeight={200}
+          menuPortalTarget={typeof document !== "undefined" ? document.body : null}
+          closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
                       options={uniOptions}
               value={uniOptions.find(opt => opt.value === introResponses.uniNeed) || null}
               onChange={selected => handleChange('uniNeed', selected.value)}
@@ -1331,10 +1376,15 @@ const IntroQuestions = ({
           <div className={`field ${hasErr('uniSubject') ? 'has-error' : ''}`} id="uniSubjectSelect">
             <label className="required">What subject are you studying (or did you study)?</label>
             <Select
+              aria-label="What subject are you studying (or did you study)?"
               classNamePrefix="introSelect"
-          menuPlacement="auto"
-          menuShouldScrollIntoView
-          filterOption={subjectStartsWithFilter}
+              menuPlacement="auto"
+              menuPosition="fixed"
+              maxMenuHeight={260}
+              minMenuHeight={200}
+              menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
+              closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest('.introSelect__menu-list'))}
+              filterOption={subjectStartsWithFilter}
                       options={universitySubjectOptions}
               value={universitySubjectOptions.find(opt => opt.value === introResponses.uniSubject) || null}
               onChange={selected => handleChange('uniSubject', selected ? selected.value : '')}
@@ -1354,7 +1404,6 @@ const IntroQuestions = ({
             type="secondary"
             size="lg"
             onClick={onBack}
-            disabled={isLoading}
             aria-label="Cancel"
           >
             Cancel

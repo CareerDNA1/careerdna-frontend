@@ -420,7 +420,7 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
                       </div>
                       {condEditing && ucas(detail) ? (
                         <div className="apps-note-edit">
-                          <input type="text" value={condDraft} maxLength={40} placeholder="Conditions, e.g. ABB or 120 UCAS points" onChange={(e) => setCondDraft(e.target.value)}
+                          <input type="text" aria-label="Offer conditions" value={condDraft} maxLength={40} placeholder="Conditions, e.g. ABB or 120 UCAS points" onChange={(e) => setCondDraft(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); saveConditions(detail); } if (e.key === 'Escape') { e.stopPropagation(); setCondEditing(false); } }} autoFocus />
                           <button type="button" className="fav-btn fav-btn--primary" disabled={busy} onClick={() => saveConditions(detail)}>Save</button>
                           <button type="button" className="fav-btn fav-btn--ghost" onClick={() => setCondEditing(false)}>Cancel</button>
@@ -428,7 +428,7 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
                       ) : null}
                       {noteEditing ? (
                         <div className="apps-note-edit">
-                          <input type="text" value={noteDraft} maxLength={240} placeholder={ucas(detail) ? 'e.g. open day 11 Oct, ask about placement year' : 'e.g. interview on 3 Oct at 10am'} onChange={(e) => setNoteDraft(e.target.value)}
+                          <input type="text" aria-label="Note" value={noteDraft} maxLength={240} placeholder={ucas(detail) ? 'e.g. open day 11 Oct, ask about placement year' : 'e.g. interview on 3 Oct at 10am'} onChange={(e) => setNoteDraft(e.target.value)}
                             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); saveNote(detail); } if (e.key === 'Escape') { e.stopPropagation(); setNoteEditing(false); } }} autoFocus />
                           <button type="button" className="fav-btn fav-btn--primary" disabled={busy} onClick={() => saveNote(detail)}>Save</button>
                           <button type="button" className="fav-btn fav-btn--ghost" onClick={() => setNoteEditing(false)}>Cancel</button>

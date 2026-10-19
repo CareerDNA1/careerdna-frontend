@@ -252,6 +252,7 @@ export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = 
               <span
                 className={`cdna-match-meter cdna-match-meter--${String(band).replace(/\s*match$/i, '').toLowerCase()} cw-accordion-item__band`}
                 tabIndex={0}
+                role="button"
                 data-selection-tooltip="true"
                 data-tooltip-title={label}
                 data-tooltip-body={getMatchTooltipBody(label)}
@@ -277,6 +278,8 @@ export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = 
               <span
                 className={`cw-match-badge cw-match-badge--${badge.tone} cw-accordion-item__pilotbadge`}
                 tabIndex={0}
+                role="button"
+                aria-label={`${label}: ${getMatchTooltipBody(label)}`}
                 data-selection-tooltip="true"
                 data-tooltip-title={label}
                 data-tooltip-body={getMatchTooltipBody(label)}
@@ -288,7 +291,7 @@ export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = 
               type="button"
               className="cw-accordion-item__chev"
               onClick={onToggle}
-              aria-label={open ? 'Collapse' : 'Expand'}
+              aria-label={`${open ? 'Collapse' : 'Expand'} ${world.title}`}
               aria-expanded={open}
             >
               <Chevron open={open} />
@@ -305,7 +308,7 @@ export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = 
               type="button"
               className="cw-accordion-item__chev"
               onClick={onToggle}
-              aria-label={open ? 'Collapse' : 'Expand'}
+              aria-label={`${open ? 'Collapse' : 'Expand'} ${world.title}`}
               aria-expanded={open}
             >
               <Chevron open={open} />

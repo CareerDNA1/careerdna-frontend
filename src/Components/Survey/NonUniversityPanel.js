@@ -1058,6 +1058,22 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
     );
   };
 
+  // Same shape as the University tab: until a career world has been liked,
+  // only the heading and the one-line prompt are shown.
+  if (!likedWorlds.length) {
+    return (
+      <section className="selection-explorer selection-explorer--empty" ref={rootRef}>
+        <div className="selection-explorer__intro selection-explorer__intro--empty">
+          <h2>Your training &amp; work routes</h2>
+          <p className="selection-explorer__empty-message">
+            Like the career worlds you&rsquo;re drawn to in the Career Worlds tab, then come back here to
+            see the training and work routes that lead into them.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="selection-explorer" ref={rootRef}>
       <div className="selection-explorer__intro selection-explorer__intro--active">
@@ -1141,15 +1157,12 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
             ) : null}
           </div>
         </div>
-      ) : (
-        <p className="nu-empty-hint">
-          Like the career worlds you&rsquo;re drawn to in the Career Worlds tab, including the vocational ones
-          under &ldquo;Explore other career worlds&rdquo;, to see their non-university routes.
+      ) : null}
+      {!loading && !error && allWorlds.length > 0 && (
+        <p className="nu-source-note">
+          Apprenticeship standards: Institute for Apprenticeships and Technical Education, under the Open Government Licence v3.0. Live openings come from Find an Apprenticeship and partner job boards and change daily; always check the employer&rsquo;s own listing before applying.
         </p>
       )}
-      <p className="nu-source-note">
-        Apprenticeship standards: Institute for Apprenticeships and Technical Education, under the Open Government Licence v3.0. Live openings come from Find an Apprenticeship and partner job boards and change daily; always check the employer&rsquo;s own listing before applying.
-      </p>
     </section>
   );
 }

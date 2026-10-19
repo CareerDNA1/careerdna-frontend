@@ -11,6 +11,7 @@ import { fetchGradJobs } from '../../utils/fetchGradJobs';
 import PathwayPicker, { readRemembered } from './PathwayPicker';
 import { usePremiumAccess } from '../../utils/premiumGate';
 import { entryRouteForCard } from '../../utils/entryRouteModes';
+import { bandForScore } from '../../utils/bands';
 import { ThumbsUp, ThumbsDown, Smiley, SmileyMeh, BookmarkSimple, Info, Briefcase, Signpost, UsersThree, TrendUp, MapPin, GraduationCap, CalendarBlank, CurrencyGbp, Rocket } from 'phosphor-react';
 import { getReactions, setItemReaction } from '../../utils/savedItems';
 import InlineError, { StillWorkingNote } from '../Common/InlineError';
@@ -271,19 +272,10 @@ function sortArchetypes(list = []) {
   });
 }
 
-function getArchetypeBand(score = 0) {
-  if (score >= 80) return 'Standout';
-  if (score >= 66) return 'Strong';
-  if (score >= 54) return 'Good';
-  return 'Lower';
-}
-
-function getSubdimensionBand(score = 0) {
-  if (score >= 70) return 'Standout';
-  if (score >= 60) return 'Strong';
-  if (score >= 50) return 'Good';
-  return 'Lower';
-}
+// Archetype and trait bands use the one shared 80/70/60 rule (utils/bands.js),
+// so a level on the Your Type and Traits tabs reads the same on every pill here.
+const getArchetypeBand = (score = 0) => bandForScore(score);
+const getSubdimensionBand = (score = 0) => bandForScore(score);
 
 // Friendly, tier-aware label (used in tooltips).
 function bandDisplayLabel(band = '') {
@@ -364,13 +356,7 @@ function normaliseMatchLabel(raw = '') {
   return /match$/i.test(value) ? value : `${value} match`;
 }
 
-function bandFromPct(pct = 0) {
-  const score = Number(pct) || 0;
-  if (score >= 80) return 'Standout';
-  if (score >= 66) return 'Strong';
-  if (score >= 54) return 'Good';
-  return 'Lower';
-}
+const bandFromPct = (pct = 0) => bandForScore(pct);
 
 function bandKey(label = '') {
   const k = String(label || '').toLowerCase();
@@ -470,6 +456,22 @@ function _teardownPin() {
 // it dispatches this event instead, and we release any pinned tooltip here.
 if (typeof window !== 'undefined') {
   window.addEventListener('cdna:hide-tooltips', () => hideSelectionTooltip({ force: true }));
+
+  // Keyboard parity for every tooltip trigger in the app (WCAG 2.1.1). The
+  // chips and pills are focusable spans whose click pins the definition open;
+  // Enter and Space must do the same, and Escape must close it whether or not
+  // it is pinned. One document-level listener covers all the panels that
+  // delegate pointer events to their own root.
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { hideSelectionTooltip({ force: true }); return; }
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const el = document.activeElement;
+    if (!(el instanceof HTMLElement)) return;
+    if (el.getAttribute('data-selection-tooltip') !== 'true') return;
+    if (el.tagName === 'BUTTON' || el.tagName === 'A') return; // native keys already work
+    e.preventDefault();
+    showSelectionTooltip(el, { pinned: true });
+  });
 }
 
 export function hideSelectionTooltip(opts) {
@@ -572,6 +574,7 @@ export function SignalBadge({ label, tooltipBody: tooltipOverride = '', plain = 
     <span
       className={`cdna-band-pill cdna-band-pill--${bandKey(label)} cdna-band-pill--header selection-detail-card__signal--has-tooltip`}
       tabIndex={0}
+      role="button"
       aria-label={`${label}: ${tooltipBody}`}
       data-selection-tooltip="true"
       data-tooltip-title={label}
@@ -607,6 +610,7 @@ function SelectionChip({ label, score, icon: Icon, kind = 'archetype' }) {
     <div
       className={`selection-chip selection-chip--${visual} selection-chip--tier-${tierKey} selection-chip--${kind} selection-chip--has-tooltip`}
       tabIndex={0}
+      role="button"
       aria-label={tooltip}
       data-selection-tooltip="true"
       data-tooltip-title={`${label} - ${bandLabel}`}

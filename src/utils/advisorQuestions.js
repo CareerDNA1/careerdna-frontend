@@ -43,18 +43,18 @@ const CONTEXTS = {
     ],
   },
   selfawareness: {
-    title: 'your self-awareness',
+    title: 'how clearly your preferences came through',
     school: [
-      'How can I use this to make better decisions about my future?',
-      'Which of these insights should I take most seriously?',
-      'How do I explain my profile to my parents or a teacher?',
-      'What should I be careful of, given my profile?',
+      'What does my clarity level mean for how much I should trust my matches?',
+      'Why is one of my areas lower than the others?',
+      'How can I make my picture clearer?',
+      'Should I retake the questionnaire?',
     ],
     university: [
-      'How can I use this to make better career decisions?',
-      'Which of these insights should I take most seriously?',
-      'What should I watch out for in my first job?',
-      'How do I explain my profile to an employer?',
+      'What does my clarity level mean for how much I should trust my matches?',
+      'Why is one of my areas lower than the others?',
+      'How can I make my picture clearer?',
+      'Should I retake the questionnaire?',
     ],
   },
   summary: {

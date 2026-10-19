@@ -218,7 +218,8 @@
 }
 
 .introSelect__menu-list {
-  max-height: min(260px, 42vh) !important;
+  /* Height is set by react-select from the space available (maxMenuHeight /
+     minMenuHeight on the component), so it can shrink or flip; no override here. */
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
@@ -428,3 +429,7 @@
   font-size: 0.8rem;
   line-height: 1.4;
 }
+
+/* The subject list renders in a portal on body so the modal cannot clip it;
+   it sits above the modal overlay and flips upward when there is no room below. */
+.introSelect__menu-portal { z-index: 100000 !important; }

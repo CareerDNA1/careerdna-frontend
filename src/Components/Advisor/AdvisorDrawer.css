@@ -71,7 +71,8 @@
 .advisor-drawer .career-advisor-prompts button { min-height: 38px; font-size: 0.82rem; padding: 8px 11px; }
 .advisor-drawer .career-advisor-prompt-intro { font-size: 0.78rem; }
 .advisor-drawer .career-advisor-credit-note { font-size: 0.74rem; }
-.advisor-drawer .career-advisor-message-content { font-size: 0.9rem; }
+.advisor-drawer .career-advisor-message-content { font-size: 0.9rem !important; line-height: 1.55 !important; }
+.advisor-drawer .career-advisor-message.user .career-advisor-message-content { font-size: 0.9rem !important; }
 
 /* Send button in the drawer: a 38px circle matched to a 38px input, icon optically centred. */
 .advisor-drawer .career-advisor-input-row { align-items: center; gap: 8px !important; padding-top: 10px !important; }
@@ -121,7 +122,18 @@
   .advisor-drawer__handle { display: flex; justify-content: center; padding: 8px 0 0; }
   .advisor-drawer__handle span { width: 40px; height: 4px; border-radius: 999px; background: #d3dbe8; }
   .advisor-drawer__head { padding-top: 6px; }
-  .advisor-drawer .career-advisor-input-row textarea { font-size: 16px !important; min-height: 42px !important; } /* no iOS zoom */
+  /* Phone: 16px stops iOS zooming on focus; padding sized so a single line
+     sits in the vertical centre of a 44px field, and the send button is the
+     same 44px so the two line up. */
+  .advisor-drawer .career-advisor-input-row textarea {
+    font-size: 16px !important; line-height: 20px !important;
+    min-height: 44px !important; height: 44px; padding: 12px 14px !important; border-radius: 22px !important;
+  }
+  .advisor-drawer .career-advisor-input-row .career-advisor-send-button {
+    width: 44px !important; height: 44px !important; min-width: 44px !important; min-height: 44px !important;
+    max-width: 44px !important; max-height: 44px !important; align-self: center;
+  }
+  .advisor-drawer .career-advisor-input-row { grid-template-columns: minmax(0, 1fr) 44px !important; align-items: center !important; }
   /* Gap between the content and the sheet edges (the chat's own phone rules
      strip the panel padding for the old full-page layout). */
   .advisor-drawer .career-advisor-panel { padding: 8px 18px 14px !important; }

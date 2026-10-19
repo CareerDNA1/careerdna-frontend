@@ -57,7 +57,8 @@ export async function fetchAiSummary(input) {
     uniNeed,
     introResponses,
     subdimensionScores,   // NEW
-    subdimensions         // NEW (alias / pre-shaped)
+    subdimensions,        // NEW (alias / pre-shaped)
+    versions              // { bank, scoring, form } of the run being reported on
   } = input;
 
   // Merge old shape if provided
@@ -127,6 +128,12 @@ export async function fetchAiSummary(input) {
     // for students who are unsure about / not planning university.
     ...(planUniversity ? { planUniversity: String(planUniversity) } : {}),
     ...(uniNeed ? { uniNeed: String(uniNeed) } : {}),
+    // Which question bank and scoring rules produced these scores, so the
+    // backend scores items against the matching content set and stamps the
+    // report (audit item 29). Omitted = current.
+    ...(versions && typeof versions === 'object'
+      ? { bankVersion: String(versions.bank || ''), scoringVersion: String(versions.scoring || ''), surveyForm: String(versions.form || '') }
+      : {}),
   };
 
   // Client-side guard to avoid 400s:

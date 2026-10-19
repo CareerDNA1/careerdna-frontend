@@ -16,7 +16,7 @@ export default function RoleExplorerPanel({ pathways = [], savedReactions = {}, 
   // Single-open accordion: only one role card is open at a time.
   const [openRoleKey, setOpenRoleKey] = useState('');
 
-  // Pathways with roles, sorted by match strength (Top match first) so the
+  // Pathways with roles, sorted by match strength (Standout first) so the
   // default selection and the list order agree.
   const withRoles = useMemo(
     () => (pathways || [])

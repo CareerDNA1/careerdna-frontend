@@ -14,7 +14,7 @@ const instructionItems = [
   },
   {
     icon: <Timer {...iconProps} />,
-    text: <>There are <strong>100 short questions</strong>, answered on a scale or as a simple either/or choice. Most people finish in <strong>20 to 25 minutes</strong> in one sitting, and your progress <strong>saves automatically</strong> as you go.</>,
+    text: <>There are <strong>100 short questions</strong>, answered on a scale or as a simple either/or choice. Most people finish in <strong>about 15 minutes</strong> in one sitting, and your progress <strong>saves automatically</strong> as you go.</>,
   },
   {
     icon: <Headphones {...iconProps} />,

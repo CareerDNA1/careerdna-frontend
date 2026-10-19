@@ -53,7 +53,7 @@ const plans = [
         'Ideal work environment insights',
         'Career worlds that fit who you are',
         'Personalised career pathway recommendations',
-        'University subject recommendations',
+        'University or training route recommendations',
         { type: 'header', text: 'Guidance' },
         'Your own Advisor: 10 questions a year, answered from your profile, grades and applications',
         'Track your development over time',

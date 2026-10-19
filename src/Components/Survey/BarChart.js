@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ARCHETYPE_DEFINITIONS as archetypeDescriptions } from "../../utils/archetypeDefinitions";
+import { bandForScore } from "../../utils/bands";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -18,12 +19,8 @@ const CDNA_BAR_THICKNESS_MOBILE = 26;
 const CDNA_BAR_RADIUS = 8;
 const CDNA_BAR_BORDER_WIDTH = 1.5;
 
-function getProfileLevel(score = 0) {
-  if (score >= 80) return "Standout";
-  if (score >= 70) return "Strong";
-  if (score >= 60) return "Good";
-  return "Lower";
-}
+// Archetype level: the shared 80/70/60 band rule (utils/bands.js).
+const getProfileLevel = (score = 0) => bandForScore(score);
 
 // Tier palette — matches the tier PILLS: pale tinted fill with a soft same-hue
 // border (almost as faded as the fill). On hover the bar fills with the solid

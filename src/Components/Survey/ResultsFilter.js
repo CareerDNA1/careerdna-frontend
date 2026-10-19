@@ -20,10 +20,10 @@ export function emptyFilter() {
   return { routes: [], bands: [], favouritesOnly: false };
 }
 
-// Normalise any band string (e.g. "Standout match", "Top match", "Lower") to a token.
+// Normalise any band string (e.g. "Standout match", "Lower") to a token.
 export function bandToken(v) {
   const s = String(v || '').trim().toLowerCase();
-  if (s.startsWith('standout') || s.startsWith('top')) return 'Standout';
+  if (s.startsWith('standout')) return 'Standout';
   if (s.startsWith('strong')) return 'Strong';
   if (s.startsWith('good')) return 'Good';
   if (s.startsWith('lower')) return 'Lower';

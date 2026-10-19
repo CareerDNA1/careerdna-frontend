@@ -3,6 +3,63 @@ import { fetchAiSummary } from './fetchAiSummary';
 import { calculateProfileQualityGate } from './profileQualityGate';
 import { OUTPUT_VERSION } from './outputVersion';
 import { saveIdentityProfile } from './identityProfile';
+import { calculateResults } from './calculateResults';
+import { scoreSubdimensions } from './scoreSubdimensions';
+import { computeClarityPercents } from './selfAwarenessSummary';
+import { getBankQuestions, getBankWeights, runVersions, currentVersions } from './banks';
+
+// Re-score a run's saved answers with the question bank and scoring rules
+// the run was answered on (bank_version / scoring_version, see utils/banks).
+// Scores are never copied forward from an older run: a fix to the bank's
+// matrix reaches every run of that bank the next time it is re-run or its
+// report is generated, while a NEW bank never touches old runs. Returns null
+// when the run has no usable answers (old runs).
+export function rescoreRunFromAnswers(run) {
+  const answers = run?.survey_answers_json;
+  if (!answers || typeof answers !== 'object' || !Object.keys(answers).length) return null;
+  const versions = runVersions(run);
+  const QUESTIONS = getBankQuestions(versions.bank);
+  const WEIGHTS = getBankWeights(versions.bank, versions.scoring);
+  const { archetypeScores } = calculateResults(answers, QUESTIONS, WEIGHTS);
+  if (!archetypeScores || !Object.keys(archetypeScores).length) return null;
+  const subdimensionRows = scoreSubdimensions(answers, QUESTIONS);
+  const claritySummary = computeClarityPercents(QUESTIONS, answers, {
+    dimensionOrder: ['Who You Are', 'What You Love', 'What Matters', 'How You Work Best'],
+  });
+  return { archetypes: archetypeScores, subdimensionRows, claritySummary, versions };
+}
+
+// Called the moment the last question is answered, before the results page
+// exists, so a closed tab or a lost connection never loses a finished survey.
+// Writes the answers plus the scores they produce under the current bank. The
+// results page later finds this row by its survey nonce
+// (findExistingRunForSurvey) and updates it with the full results and the
+// report, so no second row is created. Never throws: a failure here must not
+// stop the student reaching their results.
+export async function saveSurveyAnswersOnFinish({ nonce = '', introAnswers = {}, surveyAnswers = {} } = {}) {
+  try {
+    if (!surveyAnswers || typeof surveyAnswers !== 'object' || !Object.keys(surveyAnswers).length) return null;
+    const existing = await findExistingRunForSurvey({ nonce, surveyAnswers });
+    if (existing?.id) return existing;
+    const scored = rescoreRunFromAnswers({ survey_answers_json: surveyAnswers });
+    return await saveAssessmentRun({
+      introAnswers: introAnswers || {},
+      surveyAnswers,
+      resultsJson: {
+        archetypes: scored?.archetypes || {},
+        subdimensionRows: scored?.subdimensionRows || [],
+        claritySummary: scored?.claritySummary || null,
+        introName: introAnswers?.name || '',
+        surveyNonce: String(nonce || ''),
+        savedAt: 'survey_complete',
+      },
+      summaryMarkdown: '',
+    });
+  } catch (err) {
+    console.warn('Could not save survey answers on finish:', err?.message || err);
+    return null;
+  }
+}
 
 function eduLevelFromStatus(status) {
   if (status === 'undergraduate') return 'undergraduate';
@@ -15,6 +72,9 @@ export async function saveAssessmentRun({
   surveyAnswers = {},
   resultsJson = {},
   summaryMarkdown = '',
+  // Which bank the answers belong to. A fresh survey takes the current
+  // versions; a re-run passes the versions of the run it came from.
+  versions = null,
 }) {
   const {
     data: { user },
@@ -24,13 +84,17 @@ export async function saveAssessmentRun({
   if (userError) throw userError;
   if (!user) throw new Error('User not authenticated.');
 
+  const stamp = { ...currentVersions(), ...(versions || {}) };
   const payload = {
     user_id: user.id,
     intro_answers_json: introAnswers || {},
     survey_answers_json: surveyAnswers || {},
-    results_json: resultsJson || {},
+    results_json: { ...(resultsJson || {}), versions: stamp },
     summary_markdown: summaryMarkdown || '',
     output_version: OUTPUT_VERSION,
+    bank_version: stamp.bank,
+    scoring_version: stamp.scoring,
+    form: stamp.form,
   };
 
   const { data, error } = await supabase
@@ -325,7 +389,8 @@ export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswe
   }
 
   const savedResults = fullRun.results_json || {};
-  const archetypes = savedResults.archetypes || {};
+  const rescored = rescoreRunFromAnswers(fullRun);
+  const archetypes = rescored?.archetypes || savedResults.archetypes || {};
 
   if (!archetypes || !Object.keys(archetypes).length) {
     throw new Error('This saved run does not contain archetype data.');
@@ -337,12 +402,14 @@ export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswe
     ...(updatedIntroAnswers || {}),
   };
 
-  const subdimensionRows = Array.isArray(savedResults.subdimensionRows) ? savedResults.subdimensionRows : [];
-  const claritySummary = savedResults.claritySummary || null;
+  const subdimensionRows = rescored?.subdimensionRows
+    || (Array.isArray(savedResults.subdimensionRows) ? savedResults.subdimensionRows : []);
+  const claritySummary = rescored?.claritySummary || savedResults.claritySummary || null;
   const profileQualityGate = calculateProfileQualityGate({
     archetypes,
     subdimensionRows,
     claritySummary,
+    surveyAnswers: run.survey_answers_json || null,
   });
 
   const newRun = await saveAssessmentRun({
@@ -359,6 +426,7 @@ export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswe
       rerunOf: run.id || null,
     },
     summaryMarkdown: '',
+    versions: runVersions(run),
   });
 
   return newRun;
@@ -369,23 +437,24 @@ export async function runAiSummaryForSavedRun(runId, { bypassQualityGate = false
   if (!run) throw new Error('Saved run not found.');
 
   const savedResults = run.results_json || {};
-  const archetypes = savedResults.archetypes || {};
-  const subdimensions = Array.isArray(savedResults.subdimensionRows)
-    ? savedResults.subdimensionRows
-    : [];
+  const rescored = rescoreRunFromAnswers(run);
+  const archetypes = rescored?.archetypes || savedResults.archetypes || {};
+  const subdimensions = rescored?.subdimensionRows
+    || (Array.isArray(savedResults.subdimensionRows) ? savedResults.subdimensionRows : []);
   const intro = run.intro_answers_json || {};
-  const claritySummary = savedResults.claritySummary || null;
+  const claritySummary = rescored?.claritySummary || savedResults.claritySummary || null;
   const profileQualityGate = calculateProfileQualityGate({
     archetypes,
     subdimensionRows: subdimensions,
     claritySummary,
+    surveyAnswers: run.survey_answers_json || null,
   });
 
   if (!archetypes || !Object.keys(archetypes).length) {
     throw new Error('This saved run does not contain archetype data.');
   }
 
-  if (!bypassQualityGate && profileQualityGate.shouldBlockAnalysis) {
+  if ((!bypassQualityGate && profileQualityGate.shouldBlockAnalysis) || profileQualityGate.hardBlock) {
     const err = new Error('PROFILE_QUALITY_GATE_BLOCKED');
     err.code = 'PROFILE_QUALITY_GATE_BLOCKED';
     err.profileQualityGate = profileQualityGate;
@@ -396,6 +465,7 @@ export async function runAiSummaryForSavedRun(runId, { bypassQualityGate = false
 
   try {
     response = await fetchAiSummary({
+      versions: runVersions(run),
       archetypes,
       introResponses: intro,
       subdimensions,
@@ -418,9 +488,10 @@ export async function runAiSummaryForSavedRun(runId, { bypassQualityGate = false
     output_version: OUTPUT_VERSION,
     results_json: {
       ...savedResults,
+      archetypes,
       analysisMeta: newAnalysisMeta,
       introName: intro?.name || '',
-      subdimensionRows: Array.isArray(savedResults.subdimensionRows) ? savedResults.subdimensionRows : [],
+      subdimensionRows: subdimensions,
       claritySummary,
       profileQualityGate,
       regeneratedAt: new Date().toISOString(),

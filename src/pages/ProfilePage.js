@@ -106,36 +106,6 @@ function studentStatusLine(run) {
   return parts.join(', ');
 }
 
-function nextStepLabel(run) {
-  const intro = run?.intro_answers_json || {};
-  const status = intro.status;
-
-  const schoolMap = {
-    choose_gcse: 'Choose GCSE options',
-    study_gcse: 'Work towards GCSEs',
-    choose_alevels: 'Decide what to do after GCSEs',
-    study_alevels: 'Study A-levels, T-levels or college',
-    decide_route: 'Decide between university, apprenticeship or work',
-    apply_uni: 'Prepare applications',
-    decide_uni: 'Choose between offers',
-    apprenticeship: 'Find an apprenticeship or job',
-    not_sure: 'Not sure yet',
-  };
-
-  const uniMap = {
-    explore_pathways: 'Explore career pathways and roles',
-    apply_postgrad: 'Explore postgraduate study',
-    apply_further_postgrad: 'Explore further postgraduate study',
-    explore_internships: 'Explore internships or placements',
-    explore_full_time: 'Explore graduate roles',
-    explore_specialisms: 'Explore other specialisms or subjects',
-    not_sure: 'Not sure yet',
-  };
-
-  if (status === 'school' || status === 'other') return schoolMap[intro.schoolScope] || '—';
-  if (status === 'undergraduate' || status === 'postgraduate') return uniMap[intro.uniNeed] || '—';
-  return '—';
-}
 
 function subjectLabel(run) {
   const intro = run?.intro_answers_json || {};
@@ -202,7 +172,7 @@ function isUnlimitedPlan(profile = {}) {
 }
 
 function getReportUsage(profile = {}) {
-  return getUsageValues(profile?.reports_used, profile?.report_limit, 0, isUnlimitedPlan(profile));
+  return getUsageValues(profile?.reports_used, profile?.report_limit, profile?.extra_reports, isUnlimitedPlan(profile));
 }
 
 function getAdvisorUsage(profile = {}) {
@@ -1017,10 +987,12 @@ export default function ProfilePage() {
       // webhook, then open the welcome dialog for the plan or pack bought.
       if (checkoutReturnStartedRef.current) return;
       checkoutReturnStartedRef.current = true;
-      const boughtPack = params.get('purchase') === 'advisor_pack';
+      const purchase = params.get('purchase');
+      const boughtPack = purchase === 'advisor_pack';
+      const boughtReport = purchase === 'report_pack';
       const showWelcome = (p) => {
         const plan = String(p?.plan || profile?.plan || 'free').toLowerCase();
-        const kind = boughtPack ? 'pack' : plan === 'premium' ? 'premium' : 'explore';
+        const kind = boughtPack ? 'pack' : boughtReport ? 'report' : plan === 'premium' ? 'premium' : 'explore';
         setPlanWelcome({ kind });
       };
       syncStripeSubscriptionFromBackend()
@@ -1151,18 +1123,27 @@ export default function ProfilePage() {
     setEditIntroResponses(buildInitialIntro(run));
   };
 
+  // Cancel always closes the dialog, even mid-request: a save that is still in
+  // flight either completes in the background (the run appears in the list) or
+  // fails quietly. The student must never be trapped behind "Processing".
   const closeOutputParametersModal = () => {
-    if (rerunning) return;
+    setRerunning(false);
     setEditingRun(null);
     setEditIntroResponses(defaultIntroResponses);
   };
+
+  const RERUN_TIMEOUT_MS = 45000;
+  const withTimeout = (promise, ms) => new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error('The re-run is taking too long. Check your connection and try again.')), ms);
+    promise.then((v) => { clearTimeout(t); resolve(v); }, (e) => { clearTimeout(t); reject(e); });
+  });
 
   const handleRerunOutput = async () => {
     if (!editingRun) return;
     try {
       setRerunning(true);
       setErrorMsg('');
-      const newRun = await rerunAssessmentWithOutputParameters(editingRun, editIntroResponses);
+      const newRun = await withTimeout(rerunAssessmentWithOutputParameters(editingRun, editIntroResponses), RERUN_TIMEOUT_MS);
       await loadPageData();
       setEditingRun(null);
       setEditIntroResponses(defaultIntroResponses);
@@ -1453,6 +1434,15 @@ export default function ProfilePage() {
       ? (engagedForRun === latestRun.id && favForRun === latestRun.id)
       : (engagedForRun === 'none' && favForRun === 'none'));
 
+  // If the profile has not loaded after a while (slow or unhealthy database),
+  // say so and offer a reload rather than spinning without end.
+  const [overviewSlow, setOverviewSlow] = useState(false);
+  useEffect(() => {
+    if (overviewReady) { setOverviewSlow(false); return undefined; }
+    const t = setTimeout(() => setOverviewSlow(true), 10000);
+    return () => clearTimeout(t);
+  }, [overviewReady]);
+
   useEffect(() => {
     if (!overviewReady || !user?.id) return;
     const key = `cdna_firsts_${user.id}`;
@@ -1667,6 +1657,8 @@ export default function ProfilePage() {
           onPrimary={() => {
             setPlanWelcome(null);
             if (planWelcome.kind === 'pack') { openAdvisor(); return; }
+            // Extra report bought: the natural next step is to generate it.
+            if (planWelcome.kind === 'report') { navigate('/start'); return; }
             if (latestRun?.id) navigate(`/results/run/${latestRun.id}`);
             else navigate('/start');
           }}
@@ -1737,9 +1729,15 @@ export default function ProfilePage() {
         {profileNotice ? <p className="profile-notice">{profileNotice}</p> : null}
 
         {!overviewReady ? (
-          <section className="profile-loading" aria-busy="true" aria-label="Loading your profile">
+          <section className="profile-loading" aria-busy={!overviewSlow} aria-label="Loading your profile">
             <span className="profile-spinner" aria-hidden="true" />
             <p className="profile-runs-loading-note">Loading your profile&hellip;</p>
+            {overviewSlow ? (
+              <>
+                <p className="profile-runs-loading-note">This is taking longer than usual. Give it a moment, or try again.</p>
+                <button type="button" className="profile-btn profile-btn--xs" onClick={() => window.location.reload()}>Try again</button>
+              </>
+            ) : null}
           </section>
         ) : null}
 
@@ -1994,13 +1992,7 @@ export default function ProfilePage() {
                       <span className="profile-run-sep">|</span>
                       <span><strong>{ageValue(run)}</strong> yrs</span>
                       <span className="profile-run-sep">|</span>
-                      <span>{statusLabel(run.intro_answers_json?.status)}</span>
-                      {nextStepLabel(run) !== '—' && (
-                        <>
-                          <span className="profile-run-sep profile-run-sep--hide-tablet">|</span>
-                          <span className="profile-run-detail--hide-tablet">{nextStepLabel(run)}</span>
-                        </>
-                      )}
+                      <span>{studentStatusLine(run) || statusLabel(run.intro_answers_json?.status)}</span>
                       {subjectLabel(run) !== '—' && (
                         <>
                           <span className="profile-run-sep">|</span>

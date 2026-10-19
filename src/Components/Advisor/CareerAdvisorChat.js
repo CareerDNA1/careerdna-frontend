@@ -7,7 +7,7 @@ import ReportLimitModal from '../Common/ReportLimitModal';
 import { applyCouponCode } from '../../utils/applyCoupon';
 import { loadAdvisorConversation, sendAdvisorMessage } from '../../utils/careerAdvisor';
 import { clearAdvisorPrefill } from '../../utils/advisorPanel';
-import InlineError, { StillWorkingNote } from '../Common/InlineError';
+import InlineError from '../Common/InlineError';
 import { friendlyError } from '../../utils/friendlyError';
 
 const FALLBACK_STARTER_PROMPTS = [
@@ -431,7 +431,6 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
                     <span>Your Advisor</span>
                   </div>
                   <div className="career-advisor-message-content muted career-advisor-thinking"><span className="cdna-load-spinner" aria-hidden="true" /><span>Thinking…</span></div>
-                  <StillWorkingNote />
                 </div>
               ) : null}
               <div ref={bottomRef} />
@@ -471,6 +470,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
             <div className="career-advisor-input-row">
               <textarea
                 ref={textareaRef}
+                aria-label="Your question for the Advisor"
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 onKeyDown={handleKeyDown}

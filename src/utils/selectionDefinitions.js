@@ -4010,3 +4010,48 @@ Object.keys(PATHWAY_DEFINITIONS).forEach((k) => {
 Object.keys(CAREER_WORLD_DEFINITIONS).forEach((k) => {
   if (__LEGACY_WORLD_TITLES.has(__normTitle(CAREER_WORLD_DEFINITIONS[k] && CAREER_WORLD_DEFINITIONS[k].title))) delete CAREER_WORLD_DEFINITIONS[k];
 });
+
+/* Re-key every world definition to the canonical data id (career_worlds.json),
+   so lookups by id work without the title fallback. The blocks above were
+   written with "_and_" ids (cw_healthcare_and_medicine) while the data uses
+   cw_healthcare_medicine. Where the same world was defined under two keys, the
+   entry already stored under the canonical id wins (it is the maintained one);
+   the stray cw_performing_arts_and_music copy carried a literal backslash-n. */
+(() => {
+  let canon = {};
+  try { canon = require('../data/canonicalIds.json').worlds || {}; } catch (_) { canon = {}; }
+  Object.keys(CAREER_WORLD_DEFINITIONS).forEach((k) => {
+    if (!/^cw_/.test(k)) return;
+    const entry = CAREER_WORLD_DEFINITIONS[k];
+    const target = canon[__normTitle(entry && entry.title)];
+    if (!target || target === k) return;
+    if (!CAREER_WORLD_DEFINITIONS[target]) CAREER_WORLD_DEFINITIONS[target] = entry;
+    delete CAREER_WORLD_DEFINITIONS[k];
+  });
+  // Some entries were pasted with a literal backslash-n instead of a line
+  // break; render them as paragraph breaks.
+  Object.values(CAREER_WORLD_DEFINITIONS).forEach((entry) => {
+    if (!entry || typeof entry !== 'object') return;
+    Object.keys(entry).forEach((f) => {
+      if (typeof entry[f] === 'string' && entry[f].includes('\\n')) entry[f] = entry[f].replace(/\\n/g, '\n');
+    });
+  });
+})();
+
+/* Authoritative definitions for the two worlds rewritten on 15 October 2026
+   (audit item 15): Construction now leads with the trades and site work;
+   Care now leads with adult social care. These override any earlier block. */
+Object.assign(CAREER_WORLD_DEFINITIONS, {
+  cw_construction_the_built_environment: {
+    ...(CAREER_WORLD_DEFINITIONS.cw_construction_the_built_environment || {}),
+    title: "Construction & the Built Environment",
+    short: "Every building, road and bridge you use was built by people who know how to make things stand up, stay safe and last. This world covers the whole of that work, from the trades on site such as electricians, plumbers, bricklayers and carpenters, to the site managers, surveyors, engineers, architects and planners who design and run the projects. It suits practical people who like seeing real things take shape and who want work that is in demand everywhere.",
+    long: "Every building, road and bridge you use was built by people who know how to make things stand up, stay safe and last. This world covers the whole of that work, from the first drawing to the finished site.\n\nDay to day, you might be on site wiring a new building, fitting heating systems, laying brick or steel, running the programme that keeps a project on time and on budget, measuring and valuing land and buildings, or designing the building itself. Real jobs here include electrician, plumber, carpenter, bricklayer, site supervisor, quantity surveyor, civil engineering technician, architectural technologist, architect and town planner.\n\nIt matters because the country needs more homes, better transport, safer buildings and low carbon heating, and none of it happens without the people in this world. Construction employs over two million people in the UK and skilled trades are among the most sought-after workers there are.\n\nYou could work for a building contractor, a specialist trade firm, a housebuilder, an engineering consultancy, a local council, a surveying practice or an architecture studio. Many people in this world run their own business within a few years.\n\nAnd it is changing, with modern methods of construction, digital building models and a push for low carbon buildings creating new kinds of work alongside the traditional trades.\n\nIt tends to suit practical people who like working with their hands and their heads, who take pride in doing a job properly, and who want to see what they have built.\n\nThis world is open both ways. Most trades are learned through an apprenticeship rather than university, and site management, surveying, engineering and architecture can be reached through either an apprenticeship or a degree, so it suits you whether or not you plan to go to university.",
+  },
+  cw_care_support_work: {
+    ...(CAREER_WORLD_DEFINITIONS.cw_care_support_work || {}),
+    title: "Care & Support Work",
+    short: "Some of the most important work there is happens quietly, helping people live well when they cannot manage alone. This world is about caring for adults who need support, including older people and people with disabilities, as well as children, young people and families, and the social workers, community and faith leaders and bereavement services around them. It suits warm, patient, dependable people who want work that genuinely helps others.",
+    long: "Some of the most important work there is happens quietly, helping people live well when they cannot manage alone. This world is about caring for and standing alongside people at the points in life when they need someone, from a child in a difficult home to an older person who wants to stay in their own house.\n\nDay to day, you might help an older person wash, dress and eat and keep them company, support an adult with a learning disability to live independently, protect a child at risk, guide a family through a crisis, bring a community together, or support a family through a bereavement. Real jobs here include care assistant, support worker, social worker, family support worker, youth and community worker, faith and community leader, and funeral service roles.\n\nIt matters because adult social care is one of the largest employers in the country, with about one and a half million jobs in England alone, and demand grows every year as people live longer. The people in this world keep others safe, independent and treated with dignity.\n\nYou could work in someone's home, a care home, a supported living service, a council social care team, a school, a youth or community centre, a charity or a faith organisation, usually out among the people you support rather than behind a desk.\n\nAnd it is changing, with more care delivered at home, new technology supporting independence, and clearer career routes from care assistant through to registered manager, nurse associate or social worker.\n\nIt tends to suit warm, patient and dependable people who notice how others are feeling, who can stay calm when things are hard, and who want work that genuinely makes a difference every day.\n\nThis world is open both ways. Most people start through an apprenticeship or directly in a care role with training on the job, and social work and some leadership roles need a degree or a degree apprenticeship, so it suits you whether or not you plan to go to university.",
+  },
+});

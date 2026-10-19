@@ -1,5 +1,6 @@
 // src/Components/Survey/ResultsComponent.js
 import React, { useState, useEffect, useLayoutEffect, useRef, useMemo, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 import './ResultsComponent.css';
 import ReportLimitModal from '../Common/ReportLimitModal';
@@ -27,13 +28,14 @@ import { supabase } from '../../utils/supabaseClient';
 import { applyCouponCode } from '../../utils/applyCoupon';
 import { getStrengthIcon, getEnvironmentIcon, getCareerWorldIcon, getPathwayIcon } from '../../utils/iconMap';
 import { ThumbsUp, ThumbsDown } from 'phosphor-react';
-import { getProfileQualityGateMessage } from '../../utils/profileQualityGate';
+import { getProfileQualityGateMessage, getProfileQualityCaveat } from '../../utils/profileQualityGate';
+import { bandForScore, bandTier } from '../../utils/bands';
 import { setActiveRunId } from '../../utils/savedItems';
 import { findChildFavourites, deleteFavouriteRows, pathwayParentMeta } from '../../utils/favouriteCascade';
 import { normaliseFavouriteType } from '../../utils/favourites';
 import { canonicalItem } from '../../utils/canonicalIds';
 import CascadeRemoveModal from '../Common/CascadeRemoveModal';
-import InlineError, { StillWorkingNote } from '../Common/InlineError';
+import InlineError from '../Common/InlineError';
 import Notice from '../Common/Notice';
 import { friendlyError } from '../../utils/friendlyError';
 
@@ -132,7 +134,6 @@ function LoadingSpinnerWithProgress() {
 
         <p className="staged-loader-text">
           This takes a minute or two. Keep this page open and your report will appear here.
-          <StillWorkingNote inline>{' '}The first one can take a little longer.</StillWorkingNote>
         </p>
       </div>
     </div>
@@ -649,13 +650,9 @@ function showFeedbackTooltipForButton(button) {
   showFloatingTooltipForElement(button);
 }
 
-// Map a 0-100 subdimension score to a tier key (matches the pill bands elsewhere).
+// Map a 0-100 subdimension score to a tier key: the shared 80/70/60 band rule.
 function strengthTraitTier(score) {
-  const s = Number(score) || 0;
-  if (s >= 70) return 'standout';
-  if (s >= 60) return 'strong';
-  if (s >= 50) return 'good';
-  return 'lower';
+  return bandTier(bandForScore(score));
 }
 
 // Replace inline mentions of subdimension names in a strength's narrative with the
@@ -1998,7 +1995,7 @@ export default function ResultsComponent({
   const profileTabs = [
     { key: 'profile', label: 'Your Type' },
     { key: 'traits', label: 'Traits' },
-    { key: 'selfawareness', label: 'Self-Awareness' },
+    { key: 'selfawareness', label: 'Profile Clarity' },
   ];
 
   // Same phone tab-strip fade behaviour as the Analysis tabs.
@@ -2980,6 +2977,7 @@ export default function ResultsComponent({
           <p>
             Your unique CareerDNA is based on seven profiles that represent different ways people think, act and find motivation.
             Your results show how closely you relate to each one. Most people show stronger links with two or three profiles, but it is the combination of all seven that creates your own unique CareerDNA mix.
+            The results show how closely your answers fit each profile, not how you compare with anyone else.
             Hover over each result to see a brief description of that profile.
           </p>
           <div className="card-chart">
@@ -2993,7 +2991,7 @@ export default function ResultsComponent({
           <p>
             Your CareerDNA is built around four core areas: <strong>Who You Are</strong>, <strong>What You Love</strong>, <strong>What Matters</strong>, and <strong>How You Work Best</strong>.
             Together, they capture your key psychological drivers, including your behaviour, interests, values and working preferences.
-            Each area is broken down into subdimensions, which show where your natural tendencies are strongest. The chart below visualises these patterns.
+            Each area is broken down into subdimensions, which show where your natural tendencies are strongest. Each level shows how strongly your answers leaned towards that trait. The chart below visualises these patterns.
             There are no “good” or “bad” scores. Lower scores simply reflect different preferences, not weaknesses. What matters is the overall pattern and what it suggests about where you are most likely to thrive.
           </p>
           <div className="section-divider" />
@@ -3010,11 +3008,12 @@ export default function ResultsComponent({
       )}
       {key === 'selfawareness' && (
         <>
-          <h2 className="analysis-section-title">How well you know yourself</h2>
+          <h2 className="analysis-section-title">How clearly your preferences came through</h2>
           <p>
-            This estimates how clearly and consistently your answers describe you across the four CareerDNA areas. It looks at how decisive your answers are and how consistently related answers point in the same direction.
-            Higher % suggests a clearer and more consistent self-view at this moment in time. It’s not a measure of ability, intelligence or worth.
-            Just a signal of how strongly your preferences and tendencies came through in your answers today.
+            This shows how much your answers can be relied on in each of the four CareerDNA areas. It looks at three things: whether questions about the same trait were answered in a similar way, how often you chose the middle option, and whether some traits in the area stand out clearly above others.
+            If your answering pattern as a whole looked unreliable, for example agreeing with nearly every statement or choosing the same option many times in a row, clarity is held down in every area.
+            High clarity means the matches built from that area can be trusted. Lower clarity means they are more tentative, not that anything is wrong with you.
+            It is not a measure of ability, intelligence or worth, and it reflects your answers today, not a fixed fact about you.
           </p>
           <div className="card-chart">
             <div style={{ width: '820px', maxWidth: '100%', margin: '0 auto' }}>
@@ -3067,6 +3066,19 @@ export default function ResultsComponent({
     }
     return (
       <div className="analysis-tab-body">
+        {analysisQualityGate.shouldBlockAnalysis && (
+          <p className="analysis-quality-caveat" role="note">
+            {getProfileQualityCaveat(analysisQualityGate)}
+            {typeof (onFreshRetake || onRetake) === 'function' && (
+              <>
+                {' '}
+                <button type="button" className="analysis-quality-caveat-link" onClick={onFreshRetake || onRetake}>
+                  Retake the assessment
+                </button>
+              </>
+            )}
+          </p>
+        )}
         <div className="analysis-tabs-panel analysis-tabs-panel--full">
           {tab.key === 'discovermore' ? (
             <>
@@ -3282,6 +3294,14 @@ export default function ResultsComponent({
                     <div className="analysis-box analysis-box--tabbed is-ready">
                       <div className="analysis-tabs-layout">
                         <aside className="analysis-tabs-sidebar">
+                          <div className="results-back-wrap">
+                            <Link to="/profile" className="results-back-link">
+                              <span className="results-back-link__icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M15 6l-6 6 6 6" /></svg>
+                              </span>
+                              Back to profile
+                            </Link>
+                          </div>
                           <div
                             className="analysis-tabs-sidebar__list"
                             ref={profileTabsListRef}
@@ -3452,7 +3472,11 @@ export default function ResultsComponent({
 
                               <div className="analysis-quality-modal-icon" aria-hidden="true">!</div>
 
-                              <h3 id="analysisQualityTitle">We recommend a <span className="analysis-quality-modal-accent">retake</span></h3>
+                              <h3 id="analysisQualityTitle">
+                                {analysisQualityGate.hardBlock
+                                  ? <>These answers need a <span className="analysis-quality-modal-accent">retake</span></>
+                                  : <>We recommend a <span className="analysis-quality-modal-accent">retake</span></>}
+                              </h3>
 
                               <p>{analysisQualityMessage}</p>
                               <ul className="analysis-quality-modal-list">
@@ -3460,16 +3484,23 @@ export default function ResultsComponent({
                                 <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg><span>Use the Not sure? guidance under a question if its meaning is unclear</span></li>
                                 <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg><span>Choose the middle option only when it is true for you</span></li>
                               </ul>
-                              <p className="analysis-quality-modal-note"><strong>Retaking is free</strong> and does not use one of your reports. If you generate a report now, it will be based on these unreliable answers and will use one of your reports.</p>
+                              <p className="analysis-quality-modal-note">
+                                <strong>Retaking is free</strong> and does not use one of your reports.
+                                {analysisQualityGate.hardBlock
+                                  ? ' A report cannot be generated from these answers.'
+                                  : ' If you continue anyway, this report will use one of your reports and will be built on answers you will probably want to redo. You would then need another report for the retake, so retaking first is the better use of your allowance.'}
+                              </p>
 
                               <div className="analysis-quality-modal-actions">
-                                <button
-                                  type="button"
-                                  className="analysis-quality-modal-secondary"
-                                  onClick={() => runAnalysisNow({ bypassQualityGate: true })}
-                                >
-                                  Generate anyway
-                                </button>
+                                {!analysisQualityGate.hardBlock && (
+                                  <button
+                                    type="button"
+                                    className="analysis-quality-modal-secondary"
+                                    onClick={() => runAnalysisNow({ bypassQualityGate: true })}
+                                  >
+                                    Continue anyway
+                                  </button>
+                                )}
 
                                 {typeof (onFreshRetake || onRetake) === 'function' && (
                                   <button

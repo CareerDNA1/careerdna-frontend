@@ -244,7 +244,7 @@
 }
 
 .selection-detail-card__signal-label {
-  font-size: 0.66rem;
+  font-size: 0.72rem;
   font-weight: 600;
   line-height: 1;
   font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
@@ -283,7 +283,7 @@
   align-items: center;
   gap: 4px;
   margin-left: 8px;
-  font-size: 0.66rem;
+  font-size: 0.72rem;
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 999px;
@@ -293,10 +293,10 @@
 }
 /* Single-colour (brand blue) — strength is read from the meter, not the colour. */
 /* Tier chip on pathway/role rows — Palette A (green / amber / blue / grey). */
-.cdna-band-pill--standout { color: #2f7d32; background: #e2f2e4; }
-.cdna-band-pill--strong { color: #9a6a12; background: #faeeda; }
+.cdna-band-pill--standout { color: #28692b; background: #e2f2e4; }
+.cdna-band-pill--strong { color: #86590d; background: #faeeda; }
 .cdna-band-pill--good { color: #185fa5; background: #e6f1fb; }
-.cdna-band-pill--lower { color: #6f757e; background: #f0f2f5; }
+.cdna-band-pill--lower { color: #616871; background: #f0f2f5; }
 .pathway-role-item__right .cdna-band-pill { margin-left: 0; }
 /* World/detail header signal pill: a touch larger than the inline row chips. */
 .cdna-band-pill--header {
@@ -315,7 +315,7 @@
   min-width: 0;
 }
 .cdna-match-meter__label {
-  font-size: 0.66rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: #2f6fed;
   white-space: nowrap;
@@ -338,9 +338,9 @@
 
 /* Match-meter bar coloured by tier (Palette A: green / amber / blue / grey). */
 .cdna-match-meter--standout .cdna-match-meter__fill { background: #2f7d32; }
-.cdna-match-meter--standout .cdna-match-meter__label { color: #2f7d32; }
+.cdna-match-meter--standout .cdna-match-meter__label { color: #28692b; }
 .cdna-match-meter--strong .cdna-match-meter__fill { background: #c98a17; }
-.cdna-match-meter--strong .cdna-match-meter__label { color: #9a6a12; }
+.cdna-match-meter--strong .cdna-match-meter__label { color: #86590d; }
 .cdna-match-meter--good .cdna-match-meter__fill { background: #2f6fed; }
 .cdna-match-meter--good .cdna-match-meter__label { color: #185fa5; }
 .cdna-match-meter--lower .cdna-match-meter__fill { background: #9aa0a8; }
@@ -502,7 +502,7 @@
   padding: 0;
   background: none;
   color: #2f6fed;
-  font-size: 0.55rem;
+  font-size: 0.66rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   line-height: 1;
@@ -533,7 +533,7 @@
   border-color: #c6e6ca;
 }
 .selection-chip--tier-top .selection-chip__icon,
-.selection-chip--tier-top .selection-chip__band { color: #2f7d32; }
+.selection-chip--tier-top .selection-chip__band { color: #28692b; }
 .selection-chip--tier-top .selection-chip__label { color: #245e27; }
 
 .selection-chip--tier-strong {
@@ -541,7 +541,7 @@
   border-color: #f0dcb6;
 }
 .selection-chip--tier-strong .selection-chip__icon,
-.selection-chip--tier-strong .selection-chip__band { color: #9a6a12; }
+.selection-chip--tier-strong .selection-chip__band { color: #86590d; }
 .selection-chip--tier-strong .selection-chip__label { color: #78520e; }
 
 .selection-chip--tier-good {
@@ -555,11 +555,10 @@
 .selection-chip--tier-lower {
   background: #f0f2f5;
   border-color: #e0e4e9;
-  opacity: 0.82;
 }
 .selection-chip--tier-lower .selection-chip__icon,
 .selection-chip--tier-lower .selection-chip__band { color: #64748b; }
-.selection-chip--tier-lower .selection-chip__label { color: #6f757e; }
+.selection-chip--tier-lower .selection-chip__label { color: #616871; }
 
 /* Collapsible below-pills narrative (career worlds pilot). */
 .selection-narrative-expand {
@@ -1078,7 +1077,7 @@
 
 .selection-chip-tooltip__body {
   display: block;
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   font-weight: 400;
   line-height: 1.45;
   opacity: 0.92;
@@ -1254,7 +1253,7 @@
 
 .selection-signal-tooltip__body {
   display: block;
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   font-weight: 400;
   line-height: 1.45;
   opacity: 0.92;
@@ -1433,7 +1432,7 @@
    narrative — bold green, matching the strengths/environments treatment. */
 .cdna-narrative-trait {
   font-weight: 700;
-  color: #2f7d32;
+  color: #28692b;
   /* Never hyphenate/break a green trait or profile name mid-word. */
   -webkit-hyphens: none;
   hyphens: none;
@@ -1501,7 +1500,7 @@
 
 .selection-floating-tooltip__body {
   display: block;
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   font-weight: 400;
   line-height: 1.45;
   opacity: 0.92;
@@ -1697,3 +1696,22 @@
 
 /* Space between consecutive intro paragraphs. */
 .selection-explorer__intro-text + .selection-explorer__intro-text { margin-top: 10px; }
+
+/* Accessibility (audit item 25, 17 Oct 2026): every tappable chip, pill and
+   close control is at least 24px tall (WCAG 2.5.8). Padding grows the target;
+   the type size is unchanged. */
+.cdna-band-pill,
+.cdna-match-meter,
+.selection-chip,
+.cw-route-chip,
+.cw-match-badge {
+  min-height: 24px;
+  box-sizing: border-box;
+}
+.selection-floating-tooltip__close {
+  min-width: 28px;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

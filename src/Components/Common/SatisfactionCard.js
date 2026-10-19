@@ -212,6 +212,7 @@ export default function SatisfactionCard({ userId, assessmentRunId, asModal = fa
         <div className="satisfaction-comment-wrap">
           <textarea
             className="satisfaction-comment"
+            aria-label="What we can improve"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="Would love to hear what we can improve"

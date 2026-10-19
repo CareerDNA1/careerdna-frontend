@@ -9,14 +9,14 @@ const archetypeWeights = {
   "Originality": {
     Achiever: 0,
     Connector: 0,
-    Creator: 0.8,
-    Explorer: 0,
+    Creator: 1,
+    Explorer: 0.4,
     Organizer: 0,
     Thinker: 0,
     Visionary: 0.8
   },
   "Reliability": {
-    Achiever: 0.8,
+    Achiever: 0.6,
     Connector: 0,
     Creator: 0,
     Explorer: 0,
@@ -26,7 +26,7 @@ const archetypeWeights = {
   },
   "Resilience": {
     Achiever: 0.5,
-    Connector: 0.5,
+    Connector: 0,
     Creator: 0,
     Explorer: 0,
     Organizer: 0,
@@ -36,11 +36,11 @@ const archetypeWeights = {
   "Adaptability": {
     Achiever: 0,
     Connector: 0,
-    Creator: 0,
+    Creator: 0.3,
     Explorer: 1,
     Organizer: 0,
     Thinker: 0,
-    Visionary: 0
+    Visionary: 0.3
   },
   "Social Confidence": {
     Achiever: 0,
@@ -49,7 +49,7 @@ const archetypeWeights = {
     Explorer: 0,
     Organizer: 0,
     Thinker: 0,
-    Visionary: 0
+    Visionary: 0.4
   },
   "Empathy": {
     Achiever: 0,
@@ -90,7 +90,7 @@ const archetypeWeights = {
     Visionary: 0
   },
   "Entrepreneurial Drive": {
-    Achiever: 0,
+    Achiever: 0.4,
     Connector: 0,
     Creator: 0,
     Explorer: 0,
@@ -111,9 +111,9 @@ const archetypeWeights = {
     Achiever: 0,
     Connector: 0,
     Creator: 0,
-    Explorer: 1,
+    Explorer: 0.8,
     Organizer: 0,
-    Thinker: 0,
+    Thinker: 0.4,
     Visionary: 0
   },
   "Data Curiosity": {
@@ -121,8 +121,8 @@ const archetypeWeights = {
     Connector: 0,
     Creator: 0,
     Explorer: 0,
-    Organizer: 0.3,
-    Thinker: 1,
+    Organizer: 0.6,
+    Thinker: 0.6,
     Visionary: 0
   },
 
@@ -140,7 +140,7 @@ const archetypeWeights = {
     Achiever: 0,
     Connector: 0,
     Creator: 0.5,
-    Explorer: 0.4,
+    Explorer: 0,
     Organizer: 0,
     Thinker: 0.5,
     Visionary: 0.5
@@ -168,14 +168,14 @@ const archetypeWeights = {
     Connector: 0,
     Creator: 0,
     Explorer: 0,
-    Organizer: 1,
+    Organizer: 0.6,
     Thinker: 0,
     Visionary: 0
   },
   "Mastery": {
-    Achiever: 0,
+    Achiever: 0.5,
     Connector: 0,
-    Creator: 0.7,
+    Creator: 0.5,
     Explorer: 0,
     Organizer: 0,
     Thinker: 1,
@@ -197,7 +197,7 @@ const archetypeWeights = {
     Connector: 1,
     Creator: 0,
     Explorer: 0,
-    Organizer: 0.4,
+    Organizer: 0,
     Thinker: 0,
     Visionary: 0
   },
@@ -216,11 +216,11 @@ const archetypeWeights = {
     Creator: 0,
     Explorer: 0,
     Organizer: 1,
-    Thinker: 0.8,
+    Thinker: 0.5,
     Visionary: 0
   },
   "Pace": {
-    Achiever: 1,
+    Achiever: 0.6,
     Connector: 0,
     Creator: 0,
     Explorer: 0.5,

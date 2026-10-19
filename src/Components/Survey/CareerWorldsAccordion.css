@@ -265,10 +265,10 @@
   cursor: default;
 }
 .cw-match-badge svg { flex: 0 0 auto; }
-.cw-match-badge--top { background: #e2f2e4; color: #2f7d32; }
-.cw-match-badge--strong { background: #faeeda; color: #9a6a12; }
+.cw-match-badge--top { background: #e2f2e4; color: #28692b; }
+.cw-match-badge--strong { background: #faeeda; color: #86590d; }
 .cw-match-badge--good { background: #e6f1fb; color: #185fa5; }
-.cw-match-badge--lower { background: #f0f2f5; color: #6f757e; }
+.cw-match-badge--lower { background: #f0f2f5; color: #616871; }
 
 /* Big reaction buttons at the bottom of the card. */
 .cw-react-row {

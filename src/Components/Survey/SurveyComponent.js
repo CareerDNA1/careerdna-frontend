@@ -173,6 +173,11 @@ export default function SurveyComponent({
     );
   };
 
+  // Spoken by screen readers and shown as a small tooltip on hover or focus,
+  // so the middle options have names and not only numbers. The same five
+  // anchors on every item; the row itself keeps the two end labels only.
+  const LIKERT_OPTION_NAMES = { 1: 'Strongly disagree', 2: 'Disagree', 3: 'In between', 4: 'Agree', 5: 'Strongly agree' };
+
   const renderLikertButtons = () => (
     <div className="likert-scale-row likert-scale-row--premium">
       <div className="scale-side scale-side-left">
@@ -180,14 +185,16 @@ export default function SurveyComponent({
         <span>Disagree</span>
       </div>
 
-      <div className="likert-buttons likert-buttons--premium" key={currentQuestion?.id}>
+      <div className="likert-buttons likert-buttons--premium" role="group" aria-label="Your answer" key={currentQuestion?.id}>
         {[1, 2, 3, 4, 5].map((n) => (
           <button
             key={n}
             type="button"
             onClick={() => handleAnswer(n)}
             className={`likert-option likert-option--${n} ${selectedVal === n ? 'selected' : ''}`}
-            aria-label={`${n} out of 5`}
+            aria-label={`${LIKERT_OPTION_NAMES[n]} (${n} of 5)`}
+            aria-pressed={selectedVal === n}
+            data-anchor={LIKERT_OPTION_NAMES[n]}
           >
             {n}
           </button>

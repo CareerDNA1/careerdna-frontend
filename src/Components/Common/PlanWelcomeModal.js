@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import Celebration from './Celebration';
 import './PlanWelcomeModal.css';
 
-// Shown once, on return from a successful Stripe checkout. Three variants:
-// a new Explorer plan, a new or upgraded Premium plan, and an advisor
-// question pack. Follows the house modal frame (white card, radius 20,
+// Shown once, on return from a successful Stripe checkout. Four variants:
+// a new Explorer plan, a new or upgraded Premium plan, an advisor question
+// pack, and an extra report. Follows the house modal frame (white card, radius 20,
 // title split black / blue, tick list, pill buttons bottom right).
 //
 // Props
-//   kind        'explore' | 'premium' | 'pack'
+//   kind        'explore' | 'premium' | 'pack' | 'report'
 //   audience    'school' | 'university' (changes the Premium lines)
 //   hasReport   whether the student already has a report to open
 //   onPrimary   called after the primary button (open report / ask advisor / start)
@@ -25,7 +25,18 @@ export default function PlanWelcomeModal({ kind = 'explore', audience = 'school'
   }, []);
 
   const isUni = String(audience || '').toLowerCase() === 'university';
-  const copy = kind === 'pack'
+  const copy = kind === 'report'
+    ? {
+        title: ['Your extra report ', 'is ready to use'],
+        body: 'Your payment went through and one more report has been added to your account.',
+        lines: [
+          'Retake the assessment or re-run it with different settings',
+          'Your earlier reports stay in your history',
+          'Your remaining reports are shown on your profile',
+        ],
+        primary: 'Generate a new report',
+      }
+    : kind === 'pack'
     ? {
         title: ['Your Advisor has ', 'more questions'],
         body: 'Your payment went through and the extra questions are ready to use now.',

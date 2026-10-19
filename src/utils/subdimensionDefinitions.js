@@ -2,87 +2,89 @@
 // CareerDNA v2 — detailed definitions for all 25 behavioural dimensions.
 // Keys match the subdimension label strings used in questions.js and archetypeWeights.js.
 // These describe the dimension itself without linking directly to archetypes.
+// Written in plain second person for students aged 13+ (item 27, 17 Oct 2026);
+// the same text is shown in the report and given to the prose and Advisor models.
 
 const SUBDIMENSION_DEFINITIONS = {
 
   // WHO YOU ARE
   "Originality":
-    "Reflects a tendency to generate novel ideas, take unconventional approaches, and find original connections between different domains. Higher scores indicate natural creative thinking and a preference for finding new ways to approach problems.",
+    "You come up with ideas that other people have not thought of. When there is a usual way of doing something, you look for a different one, and you often notice links between things that seem to have nothing in common. New ideas come to you easily and you enjoy working them out.",
 
   "Reliability":
-    "Reflects consistent follow-through on commitments, self-discipline, and the ability to complete tasks on time and to a high standard. Higher scores indicate strong planning, dependability, and follow-through even when work becomes difficult.",
+    "When you say you will do something, you do it. You plan ahead, finish work on time and hold yourself to a high standard. When a task turns out to be harder or duller than expected, you keep going until it is done.",
 
   "Resilience":
-    "Reflects the capacity to recover from setbacks and maintain progress toward goals under sustained difficulty. Higher scores indicate emotional steadiness and the ability to keep going when things are slow, hard, or frustrating.",
+    "Setbacks knock you back for a while, then you get up and carry on. You stay steady when things are slow, hard or frustrating, and you can keep working towards a goal over a long stretch without losing heart.",
 
   "Adaptability":
-    "Reflects comfort with change, ambiguity, and shifting expectations. Higher scores indicate ease when plans change unexpectedly and confidence navigating uncertain or unpredictable situations.",
+    "When plans change at the last minute, you take it in your stride. You are comfortable when the situation is unclear or nobody is quite sure what will happen next, and you can adjust what you are doing without getting thrown.",
 
   "Social Confidence":
-    "Reflects comfort and energy in social and group settings, with ease of communication and interpersonal engagement. Higher scores indicate enthusiasm for group interaction and natural confidence around others.",
+    "You feel at ease in a room full of people and often come away with more energy than you went in with. Talking to new people, speaking up in a group and making conversation come naturally to you.",
 
   "Empathy":
-    "Reflects sensitivity to others' emotional states and consideration for how decisions affect other people. Higher scores indicate a natural ability to sense how others feel and a tendency to factor this into decisions and actions.",
+    "You pick up quickly on how other people are feeling, often before they say anything. When you make a decision, you think about how it will land for the people involved, and that shapes what you choose to do.",
 
   // WHAT YOU LOVE
   "Analytical Curiosity":
-    "Reflects a drive to investigate, question, and understand; satisfaction from deep analysis and systematic reasoning. Higher scores indicate enjoyment from researching topics thoroughly and making sense of complex information.",
+    "You want to know how and why things work. You enjoy digging into a topic, asking questions and following the reasoning all the way through until the answer makes sense. Working out something complicated is satisfying in itself.",
 
   "Creative Expression":
-    "Reflects motivation to make or design original work, and the importance of aesthetic quality and personal voice. Higher scores indicate a strong drive to create and genuine satisfaction in how work looks, sounds, or feels.",
+    "You feel a pull to make things: writing, music, design, images, performance or anything else that carries your own stamp. How the finished piece looks, sounds or feels matters a great deal to you, and getting it right is a real pleasure.",
 
   "Helping & Caring":
-    "Reflects intrinsic motivation to support, teach, or improve outcomes for others. Higher scores indicate that helping people develop or overcome challenges is genuinely rewarding, not just incidental to the work.",
+    "You get a lot out of helping other people learn, get better or get through a hard time. Seeing someone come on because of something you did is one of the most rewarding parts of any work for you.",
 
   "Entrepreneurial Drive":
-    "Reflects energy from identifying opportunities, initiating action, and leading the building of something new. Higher scores indicate a preference for taking charge, spotting possibilities, and making things happen.",
+    "You spot opportunities and want to act on them. You like taking the lead, getting something new off the ground and making things happen, and you are comfortable being the person who says what should come next.",
 
   "Technical Curiosity":
-    "Reflects interest in how tools, systems, and physical materials work, and motivation from hands-on practical engagement. Higher scores indicate satisfaction from building, fixing, making, or operating things.",
+    "You are drawn to how tools, machines, systems and materials work. You enjoy taking things apart, building, fixing, making or operating them, and you learn best with your hands on the real thing.",
 
   "Cultural & Global Curiosity":
-    "Reflects interest in diverse cultures, societies, politics, philosophy, history, and global affairs. Higher scores indicate that big questions about how the world works and differs are genuinely engaging and energising.",
+    "You are interested in how different people and societies live: their history, politics, beliefs and ways of seeing the world. Big questions about why the world works the way it does, and why it differs from place to place, hold your attention.",
 
   "Data Curiosity":
-    "Reflects intrinsic interest in working with numbers, data, records, and information systems. Higher scores indicate satisfaction from organising and making sense of information, and comfort spending significant time with data.",
+    "You like working with numbers, records and information. Sorting it, finding the pattern in it and turning it into something that makes sense is satisfying work for you, and you are happy spending long stretches on it.",
 
   // WHAT MATTERS
   "Purpose & Impact":
-    "Reflects the need for work to contribute to something that lasts or matters beyond personal achievement: a field, a community, an organisation or the way something works in the world. Higher scores indicate that work with no wider significance is difficult to sustain, however interesting it is.",
+    "You need your work to count for something beyond your own success: a community, a cause, a field or the way something works in the world. When work has no wider point to it, you find it hard to stay motivated, however interesting it is.",
 
   "Autonomy":
-    "Reflects the need for freedom and self-determination in how work is approached. Higher scores indicate discomfort with close direction or micromanagement, and a strong preference for owning how things get done.",
+    "You want freedom in how you do your work. Being closely directed or checked on all the time wears you down, and you do your best work when you are trusted to decide how to get things done.",
 
   "Belonging":
-    "Reflects the need for meaningful connection, inclusion, and team identity. Higher scores indicate that feeling genuinely part of a group or community is an important source of motivation and wellbeing.",
+    "Feeling part of a team or community matters a great deal to you. Knowing you are included, that people have your back and that you share something with the group is a big part of what keeps you motivated and well.",
 
   "Achievement":
-    "Reflects the drive for success, recognition, and high performance. Higher scores indicate strong motivation from being seen to excel, from visible achievement, and from financial reward as a marker of success.",
+    "You are driven to do well and to be seen doing well. Clear success, recognition from others and good pay as a sign that you have got there all push you on, and you set yourself high targets.",
 
   "Security":
-    "Reflects preference for career stability, predictable income, and low occupational risk. Higher scores indicate that knowing the career chosen is stable and unlikely to change drastically matters a great deal.",
+    "You want a career you can count on: steady work, a predictable income and a path that is unlikely to disappear or change beyond recognition. Knowing where you stand matters a great deal to you.",
 
   "Mastery":
-    "Reflects the drive to develop deep expertise and the intrinsic satisfaction of sustained, deliberate pursuit of excellence. Higher scores indicate that getting better over time is a stronger motivator than external recognition.",
+    "You want to become really good at something and keep getting better. The satisfaction comes from the skill itself and from seeing your own progress over time, more than from anyone else noticing.",
 
   // HOW YOU WORK BEST
   "Structure":
-    "Reflects preference for clear processes, organised environments, and well-defined procedures. Higher scores indicate that having a clear plan and knowing exactly what is expected enables consistently better performance.",
+    "You work best with a clear plan, organised surroundings and a set way of doing things. Knowing exactly what is expected of you, and in what order, lets you do your best work.",
 
   "Collaboration":
-    "Reflects preference for working with others, and motivation and productivity gains from shared goals and team dynamics. Higher scores indicate that working closely with a team produces better results than working alone.",
+    "You do your best work alongside other people. Shared goals, bouncing ideas around and the energy of a team lift your motivation, and you find that results come out better when you work them out together.",
 
   "Independence":
-    "Reflects preference for working alone and comfort with self-directed tasks requiring sustained individual effort. Higher scores indicate significantly higher productivity when working independently with minimal interruption.",
+    "You work best on your own. Given a task and some quiet, you can concentrate for long periods and get a great deal done, and you are comfortable steering your own work without needing to check in.",
 
   "Precision":
-    "Reflects attention to accuracy, detail, and quality, and thoroughness in completing tasks to a high standard. Higher scores indicate that noticing errors, checking work carefully, and producing accurate outputs come naturally.",
+    "You notice the small things: a wrong figure, a missed step, a detail that does not add up. You check your work carefully and take pride in getting it exactly right, and accuracy comes naturally to you.",
 
   "Pace":
-    "Reflects comfort with and preference for fast-paced, high-intensity, dynamic environments. Higher scores indicate that pressure, urgency, and a busy workload are energising rather than draining.",
+    "You like work that moves fast. Pressure, deadlines and a full day give you energy, and you are at your best when there is plenty going on and decisions have to be made quickly.",
 
   "Variety":
-    "Reflects preference for diverse tasks, varied responsibilities, and changing environments. Higher scores indicate that doing the same type of work day after day would make it very difficult to stay engaged and motivated.",
+    "You need change in your work: different tasks, different problems and different settings. Doing the same kind of thing day after day drains you, and a mix of things to do keeps you interested and switched on.",
 
 };
 

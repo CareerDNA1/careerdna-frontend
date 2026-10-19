@@ -3950,3 +3950,12 @@
   .profile-hero-btn { padding: 6px 14px; font-size: 13px; }
   .profile-hero-btn--muted { position: static; font-size: 11px; padding: 3px 9px; }
 }
+
+/* Accessibility: 24px minimum target on the small popover close (audit item 25). */
+.profile-locked-popover__close {
+  min-width: 26px;
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

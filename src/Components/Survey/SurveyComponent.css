@@ -746,6 +746,41 @@
   box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
 }
 
+/* Anchor name on hover or keyboard focus (same five words on every item).
+   Pure CSS from data-anchor, so there is no state and nothing to misfire. */
+.likert-option {
+  position: relative;
+}
+.likert-option::after {
+  content: attr(data-anchor);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%) translateY(4px);
+  padding: 5px 9px;
+  border-radius: 8px;
+  border: 1px solid #dbe6fb;
+  background: #ffffff;
+  color: #14213d;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.10);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease, transform 120ms ease;
+  z-index: 6;
+}
+.likert-option:hover::after,
+.likert-option:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+@media (hover: none) {
+  .likert-option::after { display: none; }
+}
+
 .likert-option--1 { border-color: #d9e5fb; }
 .likert-option--2 { border-color: #d0dffa; }
 .likert-option--3 { border-color: #c7d9f8; }
@@ -1392,7 +1427,7 @@
   }
   .scale-side-left,
   .scale-side-right {
-    font-size: 10.5px !important;
+    font-size: 11.5px !important;
     line-height: 1.2 !important;
   }
   .likert-buttons,

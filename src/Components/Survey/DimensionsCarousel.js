@@ -9,6 +9,7 @@ import {
   Legend,
 } from "chart.js";
 import SUBDIMENSION_DEFINITIONS from "../../utils/subdimensionDefinitions";
+import { bandForScore, bandBlocks } from "../../utils/bands";
 import whoImage from "../../Assets/images/who_you_are.jpg";
 import loveImage from "../../Assets/images/what_you_love.jpg";
 import mattersImage from "../../Assets/images/what_matters.jpg";
@@ -52,11 +53,10 @@ const truncate = (s, n = 30) =>
 
 const normalizePct = (v) => (v <= 1 ? v * 100 : v);
 
+// Trait level: the shared 80/70/60 band rule (utils/bands.js).
 function getDimensionSignal(score = 0) {
-  if (score >= 80) return { label: "Standout", value: 4 };
-  if (score >= 70) return { label: "Strong", value: 3 };
-  if (score >= 60) return { label: "Good", value: 2 };
-  return { label: "Lower", value: 1 };
+  const label = bandForScore(score);
+  return { label, value: bandBlocks(label) };
 }
 
 // Tier palette — matches the tier PILLS: pale tinted fill with a soft same-hue

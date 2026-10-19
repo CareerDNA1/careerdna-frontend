@@ -66,6 +66,7 @@ export default function ReportProblemModal({ onClose, assessmentRunId = '', pref
             <textarea
               ref={textareaRef}
               className="report-problem-textarea"
+              aria-label="Describe the problem"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Describe the problem…"

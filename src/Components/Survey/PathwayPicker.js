@@ -29,7 +29,7 @@ function remember(storageKey, value) {
 // Plain band pill (same classes as the card badges), no tooltip hooks.
 function bandKey(label = '') {
   const l = String(label || '').toLowerCase();
-  if (l.startsWith('standout') || l.startsWith('top')) return 'standout';
+  if (l.startsWith('standout')) return 'standout';
   if (l.startsWith('strong')) return 'strong';
   if (l.startsWith('good')) return 'good';
   return 'lower';

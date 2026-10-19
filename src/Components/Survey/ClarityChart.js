@@ -10,7 +10,7 @@ import {
 } from "chart.js";
 
 import QUESTIONS from "../../utils/questions";
-import { computeClarityPercents } from "../../utils/selfAwarenessSummary";
+import { computeClarityPercents, CLARITY } from "../../utils/selfAwarenessSummary";
 import { readProgress } from "../../Hooks/useProgress";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
@@ -20,27 +20,45 @@ const CDNA_BAR_THICKNESS_MOBILE = 28;
 const CDNA_BAR_RADIUS = 8;
 const CDNA_BAR_BORDER_WIDTH = 1.5;
 
-// Must use the SAME thresholds as getClarityBandValue below, so the tooltip label
-// always agrees with the bar's band (High 72+, Developing 66+, else Low).
+// Bands come from utils/selfAwarenessSummary (High 70+, Developing 50+, else
+// Low) so the tooltip label always agrees with the bar.
+const HIGH = CLARITY.bandHigh;
+const DEVELOPING = CLARITY.bandDeveloping;
+
 function getClarityLevel(score = 0) {
-  if (score >= 72) return "High clarity";
-  if (score >= 66) return "Developing clarity";
+  if (score >= HIGH) return "High clarity";
+  if (score >= DEVELOPING) return "Developing clarity";
   return "Low clarity";
 }
 
 function getClarityBandValue(score = 0) {
-  if (score >= 72) return 100;
-  if (score >= 66) return 66;
+  if (score >= HIGH) return 100;
+  if (score >= DEVELOPING) return 66;
   return 33;
 }
 
-// Tier palette — matches the tier PILLS: pale fill + soft same-hue border; on
+// Tier palette, matching the tier pills: pale fill + soft same-hue border; on
 // hover the bar fills with the solid tier colour. high = Standout green,
 // medium = Strong amber, low = Lower grey.
 function getClarityBandColors(score = 0) {
-  if (score >= 72) return { background: "#9fe1cb", border: "#8ad9c1", hover: "#78d2b6" };
-  if (score >= 66) return { background: "#fac775", border: "#f4bd60", hover: "#f2b74f" };
+  if (score >= HIGH) return { background: "#9fe1cb", border: "#8ad9c1", hover: "#78d2b6" };
+  if (score >= DEVELOPING) return { background: "#fac775", border: "#f4bd60", hover: "#f2b74f" };
   return { background: "#d3d1c7", border: "#c6c3b7", hover: "#bfbcae" };
+}
+
+// Which of the three components pulled this area down most, as a short phrase.
+function weakestComponentNote(components) {
+  if (!components) return "";
+  const entries = [
+    ["consistency", components.consistency, "questions about the same trait were answered differently"],
+    ["decisiveness", components.decisiveness, "the middle option was chosen often"],
+    ["differentiation", components.differentiation, "most traits in this area sit at similar levels, so none stands out"],
+  ].filter(([, v]) => Number.isFinite(v));
+  if (!entries.length) return "";
+  entries.sort((a, b) => a[1] - b[1]);
+  const [, value, phrase] = entries[0];
+  if (value >= 75) return "";
+  return `What lowered it most: ${phrase}.`;
 }
 
 function getOrCreateBodyTooltip() {
@@ -120,14 +138,19 @@ function externalTooltipRightOfBar(ctx) {
   const rawScore = Number(ds.rawValues?.[dp.dataIndex] ?? dp.raw ?? 0);
   const bandValue = Number(dp.raw || getClarityBandValue(rawScore));
   const levelLabel = getClarityLevel(rawScore);
+  const components = ds.components?.[dp.dataIndex] || null;
+  const capped = !!ds.capped;
   let levelDesc = "";
-  if (rawScore >= 72) {
-    levelDesc = "Your answers show a clear and consistent pattern across this dimension, suggesting your preferences and tendencies came through strongly throughout the questionnaire.";
-  } else if (rawScore >= 66) {
-    levelDesc = "Your answers show some clear patterns while also reflecting flexibility across different areas. This is common when interests and preferences are still developing or span multiple areas. If you feel your answers did not fully reflect you, you may wish to revisit the questionnaire in the future.";
+  if (rawScore >= HIGH) {
+    levelDesc = "Your answers in this area were consistent and clearly patterned: questions about the same trait were answered the same way, you rarely sat in the middle, and some traits stand out well above others. The matches built from this area can be trusted.";
+  } else if (rawScore >= DEVELOPING) {
+    levelDesc = "Your answers in this area were fairly consistent, but the picture is still forming. The matches built from this area are useful but less certain than they could be. Liking and disliking career worlds and pathways will sharpen them.";
   } else {
-    levelDesc = "Your answers suggest a broader or more mixed pattern in this area. This may indicate that your preferences vary across different situations, or that this is an area where your interests and tendencies are still developing. If you feel your answers did not fully reflect you, you may wish to revisit the questionnaire in the future.";
+    levelDesc = "Your answers in this area did not settle into a clear pattern, so treat the matches built from it as suggestions rather than conclusions. If you feel the answers did not reflect you, retaking the questionnaire when you have a quiet moment will help.";
   }
+  const note = capped
+    ? "Your overall answering pattern (for example agreeing with nearly everything, or choosing the same option many times in a row) limits how clear any area can be."
+    : rawScore >= HIGH ? "" : weakestComponentNote(components);
 
   const xScale = chart.scales.x;
   const rightPx = xScale.getPixelForValue(bandValue);
@@ -138,6 +161,7 @@ function externalTooltipRightOfBar(ctx) {
     <div style="font-weight:700;margin-bottom:6px">${label}</div>
     <div style="margin-bottom:4px">Level: ${levelLabel}</div>
     <div style="font-size:12px;opacity:.9">${levelDesc}</div>
+    ${note ? `<div style="font-size:12px;opacity:.9;margin-top:6px">${note}</div>` : ""}
   `;
   positionExternalTooltip({
     el,
@@ -183,8 +207,6 @@ export default function ClarityChart({ answers: answersProp, minItems = 4, dpr, 
       return claritySummary;
     }
     return computeClarityPercents(QUESTIONS, answers, {
-      wCertainty: 0.4,
-      wCoherence: 0.6,
       minItemsPerDim: minItems,
       dimensionOrder: ["Who You Are", "What You Love", "What Matters", "How You Work Best"],
     });
@@ -192,6 +214,8 @@ export default function ClarityChart({ answers: answersProp, minItems = 4, dpr, 
 
   const labels = (clarity?.dimensions || []).map((d) => d.dimension);
   const rawValues = (clarity?.dimensions || []).map((d) => Number(d.clarityPct ?? 0));
+  const components = (clarity?.dimensions || []).map((d) => d.components || null);
+  const capped = clarity?.cap != null;
   const values = rawValues.map(getClarityBandValue);
 
   const backgroundColors = rawValues.map((v) => getClarityBandColors(v).background);
@@ -204,6 +228,8 @@ export default function ClarityChart({ answers: answersProp, minItems = 4, dpr, 
       label: "Clarity level",
       data: values,
       rawValues,
+      components,
+      capped,
       backgroundColor: backgroundColors,
       borderColor: borderColors,
       hoverBackgroundColor: hoverColors,

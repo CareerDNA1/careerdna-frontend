@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './FurtherStudyPanel.css';
-import { Info, BookOpen, Compass, UsersThree, GraduationCap, BookmarkSimple, TrendUp, TrendDown } from 'phosphor-react';
+import { Info, BookOpen, Compass, UsersThree, GraduationCap, BookmarkSimple, TrendUp, TrendDown, ArrowRight } from 'phosphor-react';
 import { fetchFurtherStudy, peekFurtherStudyCache } from '../../utils/fetchFurtherStudy';
 import { showSelectionTooltip, hideSelectionTooltip, PathwayReactionRow } from './SelectionInsightExplorer';
 import PathwayPicker, { readRemembered } from './PathwayPicker';
@@ -136,7 +136,7 @@ export function RouteItem({ route, open = false, onToggle, reaction = '', onReac
                       ? <TrendDown size={12} weight="bold" aria-hidden="true" />
                       : demand.dir === 'up'
                         ? <TrendUp size={12} weight="bold" aria-hidden="true" />
-                        : null}
+                        : <ArrowRight size={12} weight="bold" aria-hidden="true" />}
                     Demand {demand.short}
                   </span>
                 ) : null}

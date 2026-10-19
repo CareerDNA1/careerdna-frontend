@@ -34,6 +34,43 @@ body:has(#results-root),
   margin-bottom: 32px;
 }
 
+/* Way back to the profile from any section: an outlined pill at the top of
+   the rail (house secondary-button style), set apart from the tabs by a faint
+   divider so it reads as navigation rather than as the first tab. */
+.results-back-wrap {
+  padding: 2px 0 14px;
+  margin: 0 0 10px;
+  border-bottom: 1px solid #e6edf7;
+}
+.results-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #54657b;
+  text-decoration: none;
+  padding: 4px 10px 4px 4px;
+  border: 1px solid #dbe6f7;
+  background: #ffffff;
+  border-radius: 999px;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+.results-back-link__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #eef4ff;
+  color: #2f6fed;
+}
+.results-back-link:hover { color: #2f6fed; border-color: #b9cdf3; box-shadow: 0 2px 8px rgba(47, 111, 237, 0.10); }
+.results-back-link:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
+
 /* Faded divider - gradient fade on both edges */
 .section-divider {
   height: 1px;
@@ -696,7 +733,7 @@ body:has(#results-root),
 #results-root .cdna-signal-tooltip__body,
 #results-root .analysis-box .markdown-content .cdna-signal-tooltip__body {
   display: block;
-  font-size: 0.76rem;
+  font-size: 0.82rem;
   font-weight: 400;
   line-height: 1.45;
   opacity: 0.92;
@@ -1700,13 +1737,26 @@ body:has(#results-root),
     overflow: hidden !important;
   }
 
-  /* Right-edge fade + chevron: the standard "more to swipe" cue. */
+  /* Back-to-profile pill sits above the tab strip on the phone, inside the
+     card, and must not be covered by the swipe cue below it. */
+  .results-back-wrap {
+    position: relative;
+    z-index: 2;
+    padding: 10px 14px 8px !important;
+    margin: 0 !important;
+    border-bottom: none !important;
+    background: #ffffff;
+  }
+
+  /* Right-edge fade + chevron: the standard "more to swipe" cue, covering
+     only the tab strip row (the tab buttons are about 48px tall). */
   .analysis-tabs-sidebar::after {
     content: '\203A';
     position: absolute !important;
-    top: 0 !important;
+    top: auto !important;
     right: 0 !important;
     bottom: 1px !important;
+    height: 48px !important;
     width: 56px !important;
     display: flex !important;
     align-items: center !important;
@@ -2726,12 +2776,12 @@ body:has(#results-root),
 }
 .cdna-strength-trait__star { font-size: 0.62rem; }
 .analysis-box .markdown-content .cdna-strength-trait--standout { background:#e2f2e4; border-color:#c6e6ca; color:#245e27; }
-.analysis-box .markdown-content .cdna-strength-trait--standout .cdna-strength-trait__star { color:#2f7d32; }
+.analysis-box .markdown-content .cdna-strength-trait--standout .cdna-strength-trait__star { color:#28692b; }
 .analysis-box .markdown-content .cdna-strength-trait--strong { background:#faeeda; border-color:#f0dcb6; color:#78520e; }
-.analysis-box .markdown-content .cdna-strength-trait--strong .cdna-strength-trait__star { color:#9a6a12; }
+.analysis-box .markdown-content .cdna-strength-trait--strong .cdna-strength-trait__star { color:#86590d; }
 .analysis-box .markdown-content .cdna-strength-trait--good { background:#e6f1fb; border-color:#c4ddf4; color:#123f6e; }
 .analysis-box .markdown-content .cdna-strength-trait--good .cdna-strength-trait__star { color:#185fa5; }
-.analysis-box .markdown-content .cdna-strength-trait--lower { background:#f0f2f5; border-color:#e0e4e9; color:#6f757e; opacity:0.82; }
+.analysis-box .markdown-content .cdna-strength-trait--lower { background:#f0f2f5; border-color:#e0e4e9; color:#616871; opacity:0.82; }
 .analysis-box .markdown-content .cdna-strength-trait--lower .cdna-strength-trait__star { color:#64748b; }
 
 /* Inline trait pills embedded in the strength narrative text. */
@@ -2818,7 +2868,7 @@ body:has(#results-root),
 /* Trait names inline in strength/environment narratives: bold green text, no pill. */
 .analysis-box .markdown-content .cdna-strength-trait-text {
   font-weight: 700;
-  color: #2f7d32;
+  color: #28692b;
   /* Never hyphenate/break a green trait or profile name mid-word — it wraps
      whole to the next line instead (matters on narrow phone columns). */
   -webkit-hyphens: none !important;
@@ -2845,3 +2895,38 @@ body:has(#results-root),
 
 /* Tall dialog on a short screen: scroll inside the card, never the page. */
 .analysis-quality-modal { max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }
+
+/* One-line note above a report generated from a flagged set of answers. */
+.analysis-quality-caveat {
+  margin: 0 0 14px;
+  padding: 0 0 0 12px;
+  border: 0;
+  border-left: 3px solid #e8c56a;
+  background: transparent;
+  color: #64748b;
+  border-radius: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  font-style: italic;
+}
+.analysis-quality-caveat-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-style: normal;
+  font-weight: 600;
+  color: #2563eb;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.analysis-quality-caveat-link:hover { color: #1d4ed8; }
+
+/* Accessibility (audit item 25): report paragraphs are capped near 80
+   characters a line so long lines are easier to track, which matters most for
+   dyslexic readers. Headings, cards and lists keep the full width. */
+.analysis-box .markdown-content p {
+  max-width: 80ch;
+}

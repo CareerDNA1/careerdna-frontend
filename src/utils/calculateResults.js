@@ -19,7 +19,9 @@ function getArchetypeKeys(weights) {
   return firstRowKey ? Object.keys(weights[firstRowKey] || {}) : [];
 }
 
-export function calculateResults(answers, questions) {
+// `weights` defaults to the current matrix; callers scoring a saved run pass
+// the matrix of that run's bank (see utils/banks).
+export function calculateResults(answers, questions, weights = archetypeWeights) {
   // ── Step 1: BD scores (0–100) via scoreSubdimensions ────────────────────────
   const bdRows = scoreSubdimensions(answers, questions || []);
 
@@ -33,7 +35,7 @@ export function calculateResults(answers, questions) {
   const subdimensionScores = { ...bdScoreMap };
 
   // ── Step 2: archetype scores (weighted average of BD scores) ─────────────────
-  const archetypes = getArchetypeKeys(archetypeWeights);
+  const archetypes = getArchetypeKeys(weights);
 
   const weightedSums = {};
   const weightDenoms = {};
@@ -42,7 +44,7 @@ export function calculateResults(answers, questions) {
     weightDenoms[a] = 0;
   });
 
-  for (const [bdName, weightRow] of Object.entries(archetypeWeights)) {
+  for (const [bdName, weightRow] of Object.entries(weights)) {
     const bdScore = bdScoreMap[bdName];
     if (bdScore === undefined) continue; // BD not answered / not in questions
 
