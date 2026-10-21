@@ -650,7 +650,7 @@ function showFeedbackTooltipForButton(button) {
   showFloatingTooltipForElement(button);
 }
 
-// Map a 0-100 subdimension score to a tier key: the shared 80/70/60 band rule.
+// Map a 0-100 subdimension score to a tier key: the shared 75/65/55 band rule.
 function strengthTraitTier(score) {
   return bandTier(bandForScore(score));
 }
@@ -1478,9 +1478,6 @@ export default function ResultsComponent({
   initialSection,
   initialTab,
   initialFocus,
-  // Saved result pages pass the sitting the report is based on, e.g.
-  // "Assessment 2, answered 14 Oct 2026". Fresh results pass nothing.
-  basedOnLabel = '',
 }) {
   // The vocational ("Explore other career worlds") section is only relevant to
   // students who are unsure about university or not planning to go. The intro asks
@@ -1905,8 +1902,9 @@ export default function ResultsComponent({
     [itemReactions, itemReactionMeta]
   );
 
-  // Your Advisor is available once a report exists for this run.
-  const canShowAdvisor = Boolean(effectiveAssessmentRunId && computedSummary && !loadingSummary);
+  // Your Advisor is available as soon as the run is saved (scores alone are
+  // enough; it does not need the written report).
+  const canShowAdvisor = Boolean(effectiveAssessmentRunId);
 
   const analysisTabsWithDiscoverMore = useMemo(() => {
     const tabs = [...analysisTabs];
@@ -1984,6 +1982,7 @@ export default function ResultsComponent({
       const maxScroll = list.scrollWidth - list.clientWidth;
       const atEnd = maxScroll <= 1 || list.scrollLeft >= maxScroll - 1;
       sidebar.classList.toggle('is-scroll-end', atEnd);
+      sidebar.classList.toggle('is-scrolled', list.scrollLeft > 1);
     };
 
     update();
@@ -2012,6 +2011,7 @@ export default function ResultsComponent({
       const maxScroll = list.scrollWidth - list.clientWidth;
       const atEnd = maxScroll <= 1 || list.scrollLeft >= maxScroll - 1;
       sidebar.classList.toggle('is-scroll-end', atEnd);
+      sidebar.classList.toggle('is-scrolled', list.scrollLeft > 1);
     };
 
     update();
@@ -2021,7 +2021,7 @@ export default function ResultsComponent({
       list.removeEventListener('scroll', update);
       window.removeEventListener('resize', update);
     };
-  }, [activeProfileTab, openTopSection]);
+  }, [activeProfileTab, openTopSection, computedResults]);
 
   // Keep the active tab centred in the horizontal strip on phone, so the current
   // section is always visible along with what sits on either side of it.
@@ -2485,21 +2485,26 @@ export default function ResultsComponent({
     if (!activeTab?.markdown) return undefined;
     const scope = document.getElementById('results-root') || document;
     let running = false;
+    // A container is marked once it has been decorated with real metadata, so
+    // the watcher can decorate any container that mounts later, whether or
+    // not it holds a list. (The overview has no list: before this it was
+    // skipped on first generation and only decorated after a tab change.)
+    const decorate = (root) => {
+      decorateAnalysisSignals(root, analysisMeta, resolvedItemReactions, scoresForChart);
+      if (analysisMeta?.sections) root.dataset.cdnaDecorated = '1';
+    };
     const run = () => {
       if (running) return;
       running = true;
       try {
         scope.querySelectorAll('.analysis-box .markdown-content').forEach((root) => {
-          if (root.querySelector('ol, ul') && !root.querySelector('.cdna-card-list')) {
-            decorateAnalysisSignals(root, analysisMeta, resolvedItemReactions, scoresForChart);
-          }
+          const undecoratedList = root.querySelector('ol, ul') && !root.querySelector('.cdna-card-list');
+          if (!root.dataset.cdnaDecorated || undecoratedList) decorate(root);
         });
       } finally { running = false; }
     };
     // Inputs changed: redo every container from scratch.
-    scope.querySelectorAll('.analysis-box .markdown-content').forEach((root) => {
-      decorateAnalysisSignals(root, analysisMeta, resolvedItemReactions, scoresForChart);
-    });
+    scope.querySelectorAll('.analysis-box .markdown-content').forEach((root) => decorate(root));
     let timer = null;
     const observer = new MutationObserver(() => {
       if (timer) return;
@@ -3272,9 +3277,6 @@ export default function ResultsComponent({
       )}
       <section className="results-container section-intro">
         <h1>Your Unique CareerDNA</h1>
-        {basedOnLabel ? (
-          <p className="results-based-on">Based on {basedOnLabel}</p>
-        ) : null}
         <p className="one-liner">
           {displayName ? (
             <>
@@ -3344,6 +3346,12 @@ export default function ResultsComponent({
                             ))}
                             {(() => {
                               const analysisLocked = !computedSummary || computedSummary.startsWith('⚠️');
+                              // Tabs are greyed for everyone until the report exists. The padlock
+                              // means "you need to subscribe (or buy reports) to open this", so
+                              // it only shows when the viewer cannot generate a report: a free
+                              // viewer, or a subscriber with no reports left. A subscriber with
+                              // reports remaining sees the greyed tabs without the lock.
+                              const showLockIcon = analysisLocked && reportInfoLoaded && (isFreeViewer || !canRunReport);
                               const sidebarTabs = analysisLocked ? lockedAnalysisTabs : analysisTabsWithDiscoverMore;
                               return sidebarTabs.map((tab) => {
                                 const isActive = analysisLocked
@@ -3359,7 +3367,7 @@ export default function ResultsComponent({
                                     onClick={() => { if (analysisLocked) { setLockedPreviewTab(tab.key); setOpenTopSection('analysis'); scrollResultsTabIntoView(18); } else { handleAnalysisTabClick(tab.key); } }}
                                   >
                                     <span className="analysis-tab-button__label">{tab.label}</span>
-                                    {analysisLocked ? (
+                                    {showLockIcon ? (
                                       <svg className="analysis-tab-button__lock" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
                                     ) : null}
                                   </button>

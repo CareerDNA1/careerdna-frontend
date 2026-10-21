@@ -114,16 +114,6 @@ body:has(#results-root),
   line-height: 1.7;
 }
 
-/* Saved reports: which sitting of the survey the report is based on */
-.results-based-on {
-  max-width: 800px;
-  margin: -6px auto 14px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #1e3a8a;
-  text-align: left;
-}
-
 .one-liner {
   max-width: 800px;
   margin: 0 auto;
@@ -1741,7 +1731,11 @@ body:has(#results-root),
     border-right: none !important;
     border-bottom: 1px solid #e6edf5 !important;
     background: transparent !important;
-    padding: 0 !important;
+    /* One shared 14px left inset for the pill and the tab strip, so the
+       "Back to profile" pill and the tab labels start on the same x. The
+       strip clips at this inset too, so scrolled labels never run to the
+       card edge. */
+    padding: 0 0 0 14px !important;
     min-height: 0 !important;
     min-width: 0 !important;
     overflow: hidden !important;
@@ -1752,10 +1746,29 @@ body:has(#results-root),
   .results-back-wrap {
     position: relative;
     z-index: 2;
-    padding: 10px 14px 8px !important;
+    padding: 10px 14px 8px 0 !important;
     margin: 0 !important;
     border-bottom: none !important;
     background: #ffffff;
+  }
+
+  /* Left-edge fade once the strip has scrolled, so clipped labels taper
+     out instead of being cut hard at the inset. */
+  .analysis-tabs-sidebar::before {
+    content: '';
+    position: absolute;
+    left: 14px;
+    bottom: 1px;
+    height: 48px;
+    width: 18px;
+    background: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0));
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 160ms ease;
+  }
+  .analysis-tabs-sidebar.is-scrolled::before {
+    opacity: 1;
   }
 
   /* Right-edge fade + chevron: the standard "more to swipe" cue, covering
@@ -1818,6 +1831,10 @@ body:has(#results-root),
     color: #64748b !important;
     font-weight: 550 !important;
     box-shadow: none !important;
+  }
+  /* First label starts exactly at the shared inset, level with the pill. */
+  .analysis-tabs-sidebar__list > .analysis-tab-button:first-child {
+    padding-left: 0 !important;
   }
 
   .analysis-tab-button.is-active {

@@ -7,6 +7,20 @@ import { calculateResults } from './calculateResults';
 import { scoreSubdimensions } from './scoreSubdimensions';
 import { computeClarityPercents } from './selfAwarenessSummary';
 import { getBankQuestions, getBankWeights, runVersions, currentVersions } from './banks';
+import { carryOverFavourites } from './favouriteCarryOver';
+
+// Id of the user's newest run (slim query; no jsonb columns).
+async function getLatestRunId(userId) {
+  const { data, error } = await supabase
+    .from('assessment_runs')
+    .select('id')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return data?.id || null;
+}
 
 // Re-score a run's saved answers with the question bank and scoring rules
 // the run was answered on (bank_version / scoring_version, see utils/banks).
@@ -124,6 +138,18 @@ export async function saveAssessmentRun({
   if (userError) throw userError;
   if (!user) throw new Error('User not authenticated.');
 
+  // The run whose favourites carry forward to this one: the run being re-run,
+  // or, for a fresh sitting, the run the profile currently follows (falling
+  // back to the newest). Resolved before the insert so "newest" is not the
+  // run we are about to create.
+  let carryFromId = resultsJson?.rerunOf || null;
+  if (!carryFromId) {
+    try { carryFromId = await getCurrentRunId(); } catch (_) { carryFromId = null; }
+    if (!carryFromId) {
+      try { carryFromId = await getLatestRunId(user.id); } catch (_) { carryFromId = null; }
+    }
+  }
+
   const stamp = { ...currentVersions(), ...(versions || {}) };
   const payload = {
     user_id: user.id,
@@ -145,6 +171,15 @@ export async function saveAssessmentRun({
     .single();
 
   if (error) throw error;
+
+  // Favourites follow the student: copy likes/dislikes from the previous run
+  // onto this one (see utils/favouriteCarryOver). Awaited so the results page
+  // that opens next already shows them; never fails the save.
+  try {
+    await carryOverFavourites({ fromRunId: carryFromId, toRunId: data.id });
+  } catch (e) {
+    console.warn('Favourites carry-over failed:', e?.message || e);
+  }
 
   // A fresh assessment becomes the current report. A rerun (same answers, new
   // output) only takes over if the run it came from was the current one.

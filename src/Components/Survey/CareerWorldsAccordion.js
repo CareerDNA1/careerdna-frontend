@@ -165,26 +165,23 @@ export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = 
   let narrativeRest = '';
   if (splitNarrative) {
     const full = String(world.narrative || '').replace(/\s+/g, ' ').trim();
-    // The archetype opener (one OR two sentences) never begins with "Your"; every
-    // trait sentence begins "Your ...". Split at the first trait sentence, so a
-    // two-sentence profile opener stays whole with the profiles.
-    let cut = -1;
-    if (/^Your\b/.test(full)) cut = 0;
-    else {
-      const mm = /[.!?]\s+(Your\b)/.exec(full);
-      if (mm) cut = mm.index + mm[0].indexOf('Your');
-    }
-    if (cut >= 0) {
-      narrativeLead = full.slice(0, cut).trim();
-      narrativeRest = full.slice(cut).trim();
+    // The prompt's contract (20 October 2026): the first TWO sentences stand
+    // alone above the trait detail (sentence one is what the world asks,
+    // sentence two is which profiles answer it, and it begins "Your ...
+    // profiles"). So split after the second sentence, not at the first
+    // "Your", which was the old rule when only trait sentences began that way.
+    const sentenceEnd = /[.!?](?=\s+[A-Z"“])/g;
+    let ends = [];
+    let mm;
+    while ((mm = sentenceEnd.exec(full)) && ends.length < 2) ends.push(mm.index + 1);
+    if (ends.length >= 2) {
+      narrativeLead = full.slice(0, ends[1]).trim();
+      narrativeRest = full.slice(ends[1]).trim();
+    } else if (ends.length === 1) {
+      narrativeLead = full.slice(0, ends[0]).trim();
+      narrativeRest = full.slice(ends[0]).trim();
     } else {
-      const m = full.match(/^(.*?[.!?])(?:\s+([\s\S]*))?$/);
-      if (m) {
-        narrativeLead = (m[1] || '').trim();
-        narrativeRest = (m[2] || '').trim();
-      } else {
-        narrativeLead = full;
-      }
+      narrativeLead = full;
     }
   }
 

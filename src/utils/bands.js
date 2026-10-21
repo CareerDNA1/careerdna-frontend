@@ -1,9 +1,14 @@
 // The one band rule for everything a student sees as a level or a match:
 // archetype bars, trait cards and pills, world/pathway/role/degree match badges.
 // Absolute, inclusive cuts, identical to the backend (cdnaScoreConfig.bands):
-// 80 and above Standout, 70 and above Strong, 60 and above Good, else Lower.
+// 75 and above Standout, 65 and above Strong, 55 and above Good, else Lower.
+// Set 20 October 2026 from the persona simulation (backend
+// scripts/personaSim.js): a world score for a student who clearly matches it
+// tops out at 75 to 78 because every level of averaging lowers the ceiling, so
+// 75 is the level a clear match reaches and an unclear one does not. One set
+// of cuts for traits, profiles and matches; traits read slightly generously.
 
-export const BAND_CUTS = Object.freeze({ standout: 80, strong: 70, good: 60 });
+export const BAND_CUTS = Object.freeze({ standout: 75, strong: 65, good: 55 });
 
 export const BANDS = Object.freeze(['Standout', 'Strong', 'Good', 'Lower']);
 

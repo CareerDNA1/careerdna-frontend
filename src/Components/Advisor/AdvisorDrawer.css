@@ -93,6 +93,13 @@
 .career-advisor-earlier { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 6px 0 10px; font-size: 0.74rem; color: #64748b; }
 .career-advisor-earlier .cdna-load-spinner { width: 14px; height: 14px; }
 
+/* Marks where the student's results changed (re-run or retake) between two
+   messages, so an older answer is read against the results it was given for. */
+.career-advisor-run-divider { display: flex; align-items: center; gap: 10px; margin: 8px 0 10px; font-size: 0.72rem; font-weight: 600; color: #7a8aa3; }
+.career-advisor-run-divider::before,
+.career-advisor-run-divider::after { content: ''; flex: 1 1 auto; height: 1px; background: #e2e9f3; }
+.career-advisor-run-divider span { flex: 0 0 auto; white-space: nowrap; }
+
 /* While the drawer is open the page still scrolls with the wheel, but its
    scrollbar is hidden so the only visible scroller is the chat's own. */
 @media (min-width: 1100px) {

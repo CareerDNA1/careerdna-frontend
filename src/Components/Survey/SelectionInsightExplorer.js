@@ -272,7 +272,7 @@ function sortArchetypes(list = []) {
   });
 }
 
-// Archetype and trait bands use the one shared 80/70/60 rule (utils/bands.js),
+// Archetype and trait bands use the one shared 75/65/55 rule (utils/bands.js),
 // so a level on the Your Type and Traits tabs reads the same on every pill here.
 const getArchetypeBand = (score = 0) => bandForScore(score);
 const getSubdimensionBand = (score = 0) => bandForScore(score);

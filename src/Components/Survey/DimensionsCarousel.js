@@ -53,7 +53,7 @@ const truncate = (s, n = 30) =>
 
 const normalizePct = (v) => (v <= 1 ? v * 100 : v);
 
-// Trait level: the shared 80/70/60 band rule (utils/bands.js).
+// Trait level: the shared 75/65/55 band rule (utils/bands.js).
 function getDimensionSignal(score = 0) {
   const label = bandForScore(score);
   return { label, value: bandBlocks(label) };
@@ -62,7 +62,7 @@ function getDimensionSignal(score = 0) {
 // Tier palette — matches the tier PILLS: pale tinted fill with a soft same-hue
 // border (almost as faded as the fill). On hover the bar fills with the solid
 // tier colour. Standout green, Strong amber, Good blue, Lower grey.
-// Unified thresholds: 80 / 70 / 60.
+// Unified thresholds: 75 / 65 / 55.
 function getBandColors(score = 0) {
   if (score >= 80) return { bg: "#9fe1cb", border: "#8ad9c1", hover: "#78d2b6" };
   if (score >= 70) return { bg: "#fac775", border: "#f4bd60", hover: "#f2b74f" };

@@ -1663,7 +1663,10 @@ export default function ProfilePage() {
   return (
     <div className="profile-page">
       <AccountNavbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
-      {latestRun?.id && latestRun?.summary_markdown ? <AdvisorDrawer assessmentRunId={latestRun.id} stage={isUniversity ? 'university' : 'school'} /> : null}
+      {/* Available as soon as a run has scores; the written report is not required
+          (the advisor is grounded in the saved results, not the report text).
+          Free users can open it and are prompted to subscribe when they ask. */}
+      {latestRun?.id ? <AdvisorDrawer assessmentRunId={latestRun.id} stage={isUniversity ? 'university' : 'school'} /> : null}
       {planWelcome ? (
         <PlanWelcomeModal
           kind={planWelcome.kind}

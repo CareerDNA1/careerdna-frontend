@@ -376,10 +376,20 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
               {!hasMessages ? null : (
                 messages.slice(Math.max(0, messages.length - visibleCount)).map((message, index, shown) => {
                   const isLatestAssistant = message.role === 'assistant' && !shown.slice(index + 1).some((nextMessage) => nextMessage.role === 'assistant');
+                  // The conversation follows the student across re-runs. Where
+                  // the run changes between two messages, mark it so an older
+                  // answer is read against the results it was given for.
+                  const prevRun = index > 0 ? shown[index - 1]?.assessmentRunId : null;
+                  const runChanged = Boolean(prevRun && message.assessmentRunId && prevRun !== message.assessmentRunId);
 
                   return (
+                  <React.Fragment key={message.id || `${message.role}-${message.createdAt}-${message.content?.slice(0, 12)}`}>
+                  {runChanged ? (
+                    <div className="career-advisor-run-divider" role="separator" aria-label="Your results were updated here">
+                      <span>Your results were updated here</span>
+                    </div>
+                  ) : null}
                   <div
-                    key={message.id || `${message.role}-${message.createdAt}-${message.content?.slice(0, 12)}`}
                     className={`career-advisor-message ${message.role === 'assistant' ? 'assistant' : 'user'}`}
                     ref={isLatestAssistant ? latestAssistantRef : null}
                   >
@@ -419,6 +429,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
                       </div>
                     )}
                   </div>
+                  </React.Fragment>
                   );
                 })
               )}
