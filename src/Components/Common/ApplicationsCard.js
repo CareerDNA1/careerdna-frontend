@@ -39,7 +39,7 @@ const KIND_STYLE = {
 
 // candidates: favourite ads/courses not yet applied for ({ type, id, title, subtitle, meta });
 // onApplyFavourite(item): mark one as applied (owned by the profile page).
-export default function ApplicationsCard({ apps, onChange, runId, stage = 'university', isUniversity = false, candidates = [], onApplyFavourite, predictedGrades = [], schoolYear = '', onEnterGrades, openSignal = 0 }) {
+export default function ApplicationsCard({ apps, onChange, runId, stage = 'university', isUniversity = false, candidates = [], onApplyFavourite, predictedGrades = [], schoolYear = '', onEnterGrades, openSignal = 0, openFocus = null }) {
   const list = Array.isArray(apps) ? apps : [];
   const [open, setOpen] = useState(false);
   const [detailId, setDetailId] = useState('');
@@ -84,6 +84,15 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
   useEffect(() => { if (adding && titleRef.current) titleRef.current.focus(); }, [adding]);
   // The profile's journey card can open the list ("Keep your applications up to date").
   useEffect(() => { if (openSignal > 0) setOpen(true); }, [openSignal]);
+  // Opened from a favourite ("Open your applications"): go straight to the
+  // UCAS application for a UCAS choice, or to that application otherwise.
+  useEffect(() => {
+    if (!openFocus || !openFocus.n) return;
+    setOpen(true);
+    if (openFocus.ucas) { setUcasOpen(true); return; }
+    const hit = list.find((a) => a.item_type === openFocus.itemType && String(a.item_id || '') === openFocus.itemId);
+    if (hit) setDetailId(hit.id);
+  }, [openFocus && openFocus.n]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Escape closes the innermost thing; lock page scroll while the popup is open.
   const escRef = useRef(() => {});

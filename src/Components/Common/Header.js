@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import logo from '../../Assets/images/logo-career-dna.png';
 import styles from './Header.module.css';
 
-function Header() {
+// hideBack: the first-login onboarding has nothing to go back to yet.
+function Header({ hideBack = false }) {
   return (
     <header
       className={styles.header}
@@ -19,11 +20,13 @@ function Header() {
         />
       </Link>
 
-      <Link to="/profile" className={styles.backLink} aria-label="Back to your profile">
-        <span aria-hidden="true" className={styles.backIcon}>⌂</span>
-        <span>Back to profile</span>
-        <span aria-hidden="true" className={styles.backArrow}>›</span>
-      </Link>
+      {hideBack ? null : (
+        <Link to="/profile" className={styles.backLink} aria-label="Back to your profile">
+          <span aria-hidden="true" className={styles.backIcon}>⌂</span>
+          <span>Back to profile</span>
+          <span aria-hidden="true" className={styles.backArrow}>›</span>
+        </Link>
+      )}
     </header>
   );
 }

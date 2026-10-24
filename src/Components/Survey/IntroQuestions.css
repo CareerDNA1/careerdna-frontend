@@ -433,3 +433,45 @@
 /* The subject list renders in a portal on body so the modal cannot clip it;
    it sits above the modal overlay and flips upward when there is no room below. */
 .introSelect__menu-portal { z-index: 100000 !important; }
+
+/* Institution lookup (school / university name with suggestions; free text
+   is always accepted). */
+.institution-lookup { position: relative; }
+.institution-lookup__list {
+  position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 50;
+  margin: 0; padding: 6px; list-style: none;
+  background: #ffffff; border: 1px solid #dbe6f7; border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  max-height: 260px; overflow-y: auto;
+}
+.institution-lookup__item {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+  padding: 9px 10px; border-radius: 8px; cursor: pointer; font-size: 0.93rem; color: #1f2937;
+}
+.institution-lookup__item:hover, .institution-lookup__item.is-active { background: #eef4ff; }
+.institution-lookup__name { font-weight: 600; }
+.institution-lookup__town { flex: 0 0 auto; font-size: 0.78rem; color: #64748b; }
+.institution-lookup__hint { margin-top: 6px; font-size: 0.8rem; color: #64748b; }
+
+/* Locked fields (set at onboarding): greyed control; hovering shows why. */
+.intro-lock-note { margin-top: 6px; font-size: 0.8rem; color: #7a8aa3; }
+.intro-container .introSelect--is-disabled .introSelect__control { background: #f4f6fa !important; border-color: #e1e7f0 !important; cursor: not-allowed; }
+.intro-container .introSelect--is-disabled .introSelect__single-value { color: #6b7a90 !important; }
+.intro-container .introSelect--is-disabled .introSelect__indicators { opacity: 0.45; }
+.intro-container input[type="text"]:disabled { background: #f4f6fa; color: #6b7a90; cursor: not-allowed; }
+.intro-locked-wrap { position: relative; cursor: not-allowed; }
+/* A disabled input swallows clicks; let them reach the wrapper so the tip opens. */
+.intro-locked-wrap input:disabled { pointer-events: none; }
+.intro-note-wrap { position: relative; }
+/* Editable field: the tip sits above so it never covers the suggestions list. */
+.intro-note-wrap .intro-lock-tip {
+  margin-top: 6px; padding: 8px 10px; border-radius: 8px;
+  background: #f4f7fd; border: 1px solid #dfe6f0; color: #3b4a63;
+  font-size: 0.8rem; line-height: 1.45;
+}
+.intro-lock-tip {
+  position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 20;
+  background: #ffffff; color: #1f2a37; border: 1px solid #d2dff0; border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(31, 42, 55, 0.12); padding: 10px 12px;
+  font-size: 0.84rem; line-height: 1.4; cursor: default;
+}

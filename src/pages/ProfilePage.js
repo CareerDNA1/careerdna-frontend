@@ -19,12 +19,13 @@ import {
 } from '../utils/assessmentRuns';
 import { getMyProfile, updateMyProfileDetails } from '../utils/profile';
 import { apiFetch, ApiError } from '../utils/apiFetch';
-import IntroQuestions from '../Components/Survey/IntroQuestions';
-import PricingModal from '../Components/Common/PricingModal';
+import { fetchEntitlement } from '../utils/entitlement';
+import PricingModal, { PAYMENTS_TEMPORARILY_PAUSED } from '../Components/Common/PricingModal';
+import ReportLimitModal from '../Components/Common/ReportLimitModal';
 import SatisfactionCard from '../Components/Common/SatisfactionCard';
 import { getSatisfactionPrompt, dismissSatisfactionPulse } from '../utils/satisfaction';
 import { normaliseFavouriteType, getFavouritesByCategory } from '../utils/favourites';
-import { FAVOURITES_CHANGED_EVENT } from '../utils/savedItems';
+import { FAVOURITES_CHANGED_EVENT, SAVE_FAILED_EVENT, SAVE_FAILED_TEXT } from '../utils/savedItems';
 import AcademicProfileCard from '../Components/Common/AcademicProfileCard';
 import FavouritesCard from '../Components/Common/FavouritesCard';
 import ApplicationsCard from '../Components/Common/ApplicationsCard';
@@ -39,6 +40,9 @@ import { friendlyError } from '../utils/friendlyError';
 import { setAdvisorContext, openAdvisor } from '../utils/advisorPanel';
 import PlanWelcomeModal from '../Components/Common/PlanWelcomeModal';
 import PlanBadge from '../Components/Common/PlanBadge';
+import WhereYouAreCard, { statusLocks } from '../Components/Common/WhereYouAreCard';
+import IntroQuestions from '../Components/Survey/IntroQuestions';
+import { describeStatus, saveAcademicStatus, schoolYearValue } from '../utils/academicStatus';
 
 const defaultIntroResponses = {
   name: '',
@@ -164,34 +168,6 @@ function formatPlanName(profile = {}) {
 function toNumber(value, fallback = 0) {
   const n = Number(value);
   return Number.isFinite(n) ? n : fallback;
-}
-
-function getUsageValues(used, limit, extra = 0, unlimited = false) {
-  if (unlimited) return { unlimited: true, used: 0, total: 0, remaining: null };
-  const safeUsed = toNumber(used);
-  const safeTotal = toNumber(limit) + toNumber(extra);
-  return { unlimited: false, used: safeUsed, total: safeTotal, remaining: Math.max(0, safeTotal - safeUsed) };
-}
-
-function isUnlimitedPlan(profile = {}) {
-  const plan = String(profile?.plan || '').toLowerCase();
-  // "dev" is NOT unlimited — the developer code grants a fixed 200 reports / 200
-  // advisor questions via report_limit / advisor_questions_limit (must match the
-  // backend's isUnlimitedPlan so the numbers display and are enforced).
-  return ['premium_school', 'premium_university'].includes(plan);
-}
-
-function getReportUsage(profile = {}) {
-  return getUsageValues(profile?.reports_used, profile?.report_limit, profile?.extra_reports, isUnlimitedPlan(profile));
-}
-
-function getAdvisorUsage(profile = {}) {
-  return getUsageValues(
-    profile?.advisor_questions_used,
-    profile?.advisor_questions_limit,
-    profile?.advisor_extra_questions,
-    isUnlimitedPlan(profile)
-  );
 }
 
 function getAccountEntitlementNote(profile = {}, reportUsage, advisorUsage) {
@@ -416,11 +392,6 @@ const PlayIcon = () => (
 );
 
 /* Trash icon */
-const RerunIcon = () => (
-  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 4v4h4" />
-  </svg>
-);
 const PinIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 17v5"/>
@@ -468,6 +439,19 @@ export default function ProfilePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [initialCache] = useState(() => takeProfileCache(user?.id));
   const [profile, setProfile] = useState(() => initialCache?.profileData || null);
+  // Where the person is now, in words, derived from the profile status.
+  const statusSummary = useMemo(() => (profile ? describeStatus(profile) : null), [profile]);
+  // The hero line follows the profile status (advancing by itself each
+  // September) rather than the snapshot on the latest report. Shaped like a
+  // run so the existing studentStatusLine() formatting applies.
+  const heroRun = useMemo(() => {
+    const a = profile?.academic_status;
+    if (!a || typeof a !== 'object') return null;
+    const intro = { ...a };
+    if (a.status === 'school') intro.schoolYear = schoolYearValue(a) || a.schoolYear;
+    if ((a.status === 'undergraduate' || a.status === 'postgraduate') && statusSummary?.year) intro.courseYear = statusSummary.year;
+    return { intro_answers_json: intro };
+  }, [profile, statusSummary]);
   const [runs, setRuns] = useState(() => initialCache?.runData || []);
   const [currentRun, setCurrentRun] = useState(() => initialCache?.currentRun || null);
   const [settingCurrentId, setSettingCurrentId] = useState(null);
@@ -488,6 +472,11 @@ export default function ProfilePage() {
   const [engagedForRun, setEngagedForRun] = useState(null);
   const [favForRun, setFavForRun] = useState(null);
   const [academicLoaded, setAcademicLoaded] = useState(false);
+  // A failed load is shown as a failure with a retry, never as "no grades":
+  // an empty card and a request that never came back must not look the same.
+  const [personalReload, setPersonalReload] = useState(0);
+  const [gradesLoadError, setGradesLoadError] = useState(false);
+  const [appsLoadError, setAppsLoadError] = useState(false);
   const [academicProfileData, setAcademicProfileData] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
   // What "Try again" should do for the current error (null: no retry offered).
@@ -581,8 +570,14 @@ export default function ProfilePage() {
         getFavouritesByCategory(runId).then((groups) => setFavGroups(groups || [])).catch(() => {});
       }, 300);
     };
+    const onSaveFailed = () => setProfileNotice(SAVE_FAILED_TEXT);
     window.addEventListener(FAVOURITES_CHANGED_EVENT, onChanged);
-    return () => { clearTimeout(timer); window.removeEventListener(FAVOURITES_CHANGED_EVENT, onChanged); };
+    window.addEventListener(SAVE_FAILED_EVENT, onSaveFailed);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener(FAVOURITES_CHANGED_EVENT, onChanged);
+      window.removeEventListener(SAVE_FAILED_EVENT, onSaveFailed);
+    };
   }, [currentRun?.id, user?.id]);
   const favCount = favGroups ? favGroups.reduce((a, g) => a + g.items.length, 0) : null;
   // Applications tracker (per student, not per run). Loaded once with the profile.
@@ -590,11 +585,12 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!user?.id) return undefined;
     let cancelled = false;
+    setAppsLoadError(false);
     listApplications()
       .then((rows) => { if (!cancelled) setApplications(rows || []); })
-      .catch(() => { if (!cancelled) setApplications([]); });
+      .catch(() => { if (!cancelled) { setApplications(null); setAppsLoadError(true); } });
     return () => { cancelled = true; };
-  }, [user?.id]);
+  }, [user?.id, personalReload]);
   // Applications follow the stage of the current report: a school report shows
   // UCAS choices, apprenticeship and college applications; a university report
   // shows graduate roles. The other set is kept and shows when that report is current.
@@ -640,6 +636,12 @@ export default function ProfilePage() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState({ firstName: '', lastName: '', email: '' });
   const [profileNotice, setProfileNotice] = useState('');
+  // A billing confirmation sits inside the plan strip and clears itself.
+  useEffect(() => {
+    if (!profileNotice) return undefined;
+    const t = setTimeout(() => setProfileNotice(''), 6000);
+    return () => clearTimeout(t);
+  }, [profileNotice]);
   // Welcome dialog after a successful checkout: { kind: 'explore' | 'premium' | 'pack' }
   const [planWelcome, setPlanWelcome] = useState(null);
   const [runMenuUp, setRunMenuUp] = useState(false);
@@ -657,21 +659,32 @@ export default function ProfilePage() {
   const [academicHasData, setAcademicHasData] = useState(false);
   const [gradesOpenSignal, setGradesOpenSignal] = useState(0);
   const [appsOpenSignal, setAppsOpenSignal] = useState(0);
+  // Set when a favourite asks to open Your applications on its own entry.
+  const [appsOpenFocus, setAppsOpenFocus] = useState(null);
 
   // Load whether the student has entered grades (drives the "Enter your grades"
   // roadmap step). Updated directly from the grades popup's onSaved callback.
   useEffect(() => {
     if (!user?.id) return undefined; // wait for the user
     let cancelled = false;
+    setGradesLoadError(false);
     getMyAcademicProfile()
       .then((ap) => { if (!cancelled) { setAcademicHasData(hasAcademicData(ap)); setAcademicProfileData(ap || null); } })
-      .catch(() => {})
+      .catch(() => { if (!cancelled) setGradesLoadError(true); })
       .finally(() => { if (!cancelled) setAcademicLoaded(true); });
     return () => { cancelled = true; };
-  }, [user?.id]);
+  }, [user?.id, personalReload]);
 
   // Click-to-toggle info popover for locked account fields (date of birth, email).
   const [openLockedField, setOpenLockedField] = useState('');
+  // "Buy more" on the limits rows: one-off packs, paid plans only.
+  const [buyMore, setBuyMore] = useState(null); // 'reports' | 'advisor' | null
+  // A locked-field note closes by itself after a few seconds.
+  useEffect(() => {
+    if (!openLockedField) return undefined;
+    const t = setTimeout(() => setOpenLockedField(''), 3500);
+    return () => clearTimeout(t);
+  }, [openLockedField]);
 
 
   // Close the run "..." menu on any outside click or Escape.
@@ -834,20 +847,13 @@ export default function ProfilePage() {
   }
 
   function setSubscriptionNoticeFromProfile(nextProfile, fallback = 'Your billing details have been updated.') {
-    const nextPlanName = formatPlanName(nextProfile);
     const nextDate = formatRenewalDate(nextProfile);
-    const pendingPlanName = formatPlanNameFromKey(nextProfile?.pending_plan_change);
     const pendingDate = formatPendingPlanDate(nextProfile);
 
-    if (nextProfile?.cancel_at_period_end && nextDate) {
-      setProfileNotice(`Your subscription will end on ${nextDate}. You will keep ${nextPlanName} access until then.`);
-      return;
-    }
-
-    if (nextProfile?.pending_plan_change && pendingDate) {
-      setProfileNotice(`Your plan will change to ${pendingPlanName} on ${pendingDate}. You will keep ${nextPlanName} access until then.`);
-      return;
-    }
+    // The end date and a pending plan change are already shown under Plan in
+    // Manage account, so they are not repeated as a notice.
+    if (nextProfile?.cancel_at_period_end && nextDate) { setProfileNotice(''); return; }
+    if (nextProfile?.pending_plan_change && pendingDate) { setProfileNotice(''); return; }
 
     if (String(nextProfile?.plan || '').toLowerCase() === 'free') {
       setProfileNotice('Your subscription has ended and your account is now on the free plan.');
@@ -932,8 +938,17 @@ export default function ProfilePage() {
   }, [profile, user?.email]);
 
   const planName = useMemo(() => formatPlanName(profile), [profile]);
-  const reportUsage = useMemo(() => getReportUsage(profile), [profile]);
-  const advisorUsage = useMemo(() => getAdvisorUsage(profile), [profile]);
+  // Allowances come from the backend (the same numbers it enforces), fetched
+  // whenever the profile row changes (purchase, renewal, report generated).
+  const [entitlement, setEntitlement] = useState(null);
+  useEffect(() => {
+    if (!profile?.id) return undefined;
+    let cancelled = false;
+    fetchEntitlement().then((e) => { if (!cancelled) setEntitlement(e); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [profile]);
+  const reportUsage = entitlement?.reports || null;
+  const advisorUsage = entitlement?.advisor || null;
   const accountEntitlementNote = useMemo(
     () => getAccountEntitlementNote(profile, reportUsage, advisorUsage),
     [profile, reportUsage, advisorUsage]
@@ -1028,16 +1043,30 @@ export default function ProfilePage() {
     }
   }, [location.search, profile, renewalDate, pendingPlanDate, pendingPlanName]);
 
-  const reportLimitTitle = isRecurringPlan ? 'Reports this year' : 'Reports left';
-  const reportLimitSubtitle = isRecurringPlan ? 'Included in your plan each year' : 'Explore career reports';
-  // Shown as "remaining of total left" so the student can see what is used.
-  const reportLimitValue = reportUsage?.unlimited ? '∞' : toNumber(reportUsage?.remaining);
-  const reportLimitSuffix = reportUsage?.unlimited ? 'included' : `of ${toNumber(reportUsage?.total)} left`;
+  // Same shape on both rows: the big number is what is left in total; the
+  // line under the title shows the plan allowance and any extras bought,
+  // each as "left of total". Plan allowance is used first, extras after.
+  const limitLines = (u) => {
+    if (!u) return 'Checking…';
+    const planLeft = Math.max(0, u.plan - u.used);
+    const extraLeft = Math.max(0, u.extra - Math.max(0, u.used - u.plan));
+    const parts = [`${planLeft} of ${u.plan} in your plan`];
+    if (u.extra > 0) parts.push(`plus ${extraLeft} of ${u.extra} extra bought`);
+    return parts.join(', ');
+  };
+  const limitValue = (u) => (!u ? '…' : u.unlimited ? '∞' : u.remaining);
+  const limitSuffix = (u) => (!u ? '' : u.unlimited ? 'included' : 'left');
+  // Developer access is a yearly allowance too (200 and 200), so it reads the same way.
+  const yearlyAllowance = isRecurringPlan || currentPlanKey === 'dev';
+  const reportLimitTitle = yearlyAllowance ? 'Reports this year' : 'Reports left';
+  const reportLimitSubtitle = yearlyAllowance ? limitLines(reportUsage) : 'Explore career reports';
+  const reportLimitValue = limitValue(reportUsage);
+  const reportLimitSuffix = limitSuffix(reportUsage);
 
-  const advisorLimitTitle = isRecurringPlan ? 'Advisor questions this year' : 'Advisor questions left';
-  const advisorLimitSubtitle = isRecurringPlan ? 'Included in your plan each year' : 'Chat with Your Advisor';
-  const advisorLimitValue = advisorUsage?.unlimited ? '∞' : toNumber(advisorUsage?.remaining);
-  const advisorLimitSuffix = advisorUsage?.unlimited ? 'included' : `of ${toNumber(advisorUsage?.total)} left`;
+  const advisorLimitTitle = yearlyAllowance ? 'Advisor questions this year' : 'Advisor questions left';
+  const advisorLimitSubtitle = yearlyAllowance ? limitLines(advisorUsage) : 'Chat with Your Advisor';
+  const advisorLimitValue = limitValue(advisorUsage);
+  const advisorLimitSuffix = limitSuffix(advisorUsage);
 
 
   const profileHasChanges = useMemo(() => {
@@ -1134,15 +1163,42 @@ export default function ProfilePage() {
     }
   };
 
-  const openOutputParametersModal = (run) => {
+  // New report: the same answers written again for the student's current
+  // preferences (plan for university, next step, subjects of interest, course
+  // year). Where they are (country, stage, school, year group) is shown greyed
+  // out; it is changed in Manage account under its own rules, never here.
+  // Generate saves the preferences to the profile, then re-runs (one report).
+  const openNewReport = () => {
+    const run = currentRun || latestRun;
+    if (!run) return;
+    const a = (profile && profile.academic_status) || run.intro_answers_json || {};
+    const dob = profile?.date_of_birth || a.dateOfBirth || '';
     setEditingRun(run);
-    setEditIntroResponses(buildInitialIntro(run));
+    setEditIntroResponses({
+      ...defaultIntroResponses,
+      ...a,
+      dateOfBirth: dob,
+      country: a.country || profile?.country || '',
+      schoolSubjects: Array.isArray(a.schoolSubjects) ? a.schoolSubjects : [],
+      schoolYear: schoolYearValue(a),
+    });
   };
+  // Education details are never edited from here (greyed out, with the
+  // reason on hover); only the preferences are open.
+  // New report is the one place the facts change: status when allowed
+  // (September for students, always for developers), school or university
+  // once a year, everything for developers. Generate saves the account
+  // before making the report, so the two always move together.
+  const newReportLocks = useMemo(() => statusLocks(profile), [profile]);
+  // Status change inside New report: say what it means before generating.
+  const [statusChangeConfirm, setStatusChangeConfirm] = useState(false);
+  const statusChanging = Boolean(editingRun) && String(editIntroResponses?.status || '') !== String(profile?.academic_status?.status || '');
 
   // Cancel always closes the dialog, even mid-request: a save that is still in
   // flight either completes in the background (the run appears in the list) or
   // fails quietly. The student must never be trapped behind "Processing".
   const closeOutputParametersModal = () => {
+    setStatusChangeConfirm(false);
     setRerunning(false);
     setEditingRun(null);
     setEditIntroResponses(defaultIntroResponses);
@@ -1156,9 +1212,16 @@ export default function ProfilePage() {
 
   const handleRerunOutput = async () => {
     if (!editingRun) return;
+    // Students confirm a status change (it is once a year); developers just generate.
+    if (statusChanging && !statusChangeConfirm && !profile?.is_developer) { setStatusChangeConfirm(true); return; }
     try {
       setRerunning(true);
       setErrorMsg('');
+      setStatusChangeConfirm(false);
+      // The answers become the account first (status included, if it is
+      // changing); the re-run then reads the account.
+      const saved = await saveAcademicStatus(editIntroResponses, { source: 'new_report', kind: statusChanging ? 'transition' : null });
+      if (saved) setProfile((prev) => ({ ...(prev || {}), ...saved }));
       const newRun = await withTimeout(rerunAssessmentWithOutputParameters(editingRun, editIntroResponses), RERUN_TIMEOUT_MS);
       await loadPageData();
       setEditingRun(null);
@@ -1671,22 +1734,13 @@ export default function ProfilePage() {
         <PlanWelcomeModal
           kind={planWelcome.kind}
           audience={isUniversity ? 'university' : 'school'}
-          hasReport={Boolean(latestRun?.id)}
           onClose={() => setPlanWelcome(null)}
-          onPrimary={() => {
-            setPlanWelcome(null);
-            if (planWelcome.kind === 'pack') { openAdvisor(); return; }
-            // Extra report bought: the natural next step is to generate it.
-            if (planWelcome.kind === 'report') { navigate('/start'); return; }
-            if (latestRun?.id) navigate(`/results/run/${latestRun.id}`);
-            else navigate('/start');
-          }}
         />
       ) : null}
 
       <div className="profile-shell">
         {/* Accent hero: identity + live journey progress + continue action */}
-        <header className="profile-hero">
+        <header className={`profile-hero${currentPlanKey === 'dev' ? ' profile-hero--dev' : currentPlanKey === 'explore' ? ' profile-hero--explore' : currentPlanKey === 'premium' ? ' profile-hero--paid' : ''}`}>
           <div className="profile-hero-top">
             <div className="profile-hero-id">
               <div className="profile-hero-avatar" aria-hidden="true">{initials}</div>
@@ -1704,15 +1758,15 @@ export default function ProfilePage() {
                   {profile ? <PlanBadge plan={currentPlanKey} /> : null}
                 </h1>
                 <div className="profile-hero-meta">
-                  {studentStatusLine(latestRun) ? (
+                  {studentStatusLine(heroRun || latestRun) ? (
                     <span className="profile-hero-status">
-                      {String(latestRun?.intro_answers_json?.status || '') === 'school' ? (
+                      {String((heroRun || latestRun)?.intro_answers_json?.status || '') === 'school' ? (
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6" /></svg>
                       ) : (
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M2 9l10-4 10 4-10 4z" /><path d="M6 11v4c0 1.5 3 3 6 3s6-1.5 6-3v-4" /><path d="M22 9v6" /></svg>
                       )}
                       {(() => {
-                        const parts = studentStatusLine(latestRun).split(', ');
+                        const parts = studentStatusLine(heroRun || latestRun).split(', ');
                         const course = parts.length === 3 ? parts[2] : '';
                         const stage = course ? parts.slice(0, 2).join(', ') : parts.join(', ');
                         return (
@@ -1745,7 +1799,6 @@ export default function ProfilePage() {
         </header>
 
         <InlineError message={errorMsg} onRetry={errorRetry || undefined} />
-        {profileNotice ? <p className="profile-notice">{profileNotice}</p> : null}
 
         {!overviewReady ? (
           <section className="profile-loading" aria-busy={!overviewSlow} aria-label="Loading your profile">
@@ -1911,15 +1964,22 @@ export default function ProfilePage() {
         {/* Favourites (left) + grades (right, school only) from the latest run. */}
         {overviewReady && latestRun ? (
           <div className={`profile-favrow${latestStatus === 'school' ? ' profile-favrow--three' : ''}`}>
-            <FavouritesCard runId={latestRun.id} onExplore={exploreFavourite} onOpenReport={() => openRun(latestRun.id)} initialGroups={favGroups} appliedKeys={appliedKeys} onApply={handleApplyFromFavourite} stage={applicationStage} predictedGrades={academicProfileData?.predicted_alevels || []} insightCtx={{
+            <FavouritesCard runId={latestRun.id} onExplore={exploreFavourite} onOpenReport={() => openRun(latestRun.id)} initialGroups={favGroups} appliedKeys={appliedKeys} onApply={handleApplyFromFavourite} onOpenApplications={(target) => setAppsOpenFocus((cur) => ({ ...target, n: ((cur && cur.n) || 0) + 1 }))} stage={applicationStage} predictedGrades={academicProfileData?.predicted_alevels || []} insightCtx={{
               archetypes: latestRun?.results_json?.archetypes || null,
               subdimensions: latestRun?.results_json?.subdimensionRows || [],
               summaryMarkdown: latestRun?.summary_markdown || '',
               likedPathways: (favGroups || []).filter((g) => g.type === 'pathway').flatMap((g) => g.items.map((it) => ({ id: it.id, title: it.title }))),
               likedWorlds: (favGroups || []).filter((g) => g.type === 'career_world').flatMap((g) => g.items.map((it) => ({ id: it.id, title: it.title }))),
             }} />
-            {latestStatus === 'school' ? <AcademicProfileCard openSignal={gradesOpenSignal} initialProfile={academicProfileData} onSaved={(ap) => { setAcademicHasData(hasAcademicData(ap)); setAcademicProfileData(ap || null); }} /> : null}
+            {latestStatus === 'school' ? (
+              gradesLoadError
+                ? <InlineError message="Your grades could not be loaded." onRetry={() => setPersonalReload((n) => n + 1)} />
+                : <AcademicProfileCard openSignal={gradesOpenSignal} initialProfile={academicProfileData} onSaved={(ap) => { setAcademicHasData(hasAcademicData(ap)); setAcademicProfileData(ap || null); }} />
+            ) : null}
             {/* Applications tracker: everything the student has applied for. */}
+            {appsLoadError ? (
+              <InlineError message="Your applications could not be loaded." onRetry={() => setPersonalReload((n) => n + 1)} />
+            ) : (
             <ApplicationsCard
               apps={stageApplications || []}
               onChange={(next) => setApplications((prev) => {
@@ -1933,10 +1993,12 @@ export default function ProfilePage() {
               predictedGrades={academicProfileData?.predicted_alevels || []}
               schoolYear={latestRun?.intro_answers_json?.schoolYear || ''}
               openSignal={appsOpenSignal}
+              openFocus={appsOpenFocus}
               onEnterGrades={() => setGradesOpenSignal((n) => n + 1)}
               candidates={(favGroups || []).flatMap((g) => g.items).filter((it) => (it.type === 'job' || it.type === 'course') && !appliedKeys.has(`${it.type}|${it.id}`))}
               onApplyFavourite={handleApplyFromFavourite}
             />
+            )}
           </div>
         ) : null}
 
@@ -1953,10 +2015,15 @@ export default function ProfilePage() {
               </span>
             </div>
             {totalRuns > 0 ? (
-              <button type="button" className="profile-btn-hover-primary" style={btnPrimarySm} onClick={handleRetake}>
-                <PlayIcon />
-                New assessment
-              </button>
+              <div className="profile-card-header-actions">
+                <button type="button" className="profile-btn-hover-ghost" style={btnOutlineSm} onClick={handleRetake}>
+                  New assessment
+                </button>
+                <button type="button" className="profile-btn-hover-primary" style={btnPrimarySm} onClick={openNewReport} disabled={!(currentRun || latestRun)}>
+                  <PlayIcon />
+                  New report
+                </button>
+              </div>
             ) : null}
           </div>
 
@@ -2011,7 +2078,12 @@ export default function ProfilePage() {
                       <span className="profile-run-sep">|</span>
                       <span><strong>{ageValue(run)}</strong> yrs</span>
                       <span className="profile-run-sep">|</span>
-                      <span>{studentStatusLine(run) || statusLabel(run.intro_answers_json?.status)}</span>
+                      {/* University runs: the subject is the blue label, so it is not repeated in the status line. */}
+                      <span>{(() => {
+                        const line = studentStatusLine(run) || statusLabel(run.intro_answers_json?.status);
+                        const st = String(run.intro_answers_json?.status || '');
+                        return (st === 'undergraduate' || st === 'postgraduate') ? line.split(', ').slice(0, 2).join(', ') : line;
+                      })()}</span>
                       {subjectLabel(run) !== '—' && (
                         <>
                           <span className="profile-run-sep">|</span>
@@ -2050,15 +2122,6 @@ export default function ProfilePage() {
                     </button>
                     {openRunMenuId === run.id ? (
                       <div className={`profile-run-menu${runMenuUp ? ' profile-run-menu--up' : ''}`} role="menu" onClick={(e) => e.stopPropagation()}>
-                        <button
-                          type="button"
-                          role="menuitem"
-                          className="profile-run-menu-item"
-                          onClick={() => { setOpenRunMenuId(null); openOutputParametersModal(run); }}
-                        >
-                          <RerunIcon />
-                          Re-run with new settings
-                        </button>
                         {latestRun?.id !== run.id ? (
                           <button
                             type="button"
@@ -2192,6 +2255,16 @@ export default function ProfilePage() {
         </div>
       ) : null}
 
+      {buyMore ? (
+        <ReportLimitModal
+          mode={buyMore === 'advisor' ? 'advisor' : 'exhausted'}
+          intent="buy"
+          currentPlan={currentPlanKey}
+          audience={profile?.stage === 'university' ? 'university' : 'school'}
+          onClose={() => setBuyMore(null)}
+        />
+      ) : null}
+
       {/* Manage Account Modal */}
       {editingProfile ? (
         <div className="profile-modal-overlay profile-account-modal-overlay" role="dialog" aria-modal="true" aria-label="Manage account" onClick={closeProfileEditor}>
@@ -2208,7 +2281,36 @@ export default function ProfilePage() {
               </button>
             </div>
 
+
             <form className="profile-account-form" onSubmit={handleSaveProfile}>
+            {/* Plan strip: plan, renewal and member-since at the top of the account. */}
+            <div className={`profile-account-planbar${currentPlanKey === 'dev' ? ' is-dev' : currentPlanKey === 'explore' ? ' is-explore' : currentPlanKey === 'free' ? '' : ' is-paid'}`}>
+              <div className="profile-account-planbar__main">
+                <div className="profile-account-planbar__badge"><PlanBadge plan={currentPlanKey} /></div>
+                <div className="profile-account-planbar__text">
+                  <div className="profile-account-planbar__line">
+                    {renewalDate || pendingPlanDate ? (
+                      profile?.cancel_at_period_end && renewalDate
+                        ? `Ends on ${renewalDate}`
+                        : profile?.pending_plan_change && pendingPlanDate
+                          ? `Changes to ${pendingPlanName} on ${pendingPlanDate}`
+                          : `Renews on ${renewalDate}`
+                    ) : currentPlanKey === 'dev' ? 'Developer access' : 'Free plan'}
+                  </div>
+                  <div className="profile-account-planbar__since">Member since {joined}</div>
+                  {profileNotice ? (
+                    <div className="profile-account-planbar__notice" role="status">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7" /></svg>
+                      <span>{profileNotice}</span>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+              <button type="button" className="profile-account-upgrade-pill" onClick={() => setPricingModalOpen(true)}>
+                {String(profile?.plan || 'free').toLowerCase() === 'free' ? 'Upgrade' : 'Manage plan'}
+              </button>
+            </div>
+
               <section className="profile-account-section">
                 <h3 className="profile-account-section-title">Personal details</h3>
 
@@ -2239,6 +2341,7 @@ export default function ProfilePage() {
                     </label>
                   </div>
 
+
                   {(profile?.date_of_birth || runs?.[0]?.intro_answers_json?.dateOfBirth) ? (
                   <div className="profile-account-field profile-account-field--full">
                     <span>Date of birth</span>
@@ -2259,20 +2362,10 @@ export default function ProfilePage() {
                         style={{ cursor: 'not-allowed' }}
                         onFocus={(e) => e.target.blur()}
                       />
-                      {openLockedField === 'dob' && (
-                        <div className="profile-locked-popover" role="tooltip">
-                          <button
-                            type="button"
-                            className="profile-locked-popover__close"
-                            aria-label="Close"
-                            onClick={(e) => { e.stopPropagation(); setOpenLockedField(''); }}
-                          >
-                            &times;
-                          </button>
-                          Your date of birth can't be changed here. Please contact support if you need to correct it.
-                        </div>
-                      )}
                     </div>
+                    {openLockedField === 'dob' && (
+                      <div className="wya-note" role="status">You set this when you joined. To change your date of birth, email support@mycareerdna.io.</div>
+                    )}
                   </div>
                   ) : null}
 
@@ -2292,76 +2385,20 @@ export default function ProfilePage() {
                         style={{ cursor: 'not-allowed' }}
                         onFocus={(e) => e.target.blur()}
                       />
-                      {openLockedField === 'email' && (
-                        <div className="profile-locked-popover" role="tooltip">
-                          <button
-                            type="button"
-                            className="profile-locked-popover__close"
-                            aria-label="Close"
-                            onClick={(e) => { e.stopPropagation(); setOpenLockedField(''); }}
-                          >
-                            &times;
-                          </button>
-                          Your email address can't be changed here. Please contact support if you need to update it.
-                        </div>
-                      )}
                     </div>
+                    {openLockedField === 'email' && (
+                      <div className="wya-note" role="status">This is the address you signed up with. To change your email address, email support@mycareerdna.io.</div>
+                    )}
                   </div>
 
-                  <div className="profile-account-card-divider" />
-
-                  <div className="profile-account-summary-grid">
-                    <div className="profile-account-summary-item">
-                      <span className="profile-account-summary-icon"><AccountMiniIcon type="calendar" /></span>
-                      <div>
-                        <span>Joined</span>
-                        <strong>{joined}</strong>
-                      </div>
-                    </div>
-
-                    <div className="profile-account-summary-item profile-account-summary-item--plan">
-                      <div>
-                        <span>Plan</span>
-                        <strong className="profile-account-plan-line"><PlanBadge plan={currentPlanKey} /></strong>
-                        {renewalDate || pendingPlanDate ? (
-                          <div className="profile-account-plan-note">
-                            {profile?.cancel_at_period_end && renewalDate
-                              ? `Ends on ${renewalDate}`
-                              : profile?.pending_plan_change && pendingPlanDate
-                                ? `Changes to ${pendingPlanName} on ${pendingPlanDate}`
-                                : `Renews on ${renewalDate}`}
-                          </div>
-                        ) : null}
-                        {profile?.cancel_at_period_end ? (
-                          <button
-                            type="button"
-                            className="profile-account-plan-link"
-                            onClick={handleResumePlan}
-                            disabled={resumingPlan}
-                          >
-                            {resumingPlan ? 'Resuming…' : 'Keep my plan'}
-                          </button>
-                        ) : profile?.pending_plan_change ? (
-                          <button
-                            type="button"
-                            className="profile-account-plan-link"
-                            onClick={() => setCancelDowngradeOpen(true)}
-                          >
-                            Cancel downgrade
-                          </button>
-                        ) : null}
-                      </div>
-                      <button
-                        type="button"
-                        className="profile-account-upgrade-pill"
-                        onClick={() => setPricingModalOpen(true)}
-                      >
-                        {String(profile?.plan || 'free').toLowerCase() === 'free' ? 'Upgrade' : 'Manage'}
-                      </button>
-                    </div>
-                  </div>
                 </div>
               </section>
+
+              {profile ? (
+              <section className="profile-account-section">
+                <WhereYouAreCard profile={profile} />
+              </section>
+              ) : null}
 
               <section className="profile-account-section">
                 <h3 className="profile-account-section-title">Your limits</h3>
@@ -2377,6 +2414,9 @@ export default function ProfilePage() {
                       {reportLimitValue}
                       <span>{reportLimitSuffix}</span>
                     </div>
+                    {isRecurringPlan && !PAYMENTS_TEMPORARILY_PAUSED && !reportUsage?.unlimited ? (
+                      <button type="button" className="profile-account-limit-buy" onClick={() => setBuyMore('reports')}>Buy more</button>
+                    ) : null}
                   </div>
 
                   <div className="profile-account-card-divider" />
@@ -2391,6 +2431,9 @@ export default function ProfilePage() {
                       {advisorLimitValue}
                       <span>{advisorLimitSuffix}</span>
                     </div>
+                    {isRecurringPlan && !PAYMENTS_TEMPORARILY_PAUSED && !advisorUsage?.unlimited ? (
+                      <button type="button" className="profile-account-limit-buy" onClick={() => setBuyMore('advisor')}>Buy more</button>
+                    ) : null}
                   </div>
                 </div>
               </section>
@@ -2498,6 +2541,7 @@ export default function ProfilePage() {
           pendingPlanChangeAt: profile?.pending_plan_change_at,
           pendingPlanPriceId: profile?.pending_plan_price_id,
         }}
+        onKeepPlan={async () => { await handleResumePlan(); setPricingModalOpen(false); }}
         onManageSubscription={async ({ requestedPlan, action, profile: updatedProfile }) => {
           if (updatedProfile) setProfile(updatedProfile);
           setPricingModalOpen(false);
@@ -2614,25 +2658,45 @@ export default function ProfilePage() {
         </div>
       ) : null}
 
-      {/* Output Parameters Modal */}
+      {/* New report modal */}
       {editingRun ? (
-        <div className="profile-modal-overlay profile-output-modal-overlay" role="dialog" aria-modal="true" aria-label="Change output parameters" onClick={closeOutputParametersModal}>
+        <div className="profile-modal-overlay profile-output-modal-overlay" role="dialog" aria-modal="true" aria-label="New report" onClick={closeOutputParametersModal}>
           <div className="profile-modal profile-output-modal" onClick={(e) => e.stopPropagation()}>
             <div className="profile-modal-header">
-              <h2 className="profile-modal-title">Change Output Parameters</h2>
+              <h2 className="profile-modal-title">New report</h2>
               <button type="button" style={btnModalClose} onClick={closeOutputParametersModal}>×</button>
             </div>
-
-            <IntroQuestions
-              responses={editIntroResponses}
-              setResponses={setEditIntroResponses}
-              onNext={handleRerunOutput}
-              onBack={closeOutputParametersModal}
-              isLoading={rerunning}
-              showBackButton
-              overrideNextLabel={rerunning ? 'Processing...' : 'Re-run with new parameters'}
-              embedded
-            />
+            {statusChangeConfirm ? (
+              <div className="wya-confirm">
+                <p>You are changing your status to <strong>{String(editIntroResponses?.status) === 'school' ? 'at school or college' : 'at university'}</strong>.</p>
+                <p>Your account is updated with your new status when this report is generated, and your profile, journey and reports will be for that status from now on. You can do this once in a school year. This uses one report.</p>
+                <div className="wya-confirm__actions">
+                  <button type="button" className="wya-confirm__no" onClick={() => setStatusChangeConfirm(false)} disabled={rerunning}>No, go back</button>
+                  <button type="button" className="wya-confirm__yes" onClick={handleRerunOutput} disabled={rerunning}>{rerunning ? 'Generating…' : 'Yes, generate'}</button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="profile-output-modal-intro">
+                  {profile?.is_developer
+                    ? 'Developer account: change anything here. The account is updated with these details when the report is generated.'
+                    : newReportLocks.lockedFields.includes('status')
+                    ? 'Same answers, written again for what you want now. Check your next step and subjects below, then generate. This uses one report.'
+                    : 'Same answers, written again for where you are now. You can update your status here; the account changes when the report is generated. This uses one report.'}
+                </p>
+                <IntroQuestions
+                  responses={editIntroResponses}
+                  setResponses={setEditIntroResponses}
+                  onNext={handleRerunOutput}
+                  onBack={closeOutputParametersModal}
+                  isLoading={rerunning}
+                  showBackButton
+                  overrideNextLabel={rerunning ? 'Generating…' : 'Generate report'}
+                  embedded
+                  {...newReportLocks}
+                />
+              </>
+            )}
           </div>
         </div>
       ) : null}

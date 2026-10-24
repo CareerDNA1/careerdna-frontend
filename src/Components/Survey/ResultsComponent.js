@@ -24,13 +24,14 @@ import FurtherStudyPanel from './FurtherStudyPanel';
 import NonUniversityPanel from './NonUniversityPanel';
 import RoleExplorerPanel from './RoleExplorerPanel';
 import { getMyProfile } from '../../utils/profile';
+import { fetchEntitlement } from '../../utils/entitlement';
 import { supabase } from '../../utils/supabaseClient';
 import { applyCouponCode } from '../../utils/applyCoupon';
 import { getStrengthIcon, getEnvironmentIcon, getCareerWorldIcon, getPathwayIcon } from '../../utils/iconMap';
 import { ThumbsUp, ThumbsDown } from 'phosphor-react';
 import { getProfileQualityGateMessage, getProfileQualityCaveat } from '../../utils/profileQualityGate';
 import { bandForScore, bandTier } from '../../utils/bands';
-import { setActiveRunId } from '../../utils/savedItems';
+import { setActiveRunId, SAVE_FAILED_EVENT } from '../../utils/savedItems';
 import { findChildFavourites, deleteFavouriteRows, pathwayParentMeta } from '../../utils/favouriteCascade';
 import { normaliseFavouriteType } from '../../utils/favourites';
 import { canonicalItem } from '../../utils/canonicalIds';
@@ -358,7 +359,26 @@ function makeOverallFeedbackStorageKey(analysisMeta = {}) {
   return `careerdna:overallFeedback:${reportId}`;
 }
 
+// Writes for the same item are queued one after another, so a double click
+// (or two quick clicks in two places) cannot both read "no row yet" and both
+// insert. Each call still sees the result of the one before it.
+const feedbackWriteQueue = new Map();
+
 async function saveResultFeedbackRow(payload = {}) {
+  const key = [
+    payload.userId, payload.assessmentRunId, payload.feedbackScope, payload.itemType, payload.itemId,
+  ].map((v) => String(v ?? '')).join('|');
+  const previous = feedbackWriteQueue.get(key) || Promise.resolve();
+  const run = previous.catch(() => {}).then(() => saveResultFeedbackRowNow(payload));
+  feedbackWriteQueue.set(key, run);
+  try {
+    return await run;
+  } finally {
+    if (feedbackWriteQueue.get(key) === run) feedbackWriteQueue.delete(key);
+  }
+}
+
+async function saveResultFeedbackRowNow(payload = {}) {
   const {
     userId,
     assessmentRunId,
@@ -395,9 +415,12 @@ async function saveResultFeedbackRow(payload = {}) {
     if (byId.error || byId.data?.id) return byId;
     // Not found under any known id: an older row may sit under a superseded id
     // we cannot predict. For worlds and pathways the title is the stable key.
+    // Only within the same type (plus the pathway/role alias used by older
+    // uni rows): a role and a pathway sharing a title must never be merged.
     if (itemTitle && ['career_world', 'pathway', 'role'].includes(itemType)) {
+      const titleTypes = itemType === 'career_world' ? types : Array.from(new Set([...types, 'pathway', 'role']));
       const byTitle = await start()
-        .in('item_type', Array.from(new Set([...types, 'pathway', 'role'])))
+        .in('item_type', titleTypes)
         .eq('item_title', itemTitle)
         .order('updated_at', { ascending: false }).limit(1).maybeSingle();
       if (!byTitle.error && byTitle.data?.id) return byTitle;
@@ -443,11 +466,22 @@ async function saveResultFeedbackRow(payload = {}) {
     : supabase.from('result_feedback').insert(payload));
 
   let { error } = await write(row);
-  if (error && row.item_meta) {
+  if (error && row.item_meta && error.code !== '23505') {
     // item_meta column missing (migration not run): save without it.
     const bare = { ...row };
     delete bare.item_meta;
     ({ error } = await write(bare));
+  }
+  if (error && error.code === '23505' && !existing.data?.id) {
+    // The row appeared between our read and our insert (another tab):
+    // update that row instead of failing.
+    const again = await baseQuery();
+    if (again.error) throw again.error;
+    if (again.data?.id) {
+      ({ error } = await supabase.from('result_feedback').update(row).eq('id', again.data.id));
+      if (error) throw error;
+      return { updated: true };
+    }
   }
   if (error) throw error;
   return existing.data?.id ? { updated: true } : { inserted: true };
@@ -1516,17 +1550,22 @@ export default function ResultsComponent({
     try {
       await deleteFavouriteRows(cascadePrompt.children.map((c) => c.id));
       // Clear their local reaction state too, so pills and lists update at once.
-      const gone = new Set(cascadePrompt.children.map((c) => c.item_title));
+      // Match on type and title together, so a degree and a course with the
+      // same name are not both cleared when only one was removed.
+      const gone = new Set(cascadePrompt.children.map((c) => `${c.item_type}|${c.item_title}`));
+      const childTypes = ['pathway', 'subject', 'role', 'nonuni_pathway', 'apprenticeship', 'course', 'job'];
       setItemReactions((prev) => {
         const next = { ...prev };
         Object.keys(next).forEach((k) => {
           const meta = itemReactionMeta[k];
-          if (meta && gone.has(meta.title) && ['pathway', 'subject', 'role', 'nonuni_pathway', 'apprenticeship', 'course'].includes(meta.type)) delete next[k];
+          if (!meta || !childTypes.includes(meta.type)) return;
+          if (gone.has(`${meta.type}|${meta.title}`) || (meta.type === 'role' && gone.has(`pathway|${meta.title}`))) delete next[k];
         });
         return next;
       });
     } catch (err) {
       console.warn('Could not remove saved items:', err?.message || err);
+      setSaveNotice(SAVE_FAILED_NOTICE);
     } finally {
       setCascadeBusy(false);
       setCascadePrompt(null);
@@ -1539,6 +1578,10 @@ export default function ResultsComponent({
   // resolved (title + world) without depending on any loaded insight.
   const [itemReactionMeta, setItemReactionMeta] = useState({});
   const [selectionInsights, setSelectionInsights] = useState([]);
+  // Latest committed list, readable from effects without adding it to their
+  // dependencies (which would refetch on every list change).
+  const selectionInsightsRef = useRef([]);
+  useEffect(() => { selectionInsightsRef.current = selectionInsights; }, [selectionInsights]);
   const [selectionInsightsLoading, setSelectionInsightsLoading] = useState(false);
   const [selectionInsightsReloadTick, setSelectionInsightsReloadTick] = useState(0);
   const [selectionInsightsError, setSelectionInsightsError] = useState('');
@@ -1646,7 +1689,13 @@ export default function ResultsComponent({
   // not on whichever run happens to be newest.
   useEffect(() => {
     setActiveRunId(effectiveAssessmentRunId || null);
-    return () => setActiveRunId(null);
+    // A save from a popup (job, advert, course) that failed: show the notice.
+    const onSaveFailed = () => setSaveNotice(SAVE_FAILED_NOTICE);
+    window.addEventListener(SAVE_FAILED_EVENT, onSaveFailed);
+    return () => {
+      setActiveRunId(null);
+      window.removeEventListener(SAVE_FAILED_EVENT, onSaveFailed);
+    };
   }, [effectiveAssessmentRunId]);
 
   const displayName = useMemo(() => getFirstName(profileFirstName), [profileFirstName]);
@@ -2119,13 +2168,20 @@ export default function ResultsComponent({
         if (!cancelled) {
           setProfileFirstName(profile?.first_name || '');
           setProfileUserId(profile?.id || '');
-          const plan = String(profile?.plan || '').toLowerCase();
-          const unlimited = ['premium_school', 'premium_university'].includes(plan);
-          const limit = Number(profile?.report_limit) || 0;
-          const used = Number(profile?.reports_used) || 0;
-          setReportPlan(plan);
-          setReportUnlimited(unlimited);
-          setReportsRemaining(unlimited ? null : Math.max(0, limit - used));
+          // Allowance from the backend, the same numbers it enforces when a
+          // report is generated (plan allowance plus bought extras, minus used).
+          try {
+            const ent = await fetchEntitlement();
+            if (cancelled) return;
+            setReportPlan(ent.plan);
+            setReportUnlimited(ent.reports.unlimited);
+            setReportsRemaining(ent.reports.unlimited ? null : ent.reports.remaining);
+          } catch {
+            if (cancelled) return;
+            setReportPlan(String(profile?.plan || '').toLowerCase());
+            setReportUnlimited(false);
+            setReportsRemaining(null); // unknown: the generate button stays available and the backend decides
+          }
           setReportInfoLoaded(true);
         }
       } catch {
@@ -2349,8 +2405,9 @@ export default function ResultsComponent({
         itemTypeAliases: item.rawType && item.rawType !== item.type ? [item.rawType] : [],
       });
       // A like on a world/pathway being withdrawn (removed or turned into a
-      // dislike): offer to clear what was saved under it.
-      if (remove || reaction !== 'like') {
+      // dislike): offer to clear what was saved under it. Only when it was
+      // liked: disliking something never liked has nothing to cascade.
+      if (previous === 'like' && (remove || reaction !== 'like')) {
         maybeOfferCascade({ type: item.type, id: item.id, title: item.title || '' });
       }
     } catch (err) {
@@ -2447,7 +2504,7 @@ export default function ResultsComponent({
         itemIdAliases,
         itemTypeAliases,
       });
-      if (['career_world', 'pathway', 'subject'].includes(itemType) && (remove || reaction !== 'like')) {
+      if (['career_world', 'pathway', 'subject'].includes(itemType) && previousReaction === 'like' && (remove || reaction !== 'like')) {
         maybeOfferCascade({ type: itemType, id: itemId, title: itemTitle || '' });
       }
     } catch (err) {
@@ -2485,21 +2542,25 @@ export default function ResultsComponent({
     if (!activeTab?.markdown) return undefined;
     const scope = document.getElementById('results-root') || document;
     let running = false;
-    // A container is marked once it has been decorated with real metadata, so
-    // the watcher can decorate any container that mounts later, whether or
-    // not it holds a list. (The overview has no list: before this it was
-    // skipped on first generation and only decorated after a tab change.)
+    // Whether a container still carries our decoration is judged by its
+    // content, never by a flag on the container: React keeps the container
+    // element and swaps the text inside it when the summary is re-rendered
+    // (the name personalisation and the final text land after the first
+    // paint), which removed the green names while a flag said "done". That
+    // is why the overview was plain until a tab change remounted it.
     const decorate = (root) => {
       decorateAnalysisSignals(root, analysisMeta, resolvedItemReactions, scoresForChart);
-      if (analysisMeta?.sections) root.dataset.cdnaDecorated = '1';
+    };
+    const isDecorated = (root) => {
+      if (root.querySelector('ol, ul') && !root.querySelector('.cdna-card-list')) return false;
+      return Boolean(root.querySelector('.cdna-card-list, .cdna-section-definition, .cdna-strength-trait-text, .cdna-item-rail'));
     };
     const run = () => {
       if (running) return;
       running = true;
       try {
         scope.querySelectorAll('.analysis-box .markdown-content').forEach((root) => {
-          const undecoratedList = root.querySelector('ol, ul') && !root.querySelector('.cdna-card-list');
-          if (!root.dataset.cdnaDecorated || undecoratedList) decorate(root);
+          if (!isDecorated(root)) decorate(root);
         });
       } finally { running = false; }
     };
@@ -2510,7 +2571,9 @@ export default function ResultsComponent({
       if (timer) return;
       timer = window.setTimeout(() => { timer = null; run(); }, 0);
     });
-    observer.observe(scope, { childList: true, subtree: true });
+    // characterData too: React updates an existing text node in place when
+    // only the wording changes, which is not a childList mutation.
+    observer.observe(scope, { childList: true, subtree: true, characterData: true });
     return () => { observer.disconnect(); if (timer) window.clearTimeout(timer); };
   }, [activeTab?.markdown, analysisMeta, resolvedItemReactions, scoresForChart]);
 
@@ -2682,8 +2745,30 @@ export default function ResultsComponent({
   useEffect(() => {
     let cancelled = false;
 
+    // Keys of everything currently liked. Anything in the in-memory list that is
+    // not liked any more is dropped straight away, before any network call, so
+    // the Pathways tab never shows a world the student has unliked while a
+    // slow (or failed) refresh is still in flight.
+    const selectedKeySet = new Set(
+      selectedInsightItems.flatMap((item) =>
+        [item?.id, item?.title, normalizeSignalTitle(item?.title)].filter(Boolean).map(String))
+    );
+    const isStillSelected = (insight) =>
+      [insight?.id, insight?.title, normalizeSignalTitle(insight?.title)]
+        .filter(Boolean)
+        .some((key) => selectedKeySet.has(String(key)));
+    setSelectionInsights((prev) => {
+      const list = Array.isArray(prev) ? prev : [];
+      const kept = list.filter(isStillSelected);
+      return kept.length === list.length ? list : kept;
+    });
+
     async function loadSelectionInsights() {
-      if (!selectedInsightItems.length) return;
+      if (!selectedInsightItems.length) {
+        setSelectionInsightsError('');
+        setSelectionInsightsLoading(false);
+        return;
+      }
 
       const selectedByKey = new Map(
         selectedInsightItems.flatMap((item) => {
@@ -2726,10 +2811,12 @@ export default function ResultsComponent({
         return;
       }
 
-      // Only show the full loading screen on the first load. For incremental
-      // fetches (e.g. after liking a pathway) keep the current cards on screen
+      // Show the loading screen when nothing still-liked is on screen (first
+      // load, or every previous world was unliked). For incremental fetches
+      // (e.g. after liking one more pathway) keep the current cards on screen
       // and hydrate in the background, so the open card is never unmounted.
-      if (!insightsReadyRef.current) setSelectionInsightsLoading(true);
+      const stillOnScreen = (selectionInsightsRef.current || []).filter(isStillSelected).length + precomputed.length;
+      if (!insightsReadyRef.current || !stillOnScreen) setSelectionInsightsLoading(true);
       setSelectionInsightsError('');
 
       try {
@@ -2782,13 +2869,17 @@ export default function ResultsComponent({
         insightsReadyRef.current = true;
       } catch (err) {
         if (cancelled) return;
-        if (precomputed.length) {
-          setSelectionInsights(precomputed);
-          setSelectionInsightsError('');
-        } else {
-          setSelectionInsights([]);
-          setSelectionInsightsError(friendlyError(err, 'load your deeper insights').message);
-        }
+        // Keep whatever is still liked and already on screen (fetched earlier
+        // or precomputed in the report); only show the error when there is
+        // nothing at all to show.
+        const onScreen = (selectionInsightsRef.current || []).filter(isStillSelected);
+        const onScreenKeys = new Set(onScreen.flatMap((i) => [i?.id, i?.title].filter(Boolean).map(String)));
+        const fallback = [
+          ...onScreen,
+          ...precomputed.map((p) => p.insight).filter((i) => !onScreenKeys.has(String(i?.id || '')) && !onScreenKeys.has(String(i?.title || ''))),
+        ];
+        setSelectionInsights(fallback);
+        setSelectionInsightsError(fallback.length ? '' : friendlyError(err, 'load your deeper insights').message);
       } finally {
         if (!cancelled) setSelectionInsightsLoading(false);
       }

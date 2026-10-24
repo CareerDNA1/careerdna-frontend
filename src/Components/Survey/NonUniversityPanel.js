@@ -7,7 +7,7 @@ import { usePremiumAccess } from '../../utils/premiumGate';
 import { PATHWAY_DEFINITIONS } from '../../utils/selectionDefinitions';
 import { showSelectionTooltip, hideSelectionTooltip, PathwayReactionRow, SignalBadge, JobCard, JobDetailModal } from './SelectionInsightExplorer';
 import PathwayPicker, { readRemembered } from './PathwayPicker';
-import { getReactions, setItemReaction } from '../../utils/savedItems';
+import { getReactions, setItemReaction, notifySaveFailed } from '../../utils/savedItems';
 import { getSubjectIcon, getPathwayIcon, getCareerWorldIcon } from '../../utils/iconMap';
 import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank } from './ResultsFilter';
 import InlineError from '../Common/InlineError';
@@ -344,44 +344,49 @@ function StandardRow({ route, liveVacancies, showTitle, reaction = '', onReact }
     }).catch(() => {});
     return () => { cancelled = true; };
   }, [openingsOpen]);
+  // What an advert is saved with: its snapshot and parent links.
+  const adMeta = (job) => ({
+    employer: job.employer || '',
+    location: job.location || '',
+    url: job.url || '',
+    deadline: job.deadline || '',
+    closingDate: job.closingDate || null,
+    source: job.source || 'Find an Apprenticeship',
+    salary: job.salary || '',
+    noExperience: true,
+    kind: 'apprenticeship',
+    // Parent links, so unliking the pathway or world offers to clear this too.
+    pathwayTitle: route.pathway || '',
+    careerWorldTitle: route.careerWorld || '',
+  });
   const persistAdReaction = async (job, reaction, remove) => {
     await setItemReaction({
       itemType: 'job',
       itemId: advertKey(job),
       itemTitle: job.title || 'Apprenticeship',
-      itemMeta: {
-        employer: job.employer || '',
-        location: job.location || '',
-        url: job.url || '',
-        deadline: job.deadline || '',
-        closingDate: job.closingDate || null,
-        source: job.source || 'Find an Apprenticeship',
-        salary: job.salary || '',
-        noExperience: true,
-        kind: 'apprenticeship',
-        // Parent links, so unliking the pathway or world offers to clear this too.
-        pathwayTitle: route.pathway || '',
-        careerWorldTitle: route.careerWorld || '',
-      },
+      itemMeta: adMeta(job),
       reaction,
       remove,
     });
   };
   const adReactionFor = (id) => (savedAds.has(id) ? 'like' : dislikedAds.has(id) ? 'dislike' : '');
-  const handleAdToggleSave = async (job) => {
-    const id = advertKey(job);
-    const isSaved = savedAds.has(id);
-    setSavedAds((prev) => { const n = new Set(prev); if (isSaved) n.delete(id); else n.add(id); return n; });
-    if (!isSaved) setDislikedAds((prev) => { const n = new Set(prev); n.delete(id); return n; });
-    await persistAdReaction(job, 'like', isSaved);
+  // Optimistic update; if the save fails, put the heart back and say so.
+  const applyAdReaction = (id, next, remove) => {
+    setSavedAds((prev) => { const n = new Set(prev); if (!remove && next === 'like') n.add(id); else n.delete(id); return n; });
+    setDislikedAds((prev) => { const n = new Set(prev); if (!remove && next === 'dislike') n.add(id); else n.delete(id); return n; });
   };
   const handleAdReact = async (job, next) => {
     const id = advertKey(job);
     const current = adReactionFor(id);
     const remove = current === next;
-    setSavedAds((prev) => { const n = new Set(prev); if (!remove && next === 'like') n.add(id); else n.delete(id); return n; });
-    setDislikedAds((prev) => { const n = new Set(prev); if (!remove && next === 'dislike') n.add(id); else n.delete(id); return n; });
-    await persistAdReaction(job, next, remove);
+    applyAdReaction(id, next, remove);
+    try {
+      await persistAdReaction(job, next, remove);
+    } catch (err) {
+      console.warn('Could not save advert reaction:', err?.message || err);
+      applyAdReaction(id, current, !current);
+      notifySaveFailed();
+    }
   };
   // T Levels and college diplomas are courses you apply to, not apprenticeship
   // adverts, so they never show "live openings" and link to a provider finder.
@@ -589,7 +594,6 @@ function StandardRow({ route, liveVacancies, showTitle, reaction = '', onReact }
                                 key={`${v.reference || v.title}-${i}`}
                                 job={job}
                                 saved={savedAds.has(advertKey(job))}
-                                onToggleSave={handleAdToggleSave}
                                 onOpen={setDetailAd}
                               />
                             );

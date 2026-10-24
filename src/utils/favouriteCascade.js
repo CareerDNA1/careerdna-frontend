@@ -2,6 +2,7 @@ import { supabase } from './supabaseClient';
 import { pathwayWorld, canonicalWorldId } from './canonicalIds';
 import { fetchNonUniRoutes } from './fetchNonUniRoutes';
 import { notifyFavouritesChanged } from './savedItems';
+import { normaliseFavouriteType } from './favourites';
 
 // When a student unlikes a career world or pathway, the degrees, roles and
 // training routes they saved under it become orphans. These helpers find those
@@ -9,7 +10,9 @@ import { notifyFavouritesChanged } from './savedItems';
 // remove them too.
 
 const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-const CHILD_TYPES = ['pathway', 'subject', 'role', 'nonuni_pathway', 'apprenticeship', 'course'];
+// 'job' covers live adverts; only those saved with a parent (apprenticeship
+// adverts under a training route) are ever picked.
+const CHILD_TYPES = ['pathway', 'subject', 'role', 'nonuni_pathway', 'apprenticeship', 'course', 'job'];
 
 // The career world a pathway belongs to (canonical backend ids, via
 // src/data/canonicalIds.json). Used to stamp pathway likes with their parent
@@ -25,6 +28,7 @@ export const CHILD_TYPE_LABELS = {
   nonuni_pathway: ['training route', 'training routes'],
   apprenticeship: ['apprenticeship', 'apprenticeships'],
   course: ['university course', 'university courses'],
+  job: ['advert', 'adverts'],
 };
 
 // parent: { type: 'career_world' | 'pathway' | 'subject', id, title }
@@ -39,7 +43,7 @@ export async function findChildFavourites({ userId, runId, parent }) {
   if (!['career_world', 'pathway', 'subject'].includes(parent.type)) return [];
   const { data, error } = await supabase
     .from('result_feedback')
-    .select('id, item_type, item_title, item_meta')
+    .select('id, item_type, item_id, item_title, item_meta')
     .eq('user_id', userId)
     .eq('assessment_run_id', runId)
     .eq('feedback_scope', 'item_reaction')
@@ -98,7 +102,12 @@ export async function findChildFavourites({ userId, runId, parent }) {
   if (parent.type === 'subject') {
     picked = [];
   } else {
-    picked = rows.filter((row) => row.item_type !== 'course' && (parent.type === 'pathway' ? inPathway(row) : inWorld(row)));
+    picked = rows.filter((row) => {
+      if (row.item_type === 'course') return false;
+      // Adverts only belong to something when saved with a parent link.
+      if (row.item_type === 'job' && !metaOf(row).pathwayTitle && !metaOf(row).careerWorldTitle) return false;
+      return parent.type === 'pathway' ? inPathway(row) : inWorld(row);
+    });
   }
 
   // Courses follow their degree: the parent itself when a degree is unliked,
@@ -117,7 +126,9 @@ export async function findChildFavourites({ userId, runId, parent }) {
     const m = metaOf(row);
     return {
       id: row.id,
-      item_type: row.item_type,
+      // Older uni-flow pathway families are stored as 'role'; label them as
+      // what they are.
+      item_type: normaliseFavouriteType(row.item_type, row.item_id, row.item_title),
       item_title: row.item_title || '',
       // Extra context for the prompt list, so two items with the same title
       // (a degree and a course in that subject) read differently.

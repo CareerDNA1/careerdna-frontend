@@ -3953,10 +3953,20 @@
   .profile-hero-status-course::before { content: "Studying"; }
   .profile-hero-status-course { font-weight: 600; }
   .profile-hero-actions {
-    margin-top: 12px; padding-top: 10px; border-top: 1px solid #edf1f7;
+    margin-top: 12px; padding-top: 0; border-top: 0;
     justify-content: flex-start; flex-direction: row-reverse; gap: 8px;
   }
+  .profile-hero-actions { flex-direction: row; }
+  .profile-hero-actions .profile-hero-btn--manage { flex: 1 1 auto; justify-content: center; min-height: 40px; }
+  .profile-hero-actions .profile-hero-btn--muted { position: static; min-height: 40px; padding: 0 16px; font-size: 13px; }
   .profile-hero-btn { padding: 6px 14px; font-size: 13px; }
+  /* Avatar and name on one line, badge beside the name; the status strip
+     breaks out to the full card width underneath. */
+  .profile-hero-id { flex-wrap: wrap; align-items: center; }
+  .profile-hero-idtext { display: contents; }
+  .profile-hero-welcome { flex: 1 1 0; min-width: 0; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 4px 10px; margin: 0; }
+  .profile-hero-meta { flex-basis: 100%; }
+  .profile-hero-status { margin-top: 12px; padding-top: 12px; }
   .profile-hero-btn--muted { position: static; font-size: 11px; padding: 3px 9px; }
 }
 
@@ -3968,3 +3978,100 @@
   align-items: center;
   justify-content: center;
 }
+
+/* Manage account: read-only "Where you are" line with a pointer to the card. */
+.profile-account-hint { display: block; margin-top: 4px; font-size: 0.76rem; color: #7a8aa3; }
+
+/* Subscription notice shown inside Manage account only. */
+.profile-notice--modal { margin: 0 24px 10px; }
+
+/* Recent reports header: New report (outline) next to New assessment. */
+.profile-card-header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.profile-output-modal-intro { margin: 0 0 6px; padding: 0 2px; font-size: 0.88rem; color: #4b5c6b; line-height: 1.5; }
+
+/* Plan strip at the top of Manage account. */
+.profile-account-planbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 12px 14px; border-radius: 14px;
+  border: 1px solid #dfe6f0; background: linear-gradient(135deg, #f4f7fd 0%, #ffffff 100%);
+}
+.profile-account-planbar.is-paid { border-color: #f3dfae; background: linear-gradient(135deg, #fff8e7 0%, #ffffff 70%); }
+.profile-account-planbar__main { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.profile-account-planbar__badge { flex: 0 0 auto; }
+.profile-account-planbar__text { display: grid; gap: 2px; min-width: 0; }
+.profile-account-planbar__line { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 0.84rem; font-weight: 600; color: #1f2a37; }
+.profile-account-planbar__line .profile-account-plan-link { margin: 0; }
+.profile-account-planbar__since { font-size: 0.76rem; color: #6b7a90; }
+@media (max-width: 520px) {
+  .profile-account-planbar { flex-direction: column; align-items: stretch; }
+  .profile-account-planbar .profile-account-upgrade-pill { width: 100%; }
+}
+
+/* Buy more on the limits rows. */
+.profile-account-limits-card .profile-account-limit-row { grid-template-columns: 36px minmax(0, 1fr) auto auto; }
+.profile-account-limit-buy {
+  margin-left: 2px; border: 1px solid #d2dff0; background: #fff; color: #2f6fed;
+  border-radius: 999px; padding: 0 12px; min-height: 28px; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+}
+.profile-account-limit-buy:hover { background: #eef4ff; }
+
+/* Mobile: two short lines per limit row. Title with the count on its right,
+   subtitle with Buy more on its right. */
+@media (max-width: 600px) {
+  .profile-account-limits-card .profile-account-limit-row {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "icon title number"
+      "icon sub buy";
+    column-gap: 10px;
+    row-gap: 4px;
+    align-items: center;
+  }
+  .profile-account-limits-card .profile-account-limit-row .profile-account-summary-icon { grid-area: icon; align-self: center; width: 32px; height: 32px; }
+  .profile-account-limits-card .profile-account-limit-copy { display: contents; }
+  .profile-account-limits-card .profile-account-limit-copy strong { grid-area: title; }
+  .profile-account-limits-card .profile-account-limit-copy span { grid-area: sub; display: block; }
+  .profile-account-limits-card .profile-account-limit-number { grid-area: number; grid-column: auto; justify-self: end; font-size: 1.1rem; }
+  .profile-account-limits-card .profile-account-limit-buy { grid-area: buy; justify-self: end; margin: 0; min-height: 26px; }
+}
+
+/* Paid plans: the hero takes the same soft gold as the plan strip in Manage
+   account, so the plan is visible at a glance. */
+.profile-hero--paid {
+  background: linear-gradient(135deg, #fff8e7 0%, #ffffff 70%);
+  border: 1px solid #f3dfae; border-radius: 18px; padding: 14px 18px;
+}
+@media (max-width: 600px) {
+  .profile-hero--paid { background: linear-gradient(135deg, #fff8e7 0%, #ffffff 70%); border-color: #f3dfae; }
+  .profile-hero--paid .profile-hero-status, .profile-hero--paid .profile-hero-actions { border-color: #f3e3bf; }
+}
+
+/* Developer accounts: the badge's purple, not the paid gold. */
+.profile-account-planbar.is-dev { border-color: #c4b5fd; background: linear-gradient(135deg, #ede9fe 0%, #f8f6ff 100%); }
+.profile-hero--dev {
+  background: linear-gradient(135deg, #ede9fe 0%, #f8f6ff 100%);
+  border: 1px solid #c4b5fd; border-radius: 18px; padding: 14px 18px;
+}
+@media (max-width: 600px) {
+  .profile-hero--dev { background: linear-gradient(135deg, #ede9fe 0%, #f8f6ff 100%); border-color: #c4b5fd; }
+  .profile-hero--dev .profile-hero-status, .profile-hero--dev .profile-hero-actions { border-color: #e6e1fb; }
+}
+
+/* Explorer: the badge's blue, as Premium has its gold and Developer its purple. */
+.profile-account-planbar.is-explore { border-color: #c7d9fb; background: linear-gradient(135deg, #e3edff 0%, #f7faff 100%); }
+.profile-hero--explore {
+  background: linear-gradient(135deg, #e3edff 0%, #f7faff 100%);
+  border: 1px solid #c7d9fb; border-radius: 18px; padding: 14px 18px;
+}
+@media (max-width: 600px) {
+  .profile-hero--explore { background: linear-gradient(135deg, #e3edff 0%, #f7faff 100%); border-color: #c7d9fb; }
+  .profile-hero--explore .profile-hero-status, .profile-hero--explore .profile-hero-actions { border-color: #d6e2f7; }
+}
+
+/* Billing confirmation inside the plan strip. */
+.profile-account-planbar__notice {
+  display: flex; align-items: center; gap: 6px; margin-top: 6px;
+  color: #1f7a3f; font-size: 0.8rem; font-weight: 600;
+}
+.profile-account-planbar__notice svg { flex: 0 0 auto; }

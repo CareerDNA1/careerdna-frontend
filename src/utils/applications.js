@@ -135,6 +135,19 @@ export async function applyFromFavourite(item, { runId = null, stage = '' } = {}
     history: [{ status: 'applied', at: today() }],
   };
   const { data, error } = await supabase.from('applications').insert(row).select().single();
+  if (error && error.code === '23505') {
+    // A second click landed before the first insert returned: hand back the
+    // row that now exists rather than failing.
+    const { data: again, error: againError } = await supabase
+      .from('applications')
+      .select(SELECT)
+      .eq('user_id', user.id)
+      .eq('item_type', itemType)
+      .eq('item_id', itemId)
+      .maybeSingle();
+    if (againError) throw againError;
+    if (again) return again;
+  }
   if (error) throw error;
   return data;
 }

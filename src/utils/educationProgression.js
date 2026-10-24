@@ -48,6 +48,18 @@ export function ukSchoolYearGroup(dob, asOf = new Date()) {
   return ageTurnedDuringYear - 5;
 }
 
+// Current school year group from the one the person chose when they joined
+// ("year10") plus one for every September since. `setYear` is the academic
+// start year the choice was made in; without it the choice is taken as this
+// year's. Returns a number (e.g. 11), or null when nothing was chosen.
+export function currentSchoolYear(schoolYear, setYear, asOf = new Date()) {
+  const m = /^year(\d{1,2})$/i.exec(String(schoolYear || '').trim());
+  if (!m) return null;
+  const base = Number(m[1]);
+  const from = Number(setYear) || academicStartYear(asOf);
+  return base + Math.max(0, academicStartYear(asOf) - from);
+}
+
 // Current university year (1-based) from the academic year the course started.
 // e.g. started 2025, now in 2026/27 -> year 2.
 export function universityYear(courseStartYear, asOf = new Date()) {

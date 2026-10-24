@@ -118,6 +118,7 @@ export async function createReportPackCheckout(pack) {
 }
 
 export function formatPackPrice(pack) {
+  if (pack?.amount == null) return 'Price shown at checkout';
   const amount = Number(pack?.amount || 0) / 100;
   const currency = String(pack?.currency || 'gbp').toUpperCase();
   try {

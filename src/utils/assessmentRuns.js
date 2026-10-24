@@ -8,6 +8,8 @@ import { scoreSubdimensions } from './scoreSubdimensions';
 import { computeClarityPercents } from './selfAwarenessSummary';
 import { getBankQuestions, getBankWeights, runVersions, currentVersions } from './banks';
 import { carryOverFavourites } from './favouriteCarryOver';
+import { clearRunCache } from './savedItems';
+import { getAcademicStatus, snapshotAnswers } from './academicStatus';
 
 // Id of the user's newest run (slim query; no jsonb columns).
 async function getLatestRunId(userId) {
@@ -283,6 +285,9 @@ export async function setCurrentRunId(runId) {
     .update({ current_run_id: runId || null })
     .eq('id', user.id);
   if (error) throw error;
+  // Saves made from the profile page look up the pinned report; forget the
+  // cached one so the next save goes to this report straight away.
+  clearRunCache();
   return true;
 }
 
@@ -499,10 +504,18 @@ export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswe
   }
   run = fullRun;
 
-  const intro = {
-    ...(run.intro_answers_json || {}),
-    ...(updatedIntroAnswers || {}),
-  };
+  // Where the person is comes from the profile (academic status), not from
+  // the run being re-run and not from the caller: a re-run always produces a
+  // report for the person as they are now. The run's own snapshot is only the
+  // fallback for an account that has no saved status yet. Developer accounts
+  // change their status through the Where you are card, which writes the
+  // profile, so the same path serves them.
+  let profileStatus = null;
+  try { profileStatus = await getAcademicStatus(); } catch (_) { profileStatus = null; }
+  const statusAnswers = snapshotAnswers(profileStatus);
+  const intro = statusAnswers
+    ? { ...(run.intro_answers_json || {}), ...statusAnswers }
+    : { ...(run.intro_answers_json || {}), ...(updatedIntroAnswers || {}) };
 
   const subdimensionRows = rescored?.subdimensionRows
     || (Array.isArray(savedResults.subdimensionRows) ? savedResults.subdimensionRows : []);

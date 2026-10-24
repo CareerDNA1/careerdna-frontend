@@ -81,6 +81,10 @@ export function RequireAuth() {
   const location = useLocation();
   const userId = user?.id || '';
   const [profileState, setProfileState] = useState('checking');
+  const [onboarded, setOnboarded] = useState(true);
+  // While onboarding is incomplete, every route change re-reads the profile
+  // (so finishing /welcome releases the redirect); afterwards it is constant.
+  const recheckKey = onboarded ? '' : location.pathname;
   const completeProfileUserIdRef = useRef('');
 
   useEffect(() => {
@@ -98,7 +102,9 @@ export function RequireAuth() {
       // If we have already confirmed this signed-in user's profile during this
       // app session, do not flash the whole app back to "Loading..." on token
       // refresh, tab focus, or Supabase auth state refresh events.
-      if (completeProfileUserIdRef.current === userId) {
+      // (While onboarding is still incomplete we re-read the profile on each
+      // route change, so finishing /welcome releases the redirect.)
+      if (completeProfileUserIdRef.current === userId && onboarded) {
         setProfileState('complete');
         return;
       }
@@ -112,6 +118,11 @@ export function RequireAuth() {
         if (complete) completeProfileUserIdRef.current = userId;
         else completeProfileUserIdRef.current = '';
 
+        // First login: where you are (date of birth, school or university,
+        // subject of interest ...) is confirmed once, before anything else.
+        // Accounts from before this existed have the answers prefilled from
+        // their last report and only confirm them.
+        setOnboarded(Boolean(profile?.onboarding_completed_at));
         setProfileState(complete ? 'complete' : 'incomplete');
       } catch (_) {
         if (cancelled) return;
@@ -125,7 +136,9 @@ export function RequireAuth() {
     return () => {
       cancelled = true;
     };
-  }, [userId, loading]);
+    // recheckKey: re-check after the onboarding page navigates away.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, loading, recheckKey]);
 
   if (loading || (userId && profileState === 'checking')) {
     return <RouteWait />;
@@ -146,6 +159,10 @@ export function RequireAuth() {
         }}
       />
     );
+  }
+
+  if (!onboarded && location.pathname !== '/welcome') {
+    return <Navigate to="/welcome" replace state={{ from: location }} />;
   }
 
   return <Outlet />;

@@ -4,16 +4,16 @@ import './PlanWelcomeModal.css';
 
 // Shown once, on return from a successful Stripe checkout. Four variants:
 // a new Explorer plan, a new or upgraded Premium plan, an advisor question
-// pack, and an extra report. Follows the house modal frame (white card, radius 20,
-// title split black / blue, tick list, pill buttons bottom right).
+// pack, and an extra report. It confirms what was bought and where to use
+// it; the only action is Close, which leaves the person on their profile.
+// Follows the house modal frame (white card, radius 20, title split black /
+// blue, tick list, pill button bottom right).
 //
 // Props
 //   kind        'explore' | 'premium' | 'pack' | 'report'
 //   audience    'school' | 'university' (changes the Premium lines)
-//   hasReport   whether the student already has a report to open
-//   onPrimary   called after the primary button (open report / ask advisor / start)
-//   onClose     called for "Later" and the X
-export default function PlanWelcomeModal({ kind = 'explore', audience = 'school', hasReport = false, onPrimary, onClose }) {
+//   onClose     called for Close and the X
+export default function PlanWelcomeModal({ kind = 'explore', audience = 'school', onClose }) {
   const [party, setParty] = useState(1);
   useEffect(() => { setParty((n) => n + 1); }, [kind]);
   // Focus the card itself on open so no button shows a focus ring until Tab is used.
@@ -30,11 +30,10 @@ export default function PlanWelcomeModal({ kind = 'explore', audience = 'school'
         title: ['Your extra report ', 'is ready to use'],
         body: 'Your payment went through and one more report has been added to your account.',
         lines: [
-          'Retake the assessment or re-run it with different settings',
+          'Use it from Recent reports on your profile: New assessment or New report',
           'Your earlier reports stay in your history',
-          'Your remaining reports are shown on your profile',
+          'Your remaining reports are shown under Your limits in Manage account',
         ],
-        primary: 'Generate a new report',
       }
     : kind === 'pack'
     ? {
@@ -45,7 +44,6 @@ export default function PlanWelcomeModal({ kind = 'explore', audience = 'school'
           'Every answer is based on your own CareerDNA, not generic advice',
           'Your remaining questions are shown in the Advisor panel',
         ],
-        primary: 'Ask your Advisor',
       }
     : kind === 'premium'
     ? {
@@ -62,7 +60,6 @@ export default function PlanWelcomeModal({ kind = 'explore', audience = 'school'
               'Your chances of an offer, rankings, entry requirements and live openings',
               'Your applications tracked in one place',
             ],
-        primary: hasReport ? 'Open my full report' : 'Take the assessment',
       }
     : {
         title: ['Welcome to CareerDNA ', 'Explorer'],
@@ -72,7 +69,6 @@ export default function PlanWelcomeModal({ kind = 'explore', audience = 'school'
           '10 Advisor questions a year, answered from your own profile',
           'Your development tracked over time',
         ],
-        primary: hasReport ? 'Open my full report' : 'Take the assessment',
       };
 
   return (
@@ -100,8 +96,7 @@ export default function PlanWelcomeModal({ kind = 'explore', audience = 'school'
             ))}
           </ul>
           <div className="plan-welcome__actions">
-            <button type="button" className="plan-welcome__btn plan-welcome__btn--secondary" onClick={onClose}>Later</button>
-            <button type="button" className="plan-welcome__btn plan-welcome__btn--primary" onClick={onPrimary}>{copy.primary}</button>
+            <button type="button" className="plan-welcome__btn plan-welcome__btn--primary" onClick={onClose}>Close</button>
           </div>
         </section>
       </div>

@@ -47,6 +47,7 @@ const SurveyQuestions = lazy(() => import('./pages/SurveyQuestions'));
 const ResultsPage = lazy(() => import('./pages/ResultsPage'));
 const SavedResultPage = lazy(() => import('./pages/SavedResultPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const OnboardingPage = lazy(() => import('./pages/OnboardingPage'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const RankingsModal = lazy(() => import('./Components/Rankings/RankingsModal'));
 
@@ -334,6 +335,7 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         <Route element={<RequireAuth />}>
+          <Route path="/welcome" element={<OnboardingPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route element={<RequireAdmin />}>
             <Route path="/admin" element={<AdminDashboard />} />

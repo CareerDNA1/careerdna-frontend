@@ -7,6 +7,7 @@ import DatePicker from '../Common/DatePicker';
 import './IntroQuestions.css';
 import { ageFromDOB, academicStartYear } from '../../utils/educationProgression';
 import { getIdentityProfile, IDENTITY_LOCK_ENABLED } from '../../utils/identityProfile';
+import { searchInstitutions, hasSchoolLookup } from '../../utils/academicStatus';
 import { useAuth } from '../../context/AuthContext';
 import { clearLocalUserState } from '../../utils/clearLocalUserState';
 
@@ -624,6 +625,68 @@ const getUniOptions = (status) => {
 };
 
 
+// School / university name with a lookup. Suggestions come from the bundled
+// UK lists (universities and HE colleges from Discover Uni; schools and
+// colleges from the DfE register once built); anything typed is accepted as
+// free text, so a school that is not in the list is never a blocker.
+export function InstitutionInput({ id, kind, value, onChange, onBlur, placeholder, invalid, describedBy, disabled = false }) {
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(-1);
+  const suggestions = useMemo(() => (open ? searchInstitutions(value, kind, 8) : []), [open, value, kind]);
+  const pick = (item) => { onChange(item.name, item); setOpen(false); setActive(-1); };
+  const onKeyDown = (e) => {
+    if (!suggestions.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActive((i) => Math.min(suggestions.length - 1, i + 1)); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive((i) => Math.max(0, i - 1)); }
+    else if (e.key === 'Enter' && active >= 0) { e.preventDefault(); pick(suggestions[active]); }
+    else if (e.key === 'Escape') { setOpen(false); }
+  };
+  const listId = `${id}-suggestions`;
+  return (
+    <div className="institution-lookup">
+      <input
+        id={id}
+        type="text"
+        role="combobox"
+        aria-expanded={open && suggestions.length > 0}
+        aria-controls={listId}
+        aria-autocomplete="list"
+        autoComplete="off"
+        value={value}
+        disabled={disabled}
+        onChange={(e) => { onChange(e.target.value, null); setOpen(true); setActive(-1); }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => { window.setTimeout(() => setOpen(false), 120); if (onBlur) onBlur(); }}
+        onKeyDown={onKeyDown}
+        placeholder={placeholder}
+        aria-invalid={invalid ? 'true' : 'false'}
+        aria-describedby={describedBy}
+      />
+      {!disabled && open && suggestions.length > 0 ? (
+        <ul id={listId} className="institution-lookup__list" role="listbox">
+          {suggestions.map((s, i) => (
+            <li
+              key={s.id}
+              role="option"
+              aria-selected={i === active}
+              className={`institution-lookup__item${i === active ? ' is-active' : ''}`}
+              onMouseDown={(e) => { e.preventDefault(); pick(s); }}
+            >
+              <span className="institution-lookup__name">{s.name}</span>
+              {s.town ? <span className="institution-lookup__town">{s.town}</span> : null}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {kind === 'school' && !hasSchoolLookup() ? null : (
+        open && value.trim().length >= 3 && !suggestions.length ? (
+          <div className="institution-lookup__hint">Not in our list? That is fine, we will use what you typed.</div>
+        ) : null
+      )}
+    </div>
+  );
+}
+
 const IntroQuestions = ({
   introResponses: introResponsesProp,
   setIntroResponses: setIntroResponsesProp,
@@ -638,8 +701,62 @@ const IntroQuestions = ({
   isLoading = false,
   showBackButton = false,
   embedded = false,
+  // Onboarding (first login) uses the same form with its own heading and
+  // intro text; the survey start keeps the defaults.
+  // Fields a normal account cannot change from Manage account (set when the
+  // person joins; developers excepted).
+  lockedFields = [],
+  // Why a locked field is locked: shown as a tooltip on the greyed control.
+  lockedNotes = {},
+  // Shown as a tooltip when an editable field is focused (for example "once a year").
+  fieldNotes = {},
+  // Manage account: only the facts (country, status, school or university,
+  // year group, course year, subject studied). Preferences (plan, next step,
+  // subjects of interest) belong to a report and are not shown or required.
+  factsOnly = false,
+  heading = 'Before we begin...',
+  introText = 'We’d love to ask a few quick questions to tailor your results and help us understand what you’d like CareerDNA to help you with. Your answers are used only to personalise your report and to collect anonymous, aggregated stats.',
 }) => {
   const introResponses = introResponsesProp ?? responses ?? {};
+  const isLockedField = (name) => Array.isArray(lockedFields) && lockedFields.includes(name);
+  const lockNote = () => null;
+  // Wrap a control so the tooltip shows on hover even though the control is
+  // disabled. A plain function (not a component) so the control is not
+  // remounted on every render.
+  const [lockTip, setLockTip] = useState(null);
+  // A tip closes by itself after a few seconds.
+  useEffect(() => {
+    if (!lockTip) return undefined;
+    const t = setTimeout(() => setLockTip(null), 3500);
+    return () => clearTimeout(t);
+  }, [lockTip]);
+  const wrapLocked = (name, control) => {
+    const locked = isLockedField(name);
+    const text = locked ? lockedNotes && lockedNotes[name] : fieldNotes && fieldNotes[name];
+    if (!text) return control;
+    const tip = lockTip === name ? <div className="intro-lock-tip" role="tooltip">{text}</div> : null;
+    if (locked) {
+      // Greyed field: the reason appears when the field is clicked; click again to hide.
+      return (
+        <div
+          className="intro-locked-wrap"
+          onClick={() => setLockTip((cur) => (cur === name ? null : name))}
+        >
+          {control}{tip}
+        </div>
+      );
+    }
+    // Editable field: the rule appears while the field is in use.
+    return (
+      <div
+        className="intro-note-wrap"
+        onFocus={() => setLockTip(name)}
+        onBlur={() => setLockTip((cur) => (cur === name ? null : cur))}
+      >
+        {control}{tip}
+      </div>
+    );
+  };
   const setIntroResponses = setIntroResponsesProp ?? setResponses ?? (() => {});
   const handleSubmit = onStartSurvey || onNext;
   const finalSubmitLabel = overrideNextLabel || submitLabel;
@@ -704,14 +821,14 @@ const IntroQuestions = ({
 
     if (v.status === 'undergraduate' || v.status === 'postgraduate') {
       if (!v.courseYear) out.courseYear = 'Please select your year of study.';
-      if (!v.uniNeed) out.uniNeed = 'Please select your next step.';
+      if (!factsOnly && !v.uniNeed) out.uniNeed = 'Please select your next step.';
       if (!v.uniSubject) out.uniSubject = 'Please choose your subject.';
     }
 
     if (v.status === 'school') {
       if (!v.schoolYear) out.schoolYear = 'Please select your year group.';
-      if (!v.planUniversity) out.planUniversity = 'Please tell us if you plan to study at university.';
-      if (!v.schoolScope) out.schoolScope = 'Please select your next step.';
+      if (!factsOnly && !v.planUniversity) out.planUniversity = 'Please tell us if you plan to study at university.';
+      if (!factsOnly && !v.schoolScope) out.schoolScope = 'Please select your next step.';
       if (v.schoolSubjects !== undefined && !Array.isArray(v.schoolSubjects)) {
         out.schoolSubjects = 'Please choose subjects from the list (or leave it blank).';
       }
@@ -1041,16 +1158,14 @@ const IntroQuestions = ({
     <div className="intro-container">
       {!isEditMode && (
         <>
-          <h2>Before we begin...</h2>
-          <p className="intro-text">
-            We’d love to ask a few quick questions to tailor your results and help us understand what you’d like CareerDNA to help you with.
-            Your answers are used only to personalise your report and to collect anonymous, aggregated stats.
-          </p>
+          <h2>{heading}</h2>
+          <p className="intro-text">{introText}</p>
         </>
       )}
 
       <div className={`field ${hasErr('country') ? 'has-error' : ''}`} id="countrySelect">
         <label className="required">Which country are you currently living in?</label>
+        {wrapLocked('country', (
         <Select
           aria-label="Which country are you currently living in?"
           classNamePrefix="introSelect"
@@ -1062,12 +1177,15 @@ const IntroQuestions = ({
           closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
           options={countryOptions}
           value={flatCountryOptions.find(opt => opt.value === introResponses.country) || null}
+          isDisabled={isLockedField('country')}
           onChange={selected => handleChange('country', selected ? selected.value : '')}
           onBlur={() => setFieldTouched('country')}
           placeholder="Select your country"
           aria-invalid={hasErr('country') ? 'true' : 'false'}
         />
+        ))}
         {hasErr('country') && <div className="error-text">{errMsg('country')}</div>}
+        {lockNote('country')}
       </div>
 
       {/* Date of birth is only asked on the first assessment. It is fixed after
@@ -1095,6 +1213,7 @@ const IntroQuestions = ({
 
       <div className={`field ${hasErr('status') ? 'has-error' : ''}`} id="statusSelect">
         <label className="required" htmlFor="statusSelect">What’s your current status?</label>
+        {wrapLocked('status', (
         <Select
             aria-label={"What’s your current status?"}
             classNamePrefix="introSelect"
@@ -1106,13 +1225,16 @@ const IntroQuestions = ({
           closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
             options={statusOptions}
             value={statusOptions.find(opt => opt.value === statusGroup) || null}
+            isDisabled={isLockedField('status')}
             onChange={handleStatusGroupChange}
             onBlur={() => setFieldTouched('status')}
             placeholder="Select your current status"
               aria-invalid={hasErr('status') ? 'true' : 'false'}
         />
+        ))}
         {hasErr('status') && <div className="error-text">{errMsg('status')}</div>}
-        {!hasErr('status') && statusAgeCheck ? (
+        {lockNote('status')}
+        {!hasErr('status') && !isLockedField('status') && statusAgeCheck ? (
           <div className="intro-check-note" role="status">{statusAgeCheck}</div>
         ) : null}
       </div>
@@ -1120,6 +1242,7 @@ const IntroQuestions = ({
       {isUniversityGroup && (
         <div className={`field ${hasErr('universityLevel') ? 'has-error' : ''}`} id="universityLevelSelect">
           <label className="required">Are you an undergraduate or postgraduate student?</label>
+          {wrapLocked('status', (
           <Select
             aria-label="Are you an undergraduate or postgraduate student?"
             classNamePrefix="introSelect"
@@ -1131,6 +1254,7 @@ const IntroQuestions = ({
           closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
             options={universityLevelOptions}
             value={universityLevelOptions.find(opt => opt.value === status) || null}
+            isDisabled={isLockedField('status')}
             onChange={handleUniversityLevelChange}
             onBlur={() => setFieldTouched('universityLevel')}
             placeholder="Select your university level"
@@ -1141,6 +1265,7 @@ const IntroQuestions = ({
             onMenuClose={() => setLevelMenuOpen(false)}
             aria-invalid={hasErr('universityLevel') ? 'true' : 'false'}
               />
+          ))}
           {postgradNotice && (
             <div className="subject-callout" role="status" aria-live="polite">
               Postgraduate support is on its way. We are building it now and will let you know as soon as it is ready. In the meantime you are welcome to continue as an undergraduate to explore your profile.
@@ -1153,6 +1278,7 @@ const IntroQuestions = ({
       {isUni && (
         <div className={`field ${hasErr('courseYear') ? 'has-error' : ''}`} id="courseYearSelect">
           <label className="required">Which year of your course are you in?</label>
+          {wrapLocked('courseYear', (
           <Select
             aria-label="Which year of your course are you in?"
             classNamePrefix="introSelect"
@@ -1164,11 +1290,13 @@ const IntroQuestions = ({
             closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
             options={courseYearOptions}
             value={courseYearOptions.find(opt => opt.value === introResponses.courseYear) || null}
+            isDisabled={isLockedField('courseYear')}
             onChange={selected => handleCourseYearChange(selected.value)}
             onBlur={() => setFieldTouched('courseYear')}
             placeholder="Select your year"
             aria-invalid={hasErr('courseYear') ? 'true' : 'false'}
           />
+          ))}
           {hasErr('courseYear') && <div className="error-text">{errMsg('courseYear')}</div>}
         </div>
       )}
@@ -1176,17 +1304,21 @@ const IntroQuestions = ({
       {(isSchool || isUni) && (
         <div className={`field ${hasErr('institution') ? 'has-error' : ''}`}>
           <label htmlFor="institutionInput" className="required">{institutionLabel}</label>
-          <input
+          {wrapLocked('institution', (
+          <InstitutionInput
             id="institutionInput"
-            type="text"
+            kind={isSchool ? 'school' : 'he'}
+            disabled={isLockedField('institution')}
             value={introResponses.institution || ''}
-            onChange={e => handleChange('institution', e.target.value)}
+            onChange={(name, picked) => setIntroResponses(prev => ({ ...prev, institution: name, institutionId: picked ? picked.id : '' }))}
             onBlur={() => setFieldTouched('institution')}
-            placeholder={isSchool ? 'Type your school name' : 'Type your university name'}
-            aria-invalid={hasErr('institution') ? 'true' : 'false'}
-            aria-describedby={hasErr('institution') ? 'institutionError' : undefined}
+            placeholder={isSchool ? 'Type your school or college name' : 'Type your university name'}
+            invalid={hasErr('institution')}
+            describedBy={hasErr('institution') ? 'institutionError' : undefined}
           />
+          ))}
           {hasErr('institution') && <div id="institutionError" className="error-text">{errMsg('institution')}</div>}
+          {lockNote('institution')}
         </div>
       )}
 
@@ -1212,7 +1344,8 @@ const IntroQuestions = ({
           {isSchool && (
             <div className={`field ${hasErr('schoolYear') ? 'has-error' : ''}`} id="schoolYearSelect">
               <label className="required">What year group are you in?</label>
-              <p className="intro-dob-note" style={{ margin: '0 0 8px' }}>Years are as in England. If you study elsewhere, pick the year that matches your age or stage.</p>
+              {!isLockedField('schoolYear') ? <p className="intro-dob-note" style={{ margin: '0 0 8px' }}>Years are as in England. If you study elsewhere, pick the year that matches your age or stage.</p> : null}
+              {wrapLocked('schoolYear', (
               <Select
                 aria-label="What year group are you in?"
                 classNamePrefix="introSelect"
@@ -1224,15 +1357,19 @@ const IntroQuestions = ({
                 closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
                 options={schoolYearOptions}
                 value={schoolYearOptions.find(opt => opt.value === introResponses.schoolYear) || null}
+                isDisabled={isLockedField('schoolYear')}
                 onChange={selected => handleChange('schoolYear', selected.value)}
                 onBlur={() => setFieldTouched('schoolYear')}
                 placeholder="Select your year group"
                 aria-invalid={hasErr('schoolYear') ? 'true' : 'false'}
               />
+              ))}
               {hasErr('schoolYear') && <div className="error-text">{errMsg('schoolYear')}</div>}
+              {lockNote('schoolYear')}
             </div>
           )}
 
+          {!factsOnly && (<>
           <div className={`field ${hasErr('planUniversity') ? 'has-error' : ''}`}>
             <label className="required">Do you plan to go to university?</label>
             <Select
@@ -1347,11 +1484,13 @@ const IntroQuestions = ({
             )}
             {hasErr('schoolSubjects') && <div className="error-text">{errMsg('schoolSubjects')}</div>}
           </div>
+          </>)}
         </>
       )}
 
       {isUni && (
         <>
+          {!factsOnly && (<>
           <div className={`field ${hasErr('uniNeed') ? 'has-error' : ''}`} id="uniScopeSelect">
             <label className="required">What’s your next step right now?</label>
             <Select
@@ -1372,6 +1511,7 @@ const IntroQuestions = ({
                     />
             {hasErr('uniNeed') && <div className="error-text">{errMsg('uniNeed')}</div>}
           </div>
+          </>)}
 
           <div className={`field ${hasErr('uniSubject') ? 'has-error' : ''}`} id="uniSubjectSelect">
             <label className="required">What subject are you studying (or did you study)?</label>
@@ -1429,5 +1569,27 @@ const IntroQuestions = ({
     </div>
   );
 };
+
+// Plain-language rows for the Education card in Manage account: the facts
+// only (preferences belong to a report). Values are labels, not codes.
+export function describeIntroAnswers(a = {}, { schoolYear } = {}) {
+  const lab = (opts, v) => (opts.find((o) => o.value === v) || {}).label || '';
+  const rows = [];
+  const country = a.country ? (flatCountryOptions.find((o) => o.value === a.country) || {}).label || a.country : '';
+  rows.push({ key: 'country', label: 'Country', value: country });
+  if (a.status === 'school') {
+    rows.push({ key: 'status', label: 'Status', value: 'At school or college' });
+    rows.push({ key: 'institution', label: 'School or college', value: a.institution || '' });
+    rows.push({ key: 'schoolYear', label: 'Year group', value: lab(schoolYearOptions, schoolYear || a.schoolYear).replace(/\s*\(.*\)$/, '') });
+  } else if (a.status === 'undergraduate' || a.status === 'postgraduate') {
+    rows.push({ key: 'status', label: 'Status', value: a.status === 'postgraduate' ? 'Postgraduate student' : 'Undergraduate student' });
+    rows.push({ key: 'institution', label: 'University', value: a.institution || '' });
+    rows.push({ key: 'uniSubject', label: 'Subject', value: a.uniSubject || '' });
+    rows.push({ key: 'courseYear', label: 'Year of study', value: a.courseYear ? `Year ${a.courseYear}` : '' });
+  } else if (a.status) {
+    rows.push({ key: 'status', label: 'Status', value: a.currentActivity || 'Not at school or university' });
+  }
+  return rows;
+}
 
 export default IntroQuestions;

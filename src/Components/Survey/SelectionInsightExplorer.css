@@ -1715,3 +1715,40 @@
   align-items: center;
   justify-content: center;
 }
+
+/* Optional link at the foot of a floating tooltip (e.g. "Open your applications"). */
+.selection-floating-tooltip__link {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #2f6fed;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.selection-floating-tooltip__link:hover { color: #1f4fbf; }
+
+/* Job / apprenticeship advert pop-up: same layout as the saved-course card. */
+.cw-def-modal--jobs .cw-def-modal__box.job-detail-box { position: relative; max-width: 460px; padding: 22px 20px 18px; }
+.job-detail-close { position: absolute; top: 12px; right: 12px; }
+.job-detail-title { font-size: 1.02rem; font-weight: 700; color: #14233c; line-height: 1.3; padding-right: 32px; }
+.job-detail-sub { margin-top: 3px; font-size: 0.85rem; color: #5b6b8c; }
+.cw-def-modal--jobs .job-detail-facts { margin: 12px 0 0; }
+.job-detail-link {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2f6fed;
+  text-decoration: none;
+}
+.job-detail-link:hover { text-decoration: underline; }
+.job-detail-react { margin-top: 16px; }
+
+/* Advert card: "via" pill and the saved bookmark sit together top-right. */
+.role-jobcard__top-right { display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; }

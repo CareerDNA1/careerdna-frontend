@@ -28,6 +28,15 @@ if (typeof window !== 'undefined') {
 export function setActiveRunId(runId) {
   activeRunId = runId ? String(runId) : null;
 }
+export function getActiveRunId() {
+  return activeRunId;
+}
+
+// Forget the cached "current report" (called when the student pins a
+// different report), so the next save goes to the right one straight away.
+export function clearRunCache() {
+  runCache = { id: null, at: 0 };
+}
 
 async function getContext() {
   const { data: { user } } = await supabase.auth.getUser();
@@ -110,12 +119,39 @@ export function notifyFavouritesChanged() {
   if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(FAVOURITES_CHANGED_EVENT));
 }
 
-export async function setItemReaction({ itemType, itemId, itemTitle, itemMeta = null, reaction = 'like', remove = false }) {
+// Announced when a save from a popup did not reach the database, so the page
+// underneath (results or profile) can show its "could not save" notice.
+export const SAVE_FAILED_EVENT = 'cdna:save-failed';
+export const SAVE_FAILED_TEXT = 'Could not save that. Check your connection and try again.';
+export function notifySaveFailed() {
+  if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(SAVE_FAILED_EVENT));
+}
+
+// Writes for the same item are queued, so a double tap cannot insert twice.
+const writeQueue = new Map();
+
+export async function setItemReaction(args) {
+  const key = `${args?.itemType}|${args?.itemId}`;
+  const previous = writeQueue.get(key) || Promise.resolve();
+  const run = previous.catch(() => {}).then(() => setItemReactionNow(args));
+  writeQueue.set(key, run);
+  try {
+    return await run;
+  } finally {
+    if (writeQueue.get(key) === run) writeQueue.delete(key);
+  }
+}
+
+// Throws when the save did not reach the database, so the caller can put its
+// UI back and tell the student. Returns the reaction now stored ('like',
+// 'dislike' or '') otherwise. Returns null only when there is nothing to save
+// against (not signed in, no report yet).
+async function setItemReactionNow({ itemType, itemId, itemTitle, itemMeta = null, reaction = 'like', remove = false }) {
   const { userId, runId } = await getContext();
   if (!userId || !runId || !itemType || !itemId) return null;
 
-  try {
-    const { data: existing } = await supabase
+  const findExisting = async () => {
+    const { data, error } = await supabase
       .from('result_feedback')
       .select('id')
       .eq('user_id', userId)
@@ -124,41 +160,50 @@ export async function setItemReaction({ itemType, itemId, itemTitle, itemMeta = 
       .eq('item_type', itemType)
       .eq('item_id', itemId)
       .maybeSingle();
+    if (error) throw error;
+    return data;
+  };
 
-    if (remove) {
-      if (existing?.id) await supabase.from('result_feedback').delete().eq('id', existing.id);
-      notifyFavouritesChanged();
-      return '';
-    }
+  const existing = await findExisting();
 
-    const row = {
-      user_id: userId,
-      assessment_run_id: runId,
-      feedback_scope: 'item_reaction',
-      item_type: itemType,
-      item_id: itemId,
-      item_title: itemTitle || '',
-      item_meta: itemMeta || null,
-      reaction,
-      updated_at: new Date().toISOString(),
-    };
-
-    // Write, and if the item_meta column doesn't exist yet (migration not run),
-    // retry without it so saving still works and the item appears in favourites.
-    const write = async (payload) => (existing?.id
-      ? supabase.from('result_feedback').update(payload).eq('id', existing.id)
-      : supabase.from('result_feedback').insert(payload));
-
-    const { error } = await write(row);
-    if (error) {
-      const withoutMeta = { ...row };
-      delete withoutMeta.item_meta;
-      const retry = await write(withoutMeta);
-      if (retry.error) return null;
+  if (remove) {
+    if (existing?.id) {
+      const { error } = await supabase.from('result_feedback').delete().eq('id', existing.id);
+      if (error) throw error;
     }
     notifyFavouritesChanged();
-    return reaction;
-  } catch (_) {
-    return null;
+    return '';
   }
+
+  const row = {
+    user_id: userId,
+    assessment_run_id: runId,
+    feedback_scope: 'item_reaction',
+    item_type: itemType,
+    item_id: itemId,
+    item_title: itemTitle || '',
+    item_meta: itemMeta || null,
+    reaction,
+    updated_at: new Date().toISOString(),
+  };
+
+  const write = async (payload, id) => (id
+    ? supabase.from('result_feedback').update(payload).eq('id', id)
+    : supabase.from('result_feedback').insert(payload));
+
+  let { error } = await write(row, existing?.id);
+  if (error && error.code === '23505' && !existing?.id) {
+    // Row appeared between read and insert (another tab): update it instead.
+    const again = await findExisting();
+    if (again?.id) ({ error } = await write(row, again.id));
+  }
+  if (error && error.code !== '23505') {
+    // item_meta column missing (migration not run): retry without it.
+    const withoutMeta = { ...row };
+    delete withoutMeta.item_meta;
+    ({ error } = await write(withoutMeta, existing?.id));
+  }
+  if (error) throw error;
+  notifyFavouritesChanged();
+  return reaction;
 }

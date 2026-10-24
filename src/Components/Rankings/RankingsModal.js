@@ -6,7 +6,7 @@ import { getMyAcademicProfile } from '../../utils/academicProfile';
 import { setAdvisorContext, getAdvisorPanelState } from '../../utils/advisorPanel';
 import { studentTop3Tariff, gradedAlevelCount, gradeBand, checkPrerequisites } from '../../utils/matchBand';
 import { showSelectionTooltip, hideSelectionTooltip } from '../Survey/SelectionInsightExplorer';
-import { getReactions, setItemReaction } from '../../utils/savedItems';
+import { getReactions, notifySaveFailed, setItemReaction } from '../../utils/savedItems';
 import PickMenu from '../Common/PickMenu';
 import InlineError from '../Common/InlineError';
 import { friendlyError } from '../../utils/friendlyError';
@@ -152,26 +152,25 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
     return () => { cancelled = true; };
   }, []);
 
+  // Optimistic update; if the save fails, put the buttons back and say so.
+  const applyCourseReaction = (id, next, remove) => {
+    setSavedCourses((prev) => { const n = new Set(prev); if (!remove && next === 'like') n.add(id); else n.delete(id); return n; });
+    setDislikedCourses((prev) => { const n = new Set(prev); if (!remove && next === 'dislike') n.add(id); else n.delete(id); return n; });
+  };
   const handleCourseReact = async (reaction) => {
     const cc = courseCard;
     if (!cc) return;
-    const isLiked = savedCourses.has(cc.id);
+    const current = savedCourses.has(cc.id) ? 'like' : dislikedCourses.has(cc.id) ? 'dislike' : '';
+    const remove = current === reaction;
     const meta = { university: cc.university, url: cc.url || '', subject: (data && data.subject) || subjectTitle || '', stats: cc.stats || null };
-    if (reaction === 'like') {
-      const remove = isLiked;
-      setSavedCourses((prev) => {
-        const n = new Set(prev);
-        if (remove) n.delete(cc.id); else n.add(cc.id);
-        return n;
-      });
-      setDislikedCourses((prev) => { const n = new Set(prev); n.delete(cc.id); return n; });
-      await setItemReaction({ itemType: 'course', itemId: cc.id, itemTitle: cc.title, itemMeta: meta, reaction: 'like', remove });
-    } else {
-      const remove = dislikedCourses.has(cc.id);
-      setSavedCourses((prev) => { const n = new Set(prev); n.delete(cc.id); return n; });
-      setDislikedCourses((prev) => { const n = new Set(prev); if (remove) n.delete(cc.id); else n.add(cc.id); return n; });
-      await setItemReaction({ itemType: 'course', itemId: cc.id, itemTitle: cc.title, itemMeta: meta, reaction: 'dislike', remove });
-      setCourseCard(null);
+    applyCourseReaction(cc.id, reaction, remove);
+    if (reaction === 'dislike') setCourseCard(null);
+    try {
+      await setItemReaction({ itemType: 'course', itemId: cc.id, itemTitle: cc.title, itemMeta: meta, reaction, remove });
+    } catch (err) {
+      console.warn('Could not save course reaction:', err?.message || err);
+      applyCourseReaction(cc.id, current, !current);
+      notifySaveFailed();
     }
   };
 

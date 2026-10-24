@@ -13,7 +13,7 @@ import { usePremiumAccess } from '../../utils/premiumGate';
 import { entryRouteForCard } from '../../utils/entryRouteModes';
 import { bandForScore } from '../../utils/bands';
 import { ThumbsUp, ThumbsDown, Smiley, SmileyMeh, BookmarkSimple, Info, Briefcase, Signpost, UsersThree, TrendUp, MapPin, GraduationCap, CalendarBlank, CurrencyGbp, Rocket } from 'phosphor-react';
-import { getReactions, setItemReaction } from '../../utils/savedItems';
+import { getReactions, setItemReaction, notifySaveFailed } from '../../utils/savedItems';
 import InlineError, { StillWorkingNote } from '../Common/InlineError';
 import {
   FaBrain,
@@ -500,7 +500,18 @@ export function showSelectionTooltip(target, opts) {
   el.innerHTML =
     `${pin ? '<button type="button" class="selection-floating-tooltip__close" aria-label="Close">×</button>' : ''}` +
     `${title ? `<span class="selection-floating-tooltip__headline">${escapeTooltipHtml(title)}</span>` : ''}` +
-    `${body ? `<span class="selection-floating-tooltip__body">${escapeTooltipHtml(body)}</span>` : ''}`;
+    `${body ? `<span class="selection-floating-tooltip__body">${escapeTooltipHtml(body)}</span>` : ''}` +
+    `${opts && opts.action && opts.action.label ? `<button type="button" class="selection-floating-tooltip__link">${escapeTooltipHtml(opts.action.label)}</button>` : ''}`;
+  // Optional link inside the tooltip (opts.action = { label, onClick }).
+  const actionBtn = el.querySelector('.selection-floating-tooltip__link');
+  if (actionBtn && opts && typeof opts.action.onClick === 'function') {
+    actionBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      hideSelectionTooltip({ force: true });
+      opts.action.onClick();
+    });
+  }
 
   const rect = target.getBoundingClientRect();
   const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
@@ -1005,7 +1016,7 @@ function cleanJobTitle(raw) {
   return t || String(raw || '').trim();
 }
 
-export function JobCard({ job, saved = false, onToggleSave, onOpen }) {
+export function JobCard({ job, saved = false, onOpen }) {
   const meta = job.employer || '';
   // Pills with icons, matching the apprenticeship advert cards: location ·
   // closing date · experience (only when stated) · salary.
@@ -1019,7 +1030,14 @@ export function JobCard({ job, saved = false, onToggleSave, onOpen }) {
     <>
       <div className="role-jobcard__top">
         <span className="role-jobcard__title">{cleanJobTitle(job.title)}</span>
-        {job.source ? <span className="role-jobcard__src">via {job.source}</span> : null}
+        <span className="role-jobcard__top-right">
+          {job.source ? <span className="role-jobcard__src">via {job.source}</span> : null}
+          {/* Same "saved" marker as the pathway, role and degree cards: a small
+              green bookmark, shown only once the advert is liked. */}
+          {saved ? (
+            <span className="cdna-saved-mark" aria-label="Saved to favourites"><BookmarkSimple size={18} weight="fill" aria-hidden="true" /></span>
+          ) : null}
+        </span>
       </div>
       {meta ? <div className="role-jobcard__meta">{meta}</div> : null}
       {pills.length ? (
@@ -1031,21 +1049,9 @@ export function JobCard({ job, saved = false, onToggleSave, onOpen }) {
       ) : null}
     </>
   );
-  // Card is a container so the save heart can sit as a sibling of the apply link
-  // (a button can't be nested inside an anchor).
+  // Saving happens inside the opened card (Like this), like every other card.
   return (
-    <div className={`role-jobcard${onToggleSave ? ' role-jobcard--saveable' : ''}`}>
-      {onToggleSave ? (
-        <button
-          type="button"
-          className={`role-jobcard__save${saved ? ' is-saved' : ''}`}
-          aria-pressed={saved}
-          aria-label={saved ? 'Saved to favourites' : 'Save to favourites'}
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleSave(job); }}
-        >
-          <BookmarkSimple size={16} weight={saved ? 'fill' : 'bold'} aria-hidden="true" />
-        </button>
-      ) : null}
+    <div className="role-jobcard">
       {onOpen ? (
         <button
           type="button"
@@ -1066,8 +1072,10 @@ export function JobCard({ job, saved = false, onToggleSave, onOpen }) {
 }
 
 // In-app detail card for a single live job: opens when a job row is tapped, so
-// the student sees the full advert summary (and whether it has closed) with
-// like/dislike and the apply link, instead of being sent straight out.
+// the student sees the full advert summary (and whether it has closed) before
+// going out to apply. Same layout as the saved-course card: title and employer,
+// the facts, the apply link, then Like / Not for me. Marking an advert as
+// applied is done from the student's favourites on their profile.
 export function JobDetailModal({ job, reaction = '', onReact, onClose }) {
   useEffect(() => {
     if (!job) return undefined;
@@ -1088,31 +1096,24 @@ export function JobDetailModal({ job, reaction = '', onReact, onClose }) {
     <div className="cw-def-modal cw-def-modal--jobs" role="dialog" aria-modal="true" aria-label={cleanJobTitle(job.title)}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="cw-def-modal__box job-detail-box">
-        <div className="cw-def-modal__head cw-wayin-head">
-          <span className="cw-wayin-head__icon" aria-hidden="true"><Briefcase size={22} weight="bold" /></span>
-          <div className="cw-wayin-head__titles">
-            <span className="cw-def-modal__title">{cleanJobTitle(job.title)}</span>
-            <span className="cw-wayin-head__sub">{job.employer || 'Live job'}{job.source ? ` · via ${job.source}` : ''}</span>
+        <button type="button" className="cw-def-modal__close job-detail-close" aria-label="Close" onClick={onClose}>×</button>
+        <div className="job-detail-title">{cleanJobTitle(job.title)}</div>
+        <div className="job-detail-sub">{job.employer || 'Live job'}{job.source ? ` · via ${job.source}` : ''}</div>
+        {closed ? <div className="job-detail-closed">This ad has closed, so it may no longer be accepting applications.</div> : null}
+        {pills.length ? (
+          <div className="role-jobcard__facts job-detail-facts">
+            {pills.map(({ Icon, text }, i) => (
+              <span className="role-jobcard__fact" key={i}><Icon size={13} weight="bold" aria-hidden="true" />{text}</span>
+            ))}
           </div>
-          <button type="button" className="cw-def-modal__close" aria-label="Close" onClick={onClose}>×</button>
-        </div>
-        <div className="cw-def-modal__body">
-          {closed ? <div className="job-detail-closed">This ad has closed, so it may no longer be accepting applications.</div> : null}
-          {pills.length ? (
-            <div className="role-jobcard__facts job-detail-facts">
-              {pills.map(({ Icon, text }, i) => (
-                <span className="role-jobcard__fact" key={i}><Icon size={13} weight="bold" aria-hidden="true" />{text}</span>
-              ))}
-            </div>
-          ) : null}
+        ) : null}
+        {job.url ? (
+          <a className="job-detail-link" href={job.url} target="_blank" rel="noopener noreferrer">
+            Apply on {job.source || 'the job board'} <span aria-hidden="true">↗</span>
+          </a>
+        ) : null}
+        <div className="job-detail-react">
           <PathwayReactionRow reaction={reaction} onReact={onReact} label="Save this job" />
-          {job.url ? (
-            <div className="job-detail-actions">
-              <a className="cw-readmore job-detail-apply" href={job.url} target="_blank" rel="noopener noreferrer">
-                Apply on {job.source || 'the job board'} <span aria-hidden="true">↗</span>
-              </a>
-            </div>
-          ) : null}
         </div>
       </div>
     </div>
@@ -1140,44 +1141,47 @@ export function JobsModal({ open, onClose, title, heading, lead, data, kindNoun,
     return () => { cancelled = true; };
   }, [open]);
   const reactionFor = (id) => (savedJobs.has(id) ? 'like' : dislikedJobs.has(id) ? 'dislike' : '');
+  const jobMeta = (job) => ({
+    employer: job.employer || '',
+    location: job.location || '',
+    url: job.url || '',
+    deadline: job.deadline || '',
+    closingDate: job.closingDate || null,
+    source: job.source || '',
+    experience: job.experience || '',
+    noExperience: Boolean(job.noExperience),
+    salary: job.salary || '',
+    // Which list it came from: 'grad' job, 'internship' or graduate 'scheme'.
+    // Favourites group adverts by this.
+    kind: kindNoun || 'grad',
+  });
   const persistJobReaction = async (job, reaction, remove) => {
     await setItemReaction({
       itemType: 'job',
       itemId: jobKey(job),
       itemTitle: job.title || 'Job',
-      itemMeta: {
-        employer: job.employer || '',
-        location: job.location || '',
-        url: job.url || '',
-        deadline: job.deadline || '',
-        closingDate: job.closingDate || null,
-        source: job.source || '',
-        experience: job.experience || '',
-        noExperience: Boolean(job.noExperience),
-        salary: job.salary || '',
-        // Which list it came from: 'grad' job, 'internship' or graduate 'scheme'.
-        // Favourites group adverts by this.
-        kind: kindNoun || 'grad',
-      },
+      itemMeta: jobMeta(job),
       reaction,
       remove,
     });
   };
-  const handleToggleSave = async (job) => {
-    const id = jobKey(job);
-    const isSaved = savedJobs.has(id);
-    setSavedJobs((prev) => { const n = new Set(prev); if (isSaved) n.delete(id); else n.add(id); return n; });
-    if (!isSaved) setDislikedJobs((prev) => { const n = new Set(prev); n.delete(id); return n; });
-    await persistJobReaction(job, 'like', isSaved);
+  // Optimistic update; if the save fails, put the heart back and say so.
+  const applyJobReaction = (id, next, remove) => {
+    setSavedJobs((prev) => { const n = new Set(prev); if (!remove && next === 'like') n.add(id); else n.delete(id); return n; });
+    setDislikedJobs((prev) => { const n = new Set(prev); if (!remove && next === 'dislike') n.add(id); else n.delete(id); return n; });
   };
-  // Like/dislike from the job detail card. Like also drives the heart (favourite).
   const handleJobReact = async (job, next) => {
     const id = jobKey(job);
     const current = reactionFor(id);
     const remove = current === next;
-    setSavedJobs((prev) => { const n = new Set(prev); if (!remove && next === 'like') n.add(id); else n.delete(id); return n; });
-    setDislikedJobs((prev) => { const n = new Set(prev); if (!remove && next === 'dislike') n.add(id); else n.delete(id); return n; });
-    await persistJobReaction(job, next, remove);
+    applyJobReaction(id, next, remove);
+    try {
+      await persistJobReaction(job, next, remove);
+    } catch (err) {
+      console.warn('Could not save job reaction:', err?.message || err);
+      applyJobReaction(id, current, !current);
+      notifySaveFailed();
+    }
   };
   useEffect(() => {
     if (!open) return undefined;
@@ -1228,7 +1232,6 @@ export function JobsModal({ open, onClose, title, heading, lead, data, kindNoun,
                     key={`${job.title}-${i}`}
                     job={job}
                     saved={savedJobs.has(jobKey(job))}
-                    onToggleSave={handleToggleSave}
                     onOpen={setDetailJob}
                   />
                 ))}

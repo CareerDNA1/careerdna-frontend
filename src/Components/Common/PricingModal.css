@@ -862,6 +862,11 @@
     right: 8px;
   }
 
+  .pricing-carousel-nav {
+    display: flex;
+    justify-content: center;
+  }
+
   .pricing-carousel-dots {
     display: flex;
     justify-content: center;
@@ -914,13 +919,193 @@
   }
 }
 
+/* Phones: one card at a time, swiped with a finger. All cards share one
+   grid cell, so they are all the height of the tallest card without being
+   stretched to the screen. Arrows float at mid height over the edges, the
+   dots and "2 of 4" sit under the cards, and a sliver of the neighbouring
+   card shows in each gutter. The whole panel scrolls if the screen is short. */
+.pricing-carousel-nav {
+  display: none;
+}
+
+.pricing-carousel-nav__arrow,
+.pricing-carousel-nav__count {
+  display: none;
+}
+
 @media (max-width: 699px) {
+  .pricing-modal-overlay {
+    padding: 0;
+    align-items: stretch;
+    overflow: hidden;
+  }
+
+  .pricing-modal-panel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100svh;
+    max-height: 100svh;
+    padding: 16px 14px 20px;
+    border-radius: 0;
+    border: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .pricing-modal-header {
+    flex: 0 0 auto;
+    margin: 0 42px 6px 0;
+  }
+
+  /* Cards and dots sit in the middle of the space below the header
+     rather than hugging it. */
   .pricing-carousel-shell {
+    position: relative;
     display: block;
+    flex: 0 0 auto;
+    margin: auto -14px 0;
+    padding: 18px 0 0;
+    overflow: hidden;
+  }
+
+  .pricing-carousel-nav {
+    margin-bottom: auto;
+  }
+
+  .pricing-plan-grid {
+    display: grid;
+    grid-template-columns: 100%;
+    width: 100%;
+    padding: 0 14px;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .pricing-plan-card {
+    grid-area: 1 / 1;
+    position: relative;
+    width: 100%;
+    height: auto;
+    /* Use most of the screen, but never force a card to be taller than the
+       space left under the header; the gap left over is split above and below. */
+    min-height: min(600px, calc(100svh - 250px));
+    margin: 0;
+    padding: 20px 18px 18px;
+    transition: transform 300ms cubic-bezier(.2,.7,.2,1), opacity 240ms ease;
+  }
+
+  .pricing-plan-card--carousel-0 {
+    z-index: 5;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+
+  .pricing-plan-card--carousel--1 {
+    z-index: 2;
+    opacity: 0.7;
+    pointer-events: none;
+    transform: translateX(calc(-100% - 6px));
+  }
+
+  .pricing-plan-card--carousel-1 {
+    z-index: 2;
+    opacity: 0.7;
+    pointer-events: none;
+    transform: translateX(calc(100% + 6px));
+  }
+
+  .pricing-plan-card--carousel--2,
+  .pricing-plan-card--carousel-2 {
+    z-index: 1;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(0);
+  }
+
+  /* Phone type scale. The base sizes are tuned for five cards side by
+     side on a desktop and are far too small for a single card on a phone. */
+  .pricing-plan-card h3 { font-size: 1.2rem; min-height: 0; }
+  .pricing-plan-subtitle,
+  .pricing-plan-card--institution .pricing-plan-subtitle { font-size: 0.92rem; line-height: 1.35; min-height: 0; max-width: none; margin: 4px 0 10px; }
+  .pricing-price-block { min-height: 0; margin-bottom: 10px; }
+  .pricing-plan-price { font-size: 2rem; }
+  .pricing-plan-price span { font-size: 0.85rem; }
+  .pricing-plan-anchor { font-size: 0.92rem; }
+  .pricing-plan-note { font-size: 0.8rem; }
+  .pricing-feature-list { gap: 8px; }
+  .pricing-feature-list li { font-size: 0.92rem; line-height: 1.35; padding-left: 22px; }
+  .pricing-feature-list li.pricing-feature--lead { font-size: 0.98rem; }
+  .pricing-feature-list li.pricing-feature-header { font-size: 0.74rem; }
+  .pricing-feature-list li.pricing-feature-note { font-size: 0.8rem; }
+  .pricing-plan-button { min-height: 48px; font-size: 0.92rem; }
+
+  .pricing-carousel-arrow {
+    display: inline-flex;
+    position: absolute;
+    top: 50%;
+    z-index: 8;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #c8d6e6;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.96);
+    color: #2f6fed;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.14);
+    transform: translateY(-50%);
+  }
+
+  /* Sit in the gutter, overlapping only the card's padding, not its text. */
+  .pricing-carousel-arrow--prev { left: 0; }
+  .pricing-carousel-arrow--next { right: 0; }
+
+  .pricing-carousel-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding-top: 12px;
+  }
+
+  .pricing-carousel-nav__arrow {
+    display: none;
   }
 
   .pricing-carousel-dots {
-    display: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .pricing-carousel-dots button {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(47, 111, 237, 0.24);
+    cursor: pointer;
+  }
+
+  .pricing-carousel-dots button.is-active {
+    background: #2f6fed;
+    transform: scale(1.35);
+  }
+
+  .pricing-carousel-nav__count {
+    display: inline;
+    min-width: 42px;
+    font-size: 0.78rem;
+    color: #6b7788;
+    text-align: center;
   }
 }
 
@@ -1119,3 +1304,25 @@
   border: 7px solid transparent; border-top-color: #fff; filter: drop-shadow(0 1px 0 #dbe3ef);
 }
 @keyframes pricing-tip-in { from { opacity: 0; transform: translate(-50%, 4px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+/* Subscription scheduled to end: a second, outlined button under "Current
+   plan" lets the person keep it from the pricing view too. */
+.pricing-plan-button--keep {
+  border: 1.5px solid #2f6fed !important;
+  background: #2f6fed !important;
+  color: #ffffff !important;
+}
+.pricing-plan-button--keep:hover { background: #2460d8 !important; }
+
+/* Laptop fit: wider cards, less dead space above them, tighter lists, so the
+   four plans and their buttons sit inside one screen without scrolling.
+   Only desktop widths; phones and tablets keep their own rules. */
+@media (min-width: 1181px) {
+  .pricing-modal-panel { padding: 14px 16px 14px; max-height: calc(100vh - 12px); }
+  .pricing-plan-grid { max-width: 1180px; gap: 14px; }
+  .pricing-modal-header { margin-bottom: 8px; }
+  .pricing-modal-header p { margin-top: 3px; }
+  .pricing-plan-card { min-height: 0; padding: 12px 14px 12px; }
+  .pricing-plan-card li { margin-bottom: 2px; }
+  .pricing-plan-card ul { gap: 3px; }
+}

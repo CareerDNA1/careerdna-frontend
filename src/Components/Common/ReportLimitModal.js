@@ -31,7 +31,10 @@ export default function ReportLimitModal({
   entitlement = null,
   featureLabel = '',
   audience = 'school',
+  // 'buy': opened from Buy more on the profile, not because a limit was hit.
+  intent = 'limit',
 }) {
+  const isBuy = intent === 'buy';
   const [couponCode, setCouponCode] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
   const [couponError, setCouponError] = useState('');
@@ -54,6 +57,9 @@ export default function ReportLimitModal({
   // mode, extra reports in the exhausted mode. Same checkout pattern.
   const showPacks = isPaidPlan && !PAYMENTS_TEMPORARILY_PAUSED && (isAdvisor || isExhausted);
   const [packs, setPacks] = useState([]);
+  // Until the pack request answers, the modal says it is checking rather than
+  // committing to wording that may be wrong a second later.
+  const [packsPending, setPacksPending] = useState(showPacks);
   const [packLoading, setPackLoading] = useState('');
   const [packError, setPackError] = useState('');
   const [packConsent, setPackConsent] = useState(false);
@@ -61,7 +67,8 @@ export default function ReportLimitModal({
     if (!showPacks) return undefined;
     let cancelled = false;
     const load = isAdvisor ? fetchAdvisorPacks : fetchReportPacks;
-    load().then((rows) => { if (!cancelled) setPacks(rows); });
+    setPacksPending(true);
+    load().then((rows) => { if (!cancelled) setPacks(rows); }).finally(() => { if (!cancelled) setPacksPending(false); });
     return () => { cancelled = true; };
   }, [showPacks, isAdvisor]);
   const hasPacks = showPacks && packs.length > 0;
@@ -97,9 +104,13 @@ export default function ReportLimitModal({
       ];
   const modalCopy = isAdvisor
     ? {
-        title: !isPaidPlan ? ['Your Advisor comes with ', 'Explorer and Premium'] : ['You have used your advisor questions ', 'for this year'],
+        title: !isPaidPlan ? ['Your Advisor comes with ', 'Explorer and Premium'] : isBuy ? ['Add more ', 'advisor questions'] : ['You have used your advisor questions ', 'for this year'],
         subtitle: !isPaidPlan
           ? 'Choose a plan to start asking questions about your profile and results.'
+          : isBuy && !packsPending && packs.length
+          ? 'Question packs are added to your account straight away, on top of what your plan includes.'
+          : packsPending
+          ? 'Checking your options…'
           : canUpgradeToPremium
           ? (packs.length
               ? 'Add a question pack, or upgrade to Premium for 20 questions a year plus rankings and live openings.'
@@ -125,9 +136,13 @@ export default function ReportLimitModal({
       }
     : isExhausted
     ? {
-        title: ['You have used your reports ', 'for this year'],
+        title: isBuy ? ['Add an ', 'extra report'] : ['You have used your reports ', 'for this year'],
         subtitle: !isPaidPlan
           ? 'Choose a plan to keep going. Plans include:'
+          : isBuy && !packsPending && hasPacks
+          ? 'An extra report is added to your account straight away, on top of what your plan includes.'
+          : packsPending
+          ? 'Checking your options…'
           : hasPacks
           ? 'Add an extra report to generate a new one now. More reports also come with your next billing year.'
           : 'More reports come with your next billing year, or enter an access code if you have one.',

@@ -53,7 +53,7 @@ const plans = [
         'Ideal work environment insights',
         'Career worlds that fit who you are',
         'Personalised career pathway recommendations',
-        'University or training route recommendations',
+        'UK degrees and training routes for your pathways',
         { type: 'header', text: 'Guidance' },
         'Your own Advisor: 10 questions a year, answered from your profile, grades and applications',
         'Track your development over time',
@@ -94,12 +94,13 @@ const plans = [
         '2 CareerDNA reports a year',
         '20 advisor questions a year',
         { type: 'header', text: 'Premium tools' },
-        'Your chances of an offer, from your grades',
-        'CareerDNA Subject & University Rankings',
-        'Entry requirements and offer rates',
-        'Live courses, apprenticeships and training routes',
+        'Your chances of an offer from UK universities, from your grades',
+        'CareerDNA UK Subject & University Rankings',
+        'UK entry requirements and offer rates',
+        'Live UK courses, apprenticeships and training routes',
         'Track your applications in one place',
         'Every new feature we add, included',
+        { type: 'note', text: 'Data covers UK universities, courses and employers' },
         { type: 'note', text: 'Extra advisor question packs available' },
       ],
       university: [
@@ -107,10 +108,11 @@ const plans = [
         '2 CareerDNA reports a year',
         '20 advisor questions a year',
         { type: 'header', text: 'Premium tools' },
-        'Live graduate jobs from LinkedIn, Indeed, Glassdoor and more',
-        'Internships, graduate schemes and programmes',
+        'Live UK graduate jobs from LinkedIn, Indeed, Glassdoor and more',
+        'UK internships, graduate schemes and programmes',
         'Track your applications in one place',
         'Every new feature we add, included',
+        { type: 'note', text: 'Data covers UK universities, courses and employers' },
         { type: 'note', text: 'Extra advisor question packs available' },
       ],
     },
@@ -346,7 +348,11 @@ function PricingModal({
   // is marked current and every button leads to sign-up.
   signedIn = true,
   onRequireSignIn = null,
+  // Subscription scheduled to end: lets the person keep it from here, not
+  // only from Manage account.
+  onKeepPlan = null,
 }) {
+  const [keepingPlan, setKeepingPlan] = useState(false);
   // School vs university feature wording. Defaults to the student's own stage if
   // we know it, otherwise 'school'; the toggle lets anyone switch.
   const [audience, setAudience] = useState(() => normaliseAudience(audienceProp || entitlement?.status || 'school'));
@@ -378,9 +384,10 @@ function PricingModal({
   const isDevAccount = effectivePlan === 'dev';
   const DEV_MESSAGE = 'Developer accounts are managed by the CareerDNA team. To change this account, email support@mycareerdna.io.';
   const isCancellingAtPeriodEnd = Boolean(entitlement?.cancelAtPeriodEnd || entitlement?.cancel_at_period_end);
-  const pendingPlan = isCancellingAtPeriodEnd
-    ? ''
-    : normalisePlan(entitlement?.pendingPlanChange || entitlement?.pending_plan_change || '');
+  // No pending change means no pending plan: normalisePlan would turn an
+  // empty value into 'free', which read as "will change to Starter".
+  const rawPendingPlan = String(entitlement?.pendingPlanChange || entitlement?.pending_plan_change || '').trim();
+  const pendingPlan = isCancellingAtPeriodEnd || !rawPendingPlan ? '' : normalisePlan(rawPendingPlan);
   const pendingDate = formatDisplayDate(
     entitlement?.pendingPlanChangeAt ||
     entitlement?.pending_plan_change_at ||
@@ -808,19 +815,38 @@ function PricingModal({
                 {isDevLocked && devTipFor === plan.variant ? (
                   <span className="pricing-plan-tip" role="tooltip">{DEV_MESSAGE}</span>
                 ) : null}
-                <button
-                  type="button"
-                  className={`pricing-plan-button pricing-plan-button--${plan.variant} ${isCurrent || isScheduled ? 'pricing-plan-button--current' : ''} ${isPaymentActionPaused ? 'pricing-plan-button--paused' : ''}`}
-                  onClick={() => {
-                    if (pricingDragRef.current.moved) return;
-                    handlePlanClick(plan);
-                  }}
-                  disabled={Boolean(checkoutPlan) || isCurrent || isScheduled || isPaymentActionPaused}
-                  title={isPaymentActionPaused ? PAYMENT_PAUSE_MESSAGE : undefined}
-                  aria-disabled={isDevLocked ? true : undefined}
-                >
-                  {loading ? 'Opening…' : isPaymentActionPaused ? 'Coming soon' : isCurrent ? '✓ Current plan' : buttonLabel}
-                </button>
+                {isCurrent ? (
+                  // The badge at the top already says it is the current plan.
+                  // The only action on it is Keep my plan, when it is ending.
+                  isCancellingAtPeriodEnd && typeof onKeepPlan === 'function' ? (
+                    <button
+                      type="button"
+                      className="pricing-plan-button pricing-plan-button--keep"
+                      onClick={async () => {
+                        if (keepingPlan) return;
+                        setKeepingPlan(true);
+                        try { await onKeepPlan(); } finally { setKeepingPlan(false); }
+                      }}
+                      disabled={keepingPlan}
+                    >
+                      {keepingPlan ? 'Keeping…' : 'Keep my plan'}
+                    </button>
+                  ) : null
+                ) : (
+                  <button
+                    type="button"
+                    className={`pricing-plan-button pricing-plan-button--${plan.variant} ${isScheduled ? 'pricing-plan-button--current' : ''} ${isPaymentActionPaused ? 'pricing-plan-button--paused' : ''}`}
+                    onClick={() => {
+                      if (pricingDragRef.current.moved) return;
+                      handlePlanClick(plan);
+                    }}
+                    disabled={Boolean(checkoutPlan) || isScheduled || isPaymentActionPaused}
+                    title={isPaymentActionPaused ? PAYMENT_PAUSE_MESSAGE : undefined}
+                    aria-disabled={isDevLocked ? true : undefined}
+                  >
+                    {loading ? 'Opening…' : isPaymentActionPaused ? 'Coming soon' : buttonLabel}
+                  </button>
+                )}
                 </div>
               </article>
             );
@@ -837,17 +863,40 @@ function PricingModal({
           </button>
         </div>
 
-        <div className="pricing-carousel-dots" aria-label="Select pricing plan">
-          {plans.map((plan, index) => (
-            <button
-              key={plan.title}
-              type="button"
-              className={activePlanIndex === index ? 'is-active' : ''}
-              onClick={() => goToPlanIndex(index)}
-              aria-label={`Show ${plan.title}`}
-              aria-pressed={activePlanIndex === index}
-            />
-          ))}
+        {/* Under the cards: dots on tablets; on phones also the arrows and
+            a "2 of 4" counter, so nothing sits on top of the card. */}
+        <div className="pricing-carousel-nav">
+          <button
+            type="button"
+            className="pricing-carousel-nav__arrow"
+            onClick={goToPreviousPlan}
+            aria-label="Previous plan"
+          >
+            ‹
+          </button>
+          <div className="pricing-carousel-dots" aria-label="Select pricing plan">
+            {plans.map((plan, index) => (
+              <button
+                key={plan.title}
+                type="button"
+                className={activePlanIndex === index ? 'is-active' : ''}
+                onClick={() => goToPlanIndex(index)}
+                aria-label={`Show ${plan.title}`}
+                aria-pressed={activePlanIndex === index}
+              />
+            ))}
+          </div>
+          <span className="pricing-carousel-nav__count" aria-live="polite">
+            {activePlanIndex + 1} of {plans.length}
+          </span>
+          <button
+            type="button"
+            className="pricing-carousel-nav__arrow"
+            onClick={goToNextPlan}
+            aria-label="Next plan"
+          >
+            ›
+          </button>
         </div>
 
         {pendingAction && pendingCopy ? (
