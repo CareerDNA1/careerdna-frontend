@@ -9,7 +9,14 @@ import { computeClarityPercents } from './selfAwarenessSummary';
 import { getBankQuestions, getBankWeights, runVersions, currentVersions } from './banks';
 import { carryOverFavourites } from './favouriteCarryOver';
 import { clearRunCache } from './savedItems';
-import { getAcademicStatus, snapshotAnswers } from './academicStatus';
+import { getAcademicStatus, snapshotAnswers, stageFromAnswers } from './academicStatus';
+
+// True when an answer set holds at least one answer. An empty object is not
+// a survey: scoring it still yields a full set of zero scores, so every save
+// path checks this rather than "is it an object".
+export function hasSurveyAnswers(answers) {
+  return Boolean(answers && typeof answers === 'object' && !Array.isArray(answers) && Object.keys(answers).length);
+}
 
 // Id of the user's newest run (slim query; no jsonb columns).
 async function getLatestRunId(userId) {
@@ -140,6 +147,14 @@ export async function saveAssessmentRun({
   if (userError) throw userError;
   if (!user) throw new Error('User not authenticated.');
 
+  // A report is never saved without the answers behind it. The one exception
+  // is a new report made from an older report whose answers were lost (two
+  // rows from September 2026): it carries that report's saved scores and
+  // names it in answersMissingFrom. The database enforces the same rule.
+  if (!hasSurveyAnswers(surveyAnswers) && !resultsJson?.answersMissingFrom) {
+    throw new Error('This report could not be saved because the answers to the assessment are missing. Please take the assessment again.');
+  }
+
   // The run whose favourites carry forward to this one: the run being re-run,
   // or, for a fresh sitting, the run the profile currently follows (falling
   // back to the newest). Resolved before the insert so "newest" is not the
@@ -178,7 +193,7 @@ export async function saveAssessmentRun({
   // onto this one (see utils/favouriteCarryOver). Awaited so the results page
   // that opens next already shows them; never fails the save.
   try {
-    await carryOverFavourites({ fromRunId: carryFromId, toRunId: data.id });
+    await carryOverFavourites({ fromRunId: carryFromId, toRunId: data.id, toStage: stageFromAnswers(introAnswers || {}) });
   } catch (e) {
     console.warn('Favourites carry-over failed:', e?.message || e);
   }
@@ -471,9 +486,17 @@ export async function updateAssessmentRun(runId, patch) {
   if (userError) throw userError;
   if (!user) throw new Error('User not authenticated.');
 
+  // Saved answers are never replaced by an empty set (that is how two reports
+  // lost theirs in September 2026). The database enforces the same rule.
+  const safePatch = { ...(patch || {}) };
+  if ('survey_answers_json' in safePatch && !hasSurveyAnswers(safePatch.survey_answers_json)) {
+    delete safePatch.survey_answers_json;
+  }
+  if (!Object.keys(safePatch).length) return null;
+
   const { data, error } = await supabase
     .from('assessment_runs')
-    .update(patch)
+    .update(safePatch)
     .eq('user_id', user.id)
     .eq('id', runId)
     .select('*')
@@ -490,9 +513,17 @@ export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswe
   // run object passed in from the list may not carry its archetypes. Fetch the
   // full row by id when they're missing.
   let fullRun = run;
-  if ((!run.results_json || !run.results_json.archetypes || !Object.keys(run.results_json.archetypes).length) && run.id) {
+  const hasSavedScores = (r) => Boolean(r?.results_json?.archetypes && Object.keys(r.results_json.archetypes).length);
+  if (!hasSavedScores(run) && run.id) {
     const fetched = await getAssessmentRunById(run.id);
     if (fetched) fullRun = fetched;
+  }
+  // The latest assessment (profiles.latest_assessment) has no id of its own.
+  // When it has neither answers nor saved scores, read the scores from the
+  // report it came from, if that report still exists.
+  if (!run.id && !hasSurveyAnswers(run.survey_answers_json) && !hasSavedScores(run) && run.fromRunId) {
+    const source = await getAssessmentRunById(run.fromRunId).catch(() => null);
+    if (source?.results_json) fullRun = { ...run, results_json: source.results_json };
   }
 
   const savedResults = fullRun.results_json || {};
@@ -500,9 +531,14 @@ export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswe
   const archetypes = rescored?.archetypes || savedResults.archetypes || {};
 
   if (!archetypes || !Object.keys(archetypes).length) {
-    throw new Error('This saved run does not contain archetype data.');
+    throw new Error('We could not find the answers or scores from your last assessment, so a new report cannot be made from it. Please take the assessment again.');
   }
   run = fullRun;
+  // Answers lost (two reports from September 2026): the new report is built
+  // from the saved scores and says which report they came from.
+  const answersMissingFrom = hasSurveyAnswers(run.survey_answers_json)
+    ? null
+    : (savedResults.answersMissingFrom || run.id || run.fromRunId || 'unknown');
 
   // Where the person is comes from the profile (academic status), not from
   // the run being re-run and not from the caller: a re-run always produces a
@@ -539,6 +575,7 @@ export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswe
       claritySummary,
       profileQualityGate,
       rerunOf: run.id || null,
+      ...(answersMissingFrom ? { answersMissingFrom } : {}),
     },
     summaryMarkdown: '',
     versions: runVersions(run),

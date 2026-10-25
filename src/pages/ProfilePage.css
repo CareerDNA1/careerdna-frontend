@@ -2179,6 +2179,11 @@
 .profile-account-input-wrap input {
   font-size: 0.84rem;
   font-weight: 500;
+  /* Long values (an email on a phone) end in "…" rather than mid-letter. */
+  min-width: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .profile-account-summary-item strong,

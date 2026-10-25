@@ -40,7 +40,8 @@ import { friendlyError } from '../utils/friendlyError';
 import { setAdvisorContext, openAdvisor } from '../utils/advisorPanel';
 import PlanWelcomeModal from '../Components/Common/PlanWelcomeModal';
 import PlanBadge from '../Components/Common/PlanBadge';
-import WhereYouAreCard, { statusLocks } from '../Components/Common/WhereYouAreCard';
+import WhereYouAreCard, { statusLocks, SUPPORT_EMAIL } from '../Components/Common/WhereYouAreCard';
+import { showSelectionTooltip, hideSelectionTooltip } from '../Components/Survey/SelectionInsightExplorer';
 import IntroQuestions from '../Components/Survey/IntroQuestions';
 import { describeStatus, saveAcademicStatus, schoolYearValue } from '../utils/academicStatus';
 
@@ -675,16 +676,21 @@ export default function ProfilePage() {
     return () => { cancelled = true; };
   }, [user?.id, personalReload]);
 
-  // Click-to-toggle info popover for locked account fields (date of birth, email).
-  const [openLockedField, setOpenLockedField] = useState('');
+  // Locked account fields (date of birth, email): clicking one shows the app's
+  // white floating tooltip above it, so nothing in the card moves.
+  const lockedNoteTimer = useRef(null);
+  const showLockedNote = (target, text) => {
+    if (!(target instanceof HTMLElement) || !text) return;
+    target.setAttribute('data-tooltip-body', text);
+    window.requestAnimationFrame(() => {
+      showSelectionTooltip(target, { pinned: true });
+      clearTimeout(lockedNoteTimer.current);
+      lockedNoteTimer.current = setTimeout(() => hideSelectionTooltip({ force: true }), 6000);
+    });
+  };
+  useEffect(() => () => clearTimeout(lockedNoteTimer.current), []);
   // "Buy more" on the limits rows: one-off packs, paid plans only.
   const [buyMore, setBuyMore] = useState(null); // 'reports' | 'advisor' | null
-  // A locked-field note closes by itself after a few seconds.
-  useEffect(() => {
-    if (!openLockedField) return undefined;
-    const t = setTimeout(() => setOpenLockedField(''), 3500);
-    return () => clearTimeout(t);
-  }, [openLockedField]);
 
 
   // Close the run "..." menu on any outside click or Escape.
@@ -1095,7 +1101,9 @@ export default function ProfilePage() {
   const handleRetake = () => {
     // First-time users have no saved runs yet, so this is not a retake.
     // Send them straight into the assessment without a confirmation popup.
-    if (totalRuns === 0) {
+    // With a saved assessment (even after deleting every report) a new one
+    // replaces it, so ask first.
+    if (totalRuns === 0 && !latestAssessment) {
       navigate('/start');
       return;
     }
@@ -1169,8 +1177,12 @@ export default function ProfilePage() {
   // out; it is changed in Manage account under its own rules, never here.
   // Generate saves the preferences to the profile, then re-runs (one report).
   const openNewReport = () => {
-    const run = currentRun || latestRun;
+    // Always the latest assessment; a report row only if the profile has none
+    // stored yet (before sql/24 is run).
+    const run = latestAssessment || currentRun || latestRun;
     if (!run) return;
+    setErrorMsg('');
+    setErrorRetry(null);
     const a = (profile && profile.academic_status) || run.intro_answers_json || {};
     const dob = profile?.date_of_birth || a.dateOfBirth || '';
     setEditingRun(run);
@@ -1243,10 +1255,22 @@ export default function ProfilePage() {
       setErrorMsg('');
       await setCurrentRunId(runId);
       const full = await getCurrentAssessmentRun(runId);
-      setCurrentRun(full || null);
-      setProfile((p) => (p ? { ...p, current_run_id: runId } : p));
+      // Clear the journey and favourites in the same update that switches the
+      // report, so their loaders (keyed on the report id) refill them. Clearing
+      // after a later await wiped what the loaders had already filled and left
+      // the page on "Loading your profile" for good.
       setEngagedForRun(null);
       setFavForRun(null);
+      setCurrentRun(full || null);
+      setProfile((p) => (p ? { ...p, current_run_id: runId } : p));
+      // Developer accounts: the whole profile follows the report, so its
+      // "where you are" (school or university, year, subject) becomes the
+      // account's too. Students keep their locked status; for them a report
+      // never changes it.
+      if (profile?.is_developer && full?.intro_answers_json?.status) {
+        const saved = await saveAcademicStatus(full.intro_answers_json, { source: 'dev_set_current' });
+        if (saved) setProfile((prev) => ({ ...(prev || {}), ...saved, current_run_id: runId }));
+      }
     } catch (err) {
       failWith(err, 'set the current report');
     } finally {
@@ -1428,6 +1452,31 @@ export default function ProfilePage() {
   // Survey/Profile are milestones from the run itself; the exploration steps only
   // complete once the user has actually interacted (liked/disliked) on that page.
   const latestRun = currentRun || runs?.[0] || null;
+  // The latest assessment is kept on the profile apart from reports (sql/24),
+  // so New report still works after every report has been deleted. Shaped
+  // like a run so the report code can use it as it is.
+  // saved_scores (sql/25) are the scores worked out at the time; they are only
+  // used when the answers themselves were lost (two reports, September 2026).
+  const la = profile?.latest_assessment || null;
+  const laHasAnswers = Boolean(la?.survey_answers_json && typeof la.survey_answers_json === 'object' && Object.keys(la.survey_answers_json).length);
+  const laScores = la?.saved_scores && typeof la.saved_scores === 'object' ? la.saved_scores : null;
+  const laHasScores = Boolean(laScores?.archetypes && Object.keys(laScores.archetypes).length);
+  const latestAssessment = la && (laHasAnswers || laHasScores || la.from_run_id)
+    ? {
+        survey_answers_json: laHasAnswers ? la.survey_answers_json : {},
+        intro_answers_json: la.intro_answers_json || {},
+        survey_taken_at: la.survey_taken_at || null,
+        bank_version: la.bank_version || null,
+        scoring_version: la.scoring_version || null,
+        form: la.form || null,
+        results_json: laHasAnswers || !laHasScores ? {} : { ...laScores },
+        fromRunId: la.from_run_id || null,
+      }
+    : null;
+  const latestAssessmentDate = latestAssessment?.survey_taken_at
+    ? new Date(latestAssessment.survey_taken_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    : '';
+  const canMakeReport = Boolean(latestAssessment || currentRun || latestRun);
 
   // Your Advisor on this page talks about next steps, favourites, grades and applications.
   useEffect(() => {
@@ -1499,12 +1548,12 @@ export default function ProfilePage() {
   // localStorage so it only ever happens once per milestone.
   const [celebrate, setCelebrate] = useState({});
   const milestoneCounts = useMemo(() => ({
-    assessments: Number(totalSurveys) || 0,
+    assessments: Math.max(Number(profile?.assessments_taken) || 0, Number(totalSurveys) || 0),
     reports: Number(totalRuns) || 0,
     questions: Number(profile?.advisor_questions_used || 0),
     favourites: favCount == null ? null : Number(favCount) || 0,
     applications: applicationTracked == null ? null : Number(applicationTracked) || 0,
-  }), [totalSurveys, totalRuns, profile?.advisor_questions_used, favCount, applicationTracked]);
+  }), [totalSurveys, totalRuns, profile?.assessments_taken, profile?.advisor_questions_used, favCount, applicationTracked]);
 
   const overviewReady = !loadingRuns
     && !!user?.id
@@ -1827,7 +1876,7 @@ export default function ProfilePage() {
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg>
                 </span>
                 <div className="profile-stat-body">
-                  <span className="profile-stat-num">{totalSurveys}</span>
+                  <span className="profile-stat-num">{Math.max(Number(profile?.assessments_taken) || 0, Number(totalSurveys) || 0)}</span>
                   <span className="profile-stat-label">Assessments</span>
                 </div>
               </div>
@@ -2014,12 +2063,12 @@ export default function ProfilePage() {
                   : `${totalRuns} total`}
               </span>
             </div>
-            {totalRuns > 0 ? (
+            {totalRuns > 0 || latestAssessment ? (
               <div className="profile-card-header-actions">
                 <button type="button" className="profile-btn-hover-ghost" style={btnOutlineSm} onClick={handleRetake}>
                   New assessment
                 </button>
-                <button type="button" className="profile-btn-hover-primary" style={btnPrimarySm} onClick={openNewReport} disabled={!(currentRun || latestRun)}>
+                <button type="button" className="profile-btn-hover-primary" style={btnPrimarySm} onClick={openNewReport} disabled={!canMakeReport}>
                   <PlayIcon />
                   New report
                 </button>
@@ -2043,6 +2092,13 @@ export default function ProfilePage() {
                   </p>
                   <button type="button" className="profile-btn-hover-primary" style={btnPrimary} onClick={continueDraft}>
                     {draftComplete ? 'See my results' : 'Continue my assessment'}
+                  </button>
+                </>
+              ) : latestAssessment ? (
+                <>
+                  <p>You have no reports at the moment. Your assessment{latestAssessmentDate ? ` from ${latestAssessmentDate}` : ''} is saved, so you can make a new report from it.</p>
+                  <button type="button" className="profile-btn-hover-primary" style={btnPrimary} onClick={openNewReport}>
+                    New report
                   </button>
                 </>
               ) : (
@@ -2230,8 +2286,8 @@ export default function ProfilePage() {
               ×
             </button>
 
-            <h3 id="deleteConfirmTitle">Delete this saved result?</h3>
-            <p>This cannot be undone.</p>
+            <h3 id="deleteConfirmTitle">Delete this report?</h3>
+            <p>This cannot be undone. Your latest assessment stays saved, so you can make a new report from it at any time.</p>
 
             <div className="profile-retake-confirm-actions">
               <button
@@ -2348,8 +2404,7 @@ export default function ProfilePage() {
                     <div
                       className="profile-account-input-wrap profile-account-input-wrap--readonly profile-account-input-wrap--locked"
                       style={{ position: 'relative', cursor: 'not-allowed' }}
-                      onClick={() => setOpenLockedField((prev) => (prev === 'dob' ? '' : 'dob'))}
-                      onMouseLeave={() => setOpenLockedField((prev) => (prev === 'dob' ? '' : prev))}
+                      onClick={(e) => showLockedNote(e.currentTarget, `You set this when you joined. To change your date of birth, email ${SUPPORT_EMAIL}.`)}
                     >
                       <AccountMiniIcon type="calendar" />
                       <input
@@ -2363,9 +2418,6 @@ export default function ProfilePage() {
                         onFocus={(e) => e.target.blur()}
                       />
                     </div>
-                    {openLockedField === 'dob' && (
-                      <div className="wya-note" role="status">You set this when you joined. To change your date of birth, email support@mycareerdna.io.</div>
-                    )}
                   </div>
                   ) : null}
 
@@ -2374,8 +2426,7 @@ export default function ProfilePage() {
                     <div
                       className="profile-account-input-wrap profile-account-input-wrap--readonly profile-account-input-wrap--locked"
                       style={{ position: 'relative', cursor: 'not-allowed' }}
-                      onClick={() => setOpenLockedField((prev) => (prev === 'email' ? '' : 'email'))}
-                      onMouseLeave={() => setOpenLockedField((prev) => (prev === 'email' ? '' : prev))}
+                      onClick={(e) => showLockedNote(e.currentTarget, `This is the address you signed up with. To change your email address, email ${SUPPORT_EMAIL}.`)}
                     >
                       <AccountMiniIcon type="mail" />
                       <input
@@ -2386,9 +2437,6 @@ export default function ProfilePage() {
                         onFocus={(e) => e.target.blur()}
                       />
                     </div>
-                    {openLockedField === 'email' && (
-                      <div className="wya-note" role="status">This is the address you signed up with. To change your email address, email support@mycareerdna.io.</div>
-                    )}
                   </div>
 
                 </div>
@@ -2677,6 +2725,9 @@ export default function ProfilePage() {
               </div>
             ) : (
               <>
+                {latestAssessmentDate ? (
+                  <p className="profile-output-modal-intro"><strong>This report will use your assessment from {latestAssessmentDate}.</strong></p>
+                ) : null}
                 <p className="profile-output-modal-intro">
                   {profile?.is_developer
                     ? 'Developer account: change anything here. The account is updated with these details when the report is generated.'
@@ -2697,6 +2748,9 @@ export default function ProfilePage() {
                 />
               </>
             )}
+            {/* Errors from Generate show here, next to the button; the page's
+                own error line sits behind this pop-up. */}
+            <InlineError message={errorMsg} compact />
           </div>
         </div>
       ) : null}

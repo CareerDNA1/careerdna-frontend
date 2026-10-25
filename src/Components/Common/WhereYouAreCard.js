@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { describeIntroAnswers } from '../Survey/IntroQuestions';
+import { showSelectionTooltip, hideSelectionTooltip } from '../Survey/SelectionInsightExplorer';
 import { isDeveloperProfile, canChangeInstitution, canChangeStatus, schoolYearValue } from '../../utils/academicStatus';
 import './WhereYouAreCard.css';
 
@@ -45,12 +46,19 @@ export function statusLocks(profile) {
 }
 
 export default function WhereYouAreCard({ profile }) {
-  const [note, setNote] = useState('');
-  useEffect(() => {
-    if (!note) return undefined;
-    const t = setTimeout(() => setNote(''), 3500);
-    return () => clearTimeout(t);
-  }, [note]);
+  // Clicking a box shows the app's white floating tooltip above it, so
+  // nothing in the grid moves (an inline note stretched the row).
+  const hideTimer = useRef(null);
+  useEffect(() => () => { clearTimeout(hideTimer.current); hideSelectionTooltip({ force: true }); }, []);
+  const showNote = (target, text) => {
+    if (!target || !text) return;
+    target.setAttribute('data-tooltip-body', text);
+    window.requestAnimationFrame(() => {
+      showSelectionTooltip(target, { pinned: true });
+      clearTimeout(hideTimer.current);
+      hideTimer.current = setTimeout(() => hideSelectionTooltip({ force: true }), 6000);
+    });
+  };
   const developer = isDeveloperProfile(profile);
   const a = (profile && profile.academic_status) || {};
   const rows = useMemo(() => describeIntroAnswers(a, { schoolYear: schoolYearValue(a) }), [a]);
@@ -58,14 +66,15 @@ export default function WhereYouAreCard({ profile }) {
 
   // What clicking each box says. Everything changes through New report.
   const viaReport = 'from New report under Recent reports. The account changes when the report is generated.';
+  const devNote = 'Developer account: change this from New report under Recent reports, or set one of your reports as current to switch to its details.';
   const notes = developer
     ? {
-        country: `Developer account: change your country ${viaReport}`,
-        status: `Developer account: change your status ${viaReport}`,
-        institution: `Developer account: change your school or university ${viaReport}`,
-        schoolYear: `Developer account: change your year group ${viaReport}`,
-        courseYear: `Developer account: change your year of study ${viaReport}`,
-        uniSubject: `Developer account: change your subject ${viaReport}`,
+        country: devNote,
+        status: devNote,
+        institution: devNote,
+        schoolYear: devNote,
+        courseYear: devNote,
+        uniSubject: devNote,
       }
     : {
         country: lockedNotes.country,
@@ -97,11 +106,10 @@ export default function WhereYouAreCard({ profile }) {
                   <span>{r.label}</span>
                   <div
                     className="profile-account-input-wrap profile-account-input-wrap--readonly profile-account-input-wrap--locked wya-locked"
-                    onClick={() => text && setNote((cur) => (cur === r.key ? '' : r.key))}
+                    onClick={(e) => showNote(e.currentTarget, text)}
                   >
                     <input type="text" value={r.value || 'Not set'} readOnly onFocus={(e) => e.target.blur()} />
                   </div>
-                  {note === r.key && text ? <div className="wya-note" role="status">{text}</div> : null}
                 </div>
               );
             })}

@@ -9,7 +9,7 @@ import { useSurveyEngine } from '../Hooks/useSurveyEngine';
 import scoreSubdimensions from '../utils/scoreSubdimensions';
 import { getBankQuestions, CURRENT_BANK_VERSION } from '../utils/banks';
 import { computeClarityPercents } from '../utils/selfAwarenessSummary';
-import { saveAssessmentRun, updateAssessmentRun, findExistingRunForSurvey } from '../utils/assessmentRuns';
+import { saveAssessmentRun, updateAssessmentRun, findExistingRunForSurvey, hasSurveyAnswers } from '../utils/assessmentRuns';
 import { useAuth } from '../context/AuthContext';
 import { readProgress, clearProgress } from '../Hooks/useProgress';
 import { markProfileStale } from '../utils/profileCache';
@@ -49,15 +49,22 @@ export default function ResultsPage() {
     state,
   } = useSurveyEngine();
 
-  const hasResults =
-    archetypes && typeof archetypes === 'object' && Object.keys(archetypes).length > 0;
-
   // --- robust fallbacks for answers & questions ---
+  // The first source that actually holds answers. An empty object is not
+  // "missing" to ||, so the plain chain used to stop at an empty in-memory
+  // set and never reach the saved copy.
   const answersFallback =
-    answers ||
-    state?.answers ||
-    getJSON('cdna_answers', {}) ||
-    getJSON('answers', {});
+    [answers, state?.answers, getJSON('cdna_answers', {}), getJSON('answers', {})]
+      .find((a) => hasSurveyAnswers(a)) || {};
+
+  // Results exist only when there are answers behind them: scoring an empty
+  // set still gives a full set of zero scores, which must never be saved as
+  // a report (two reports lost their answers this way in September 2026).
+  // The scores come from the survey engine's answers, so those are the ones
+  // that must be present; answersFallback then resolves to the same set.
+  const hasResults =
+    hasSurveyAnswers(answers) &&
+    archetypes && typeof archetypes === 'object' && Object.keys(archetypes).length > 0;
 
   const questionsFallback =
     (Array.isArray(questions) && questions.length ? questions : null) ||

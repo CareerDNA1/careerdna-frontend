@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient';
+import { stageFromAnswers } from './academicStatus';
 
 // Favourites follow the student, not the run.
 //
@@ -16,10 +17,48 @@ import { supabase } from './supabaseClient';
 // Anything the student has already reacted to on the new run is left alone,
 // so running this twice, or after the student has started liking things on
 // the new run, never duplicates or overwrites a reaction.
-export async function carryOverFavourites({ fromRunId, toRunId } = {}) {
-  if (!fromRunId || !toRunId || fromRunId === toRunId) return { copied: 0 };
+//
+// Stage rule: favourites only carry within the same stage. School to school
+// and university to university keep everything; a switch between school and
+// university starts with no favourites, because the worlds, pathways, courses
+// and adverts are a different set. toStage is the new report's stage
+// ('school' or 'university', from stageFromAnswers); the old report's stage
+// is read from its own intro answers.
+// When the suggested source report is from the other stage, the favourites
+// come from the newest report of the SAME stage instead (school favourites
+// come back when the student returns to a school report, and the same for
+// university). With no report of that stage, nothing is copied.
+export async function carryOverFavourites({ fromRunId, toRunId, toStage = null } = {}) {
+  if (!toRunId) return { copied: 0 };
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { copied: 0 };
+
+  if (toStage) {
+    let fromStage = null;
+    if (fromRunId) {
+      const { data: fromRun, error: fromError } = await supabase
+        .from('assessment_runs')
+        .select('intro_answers_json')
+        .eq('user_id', user.id)
+        .eq('id', fromRunId)
+        .maybeSingle();
+      if (fromError) throw fromError;
+      fromStage = stageFromAnswers(fromRun?.intro_answers_json || {});
+    }
+    if (!fromRunId || (fromStage && fromStage !== toStage)) {
+      const { data: recent, error: recentError } = await supabase
+        .from('assessment_runs')
+        .select('id, status:intro_answers_json->>status')
+        .eq('user_id', user.id)
+        .neq('id', toRunId)
+        .order('created_at', { ascending: false })
+        .limit(50);
+      if (recentError) throw recentError;
+      const sameStage = (recent || []).find((r) => stageFromAnswers({ status: r.status }) === toStage);
+      fromRunId = sameStage?.id || null;
+    }
+  }
+  if (!fromRunId || fromRunId === toRunId) return { copied: 0 };
 
   const { data, error } = await supabase
     .from('result_feedback')
