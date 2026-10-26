@@ -75,7 +75,9 @@ export function checkPrerequisites(ap, requirements) {
   const gmap = {};
   (ap?.gcses || []).forEach((r) => {
     const k = gcseKey(r.subject);
-    if (k) gmap[k] = Math.max(gmap[k] || 0, Number(r.grade) || 0);
+    // Combined Science is a double grade ("5-4"): use the lower of the pair.
+    const g = /^\d-\d$/.test(String(r.grade || '')) ? Math.min(...String(r.grade).split('-').map(Number)) : (Number(r.grade) || 0);
+    if (k) gmap[k] = Math.max(gmap[k] || 0, g);
   });
   const label = { maths: 'Maths', english: 'English', science: 'Science' };
   const missingGcse = [];

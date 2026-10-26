@@ -1,4 +1,6 @@
+import { tidyOrgName } from './orgName';
 import { supabase } from './supabaseClient';
+import { stageRunIds, newestPerItem, clearItemAcrossStage } from './favouriteScope';
 import { canonicalItem, pathwayWorld, canonicalWorldId } from './canonicalIds';
 import { notifyFavouritesChanged } from './savedItems';
 import { apiFetch } from './apiFetch';
@@ -12,8 +14,8 @@ export function normaliseFavouriteType(itemType, itemId, itemTitle) {
   return canonicalItem(t, itemId, itemTitle).type;
 }
 
-// Favourites are the items the student liked on a SINGLE assessment run (their
-// latest one). Backed by the result_feedback table (feedback_scope 'item_reaction',
+// Favourites are one list per stage (school or university), shared by every
+// report of that stage (utils/favouriteScope.js). Backed by the result_feedback table (feedback_scope 'item_reaction',
 // reaction 'like'). Categories mirror the item_type values written across the app.
 export const FAV_CATEGORIES = [
   { type: 'career_world', label: 'Career worlds' },
@@ -44,25 +46,31 @@ export async function getFavouritesByCategory(runId) {
   // Prefer selecting item_meta (needed for saved course/job links + expiry). If
   // the column doesn't exist yet (migration not run), fall back to the base
   // columns so favourites never break.
+  // The stage's one favourites list: every report of this stage (school or
+  // university), newest answer per item (see utils/favouriteScope). Reactions
+  // are read whatever they are, so a later "not for me" hides an older like.
+  const scopeIds = await stageRunIds(user.id, runId);
   let data;
   let res = await supabase
     .from('result_feedback')
-    .select('item_id, item_type, item_title, item_meta')
+    .select('item_id, item_type, item_title, item_meta, reaction, updated_at, created_at')
     .eq('user_id', user.id)
-    .eq('assessment_run_id', runId)
+    .in('assessment_run_id', scopeIds)
     .eq('feedback_scope', 'item_reaction')
-    .eq('reaction', 'like');
+    .in('reaction', ['like', 'dislike']);
   if (res.error) {
     res = await supabase
       .from('result_feedback')
-      .select('item_id, item_type, item_title')
+      .select('item_id, item_type, item_title, reaction, updated_at, created_at')
       .eq('user_id', user.id)
-      .eq('assessment_run_id', runId)
+      .in('assessment_run_id', scopeIds)
       .eq('feedback_scope', 'item_reaction')
-      .eq('reaction', 'like');
+      .in('reaction', ['like', 'dislike']);
     if (res.error) throw res.error;
   }
-  data = res.data;
+  // Same item saved under an older id (renamed worlds, superseded ids) counts once.
+  const canonKey = (r) => { const c = canonicalItem(r.item_type, r.item_id, r.item_title); return `${c.type}|${c.id}`; };
+  data = newestPerItem(res.data || [], canonKey).filter((r) => r.reaction === 'like');
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -98,7 +106,7 @@ export async function getFavouritesByCategory(runId) {
       type: t,
       storedType: String(r.item_type || 'other'),
       url: meta.url || idUrl || '',
-      subtitle: meta.university || meta.employer || idUni || '',
+      subtitle: meta.university || tidyOrgName(meta.employer) || idUni || '',
       subject: meta.subject || '',
       stats: (meta.stats && typeof meta.stats === 'object') ? meta.stats : null,
       meta: (t === 'job' && !meta.kind && guessedKind) ? { ...meta, kind: guessedKind } : meta,
@@ -212,7 +220,7 @@ async function refreshApprenticeshipAds(items, { userId, runId, today }) {
     // Persist the corrected snapshot on the favourite and on any application for it.
     try {
       await supabase.from('result_feedback').update({ item_meta: meta })
-        .eq('user_id', userId).eq('assessment_run_id', runId).eq('feedback_scope', 'item_reaction').eq('item_id', it.id);
+        .eq('user_id', userId).eq('feedback_scope', 'item_reaction').eq('item_id', it.id);
       if (!meta.withdrawn && meta.closingDate) {
         await supabase.from('applications').update({ closing_date: String(meta.closingDate).slice(0, 10) })
           .eq('user_id', userId).eq('item_id', it.id);
@@ -221,18 +229,38 @@ async function refreshApprenticeshipAds(items, { userId, runId, today }) {
   }));
 }
 
-// Remove one favourite (delete that like row for this run).
+// "Clear all": remove every favourite in the stage's list, except the items
+// passed in keep (`${type}|${id}` keys of favourites that are in the student's
+// applications, which have to stay while the application exists). "Not for me"
+// answers are left alone. Returns how many favourites were kept.
+export async function clearAllFavourites(runId, { keep = new Set() } = {}) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('You need to be logged in.');
+  const scopeIds = await stageRunIds(user.id, runId);
+  const { data, error } = await supabase
+    .from('result_feedback')
+    .select('id, item_type, item_id')
+    .eq('user_id', user.id)
+    .in('assessment_run_id', scopeIds)
+    .eq('feedback_scope', 'item_reaction')
+    .eq('reaction', 'like');
+  if (error) throw error;
+  const keepKey = (r) => keep.has(`${normaliseFavouriteType(r.item_type, r.item_id, '')}|${r.item_id}`) || keep.has(`${r.item_type}|${r.item_id}`);
+  const ids = (data || []).filter((r) => !keepKey(r)).map((r) => r.id);
+  for (let i = 0; i < ids.length; i += 200) {
+    const { error: delError } = await supabase.from('result_feedback').delete().in('id', ids.slice(i, i + 200));
+    if (delError) throw delError;
+  }
+  notifyFavouritesChanged();
+  return (data || []).length - ids.length;
+}
+
+// Remove one favourite from the stage's list.
 export async function removeFavourite(runId, itemId, itemType, storedType = '') {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('You need to be logged in.');
-  const { error } = await supabase
-    .from('result_feedback')
-    .delete()
-    .eq('user_id', user.id)
-    .eq('assessment_run_id', runId)
-    .eq('feedback_scope', 'item_reaction')
-    .eq('item_type', storedType || itemType)
-    .eq('item_id', itemId);
-  if (error) throw error;
+  // Removed from the stage's list: clear it on every report of the stage.
+  const scopeIds = await stageRunIds(user.id, runId);
+  await clearItemAcrossStage({ userId: user.id, runIds: scopeIds, itemTypes: [storedType || itemType, itemType], itemIds: [itemId] });
   notifyFavouritesChanged();
 }

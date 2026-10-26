@@ -5,6 +5,7 @@ import {
   ucasOf, ucasLive, ucasPhase, ucasSentAt, ucasAllDecided, ucasOffers, ucasRuleWarnings, ucasDecidedCount,
   ucasLastDecisionAt, ucasReplyBy, ucasClearingOf, ucasCycleFor, isEarlyDeadlineChoice,
   ucasMarkSent, ucasUnsend, ucasReply, ucasPlace, ucasUnreply, sortUcasChoices, formatDate, pluralDays,
+  entryComparisonNote,
 } from '../../utils/applications';
 import ChancesPill, { chancesFor, chancesForConditions } from './ChancesPill';
 import DatePicker from './DatePicker';
@@ -53,7 +54,9 @@ export default function UcasPanel({ choices: rawChoices = [], onChange, onOpen, 
   // Safe choice as a fallback (it also makes a realistic insurance choice).
   // Only while the choices are still being built.
   if (phase === 'shortlisting' && live.length >= 2) {
-    const bands = live.map((c) => chancesFor(predicted, c.item_meta?.stats?.typicalGrades)).filter(Boolean);
+    // Foundation year courses have no reliable typical offer, so they are left
+    // out of the balance check.
+    const bands = live.filter((c) => !entryComparisonNote(c.title, c.organisation)).map((c) => chancesFor(predicted, c.item_meta?.stats?.typicalGrades)).filter(Boolean);
     if (bands.length >= 2) {
       const above = bands.filter((b) => b.key === 'reach' || b.key === 'longshot').length;
       const safe = bands.filter((b) => b.key === 'safe').length;
@@ -119,19 +122,31 @@ export default function UcasPanel({ choices: rawChoices = [], onChange, onOpen, 
           <div className="ucas-title">UCAS application <span className={`apps-pill apps-pill--${UCAS_PHASE_TONE[phase]}`}>{phase === 'placed' && clearing ? 'Placed through Clearing' : UCAS_PHASE_TEXT[phase]}</span>{phase === 'sent' && sentAt ? <span className="ucas-sent">sent {formatDate(sentAt)}</span> : null}</div>
           <div className="ucas-sub">{headerNote()}</div>
         </div>
-        <span className="ucas-count">{Math.min(live.length, UCAS_MAX_CHOICES)} of {UCAS_MAX_CHOICES}</span>
+        <span className={`ucas-count${over > 0 ? ' ucas-count--over' : ''}`}>{over > 0 ? `${live.length} choices` : `${live.length} of ${UCAS_MAX_CHOICES}`}</span>
       </div>
 
       {warnings.map((w, i) => <p className="ucas-warn" key={i}><WarningCircle size={14} weight="fill" aria-hidden="true" /> {w}</p>)}
       {phase === 'shortlisting' && live.length && !hasGrades ? (
         <p className="ucas-note"><Info size={14} weight="fill" aria-hidden="true" /> {onEnterGrades
-          ? <>Enter your predicted grades to see how each choice compares with its typical offer. <button type="button" className="ucas-link ucas-link--inline" onClick={onEnterGrades}>Enter your grades</button></>
-          : 'Enter your predicted grades in Your grades to see how each choice compares with its typical offer.'}</p>
+          ? <>Enter your predicted grades to see how each choice compares with its typical entry grades. <button type="button" className="ucas-link ucas-link--inline" onClick={onEnterGrades}>Enter your grades</button></>
+          : 'Enter your predicted grades in Your grades to see how each choice compares with its typical entry grades.'}</p>
       ) : null}
       <InlineError compact message={error} onRetry={errorRetry || undefined} />
 
-      <ol className="ucas-slots">
-        {Array.from({ length: Math.max(UCAS_MAX_CHOICES, choices.length) }).map((_, i) => {
+      {[
+        { key: 'five', from: 0, to: Math.max(UCAS_MAX_CHOICES, Math.min(choices.length, UCAS_MAX_CHOICES)) },
+        ...(choices.length > UCAS_MAX_CHOICES ? [{ key: 'extra', from: UCAS_MAX_CHOICES, to: choices.length }] : []),
+      ].map((group) => (
+      <React.Fragment key={group.key}>
+      {group.key === 'extra' ? (
+        <div className="ucas-extra-head">
+          <span className="ucas-extra-title">Also considering</span>
+          <span className="ucas-extra-sub">UCAS takes five. Keep these here while you decide, then remove the ones you drop before you send.</span>
+        </div>
+      ) : null}
+      <ol className={`ucas-slots${group.key === 'extra' ? ' ucas-slots--extra' : ''}`} start={group.from + 1}>
+        {Array.from({ length: group.to - group.from }).map((_, k) => {
+          const i = group.from + k;
           const c = choices[i];
           if (!c) return <li className="ucas-slot ucas-slot--empty" key={`e${i}`}><span className="ucas-n">{i + 1}</span>Free choice</li>;
           const v = ucasOf(c);
@@ -146,7 +161,7 @@ export default function UcasPanel({ choices: rawChoices = [], onChange, onOpen, 
                 <span className="ucas-slot-title">{c.title}</span>
                 <span className="ucas-slot-sub">{c.organisation}{cond ? ` · needs ${cond}` : ''}</span>
               </span>
-              {phase === 'shortlisting' && c.item_meta?.stats?.typicalGrades
+              {phase === 'shortlisting' && c.item_meta?.stats?.typicalGrades && !entryComparisonNote(c.title, c.organisation)
                 ? <ChancesPill predicted={predicted} typicalGrades={c.item_meta.stats.typicalGrades} onTap={(t) => setTip((cur) => (cur === t ? '' : t))} />
                 : null}
               {phase === 'shortlisting' ? null : (
@@ -157,6 +172,8 @@ export default function UcasPanel({ choices: rawChoices = [], onChange, onOpen, 
           );
         })}
       </ol>
+      </React.Fragment>
+      ))}
       {tip ? <p className="ucas-note ucas-note--tip">{tip}</p> : null}
 
       <div className="ucas-actions">

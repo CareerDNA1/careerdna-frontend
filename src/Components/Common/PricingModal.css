@@ -953,9 +953,16 @@
     overflow-x: hidden;
   }
 
+  /* Equal space both sides (the close button sits top right), so the title,
+     line and school/university switch are centred on the screen. */
   .pricing-modal-header {
     flex: 0 0 auto;
-    margin: 0 42px 6px 0;
+    margin: 0 36px 6px;
+    text-align: center;
+  }
+  .pricing-modal-header .pricing-audience-toggle {
+    margin-left: auto;
+    margin-right: auto;
   }
 
   /* Cards and dots sit in the middle of the space below the header
@@ -983,10 +990,13 @@
     -webkit-user-select: none;
   }
 
+  /* The active card takes 82% of the width, centred, so a slice of the
+     cards either side shows at the edges: it is clear there is more. */
   .pricing-plan-card {
     grid-area: 1 / 1;
     position: relative;
-    width: 100%;
+    width: 82%;
+    justify-self: center;
     height: auto;
     /* Use most of the screen, but never force a card to be taller than the
        space left under the header; the gap left over is split above and below. */
@@ -1005,16 +1015,16 @@
 
   .pricing-plan-card--carousel--1 {
     z-index: 2;
-    opacity: 0.7;
+    opacity: 0.45;
     pointer-events: none;
-    transform: translateX(calc(-100% - 6px));
+    transform: translateX(calc(-100% - 10px)) scale(0.94);
   }
 
   .pricing-plan-card--carousel-1 {
     z-index: 2;
-    opacity: 0.7;
+    opacity: 0.45;
     pointer-events: none;
-    transform: translateX(calc(100% + 6px));
+    transform: translateX(calc(100% + 10px)) scale(0.94);
   }
 
   .pricing-plan-card--carousel--2,

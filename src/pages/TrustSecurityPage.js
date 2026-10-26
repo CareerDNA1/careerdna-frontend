@@ -74,7 +74,7 @@ const cards = [
       'Flagged messages are recorded so a named safeguarding lead can review them; these turns never use up advisor questions',
       'Where a school provides access, we share concerns with the school\u2019s designated safeguarding lead under our agreement with them',
     ],
-    closing: 'Questions about safeguarding can be sent to hello@mycareerdna.io.',
+    closing: 'Questions about safeguarding can be sent to support@mycareerdna.io.',
   },
   {
     icon: '📊',
@@ -101,7 +101,7 @@ const cards = [
       'Animations respect the reduce motion setting on your device',
       'Where live data comes from third parties (for example job adverts), we present it in our own accessible layout',
     ],
-    closing: 'If any part of CareerDNA is hard for you to use, email hello@mycareerdna.io or use Report a problem and we will fix it or offer the information another way.',
+    closing: 'If any part of CareerDNA is hard for you to use, email support@mycareerdna.io or use Report a problem and we will fix it or offer the information another way.',
   },
   {
     icon: '📁',
@@ -215,8 +215,8 @@ export default function TrustSecurityPage() {
 
               <p className="trust-card-closing trust-contact-text">
                 Privacy and security enquiries:{' '}
-                <a className="trust-email-link" href="mailto:hello@mycareerdna.io">
-                  hello@mycareerdna.io
+                <a className="trust-email-link" href="mailto:support@mycareerdna.io">
+                  support@mycareerdna.io
                 </a>
               </p>
             </article>
@@ -239,7 +239,7 @@ export default function TrustSecurityPage() {
               Terms of Use
             </button>
             <span aria-hidden="true">·</span>
-            <a href="mailto:hello@mycareerdna.io">Contact</a>
+            <a href="mailto:support@mycareerdna.io">Contact</a>
           </nav>
 
           <p className="trust-footer-copy">

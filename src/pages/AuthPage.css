@@ -234,6 +234,31 @@
   border: 1px solid #fecaca;
 }
 
+/* Per-field error: red text under the box, red outline on the box. Same look
+   as the date-of-birth message in the onboarding form. */
+.auth-field-error {
+  display: block;
+  margin-top: 6px;
+  color: #dc2626;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.35;
+  white-space: normal;
+}
+
+.has-field-error .auth-input {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.10);
+}
+
+.auth-legal-check.has-field-error {
+  color: #b42318;
+}
+
+.auth-legal-check + .auth-field-error {
+  margin-top: -4px;
+}
+
 .auth-links {
   margin-top: 10px;
   padding-top: 10px;

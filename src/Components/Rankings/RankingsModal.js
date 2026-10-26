@@ -10,6 +10,7 @@ import { getReactions, notifySaveFailed, setItemReaction } from '../../utils/sav
 import PickMenu from '../Common/PickMenu';
 import InlineError from '../Common/InlineError';
 import { friendlyError } from '../../utils/friendlyError';
+import { isFoundationYearCourse, entryComparisonNote, SCOTLAND_ENTRY_NOTE } from '../../utils/applications';
 import './RankingsModal.css';
 
 // Stable id for a saved course (prefer its provider URL; fall back to uni+title).
@@ -94,6 +95,8 @@ function basisText(b, subject, graduates = true, via) {
 const isArea = (b) => b && (b.level === 'area' || b.level === 'broad');
 
 // TEF badge with the app's own tooltip (not the browser's title box).
+// Scottish universities: no A-level equivalent is shown (see build_rankings.py).
+
 const tipProps = (title, body) => ({
   'data-selection-tooltip': 'true',
   'data-tooltip-title': title,
@@ -106,7 +109,7 @@ const tipProps = (title, body) => ({
   onClick: (e) => { e.stopPropagation(); showSelectionTooltip(e.currentTarget, { pinned: true }); },
 });
 function tefPill(tef) {
-  const na = <span className="rk-tef rk-tef--none" {...tipProps('TEF', 'The Teaching Excellence Framework rates English universities only.')}>N/A</span>;
+  const na = <span className="rk-tef rk-tef--none" {...tipProps('TEF', 'The Teaching Excellence Framework rates universities in England only. Universities in Scotland, Wales and Northern Ireland are reviewed under their own systems, so they have no TEF rating.')}>N/A</span>;
   if (!tef) return na;
   const s = TEF_STYLE[tef];
   if (!s) return na;
@@ -266,8 +269,8 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
   const rkColumnDefs = [
     { key: 'score', group: 'verdict', width: 70, cls: 'rk-num rk-score', lines: ['CareerDNA', 'Ranking'], title: 'CareerDNA Ranking', tip: 'Employability score for this subject, 0 to 100; # is the rank. Weights: graduate-level jobs 25%, salary 20%, continuation 15%, in work or study 10%, career readiness 10%, entry standards 10%, satisfaction 10%. Full methodology: link under the table. (Source: Office for Students.)', render: (u) => scoreCell(u) },
     { key: 'tef', group: 'verdict', width: 62, cls: 'rk-mid', lines: ['TEF'], title: 'Teaching Excellence Framework', tip: 'The official Gold, Silver or Bronze rating for teaching quality. (Source: Teaching Excellence Framework, Office for Students.)', render: (u) => tefPill(u.tef) },
-    { key: 'chances', group: 'getin', width: 92, cls: 'rk-mid', when: showChances, lines: ['Your', 'chances'], title: 'Your chances', tip: "How your predicted A-level results compare with each university's typical offer.\n\nSafe: your predicted grades are comfortably above the typical offer.\nMatch: your predicted grades are about the same as the typical offer.\nStretch: you would need to improve on your predicted grades to get a place.\nAmbitious: you would need to improve significantly on your predicted grades to get a place.\n\nBased on the typical entry grades for this course. Individual offers can vary. (Source: UCAS tariff of entrants, Office for Students.)", render: (u) => { const b = gradeBand(studentTariff, u.typicalGrades); return b ? <span className={`rk-band rk-band--${b.key}`}>{b.label}</span> : <span className="rk-band-na">–</span>; } },
-    { key: 'entry', group: 'getin', width: 58, cls: 'rk-mid rk-entry', lines: ['Entry'], title: 'Entry standards', tip: 'Typical entry grades, based on the UCAS tariff of accepted students. (Source: Office for Students.)', render: (u) => u.typicalGrades || '–' },
+    { key: 'chances', group: 'getin', width: 92, cls: 'rk-mid', when: showChances, lines: ['Your', 'chances'], title: 'Your chances', tip: "How your predicted A-level results compare with the typical entry grades of students who started this subject at each university.\n\nSafe: your predicted grades are comfortably above the typical entry grades.\nMatch: your predicted grades are about the same as the typical entry grades.\nStretch: you would need to improve on your predicted grades to get a place.\nAmbitious: you would need to improve significantly on your predicted grades to get a place.\n\nBased on the typical entry grades for this course. Individual offers can vary. (Source: UCAS tariff of entrants, Office for Students.)", render: (u) => { const b = gradeBand(studentTariff, u.typicalGrades); return b ? <span className={`rk-band rk-band--${b.key}`}>{b.label}</span> : (u.entryNote === 'scotland' ? <span className="rk-band-na" {...tipProps('Your chances', SCOTLAND_ENTRY_NOTE)}>–</span> : <span className="rk-band-na">–</span>); } },
+    { key: 'entry', group: 'getin', width: 58, cls: 'rk-mid rk-entry', lines: ['Entry'], title: 'Entry standards', tip: 'Typical entry grades, based on the UCAS tariff of accepted students. (Source: Office for Students.)', render: (u) => u.typicalGrades || (u.entryNote === 'scotland' ? <span className="rk-band-na" {...tipProps('Entry grades', SCOTLAND_ENTRY_NOTE)}>–</span> : '–') },
     { key: 'offer', group: 'getin', width: 66, cls: 'rk-num rk-offer', lines: ['Offer', 'rate'], title: 'Offer rate', tip: `The share of applicants who received an offer. A lower rate means more competitive. This is the figure for the broad subject area${data?.offerAreaName ? ` (${data.offerAreaName})` : ''}. (Source: UCAS ${data?.offerRateYear || 2025} end of cycle.)`, render: (u) => (u.offerRate != null ? `${Math.round(u.offerRate * 100)}%` : '–') },
     { key: 'gradjobs', group: 'outcomes', width: 74, cls: 'rk-num', lines: ['Graduate', 'jobs'], title: 'Graduate-level jobs', tip: 'Percentage of graduates in professional or managerial work 15 months after finishing (Graduate Outcomes survey). The strongest single measure of whether a course leads to graduate-level employment. (Source: Graduate Outcomes survey, Office for Students.)', render: (u) => (u.graduateJobs != null ? fig(u, 'gradjobs', `${u.graduateJobs}%`, 'Graduate-level jobs', subjName) : '–') },
     { key: 'salary', group: 'outcomes', width: 66, cls: 'rk-num', lines: ['Median', 'salary'], title: 'Median salary', tip: 'Median graduate salary, 15 months after finishing the course. (Source: Graduate Outcomes survey, Office for Students.)', render: (u) => (u.medianSalary ? fig(u, 'salary', `£${Math.round(u.medianSalary / 1000)}k`, 'Median salary', subjName) : '–') },
@@ -477,10 +480,11 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                   {courseCard.stats.graduateJobs != null ? <span className="rk-course-stat"><b>{courseCard.stats.graduateJobs}%</b> graduate jobs</span> : null}
                   {courseCard.stats.employment != null ? <span className="rk-course-stat"><b>{courseCard.stats.employment}%</b> in work or study</span> : null}
                   {courseCard.stats.satisfaction != null ? <span className="rk-course-stat"><b>{courseCard.stats.satisfaction}%</b> satisfaction</span> : null}
-                  {courseCard.stats.typicalGrades ? <span className="rk-course-stat"><b>{courseCard.stats.typicalGrades}</b> typical offer</span> : null}
+                  {courseCard.stats.typicalGrades && !isFoundationYearCourse(courseCard.title) ? <span className="rk-course-stat"><b>{courseCard.stats.typicalGrades}</b> typical entry grades</span> : null}
                   {courseCard.stats.offerRate != null ? <span className="rk-course-stat"><b>{Math.round(courseCard.stats.offerRate * 100)}%</b> offer rate</span> : null}
                   {courseCard.stats.tef ? <span className="rk-course-stat"><b>{courseCard.stats.tef}</b> TEF</span> : null}
-                  {courseCard.stats.typicalGrades && gradeBand(studentTariff, courseCard.stats.typicalGrades) ? (() => {
+                  {entryComparisonNote(courseCard.title, courseCard.university) ? <span className="rk-course-stats__note">{entryComparisonNote(courseCard.title, courseCard.university)}</span> : null}
+                  {courseCard.stats.typicalGrades && !isFoundationYearCourse(courseCard.title) && gradeBand(studentTariff, courseCard.stats.typicalGrades) ? (() => {
                     const b = gradeBand(studentTariff, courseCard.stats.typicalGrades);
                     return <span className="rk-course-stat rk-course-stat--band">Your chances: <span className={`rk-band rk-band--${b.key}`}>{b.label}</span></span>;
                   })() : null}

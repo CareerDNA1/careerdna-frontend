@@ -14,31 +14,53 @@ export const GCSE_GRADES = [9, 8, 7, 6, 5, 4, 3, 2, 1];
 // pick from this list; the names match the controlled vocabulary used by
 // subject_requirements on the backend, so prerequisites can be checked.
 export const ALEVEL_SUBJECTS = [
-  'Accounting', 'Ancient History', 'Arabic', 'Art & Design', 'Biology', 'Business',
+  'Accounting', 'Ancient History', 'Arabic', 'Art & Design', 'Biblical Hebrew', 'Biology', 'Business',
   'Chemistry', 'Chinese', 'Classical Civilisation', 'Computer Science', 'Dance',
   'Design & Technology', 'Drama & Theatre Studies', 'Economics', 'Electronics',
   'English Language', 'English Language & Literature', 'English Literature',
   'Environmental Science', 'Film Studies', 'French', 'Further Maths', 'Geography',
-  'Geology', 'German', 'Government & Politics', 'Greek', 'Health & Social Care',
-  'History', 'History of Art', 'Italian', 'Japanese', 'Latin', 'Law', 'Maths',
-  'Media Studies', 'Music', 'Music Technology', 'Philosophy', 'Photography',
-  'Physical Education', 'Physics', 'Politics', 'Polish', 'Portuguese', 'Psychology',
-  'Religious Studies', 'Russian', 'Sociology', 'Spanish', 'Statistics', 'Textiles',
-  'Urdu', 'Welsh',
+  'Geology', 'German', 'Greek', 'Gujarati', 'History', 'History of Art', 'Italian', 'Japanese',
+  'Latin', 'Law', 'Maths', 'Media Studies', 'Modern Hebrew', 'Music', 'Music Technology',
+  'Panjabi', 'Persian', 'Philosophy', 'Photography', 'Physical Education', 'Physics', 'Politics',
+  'Polish', 'Portuguese', 'Psychology', 'Religious Studies', 'Russian', 'Sociology', 'Spanish',
+  'Statistics', 'Textiles', 'Turkish', 'Urdu', 'Welsh',
 ];
+// Checked against the A-levels the English exam boards (AQA, OCR, Pearson
+// Edexcel, WJEC Eduqas) offer in 2026. Removed: "Government & Politics" (the
+// subject is called Politics) and "Health & Social Care" (no longer an A-level
+// in England; schools offer it as a BTEC or Cambridge Technical instead).
 // GCSE subjects. Maths and English Language are compulsory in England and are
 // always present on the profile.
 export const GCSE_COMPULSORY = ['Maths', 'English Language'];
 export const GCSE_SUBJECTS = [
   'Maths', 'English Language', 'English Literature', 'Science (Combined)', 'Biology',
-  'Chemistry', 'Physics', 'Ancient History', 'Arabic', 'Art & Design', 'Astronomy',
+  'Chemistry', 'Physics', 'Ancient History', 'Arabic', 'Art & Design', 'Astronomy', 'Bengali',
   'Business', 'Chinese', 'Citizenship', 'Classical Civilisation', 'Computer Science',
-  'Dance', 'Design & Technology', 'Drama', 'Economics', 'Engineering', 'Food Preparation & Nutrition',
-  'French', 'Further Maths', 'Geography', 'Geology', 'German', 'Greek', 'Health & Social Care',
-  'History', 'Italian', 'Japanese', 'Latin', 'Media Studies', 'Music', 'Photography',
-  'Physical Education', 'Polish', 'Psychology', 'Religious Studies', 'Russian', 'Sociology',
-  'Spanish', 'Statistics', 'Textiles', 'Urdu', 'Welsh',
+  'Dance', 'Design & Technology', 'Drama', 'Economics', 'Electronics', 'Engineering', 'Film Studies',
+  'Food Preparation & Nutrition', 'French', 'Further Maths', 'Geography', 'Geology', 'German', 'Greek',
+  'Gujarati', 'History', 'Italian', 'Japanese', 'Latin', 'Media Studies', 'Modern Hebrew', 'Music',
+  'Panjabi', 'Persian', 'Photography', 'Physical Education', 'Polish', 'Portuguese', 'Psychology',
+  'Religious Studies', 'Russian', 'Sociology', 'Spanish', 'Statistics', 'Textiles', 'Turkish', 'Urdu', 'Welsh',
 ];
+// "Health & Social Care" removed: it is not a GCSE in England (schools offer a
+// Cambridge National instead). "Further Maths" is strictly a Level 2
+// certificate graded 9 to 1, kept because schools list it with the GCSEs.
+
+// Combined Science is a double award: two grades side by side, the higher
+// first and never more than one apart (9-9, 9-8, 8-8 ... 1-1, 17 in all).
+export const GCSE_COMBINED = 'Science (Combined)';
+export const COMBINED_SCIENCE_GRADES = (() => {
+  const out = [];
+  for (let g = 9; g >= 1; g -= 1) { out.push(`${g}-${g}`); if (g > 1) out.push(`${g}-${g - 1}`); }
+  return out;
+})();
+// A student takes either Combined Science or the three separate sciences.
+export const SEPARATE_SCIENCES = ['Biology', 'Chemistry', 'Physics'];
+export const isCombinedScience = (subject) => String(subject || '').trim().toLowerCase() === GCSE_COMBINED.toLowerCase();
+
+// Extended Project Qualification: an optional extra project, graded A* to E
+// like an A-level and worth half one. Universities often name it in offers.
+export const EPQ_GRADES = ['A*', 'A', 'B', 'C', 'D', 'E'];
 // Sensible caps: schools rarely allow more than 5 A-levels or 12 GCSEs.
 export const MAX_ALEVELS = 5;
 export const MAX_GCSES = 12;
@@ -121,7 +143,13 @@ export async function saveMyAcademicProfile(academicProfile) {
   };
   const gcses = dedupe((Array.isArray(academicProfile?.gcses) ? academicProfile.gcses : [])
     .filter((r) => r && String(r.subject || '').trim())
-    .map((r) => ({ subject: String(r.subject).trim(), grade: Number(r.grade) || null })))
+    .map((r) => ({
+      subject: String(r.subject).trim(),
+      // Combined Science keeps its double grade ("5-4"); others are 9 to 1.
+      grade: isCombinedScience(r.subject)
+        ? (/^[1-9]-[1-9]$/.test(String(r.grade || '')) ? String(r.grade) : null)
+        : (Number(r.grade) || null),
+    })))
     .filter((r) => r.grade != null);
   const predicted = dedupe((Array.isArray(academicProfile?.predicted_alevels) ? academicProfile.predicted_alevels : [])
     .filter((r) => r && String(r.subject || '').trim())
@@ -133,6 +161,8 @@ export async function saveMyAcademicProfile(academicProfile) {
       qualification_type: academicProfile?.qualification_type || 'A-level',
       gcses,
       predicted_alevels: predicted,
+      // Optional Extended Project grade (A* to E), or null.
+      epq_grade: EPQ_GRADES.includes(String(academicProfile?.epq_grade || '').toUpperCase()) ? String(academicProfile.epq_grade).toUpperCase() : null,
       prediction_source: 'self',
       updated_at: new Date().toISOString().slice(0, 10),
     },

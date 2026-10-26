@@ -20,7 +20,7 @@ export async function applyCouponCode(code) {
         throw new Error('Please sign in again before applying an access code.');
       }
       if (err.status === 404) {
-        throw new Error('Coupon service was not found.');
+        throw new Error('Something went wrong. Please try again.');
       }
       if (err.status) {
         throw new Error(err.data?.message || err.data?.error || `Could not apply access code (${err.status}).`);

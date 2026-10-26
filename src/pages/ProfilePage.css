@@ -3896,10 +3896,24 @@
 .profile-run-row .profile-run-menu-wrap { flex: 0 0 auto; margin: 0 !important; position: relative; }
 .profile-run-row .profile-run-menu-btn { width: 34px; height: 34px; }
 @media (max-width: 600px) {
-  .profile-run-row { padding: 11px 10px 11px 12px !important; gap: 10px !important; }
-  .profile-run-chip { width: 36px; height: 36px; font-size: 0.78rem; }
+  .profile-run-row { padding: 11px 10px 11px 14px !important; gap: 10px !important; }
+  /* The "#302" chip repeats "Report 302", so on a phone it goes and the
+     text gets the full width up to the "..." button. */
+  .profile-run-chip { display: none !important; }
   .profile-run-chev { display: none; }
   .profile-run-detail--hide-tablet, .profile-run-sep--hide-tablet { display: none; }
+  /* Details flow as one line joined by dots and wrap naturally, instead of
+     each piece ending in a dangling "|" and dropping to its own line. */
+  .profile-run-row .profile-run-details { gap: 2px 0 !important; }
+  .profile-run-row .profile-run-sep { display: none !important; }
+  .profile-run-row .profile-run-details > span:not(.profile-run-sep):not(.profile-run-assessment):not(:first-child)::before {
+    content: '\00B7';
+    margin: 0 6px;
+    color: #a8b5c8;
+  }
+  /* The subject (university reports) always gets its own line, no dot. */
+  .profile-run-row .profile-run-details > .profile-run-subject { flex: 0 0 100%; }
+  .profile-run-row .profile-run-details > .profile-run-subject::before { content: none !important; }
 }
 
 /* Plan badge inside the account modal plan row (replaces the plan name text) */
@@ -4080,3 +4094,10 @@
   color: #1f7a3f; font-size: 0.8rem; font-weight: 600;
 }
 .profile-account-planbar__notice svg { flex: 0 0 auto; }
+
+/* Footer (same look as the report pages' footer) */
+.profile-footer { max-width: 760px; margin: 48px auto 0; padding: 28px 20px 32px; text-align: center; border-top: 1px solid rgba(47, 111, 237, 0.10); }
+.profile-footer-links { display: inline-flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; color: rgba(75, 95, 118, 0.62); font-size: 0.84rem; line-height: 1.5; }
+.profile-footer-links a { color: #2f6fed; font-weight: 600; text-decoration: none; }
+.profile-footer-links a:hover, .profile-footer-links a:focus-visible { text-decoration: underline; }
+.profile-footer-copy { margin: 0; color: rgba(75, 95, 118, 0.58); font-size: 0.78rem; line-height: 1.5; }

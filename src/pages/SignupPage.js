@@ -194,6 +194,11 @@ export default function SignupPage() {
   const [acceptedLegal, setAcceptedLegal] = useState(false);
   const [confirmedAge, setConfirmedAge] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  // One red message per box, shown under it (see handleSubmit).
+  const [fieldErrors, setFieldErrors] = useState({});
+  const clearFieldError = (key) => setFieldErrors((prev) => (prev[key] ? { ...prev, [key]: '' } : prev));
+  const fieldErr = (key) => (fieldErrors[key] ? <span className="auth-field-error" role="alert">{fieldErrors[key]}</span> : null);
+  const errCls = (key) => (fieldErrors[key] ? ' has-field-error' : '');
   const [infoMsg] = useState(location.state?.message || '');
   const [loading, setLoading] = useState(false);
   const [checkingGoogleAccount, setCheckingGoogleAccount] = useState(false);
@@ -299,25 +304,24 @@ export default function SignupPage() {
     e.preventDefault();
     setErrorMsg('');
 
-    if (!firstName.trim() || !lastName.trim()) {
-      setErrorMsg('Please enter your first name and last name.');
-      return;
-    }
-
-    if (!confirmedAge) { setErrorMsg('Please confirm that you are 13 or over.'); return; }
-
-    if (!acceptedLegal) {
-      setErrorMsg('Please agree to the Terms of Use and confirm you have read the Privacy Notice before creating your account.');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setErrorMsg('Passwords do not match.');
-      return;
-    }
-
-    if (!isStrongPassword(password)) {
-      setErrorMsg(PASSWORD_RULES_TEXT);
+    // Every problem is shown in red under its own box, all at once, so the
+    // person sees exactly what to fix instead of one message at the top.
+    const next = {};
+    if (!firstName.trim()) next.firstName = 'Please enter your first name.';
+    if (!lastName.trim()) next.lastName = 'Please enter your last name.';
+    if (!email.trim()) next.email = 'Please enter your email address.';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) next.email = 'That does not look like a valid email address.';
+    if (!isStrongPassword(password)) next.password = PASSWORD_RULES_TEXT;
+    if (!confirmPassword) next.confirmPassword = 'Please type your password again.';
+    else if (password !== confirmPassword) next.confirmPassword = 'Passwords do not match.';
+    if (!confirmedAge) next.age = 'Please confirm that you are 13 or over.';
+    if (!acceptedLegal) next.legal = 'Please agree to the Terms of Use and confirm you have read the Privacy Notice.';
+    setFieldErrors(next);
+    if (Object.keys(next).length) {
+      window.requestAnimationFrame(() => {
+        const first = document.querySelector('.auth-form .has-field-error');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
       return;
     }
 
@@ -346,7 +350,12 @@ export default function SignupPage() {
     setLoading(false);
 
     if (error) {
-      setErrorMsg(friendlyError(error, 'create your account').message);
+      const friendly = friendlyError(error, 'create your account').message;
+      // Problems with the email or password go under that box; anything else
+      // (connection, service) stays in the message at the top.
+      if (/email/i.test(friendly) && !/password/i.test(friendly)) setFieldErrors({ email: friendly });
+      else if (/password/i.test(friendly)) setFieldErrors({ password: friendly });
+      else setErrorMsg(friendly);
       return;
     }
 
@@ -432,26 +441,27 @@ export default function SignupPage() {
             </div>
           ) : (
             <>
-              <form className="auth-form" onSubmit={handleSubmit}>
+              <form className="auth-form" onSubmit={handleSubmit} noValidate>
                 <div className="auth-row">
-                  <label className="auth-label">First name<span className="auth-input-wrap"><input className="auth-input" type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} autoComplete="given-name" required /></span></label>
-                  <label className="auth-label">Last name<span className="auth-input-wrap"><input className="auth-input" type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} autoComplete="family-name" required /></span></label>
+                  <label className={`auth-label${errCls('firstName')}`}>First name<span className="auth-input-wrap"><input className="auth-input" type="text" value={firstName} onChange={(e) => { setFirstName(e.target.value); clearFieldError('firstName'); }} autoComplete="given-name" aria-invalid={Boolean(fieldErrors.firstName)} /></span>{fieldErr('firstName')}</label>
+                  <label className={`auth-label${errCls('lastName')}`}>Last name<span className="auth-input-wrap"><input className="auth-input" type="text" value={lastName} onChange={(e) => { setLastName(e.target.value); clearFieldError('lastName'); }} autoComplete="family-name" aria-invalid={Boolean(fieldErrors.lastName)} /></span>{fieldErr('lastName')}</label>
                 </div>
 
-                <label className="auth-label">Email<span className="auth-input-wrap"><input className="auth-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" placeholder="you@example.com" required /></span></label>
+                <label className={`auth-label${errCls('email')}`}>Email<span className="auth-input-wrap"><input className="auth-input" type="email" value={email} onChange={(e) => { setEmail(e.target.value); clearFieldError('email'); }} autoComplete="email" placeholder="you@example.com" aria-invalid={Boolean(fieldErrors.email)} /></span>{fieldErr('email')}</label>
 
                 <div className="auth-row">
-                <label className="auth-label">Password<span className="auth-password-wrap auth-input-wrap"><input className="auth-input auth-input--password-toggle" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} onFocus={() => setPasswordFocused(true)} onBlur={() => setPasswordFocused(false)} autoComplete="new-password" minLength={8} required /><button type="button" className="auth-password-toggle" onClick={() => setShowPassword((current) => !current)} aria-label={showPassword ? 'Hide password' : 'Show password'}><EyeIcon hidden={!showPassword} /></button></span>{(passwordFocused || password.length > 0) && <PasswordRequirements password={password} />}</label>
+                <label className={`auth-label${errCls('password')}`}>Password<span className="auth-password-wrap auth-input-wrap"><input className="auth-input auth-input--password-toggle" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => { setPassword(e.target.value); clearFieldError('password'); }} onFocus={() => setPasswordFocused(true)} onBlur={() => setPasswordFocused(false)} autoComplete="new-password" aria-invalid={Boolean(fieldErrors.password)} /><button type="button" className="auth-password-toggle" onClick={() => setShowPassword((current) => !current)} aria-label={showPassword ? 'Hide password' : 'Show password'}><EyeIcon hidden={!showPassword} /></button></span>{fieldErr('password')}{(passwordFocused || password.length > 0) && <PasswordRequirements password={password} />}</label>
 
-                <label className="auth-label">Confirm password<span className="auth-password-wrap auth-input-wrap"><input className="auth-input auth-input--password-toggle" type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} autoComplete="new-password" minLength={8} required /><button type="button" className="auth-password-toggle" onClick={() => setShowConfirmPassword((current) => !current)} aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}><EyeIcon hidden={!showConfirmPassword} /></button></span></label>
+                <label className={`auth-label${errCls('confirmPassword')}`}>Confirm password<span className="auth-password-wrap auth-input-wrap"><input className="auth-input auth-input--password-toggle" type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => { setConfirmPassword(e.target.value); clearFieldError('confirmPassword'); }} autoComplete="new-password" aria-invalid={Boolean(fieldErrors.confirmPassword)} /><button type="button" className="auth-password-toggle" onClick={() => setShowConfirmPassword((current) => !current)} aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}><EyeIcon hidden={!showConfirmPassword} /></button></span>{fieldErr('confirmPassword')}</label>
                 </div>
 
-                <label className="auth-legal-check">
-                  <input type="checkbox" checked={confirmedAge} onChange={(e) => setConfirmedAge(e.target.checked)} />
+                <label className={`auth-legal-check${errCls('age')}`}>
+                  <input type="checkbox" checked={confirmedAge} onChange={(e) => { setConfirmedAge(e.target.checked); clearFieldError('age'); }} />
                   <span>I confirm that I am 13 or over.</span>
                 </label>
-                <label className="auth-legal-check">
-                  <input type="checkbox" checked={acceptedLegal} onChange={(e) => setAcceptedLegal(e.target.checked)} />
+                {fieldErr('age')}
+                <label className={`auth-legal-check${errCls('legal')}`}>
+                  <input type="checkbox" checked={acceptedLegal} onChange={(e) => { setAcceptedLegal(e.target.checked); clearFieldError('legal'); }} />
                   <span>
                     I agree to the{' '}
                     <button type="button" className="auth-inline-link" onClick={() => setLegalModalTab('terms')} style={inlineLegalButtonStyle}>Terms of Use</button>{' '}
@@ -459,6 +469,7 @@ export default function SignupPage() {
                     <button type="button" className="auth-inline-link" onClick={() => setLegalModalTab('privacy')} style={inlineLegalButtonStyle}>Privacy Notice</button>.
                   </span>
                 </label>
+                {fieldErr('legal')}
 
                 <button className="auth-button" type="submit" disabled={loading}>{loading ? 'Creating account...' : 'Create account'}</button>
               </form>

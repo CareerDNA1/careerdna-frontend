@@ -39,6 +39,11 @@ const CW_TITLES = [];
 Object.entries(CAREER_WORLD_DEFINITIONS || {}).forEach(([id, d]) => {
   if (d && d.title) { CW_TITLE_TO_ID[norm(d.title)] = id; CW_TITLES.push([id, d.title]); }
 });
+// Graduate-facing pathway definitions are keyed by title; match loosely so
+// '&'/'and' or spacing differences still find them.
+const UNI_LONG_BY_NORM = {};
+Object.entries(PATHWAY_UNI_LONG_DEFINITIONS || {}).forEach(([title, text]) => { UNI_LONG_BY_NORM[String(title).toLowerCase().replace(/[^a-z0-9]+/g, '')] = text; });
+const uniLongFor = (title) => (title ? UNI_LONG_BY_NORM[String(title).toLowerCase().replace(/[^a-z0-9]+/g, '')] || '' : '');
 const PATHWAY_BY_TITLE = {};
 const PATHWAY_TITLES = [];
 Object.entries(PATHWAY_DEFINITIONS || {}).forEach(([id, d]) => {
@@ -129,7 +134,8 @@ export async function assembleFavouriteWorld(item, ctx = {}) {
       title: insight?.title || item.title,
       shortDef: def?.short || '',
       longDef: def?.long || '',
-      uniLongDef: (PATHWAY_UNI_LONG_DEFINITIONS && PATHWAY_UNI_LONG_DEFINITIONS[canonId]) || '',
+      // Keyed by pathway title, not id.
+      uniLongDef: uniLongFor(insight?.title || item.title) || uniLongFor(def?.title) || '',
       signalLabel: insight?.signalLabel || '',
       signalBlocks: insight?.signalBlocks,
       narrative,

@@ -4,14 +4,15 @@ import { apiFetch, ApiError } from './apiFetch';
 // caller used before: a sign-in prompt when there is no token, a "service was
 // not found" message when every base URL answers 404, and the server's own
 // message (or a numbered fallback) for other errors.
-async function stripePost(path, { body, signInMessage, notFoundMessage, failPrefix }) {
+async function stripePost(path, { body, signInMessage }) {
   try {
     return await apiFetch(path, { method: 'POST', auth: 'required', body, timeoutMs: 30000 });
   } catch (err) {
     if (err instanceof ApiError) {
       if (err.code === 'NOT_SIGNED_IN') throw new Error(signInMessage);
-      if (err.status === 404) throw new Error(notFoundMessage);
-      if (err.status) throw new Error(err.data?.message || err.data?.error || `${failPrefix} (${err.status}).`);
+      if (err.status === 404) throw new Error('Something went wrong. Please try again.');
+      // The server's own sentence when it sends one; never a raw code or status number.
+      if (err.status) throw new Error(err.data?.message || 'Something went wrong. Please try again.');
     }
     throw err;
   }
@@ -32,7 +33,7 @@ export async function createCheckoutSession(plan) {
   });
 
   if (!data?.url) {
-    throw new Error('Stripe checkout did not return a checkout URL.');
+    throw new Error('Something went wrong. Please try again.');
   }
 
   return data;
@@ -47,7 +48,7 @@ export async function createBillingPortalSession() {
   });
 
   if (!data?.url) {
-    throw new Error('Stripe billing portal did not return a URL.');
+    throw new Error('Something went wrong. Please try again.');
   }
 
   return data;
@@ -93,7 +94,7 @@ export async function createAdvisorPackCheckout(pack) {
     notFoundMessage: 'Checkout service was not found.',
     failPrefix: 'Could not start checkout',
   });
-  if (!data?.url) throw new Error('Stripe checkout did not return a checkout URL.');
+  if (!data?.url) throw new Error('Something went wrong. Please try again.');
   return data;
 }
 
@@ -113,7 +114,7 @@ export async function createReportPackCheckout(pack) {
     notFoundMessage: 'Checkout service was not found.',
     failPrefix: 'Could not start checkout',
   });
-  if (!data?.url) throw new Error('Stripe checkout did not return a checkout URL.');
+  if (!data?.url) throw new Error('Something went wrong. Please try again.');
   return data;
 }
 

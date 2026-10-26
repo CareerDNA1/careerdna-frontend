@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Fingerprint, Timer, Headphones, Brain, Scales } from 'phosphor-react';
+import { Fingerprint, Timer, Headphones, Brain, Scales, Lightbulb } from 'phosphor-react';
 import Button from '../Common/Button';
 import instructionsGraphic from '../../Assets/images/instructions_graphic.webp';
 import logo from '../../Assets/images/logo-career-dna.png';
@@ -14,7 +14,7 @@ const instructionItems = [
   },
   {
     icon: <Timer {...iconProps} />,
-    text: <>There are <strong>100 short questions</strong>, answered on a scale or as a simple either/or choice. Most people finish in <strong>about 15 minutes</strong> in one sitting, and your progress <strong>saves automatically</strong> as you go.</>,
+    text: <>There are <strong>100 short questions</strong>, each answered on a scale from 1 to 5. Most people finish in <strong>about 15 minutes</strong> in one sitting, and your progress <strong>saves automatically</strong> as you go.</>,
   },
   {
     icon: <Headphones {...iconProps} />,
@@ -27,6 +27,10 @@ const instructionItems = [
   {
     icon: <Scales {...iconProps} />,
     text: <>Choosing the <strong>middle option</strong> (option 3) is fine if you're unsure, but the ends of the scale (1 or 5) signal a stronger view.</>,
+  },
+  {
+    icon: <Lightbulb {...iconProps} />,
+    text: <>Not sure what a question means? Tap <strong>Not sure? Get some guidance</strong> under it for a short explanation and an example. Use it as often as you like.</>,
   },
 ];
 

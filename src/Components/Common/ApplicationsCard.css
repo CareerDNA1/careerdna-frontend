@@ -80,6 +80,24 @@
 .apps-form--page { margin: 0; padding: 0; border: 0; background: transparent; }
 .apps-form--page .fav-modal-title { margin-bottom: 4px; }
 .apps-pick .fav-modal-sub { margin-bottom: 16px; }
+/* "Add to UCAS choices" / "Mark as applied" on each favourite in the picker:
+   the same green pill as the applied button on the favourite cards. */
+.fav-apply {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border: 1px solid #9fe1cb; border-radius: 999px;
+  background: #fff; color: #0f6e56; font-family: inherit; font-size: 0.85rem; font-weight: 700;
+  line-height: 1.2; white-space: nowrap; cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.fav-apply:hover:not(:disabled) { background: #e1f5ee; border-color: #7fd3b6; }
+.fav-apply:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
+.fav-apply:disabled { opacity: 0.6; cursor: default; }
+.fav-apply--done { background: #e1f5ee; border-color: #9fe1cb; cursor: default; }
+.apps-pick .fav-item { gap: 12px; }
+.apps-pick .fav-item-main { min-width: 0; }
+@media (max-width: 480px) {
+  .fav-apply { padding: 7px 11px; font-size: 0.8rem; }
+}
 
 /* Application detail: mirrors the favourite ad card */
 .apps-detail-row { padding: 14px 0 0; }

@@ -5,7 +5,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import AccountNavbar from '../Components/Common/AccountNavbar';
 import { useAuth } from '../context/AuthContext';
 import { resumableProgress } from '../Hooks/useProgress';
-import { takeProfileStale } from '../utils/profileCache';
+import { takeProfileStale, markProfileStale } from '../utils/profileCache';
+import { stageRunIds, newestPerItem } from '../utils/favouriteScope';
 import { supabase } from '../utils/supabaseClient';
 import {
   deleteAssessmentRun,
@@ -492,6 +493,9 @@ export default function ProfilePage() {
     typeof window !== 'undefined' && window.innerWidth <= 600
   );
 
+  // Bumped whenever favourites change on this page (remove, Clear all, cascade)
+  // so the journey steps are worked out again without a reload.
+  const [engagedReload, setEngagedReload] = useState(0);
   // Load which sections the user has interacted with (liked/disliked) on their
   // latest run, so the journey timeline can mark those steps complete.
   useEffect(() => {
@@ -507,15 +511,17 @@ export default function ProfilePage() {
     let cancelled = false;
     (async () => {
       try {
+        // The stage's shared favourites list (utils/favouriteScope).
+        const scopeIds = await stageRunIds(uid, runId);
         const { data, error } = await supabase
           .from('result_feedback')
-          .select('item_type, item_id, item_title, reaction')
+          .select('item_type, item_id, item_title, reaction, updated_at, created_at')
           .eq('user_id', uid)
-          .eq('assessment_run_id', runId)
+          .in('assessment_run_id', scopeIds)
           .eq('feedback_scope', 'item_reaction');
         if (error) throw error;
         if (cancelled) return;
-        const rows = Array.isArray(data) ? data : [];
+        const rows = newestPerItem(Array.isArray(data) ? data : []);
         // Canonical types: a pathway family the university flow stored as
         // 'role' is a pathway for the journey steps.
         const typeOf = (r) => normaliseFavouriteType(String(r?.item_type || '').trim().toLowerCase(), r?.item_id, r?.item_title);
@@ -538,7 +544,7 @@ export default function ProfilePage() {
     return () => {
       cancelled = true;
     };
-  }, [currentRun?.id, user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentRun?.id, user?.id, engagedReload]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Recurring "How useful is CareerDNA?" prompt: record this visit and work out
   // whether a satisfaction pulse is due for this visit number (schedule lives in
@@ -569,6 +575,7 @@ export default function ProfilePage() {
       clearTimeout(timer);
       timer = setTimeout(() => {
         getFavouritesByCategory(runId).then((groups) => setFavGroups(groups || [])).catch(() => {});
+        setEngagedReload((n) => n + 1);
       }, 300);
     };
     const onSaveFailed = () => setProfileNotice(SAVE_FAILED_TEXT);
@@ -862,7 +869,7 @@ export default function ProfilePage() {
     if (nextProfile?.pending_plan_change && pendingDate) { setProfileNotice(''); return; }
 
     if (String(nextProfile?.plan || '').toLowerCase() === 'free') {
-      setProfileNotice('Your subscription has ended and your account is now on the free plan.');
+      setProfileNotice('Your subscription has ended and your account is now on the Starter plan.');
       return;
     }
 
@@ -1235,7 +1242,10 @@ export default function ProfilePage() {
       const saved = await saveAcademicStatus(editIntroResponses, { source: 'new_report', kind: statusChanging ? 'transition' : null });
       if (saved) setProfile((prev) => ({ ...(prev || {}), ...saved }));
       const newRun = await withTimeout(rerunAssessmentWithOutputParameters(editingRun, editIntroResponses), RERUN_TIMEOUT_MS);
-      await loadPageData();
+      // Go straight to the new report. Reloading the whole profile here first
+      // showed "Loading your profile" for a page that was about to be left;
+      // instead the profile is marked out of date and reloads when reopened.
+      markProfileStale();
       setEditingRun(null);
       setEditIntroResponses(defaultIntroResponses);
       navigate(`/results/run/${newRun.id}`);
@@ -2351,7 +2361,7 @@ export default function ProfilePage() {
                         : profile?.pending_plan_change && pendingPlanDate
                           ? `Changes to ${pendingPlanName} on ${pendingPlanDate}`
                           : `Renews on ${renewalDate}`
-                    ) : currentPlanKey === 'dev' ? 'Developer access' : 'Free plan'}
+                    ) : currentPlanKey === 'dev' ? 'Developer access' : 'Starter plan'}
                   </div>
                   <div className="profile-account-planbar__since">Member since {joined}</div>
                   {profileNotice ? (
@@ -2754,6 +2764,22 @@ export default function ProfilePage() {
           </div>
         </div>
       ) : null}
+
+      {/* Same footer as the report pages (Privacy, Terms, Report a problem). */}
+      <footer className="profile-footer" aria-label="CareerDNA footer">
+        <nav className="profile-footer-links" aria-label="Footer links">
+          <a href="/legal#privacy">Privacy Policy</a>
+          <span aria-hidden="true">·</span>
+          <a href="/legal#terms">Terms of Use</a>
+          <span aria-hidden="true">·</span>
+          <a href="/trust-security#accessibility">Accessibility</a>
+          <span aria-hidden="true">·</span>
+          <a href="mailto:support@mycareerdna.io">Contact</a>
+          <span aria-hidden="true">·</span>
+          <a href="#report-problem">Report a problem</a>
+        </nav>
+        <p className="profile-footer-copy">© 2026 CareerDNA. All rights reserved.</p>
+      </footer>
     </div>
   );
 }

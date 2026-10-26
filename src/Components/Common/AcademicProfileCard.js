@@ -12,6 +12,10 @@ import {
   GCSE_COMPULSORY,
   MAX_ALEVELS,
   MAX_GCSES,
+  COMBINED_SCIENCE_GRADES,
+  SEPARATE_SCIENCES,
+  EPQ_GRADES,
+  isCombinedScience,
 } from '../../utils/academicProfile';
 import PickMenu from './PickMenu';
 import './AcademicProfileCard.css';
@@ -24,9 +28,15 @@ const isCompulsoryGcse = (subject) => GCSE_COMPULSORY.some((c) => sameSubject(c,
 // chosen on other rows of the same section, so the same subject cannot be
 // entered twice. A stored subject that is not in the list still shows.
 function subjectOptions(all, rows, i) {
-  const taken = rows.filter((_, j) => j !== i).map((r) => String(r.subject || '').toLowerCase()).filter(Boolean);
+  const others = rows.filter((_, j) => j !== i);
+  const taken = others.map((r) => String(r.subject || '').toLowerCase()).filter(Boolean);
   const own = String(rows[i]?.subject || '');
-  const list = all.filter((sub) => !taken.includes(sub.toLowerCase()));
+  // Combined Science and the separate sciences cannot both be taken.
+  const hasCombined = others.some((r) => isCombinedScience(r.subject));
+  const hasSeparate = others.some((r) => SEPARATE_SCIENCES.some((x) => sameSubject(x, r.subject)));
+  const list = all.filter((sub) => !taken.includes(sub.toLowerCase())
+    && !(hasCombined && SEPARATE_SCIENCES.some((x) => sameSubject(x, sub)))
+    && !(hasSeparate && isCombinedScience(sub)));
   if (own && !list.some((sub) => sameSubject(sub, own))) list.unshift(own);
   return list.map((sub) => ({ value: sub, label: sub }));
 }
@@ -44,6 +54,7 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [clearAsk, setClearAsk] = useState(false); // "Clear all grades" confirm showing
   const baseRef = useRef('');   // draft as opened, to know whether anything changed
 
   useEffect(() => {
@@ -83,10 +94,15 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
       ...GCSE_COMPULSORY.map((c) => stored.find((r) => sameSubject(r.subject, c)) || { subject: c, grade: '' }),
       ...stored.filter((r) => !isCompulsoryGcse(r.subject)),
     ];
+    // Combined Science saved before the double grade existed (a single "5")
+    // becomes the matching pair ("5-5") rather than being lost on save.
+    base.gcses = base.gcses.map((r) => (isCombinedScience(r.subject) && /^[1-9]$/.test(String(r.grade || ''))
+      ? { ...r, grade: `${r.grade}-${r.grade}` } : r));
     baseRef.current = JSON.stringify(base);
     setDraft(base);
     setNotice('');
     setError('');
+    setClearAsk(false);
     setEditing(true);
   };
 
@@ -102,7 +118,11 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
   const setRow = (key, i, field, value) => {
     setDraft((d) => {
       const next = { ...d, [key]: [...d[key]] };
-      next[key][i] = { ...next[key][i], [field]: value };
+      const row = { ...next[key][i], [field]: value };
+      // Switching to or from Combined Science changes the grade scale
+      // (double grade vs single), so the old grade no longer applies.
+      if (field === 'subject' && isCombinedScience(value) !== isCombinedScience(next[key][i]?.subject)) row.grade = '';
+      next[key][i] = row;
       return next;
     });
   };
@@ -111,24 +131,24 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
   // One empty row at a time: the add button waits until the last row has a subject.
   const canAdd = (key, max) => draft && draft[key].length < max && draft[key].every((r) => r.subject);
   const dirty = !!draft && JSON.stringify(draft) !== baseRef.current;
+  // Combined Science and a separate science on the same profile cannot both be right.
+  const scienceClash = !!draft && draft.gcses.some((r) => isCombinedScience(r.subject))
+    && draft.gcses.some((r) => SEPARATE_SCIENCES.some((x) => sameSubject(x, r.subject)));
 
-  const save = async () => {
+  const save = async (profile = draft, savedNotice = 'Your grades were saved.') => {
     try {
       setSaving(true);
       setError('');
-      const saved = await saveMyAcademicProfile(draft);
+      const saved = await saveMyAcademicProfile(profile);
       setAp(saved);
       setEditing(false);
       setDraft(null);
-      setNotice('Your grades were saved.');
+      setClearAsk(false);
+      setNotice(savedNotice);
       if (onSaved) onSaved(saved);
     } catch (err) {
-      const msg = String(err?.message || '');
-      if (/column .*academic_profile.* does not exist/i.test(msg) || /academic_profile/.test(msg)) {
-        setError('Could not save yet: the academic_profile column has not been added to the database.');
-      } else {
-        setError(msg || 'Could not save your grades.');
-      }
+      // Never show raw database or server wording to students.
+      setError('Something went wrong. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -177,6 +197,12 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
               ))}
             </span>
           </div>
+          {ap.epq_grade ? (
+            <div className="acad-view-row">
+              <span className="acad-view-key">EPQ</span>
+              <span className="acad-chips"><span className="acad-chip">Extended Project {ap.epq_grade}</span></span>
+            </div>
+          ) : null}
           <p className="acad-foot">Keep these up to date. They power Your chances in the university rankings and let Your Advisor compare your grades with the degrees and routes you save.</p>
         </div>
       ) : (
@@ -237,7 +263,7 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
                     triggerClass={`acad-select acad-select--subject${row.subject ? '' : ' is-empty'}`}
                     onSelect={(v) => setRow('gcses', i, 'subject', v)} />
                 )}
-                <PickMenu options={gradeOptions(GCSE_GRADES)} value={row.grade} ariaLabel="GCSE grade" title="GCSE grade" placeholder="Grade"
+                <PickMenu options={gradeOptions(isCombinedScience(row.subject) ? COMBINED_SCIENCE_GRADES : GCSE_GRADES)} value={row.grade} ariaLabel="GCSE grade" title={isCombinedScience(row.subject) ? 'Combined Science grades' : 'GCSE grade'} placeholder="Grade"
                   triggerClass={`acad-select${row.grade ? '' : ' is-empty'}`} onSelect={(v) => setRow('gcses', i, 'grade', v)} />
                 {isCompulsoryGcse(row.subject) ? (
                   <span className="acad-row-remove acad-row-remove--blank" aria-hidden="true" />
@@ -248,22 +274,53 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
                 )}
               </div>
             ))}
+            {scienceClash ? (
+              <p className="acad-error">You have Combined Science and a separate science. Students take one or the other, so remove the one you did not take.</p>
+            ) : null}
             {canAdd('gcses', MAX_GCSES) ? (
               <button type="button" className="acad-add" onClick={() => addRow('gcses')}>
                 <Plus size={13} weight="bold" aria-hidden="true" /> Add a GCSE
               </button>
             ) : null}
-            <p className="acad-section-note">Maths and English Language are compulsory GCSEs, so they are always listed. Leave the grade blank if you do not have it yet.</p>
+            <p className="acad-section-note">Maths and English Language are compulsory GCSEs, so they are always listed. Leave the grade blank if you do not have it yet. Combined Science counts as two GCSEs and has two grades, for example 5-4; you take either Combined Science or the separate sciences, not both.</p>
+          </div>
+
+          <div className="acad-section">
+            <div className="acad-section-label">Extended Project (EPQ)</div>
+            <div className="acad-row">
+              <span className="acad-select acad-select--subject acad-select--fixed"><span className="apps-pick-label">Extended Project Qualification</span></span>
+              <PickMenu options={[{ value: '', label: 'Not taking it' }, ...EPQ_GRADES.map((g) => ({ value: g, label: g }))]} value={draft.epq_grade || ''}
+                ariaLabel="EPQ predicted grade" title="EPQ predicted grade" placeholder="Grade"
+                triggerClass={`acad-select${draft.epq_grade ? '' : ' is-empty'}`} onSelect={(v) => setDraft((d) => ({ ...d, epq_grade: v || null }))} />
+              <span className="acad-row-remove acad-row-remove--blank" aria-hidden="true" />
+            </div>
+            <p className="acad-epq-note">Optional. The EPQ is a project you research and write yourself, graded A* to E and worth half an A-level. Some universities lower their offer for a good EPQ grade, for example ABB plus an A in the EPQ instead of AAB.</p>
           </div>
 
           <p className="acad-foot">Only you can see these. Edit or clear them any time.</p>
 
+          {clearAsk ? (
+            <div className="acad-clear-confirm" role="group" aria-label="Clear all your grades?">
+              <span>Clear all your grades? Your A-levels, GCSEs and EPQ will be removed. This cannot be undone.</span>
+              <span className="acad-clear-actions">
+                <button type="button" className="acad-btn acad-btn--danger" disabled={saving}
+                  onClick={() => save({ ...emptyAcademicProfile(), epq_grade: null }, 'Your grades were cleared.')}>
+                  {saving ? 'Clearing…' : 'Clear all'}
+                </button>
+                <button type="button" className="acad-btn acad-btn--ghost" disabled={saving} onClick={() => setClearAsk(false)}>Cancel</button>
+              </span>
+            </div>
+          ) : (
           <div className="acad-actions">
+            {hasAcademicData(ap) || ap?.epq_grade ? (
+              <button type="button" className="acad-clear-all" data-no-autofocus onClick={() => setClearAsk(true)} disabled={saving}>Clear all grades</button>
+            ) : null}
             <button type="button" className="acad-btn acad-btn--ghost" onClick={cancelEdit} disabled={saving}>Cancel</button>
-            <button type="button" className="acad-btn acad-btn--primary" onClick={save} disabled={saving || !dirty}>
+            <button type="button" className="acad-btn acad-btn--primary" onClick={() => save()} disabled={saving || !dirty || scienceClash}>
               {saving ? 'Saving…' : 'Save grades'}
             </button>
           </div>
+          )}
             </div>
           </div>
         </div>

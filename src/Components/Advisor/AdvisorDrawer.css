@@ -1,6 +1,6 @@
 /* Your Advisor drawer: right-hand panel on wide screens, bottom sheet on phones.
    Sits under every modal (they are 96000+) but above the page. */
-:root { --advisor-drawer-w: 400px; }
+:root { --advisor-drawer-w: 460px; }
 
 /* The drawer overlays the page; the page keeps its layout and stays scrollable. */
 
@@ -73,6 +73,11 @@
 .advisor-drawer .career-advisor-credit-note { font-size: 0.74rem; }
 .advisor-drawer .career-advisor-message-content { font-size: 0.9rem !important; line-height: 1.55 !important; }
 .advisor-drawer .career-advisor-message.user .career-advisor-message-content { font-size: 0.9rem !important; }
+/* Use the drawer's width for the answers: the full-page chat keeps a wide side
+   margin that, in a narrow panel, made long answers tall and added a sideways scrollbar. */
+.advisor-drawer .career-advisor-messages { overflow-x: hidden !important; padding-right: 6px !important; }
+.advisor-drawer .career-advisor-message.assistant { max-width: 100% !important; }
+.advisor-drawer .career-advisor-message.user { max-width: 85% !important; }
 
 /* Send button in the drawer: a 38px circle matched to a 38px input, icon optically centred. */
 .advisor-drawer .career-advisor-input-row { align-items: center; gap: 8px !important; padding-top: 10px !important; }

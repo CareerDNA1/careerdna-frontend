@@ -107,7 +107,7 @@ export async function apiFetch(path, options = {}) {
       // A relative path on the dev server (or a SPA host) answers 200 with the
       // app's HTML, not JSON. Treat that as "not this candidate".
       if (res.ok && !isJson) {
-        lastError = new ApiError('Server returned a non JSON response.', { status: res.status });
+        lastError = new ApiError('Something went wrong. Please try again.', { status: res.status });
         continue;
       }
 

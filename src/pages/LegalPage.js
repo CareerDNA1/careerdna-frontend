@@ -8,7 +8,7 @@ export const CAREERDNA_LEGAL_VERSION = '2026-10-05-v6';
 // Company details shown in the Terms and Privacy Notice.
 export const LEGAL_ENTITY = 'CareerDNA Ltd';
 export const LEGAL_ADDRESS = '35a Priory Road, London, NW6 4NN, United Kingdom';
-export const SUPPORT_EMAIL = 'hello@mycareerdna.io';
+export const SUPPORT_EMAIL = 'support@mycareerdna.io';
 // Where the Supabase project (accounts, results, advisor history) is hosted.
 export const DATA_REGION = 'the European Union (Ireland)';
 
@@ -610,8 +610,8 @@ const styles = {
   },
   tabsWrap: {
     display: 'flex',
-    gap: '10px',
-    padding: '14px 24px 12px',
+    gap: '8px',
+    padding: '12px 16px 12px',
     borderBottom: '1px solid #edf2f7',
     background: '#ffffff',
     flexShrink: 0,
@@ -620,13 +620,18 @@ const styles = {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '9px',
-    minWidth: '130px',
+    gap: '7px',
+    // Share the row and stay on one line, so on a phone the two tabs are
+    // slim pills side by side rather than tall two-line buttons.
+    flex: '1 1 0',
+    minWidth: 0,
+    maxWidth: '190px',
+    whiteSpace: 'nowrap',
     border: '1px solid #d8e1ee',
     borderRadius: '999px',
     background: '#ffffff',
     color: '#334155',
-    padding: '9px 16px',
+    padding: '8px 12px',
     fontSize: '0.85rem',
     fontWeight: 700,
     cursor: 'pointer',
@@ -639,8 +644,9 @@ const styles = {
     boxShadow: '0 6px 16px rgba(37, 99, 235, 0.18)',
   },
   tabIconSvg: {
-    width: '18px',
-    height: '18px',
+    width: '16px',
+    height: '16px',
+    flexShrink: 0,
     fill: 'none',
     stroke: 'currentColor',
     strokeWidth: 2,

@@ -4,7 +4,8 @@ import './CascadeRemoveModal.css';
 
 // Shown right after a student unlikes a career world or pathway that still has
 // favourites saved under it. Two choices only: remove them too, or keep them.
-export default function CascadeRemoveModal({ parent, items, busy = false, onRemove, onKeep }) {
+// onCancel (optional): undo the unlike itself, leaving everything as it was.
+export default function CascadeRemoveModal({ parent, items, busy = false, onRemove, onKeep, onCancel = null }) {
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape' && !busy) onKeep(); };
     window.addEventListener('keydown', onKey);
@@ -44,6 +45,11 @@ export default function CascadeRemoveModal({ parent, items, busy = false, onRemo
           <button type="button" className="cascade-btn" onClick={onKeep} disabled={busy}>
             Keep them
           </button>
+          {onCancel ? (
+            <button type="button" className="cascade-btn cascade-btn--link" onClick={onCancel} disabled={busy}>
+              Cancel, keep {parent.title} liked
+            </button>
+          ) : null}
         </div>
       </div>
     </div>

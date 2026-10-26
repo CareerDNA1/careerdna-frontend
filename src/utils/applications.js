@@ -1,3 +1,4 @@
+import { tidyOrgName } from './orgName';
 import { supabase } from './supabaseClient';
 
 // Applications tracker (public.applications). A student marks a favourite ad or
@@ -88,14 +89,17 @@ export async function listApplications() {
     .order('applied_at', { ascending: false })
     .order('created_at', { ascending: false });
   if (error) throw error;
-  return data || [];
+  // Display tidy only (acronym capitals); the stored row is not rewritten.
+  return (data || []).map((a) => (a.organisation ? { ...a, organisation: tidyOrgName(a.organisation) } : a));
 }
 
 // Set of `${item_type}|${item_id}` for quick "already applied" checks. Build it
 // from ALL of the student's applications, not just the current stage's, so the
 // same ad can never be logged twice.
+// A Map (key -> application status), so callers can both check membership
+// (.has) and show the real outcome (Applied, Interview, Unsuccessful...).
 export function appliedKeySet(apps = []) {
-  return new Set((apps || []).filter((a) => a.item_id && a.item_type !== 'manual').map((a) => `${a.item_type}|${a.item_id}`));
+  return new Map((apps || []).filter((a) => a.item_id && a.item_type !== 'manual').map((a) => [`${a.item_type}|${a.item_id}`, a.status || 'applied']));
 }
 export const favouriteAppKey = (item) => `${item?.type || ''}|${item?.id || ''}`;
 
@@ -357,6 +361,37 @@ export function forStage(apps = [], stage) {
 //   ucasPlaced      true on the choice the student was placed at
 //   ucasClearing    { organisation, title } when placed through Clearing
 export const UCAS_MAX_CHOICES = 5;
+
+// Foundation year (year 0) courses. Their entry grades are set separately and
+// are usually lower than the standard degree, but our figures are for the
+// subject as a whole, so no typical offer or chances band is shown for them.
+export function isFoundationYearCourse(title = '') {
+  return /\bfoundation\s+year\b|\bwith\s+(a\s+|an\s+)?(integrated\s+)?foundation\b|\byear\s+(0|zero)\b|\(foundation\)/i.test(String(title || ''));
+}
+export const FOUNDATION_YEAR_NOTE = 'Foundation year courses usually ask for lower grades than the standard degree. Check the entry requirements on the course page.';
+
+// Scottish universities: their entry figures come from Highers and Advanced
+// Highers and cannot be read as A-level grades (see build_rankings.py), so no
+// typical entry grades or chances band is shown for them either. Older saved
+// courses still carry the old figures, hence the name check here too.
+const SCOTTISH_UNIVERSITIES = [
+  'glasgow school of art', 'queen margaret university', 'robert gordon university', 'royal conservatoire of scotland',
+  "scotland's rural college", 'sruc', 'university of the highlands and islands', 'glasgow caledonian university',
+  'heriot-watt university', 'edinburgh napier university', 'university of aberdeen', 'university of edinburgh',
+  'university of glasgow', 'university of the west of scotland', 'university of st andrews', 'university of stirling',
+  'university of strathclyde', 'abertay university', 'university of dundee',
+];
+export function isScottishUniversity(name = '') {
+  const n = String(name || '').trim().toLowerCase();
+  return Boolean(n) && SCOTTISH_UNIVERSITIES.some((u) => n === u || n.startsWith(`${u},`) || n.startsWith(`${u} `));
+}
+export const SCOTLAND_ENTRY_NOTE = 'Most students at Scottish universities start with Highers and Advanced Highers, so their entry figures cannot be turned into A-level grades. Check the A-level entry requirements on the course page.';
+// Why no grades comparison is shown for a course, or '' when one is.
+export function entryComparisonNote(title = '', university = '') {
+  if (isFoundationYearCourse(title)) return FOUNDATION_YEAR_NOTE;
+  if (isScottishUniversity(university)) return SCOTLAND_ENTRY_NOTE;
+  return '';
+}
 
 // Cycle dates. UCAS publishes these each year: update here, nowhere else.
 // Entry year -> early (Oxbridge, medicine, dentistry, vet), main (equal

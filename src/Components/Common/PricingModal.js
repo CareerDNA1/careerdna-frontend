@@ -25,13 +25,13 @@ const plans = [
       school: [
         'Your CareerDNA type and seven-profile breakdown',
         'Your top traits and how strong they are',
-        'How well you know yourself',
+        'How clear your results are',
         'A taste of what the full profile unlocks',
       ],
       university: [
         'Your CareerDNA type and seven-profile breakdown',
         'Your top traits and how strong they are',
-        'How well you know yourself',
+        'How clear your results are',
         'A taste of what the full profile unlocks',
       ],
     },
@@ -433,8 +433,35 @@ function PricingModal({
     return Math.max(-2, Math.min(2, diff));
   };
 
+  // Phones: plain touch events. Pointer events on a phone get cancelled as
+  // soon as the browser decides the finger is scrolling or has left the grid,
+  // which is why swiping did nothing; touch events always arrive.
+  const touchRef = useRef({ x: 0, y: 0, active: false });
+  const handlePricingTouchStart = (event) => {
+    const t = event.touches && event.touches[0];
+    if (!t) return;
+    touchRef.current = { x: t.clientX, y: t.clientY, active: true };
+  };
+  const handlePricingTouchEnd = (event) => {
+    const start = touchRef.current;
+    touchRef.current = { x: 0, y: 0, active: false };
+    const t = event.changedTouches && event.changedTouches[0];
+    if (!start.active || !t) return;
+    const dx = t.clientX - start.x;
+    const dy = t.clientY - start.y;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+      // A swipe that ends on a button must not also press it.
+      pricingDragRef.current = { ...pricingDragRef.current, moved: true };
+      window.setTimeout(() => { pricingDragRef.current.moved = false; }, 350);
+      if (dx < 0) goToNextPlan();
+      else goToPreviousPlan();
+    }
+  };
+
   const handlePricingPointerDown = (event) => {
-    if (!event.pointerType || event.pointerType === 'mouse') return;
+    // Touch is handled by the touch events above; this covers pens and
+    // trackpads that report as pointers.
+    if (!event.pointerType || event.pointerType === 'mouse' || event.pointerType === 'touch') return;
     pricingDragRef.current = {
       startX: event.clientX,
       startY: event.clientY,
@@ -621,7 +648,7 @@ function PricingModal({
     if (status === 'current' || status === 'scheduled' || status === 'included') return;
 
     if (variant === 'institution') {
-      window.location.href = 'mailto:hello@mycareerdna.io?subject=CareerDNA%20Enterprise%20enquiry';
+      window.location.href = 'mailto:support@mycareerdna.io?subject=CareerDNA%20Enterprise%20enquiry';
       return;
     }
 
@@ -719,6 +746,8 @@ function PricingModal({
 
           <div
             className="pricing-plan-grid"
+            onTouchStart={handlePricingTouchStart}
+            onTouchEnd={handlePricingTouchEnd}
             onPointerDown={handlePricingPointerDown}
             onPointerMove={handlePricingPointerMove}
             onPointerUp={handlePricingPointerUp}
@@ -733,7 +762,7 @@ function PricingModal({
             const isScheduled = status === 'scheduled';
             const isDevLocked = isDevAccount && plan.variant !== 'institution';
             const buttonLabel = isDevLocked
-              ? (plan.variant === 'starter' ? 'Free plan' : getPlanButtonLabel(plan, displayPlan, '', false))
+              ? (plan.variant === 'starter' ? 'Starter plan' : getPlanButtonLabel(plan, displayPlan, '', false))
               : signedIn
               ? getPlanButtonLabel(plan, effectivePlan, pendingPlan, isCancellingAtPeriodEnd)
               : (plan.variant === 'starter' ? 'Get started free' : plan.variant === 'institution' ? 'Contact us' : 'Subscribe');

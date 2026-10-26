@@ -54,7 +54,7 @@ function cleanVacTitle(t) {
     const junk = (p) => /£|\bp\s*\/?\s*a\b|per annum|per year|\bhrs?\b|hours|\/\s*w\b|\b[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}\b/i.test(p);
     const keep = [parts[0]];
     for (let i = 1; i < parts.length; i += 1) { if (junk(parts[i])) break; keep.push(parts[i]); }
-    s = keep.join(' – ');
+    s = keep.join(', '); // no dashes in titles students see
   }
   return s.replace(/\s+/g, ' ').trim();
 }
@@ -83,7 +83,7 @@ function stripEmployerPrefix(title, employer) {
     .replace(/[^a-z0-9]+/g, ' ').trim();
   const parts = title.split(/\s+[–—-]\s+/);
   if (parts.length > 1 && norm(parts[0]) && norm(parts[0]) === norm(employer)) {
-    return parts.slice(1).join(' – ').trim();
+    return parts.slice(1).join(', ').trim();
   }
   return title;
 }
@@ -127,8 +127,10 @@ function findACourseUrl(route) {
 }
 
 // title -> short pathway definition (for the "What it is" blurb)
+// Only entries that carry a short definition (the full rf_* ones); the older
+// long-only copies of the same title must not blank it out.
 const PATHWAY_SHORT_BY_TITLE = Object.fromEntries(
-  Object.values(PATHWAY_DEFINITIONS || {}).map((v) => [v.title, v.short])
+  Object.values(PATHWAY_DEFINITIONS || {}).filter((v) => v && v.short).map((v) => [v.title, v.short])
 );
 // title -> long pathway definition, split into paragraphs. Used to fill the
 // "What you'd do" and "Who it suits" cells of the card.

@@ -1,3 +1,4 @@
+import { invalidateStageRuns } from './favouriteScope';
 import { supabase } from './supabaseClient';
 import { fetchAiSummary } from './fetchAiSummary';
 import { calculateProfileQualityGate } from './profileQualityGate';
@@ -188,6 +189,8 @@ export async function saveAssessmentRun({
     .single();
 
   if (error) throw error;
+  // A new report joins its stage's shared favourites list.
+  invalidateStageRuns();
 
   // Favourites follow the student: copy likes/dislikes from the previous run
   // onto this one (see utils/favouriteCarryOver). Awaited so the results page
@@ -604,7 +607,7 @@ export async function runAiSummaryForSavedRun(runId, { bypassQualityGate = false
   });
 
   if (!archetypes || !Object.keys(archetypes).length) {
-    throw new Error('This saved run does not contain archetype data.');
+    throw new Error('Something went wrong. Please try again.');
   }
 
   if ((!bypassQualityGate && profileQualityGate.shouldBlockAnalysis) || profileQualityGate.hardBlock) {

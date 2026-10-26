@@ -57,7 +57,7 @@ export default function GlobalFocusTrap() {
         // Let the dialog paint, then move focus inside it.
         window.setTimeout(() => {
           if (!current || current.contains(document.activeElement)) return;
-          const first = focusables(current).find((el) => !el.matches('[aria-label="Close"], .modal-close, [class*="close"]')) || focusables(current)[0];
+          const first = focusables(current).find((el) => !el.matches('[aria-label="Close"], .modal-close, [class*="close"], [data-no-autofocus]')) || focusables(current)[0];
           (first || current).focus({ preventScroll: true });
         }, 0);
       } else if (opener && document.contains(opener)) {

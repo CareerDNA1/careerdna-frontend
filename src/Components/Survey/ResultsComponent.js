@@ -36,6 +36,7 @@ import { findChildFavourites, deleteFavouriteRows, pathwayParentMeta } from '../
 import { normaliseFavouriteType } from '../../utils/favourites';
 import { canonicalItem } from '../../utils/canonicalIds';
 import CascadeRemoveModal from '../Common/CascadeRemoveModal';
+import { stageRunIds, newestPerItem, clearItemAcrossStage } from '../../utils/favouriteScope';
 import InlineError from '../Common/InlineError';
 import Notice from '../Common/Notice';
 import { friendlyError } from '../../utils/friendlyError';
@@ -329,7 +330,7 @@ function getReactionCopy(normalizedHeading = '', itemTitle = '') {
 
   if (discoverMoreHeadings.has(normalizedHeading)) {
     return {
-      like: 'Sounds interesting',
+      like: 'Add to favourites',
       dislike: 'Not for me',
       likeActive: 'Added to favourites',
       dislikeActive: 'Not for me',
@@ -399,12 +400,18 @@ async function saveResultFeedbackRowNow(payload = {}) {
 
   if (!userId || !assessmentRunId || !feedbackScope) return { skipped: true };
 
+  // Item reactions (favourites) are one list per stage: look for the item on
+  // every report of this stage, not only this one (see utils/favouriteScope).
+  const scopeIds = feedbackScope === 'item_reaction' ? await stageRunIds(userId, assessmentRunId) : [assessmentRunId];
+  const allIds = Array.from(new Set([itemId, ...(itemIdAliases || [])].filter(Boolean)));
+  const allTypes = Array.from(new Set([itemType, ...(itemTypeAliases || [])].filter(Boolean)));
+
   const baseQuery = async () => {
     const start = () => supabase
       .from('result_feedback')
       .select('id')
       .eq('user_id', userId)
-      .eq('assessment_run_id', assessmentRunId)
+      .in('assessment_run_id', scopeIds)
       .eq('feedback_scope', feedbackScope);
 
     if (feedbackScope !== 'item_reaction') return start().maybeSingle();
@@ -439,6 +446,8 @@ async function saveResultFeedbackRowNow(payload = {}) {
       .eq('id', existing.data.id);
 
     if (error) throw error;
+    // And any copy of it on the other reports of this stage.
+    await clearItemAcrossStage({ userId, runIds: scopeIds, itemTypes: allTypes, itemIds: allIds });
     return { removed: true };
   }
 
@@ -461,9 +470,13 @@ async function saveResultFeedbackRowNow(payload = {}) {
   const existing = await baseQuery();
   if (existing.error) throw existing.error;
 
-  const write = async (payload) => (existing.data?.id
-    ? supabase.from('result_feedback').update(payload).eq('id', existing.data.id)
-    : supabase.from('result_feedback').insert(payload));
+  // An existing row stays on the report it was made on (the stage shares one
+  // list, so which report holds it does not matter); only new rows go here.
+  const write = async (payload) => {
+    if (!existing.data?.id) return supabase.from('result_feedback').insert(payload);
+    const { assessment_run_id: _keepRun, ...changes } = payload;
+    return supabase.from('result_feedback').update(changes).eq('id', existing.data.id);
+  };
 
   let { error } = await write(row);
   if (error && row.item_meta && error.code !== '23505') {
@@ -484,6 +497,14 @@ async function saveResultFeedbackRowNow(payload = {}) {
     }
   }
   if (error) throw error;
+  // One row per item per stage: once this report's row is saved, drop the
+  // copies on the other reports so an older answer can never come back.
+  if (feedbackScope === 'item_reaction') {
+    try {
+      const saved = existing.data?.id ? { data: existing.data } : await baseQuery();
+      await clearItemAcrossStage({ userId, runIds: scopeIds, itemTypes: allTypes, itemIds: allIds, keepId: saved.data?.id || null });
+    } catch (_) { /* the reaction itself is saved */ }
+  }
   return existing.data?.id ? { updated: true } : { inserted: true };
 }
 
@@ -1122,7 +1143,7 @@ const LOCKED_TAB_PREVIEW = {
   careerworlds: {
     title: 'Your career worlds',
     intro: [
-      'The broad areas of work that match your profile, rated Top, Strong or Good. Each world explains why it fits and which of your traits drive the match. You can mark the ones you want to explore further.',
+      'The broad areas of work that match your profile, rated Standout, Strong or Good. Each world explains why it fits and which of your traits drive the match. You can mark the ones you want to explore further.',
     ],
   },
   discovermore: {
@@ -1359,12 +1380,15 @@ const VOCATIONAL_WORLD_ITEMS_BY_ID = new Map(
 // Pathways accordion (short def leads, LLM narrative follows).
 const PATHWAY_SHORT_BY_TITLE = {};
 const PATHWAY_LONG_BY_TITLE = {};
+// Each pathway title has several entries: the full one (rf_*, with a short and
+// a long definition) and older long-only school-voice copies (iv_*, iv2_*). The
+// full entry always wins here; a copy only fills a gap, never overwrites.
 Object.values(PATHWAY_DEFINITIONS).forEach((entry) => {
   const t = cwCompactKey(entry?.title);
-  if (t) {
-    PATHWAY_SHORT_BY_TITLE[t] = entry?.short || '';
-    PATHWAY_LONG_BY_TITLE[t] = entry?.long || entry?.paragraph || entry?.short || '';
-  }
+  if (!t) return;
+  const isFull = Boolean(entry?.short);
+  if (isFull || !PATHWAY_SHORT_BY_TITLE[t]) PATHWAY_SHORT_BY_TITLE[t] = entry?.short || PATHWAY_SHORT_BY_TITLE[t] || '';
+  if (isFull || !PATHWAY_LONG_BY_TITLE[t]) PATHWAY_LONG_BY_TITLE[t] = entry?.long || entry?.paragraph || entry?.short || PATHWAY_LONG_BY_TITLE[t] || '';
 });
 // Deeper, graduate-facing pathway definition (degree-linked pathways only), keyed
 // by compact title. Shown to university students in the pathway Read more window.
@@ -1536,19 +1560,20 @@ export default function ResultsComponent({
   // prompt: { parent, children }. See utils/favouriteCascade.js.
   const [cascadePrompt, setCascadePrompt] = useState(null);
   const [cascadeBusy, setCascadeBusy] = useState(false);
-  const maybeOfferCascade = async (parent) => {
+  // undo: puts the like back if the student cancels (the unlike was a slip).
+  const maybeOfferCascade = async (parent, undo = null) => {
     if (!profileUserId || !effectiveAssessmentRunId || !parent) return;
     if (!['career_world', 'pathway', 'subject'].includes(parent.type)) return;
     try {
       const children = await findChildFavourites({ userId: profileUserId, runId: effectiveAssessmentRunId, parent });
-      if (children.length) { hideFeedbackTooltip(); setCascadePrompt({ parent, children }); }
+      if (children.length) { hideFeedbackTooltip(); setCascadePrompt({ parent, children, undo }); }
     } catch (_) { /* never block the unlike itself */ }
   };
   const runCascadeRemove = async () => {
     if (!cascadePrompt) return;
     setCascadeBusy(true);
     try {
-      await deleteFavouriteRows(cascadePrompt.children.map((c) => c.id));
+      await deleteFavouriteRows(cascadePrompt.children.map((c) => c.id), { userId: profileUserId, runId: effectiveAssessmentRunId, items: cascadePrompt.children });
       // Clear their local reaction state too, so pills and lists update at once.
       // Match on type and title together, so a degree and a course with the
       // same name are not both cleared when only one was removed.
@@ -2229,18 +2254,20 @@ export default function ResultsComponent({
       }
 
       try {
+        // The stage's one favourites list: every report of this stage, newest wins.
+        const scopeIds = await stageRunIds(profileUserId, effectiveAssessmentRunId);
         const { data, error } = await supabase
           .from('result_feedback')
-          .select('item_id, item_type, item_title, reaction')
+          .select('item_id, item_type, item_title, reaction, updated_at, created_at')
           .eq('user_id', profileUserId)
-          .eq('assessment_run_id', effectiveAssessmentRunId)
+          .in('assessment_run_id', scopeIds)
           .eq('feedback_scope', 'item_reaction');
 
         if (error) throw error;
 
         const fromDatabase = {};
         const metaFromDatabase = {};
-        (Array.isArray(data) ? data : []).forEach((row) => {
+        newestPerItem(Array.isArray(data) ? data : [], (r) => { const c = canonicalItem(r.item_type, r.item_id, r.item_title); return `${c.type}|${c.id}`; }).forEach((row) => {
           if (row?.item_id && row?.reaction) {
             // Older rows may carry a superseded id: key them by the canonical one.
             const canon = canonicalItem(row.item_type, row.item_id, row.item_title);
@@ -2408,7 +2435,10 @@ export default function ResultsComponent({
       // dislike): offer to clear what was saved under it. Only when it was
       // liked: disliking something never liked has nothing to cascade.
       if (previous === 'like' && (remove || reaction !== 'like')) {
-        maybeOfferCascade({ type: item.type, id: item.id, title: item.title || '' });
+        maybeOfferCascade({ type: item.type, id: item.id, title: item.title || '' }, () => {
+          setItemReactions((prev) => ({ ...prev, [itemId]: 'like' }));
+          persistItemReaction({ itemId, reaction: 'like', remove: false, previous: remove ? '' : reaction });
+        });
       }
     } catch (err) {
       console.warn('Could not save item feedback:', err?.message || err);
@@ -2505,7 +2535,9 @@ export default function ResultsComponent({
         itemTypeAliases,
       });
       if (['career_world', 'pathway', 'subject'].includes(itemType) && previousReaction === 'like' && (remove || reaction !== 'like')) {
-        maybeOfferCascade({ type: itemType, id: itemId, title: itemTitle || '' });
+        maybeOfferCascade({ type: itemType, id: itemId, title: itemTitle || '' }, () => {
+          handleNestedItemReaction({ itemType: rawItemType, itemId: rawItemId, itemTitle, reaction: 'like', remove: false, itemMeta });
+        });
       }
     } catch (err) {
       console.warn('Could not save nested item feedback:', err?.message || err);
@@ -3135,7 +3167,7 @@ export default function ResultsComponent({
       // screen from the first frame and only the content below it loads.
       const intro = tab.key === 'furtherstudy' ? {
         title: 'Your university routes',
-        text: 'The university degrees that lead into the career worlds you liked. Pick a career world to see its range of degrees and how well each one fits you. Prefer to earn while you learn? The Training & Work tab shows the apprenticeship and work routes instead.',
+        text: 'The university degrees that lead into the career worlds you liked. Pick a career world to see its range of degrees. Prefer to earn while you learn? The Training & Work tab shows the apprenticeship and work routes instead.',
         loading: 'Finding your university routes',
       } : tab.key === 'nonuni' ? {
         title: 'Your training & work routes',
@@ -3353,6 +3385,7 @@ export default function ResultsComponent({
           busy={cascadeBusy}
           onRemove={runCascadeRemove}
           onKeep={() => setCascadePrompt(null)}
+          onCancel={cascadePrompt.undo ? () => { const u = cascadePrompt.undo; setCascadePrompt(null); u(); } : null}
         />
       ) : null}
       {upgradePrompt && (
@@ -3676,7 +3709,7 @@ export default function ResultsComponent({
             <span aria-hidden="true">·</span>
             <a href="/trust-security#accessibility">Accessibility</a>
             <span aria-hidden="true">·</span>
-            <a href="mailto:hello@mycareerdna.io">Contact</a>
+            <a href="mailto:support@mycareerdna.io">Contact</a>
             <span aria-hidden="true">·</span>
             <a href="#report-problem">Report a problem</a>
           </nav>

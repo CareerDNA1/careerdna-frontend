@@ -332,7 +332,7 @@ export default function LoginPage() {
       const syncedProfile = await syncProfileFromAuthUser(data?.user);
 
       if (!isCompleteProfile(syncedProfile)) {
-        throw new Error('Your account profile is incomplete. Please email hello@mycareerdna.io if this continues.');
+        throw new Error('Your account profile is incomplete. Please email support@mycareerdna.io if this continues.');
       }
 
       setLoading(false);
@@ -347,7 +347,7 @@ export default function LoginPage() {
       setLoading(false);
       setErrorMsg(
         profileError?.message ||
-          'Your login succeeded, but your CareerDNA profile could not be loaded. Please email hello@mycareerdna.io if this continues.'
+          'Your login succeeded, but your CareerDNA profile could not be loaded. Please email support@mycareerdna.io if this continues.'
       );
     }
   }

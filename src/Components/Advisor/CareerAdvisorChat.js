@@ -68,6 +68,11 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
   const [starterPrompts, setStarterPrompts] = useState(FALLBACK_STARTER_PROMPTS);
   const [usedStarterPrompts, setUsedStarterPrompts] = useState([]);
   const [input, setInput] = useState('');
+  // Once a question is asked, the suggested questions step aside to give the
+  // answers room. They return the next time the advisor is opened (the chat
+  // mounts afresh) or when it is opened from a different section.
+  const [askedThisVisit, setAskedThisVisit] = useState(false);
+  useEffect(() => { setAskedThisVisit(false); }, [context?.title]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -229,6 +234,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
 
     if (!text) return;
 
+    setAskedThisVisit(true);
     if (textOverride) markStarterPromptUsed(text);
     shouldScrollAfterSendRef.current = true;
 
@@ -379,14 +385,28 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
                   // The conversation follows the student across re-runs. Where
                   // the run changes between two messages, mark it so an older
                   // answer is read against the results it was given for.
-                  const prevRun = index > 0 ? shown[index - 1]?.assessmentRunId : null;
+                  const prev = index > 0 ? shown[index - 1] : null;
+                  const prevRun = prev?.assessmentRunId || null;
                   const runChanged = Boolean(prevRun && message.assessmentRunId && prevRun !== message.assessmentRunId);
+                  // A new assessment, or a move between school and university,
+                  // also resets what the advisor remembers (backend), so say so.
+                  const contextChanged = Boolean(runChanged && prev?.contextKey && message.contextKey && prev.contextKey !== message.contextKey);
+                  let dividerText = 'Your results were updated here';
+                  if (contextChanged) {
+                    if (prev.stage && message.stage && prev.stage !== message.stage && (message.stage === 'school' || message.stage === 'university')) {
+                      dividerText = `You moved to ${message.stage === 'university' ? 'university' : 'school'}. Your advisor is now using your new results.`;
+                    } else {
+                      const when = message.assessmentDate ? new Date(message.assessmentDate) : null;
+                      const label = when && !Number.isNaN(when.getTime()) ? when.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+                      dividerText = `New assessment${label ? ` on ${label}` : ''}. Your advisor is now using your new results.`;
+                    }
+                  }
 
                   return (
                   <React.Fragment key={message.id || `${message.role}-${message.createdAt}-${message.content?.slice(0, 12)}`}>
                   {runChanged ? (
-                    <div className="career-advisor-run-divider" role="separator" aria-label="Your results were updated here">
-                      <span>Your results were updated here</span>
+                    <div className="career-advisor-run-divider" role="separator" aria-label={dividerText}>
+                      <span>{dividerText}</span>
                     </div>
                   ) : null}
                   <div
@@ -447,7 +467,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
               <div ref={bottomRef} />
             </div>
 
-            {visiblePrompts.length > 0 ? (
+            {visiblePrompts.length > 0 && !askedThisVisit ? (
               <div className="career-advisor-suggestions">
                 <div className="career-advisor-prompt-intro">{context?.title ? `About ${context.title}, or ask your own.` : 'Choose one of these questions or ask your own.'}</div>
                 <div className="career-advisor-prompts" aria-label="Suggested questions">

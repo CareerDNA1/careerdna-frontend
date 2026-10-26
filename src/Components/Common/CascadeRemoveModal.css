@@ -38,6 +38,8 @@
 .cascade-btn--primary { background: #2f6fed; border-color: #2f6fed; color: #fff; }
 .cascade-btn--primary:hover { background: #245fd6; }
 .cascade-btn:disabled { opacity: 0.6; cursor: default; }
+.cascade-btn--link { flex-basis: 100%; border: 0; background: none; padding: 4px 0 0; color: #64748b; font-weight: 600; text-align: left; }
+.cascade-btn--link:hover { background: none; color: #2f6fed; text-decoration: underline; }
 
 /* Tall dialog on a short screen: scroll inside the card, never the page. */
 .cascade-box { max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }

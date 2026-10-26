@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Heart, X, CheckCircle, PaperPlaneTilt, ArrowRight, Briefcase, Compass, GraduationCap, BookOpen, FileText, Signpost, Sparkle, MapPin, CaretRight, ArrowSquareOut, ArrowLeft, CalendarBlank, CurrencyGbp, IdentificationBadge } from 'phosphor-react';
 import { getCareerWorldIcon, getPathwayIcon, getSubjectIcon, getStrengthIcon, getEnvironmentIcon } from '../../utils/iconMap';
-import { getFavouritesByCategory, removeFavourite } from '../../utils/favourites';
-import { canApplyFor, favouriteAppKey, isUcasChoice } from '../../utils/applications';
+import { getFavouritesByCategory, removeFavourite, clearAllFavourites } from '../../utils/favourites';
+import { canApplyFor, favouriteAppKey, isUcasChoice, APPLICATION_STATUS_LABEL, APPLICATION_STATUS_TONE } from '../../utils/applications';
 import { findChildFavourites, deleteFavouriteRows } from '../../utils/favouriteCascade';
 import { supabase } from '../../utils/supabaseClient';
 import CascadeRemoveModal from './CascadeRemoveModal';
 import ChancesPill from './ChancesPill';
+import { entryComparisonNote } from '../../utils/applications';
 import { loadSubjectRanking } from '../../utils/rankings';
 import { assembleFavouriteWorld, assembleFavouriteRole, assembleFavouriteDegree, assembleFavouriteTraining } from '../../utils/favouriteReportCard';
 import { WorldCard } from '../Survey/CareerWorldsAccordion';
@@ -86,7 +87,7 @@ const REPORT_TYPES = new Set(['career_world', 'pathway', 'subject', 'role', 'app
 export default function FavouritesCard({ runId, onExplore, onOpenReport, initialGroups, insightCtx, appliedKeys, onApply, onOpenApplications, stage = 'university', predictedGrades = [] }) {
   // Grades band for a saved course (Safe / Match / Stretch / Ambitious), same as the rankings table.
   const [chancesTip, setChancesTip] = useState('');
-  const chances = (item, size = 'sm') => (item && item.type === 'course' && item.stats?.typicalGrades)
+  const chances = (item, size = 'sm') => (item && item.type === 'course' && item.stats?.typicalGrades && !entryComparisonNote(item.title, item.subtitle))
     ? <ChancesPill predicted={predictedGrades} typicalGrades={item.stats.typicalGrades} size={size} onTap={(t) => setChancesTip((cur) => (cur === t ? '' : t))} />
     : null;
   // When the parent preloads the favourites (initialGroups), use them directly so
@@ -108,6 +109,8 @@ export default function FavouritesCard({ runId, onExplore, onOpenReport, initial
   // Removing a world/pathway that still has favourites under it: { parent, children }.
   const [cascadePrompt, setCascadePrompt] = useState(null);
   const [cascadeBusy, setCascadeBusy] = useState(false);
+  const [clearAsk, setClearAsk] = useState(false);   // "Clear all" confirm showing
+  const [clearBusy, setClearBusy] = useState(false);
   const [error, setError] = useState('');
   // What "Try again" should do for the current error (null: no retry offered).
   const [errorRetry, setErrorRetry] = useState(null);
@@ -148,7 +151,10 @@ export default function FavouritesCard({ runId, onExplore, onOpenReport, initial
   // A school student's course goes onto their UCAS choices rather than being "applied for".
   const isUcas = (item) => isUcasChoice({ kind: item?.type === 'course' ? 'course' : '', item_type: item?.type }, stage);
   const applyLabel = (item) => (isUcas(item) ? 'Add to UCAS choices' : 'Mark as applied');
-  const appliedLabel = (item) => (isUcas(item) ? 'UCAS choice' : 'Applied');
+  // The application's real outcome, kept in step with Your applications.
+  const appliedStatus = (item) => (appliedKeys && typeof appliedKeys.get === 'function' ? appliedKeys.get(favouriteAppKey(item)) : null) || 'applied';
+  const appliedLabel = (item) => (isUcas(item) ? 'UCAS choice' : (APPLICATION_STATUS_LABEL[appliedStatus(item)] || 'Applied'));
+  const appliedTone = (item) => (isUcas(item) ? 'green' : (APPLICATION_STATUS_TONE[appliedStatus(item)] || 'green'));
   const handleApply = async (item) => {
     if (typeof onApply !== 'function' || isApplied(item)) return;
     try { setApplyingId(item.id); setError(''); await onApply(item); }
@@ -171,7 +177,7 @@ export default function FavouritesCard({ runId, onExplore, onOpenReport, initial
     }
     // List rows: a quiet green tick once the item is in the tracker (rows never
     // offer the action itself; that happens inside the opened card).
-    if (isApplied(item)) return <span className="fav-applied fav-applied--sm"><CheckCircle size={13} weight="fill" aria-hidden="true" />{appliedLabel(item)}</span>;
+    if (isApplied(item)) return <span className={`fav-applied fav-applied--sm fav-applied--${appliedTone(item)}`}><CheckCircle size={13} weight="fill" aria-hidden="true" />{appliedLabel(item)}</span>;
     return null;
   };
 
@@ -260,6 +266,26 @@ export default function FavouritesCard({ runId, onExplore, onOpenReport, initial
   }, [detail]);
 
   const total = (groups || []).reduce((n, g) => n + g.items.length, 0);
+  // Favourites that are in the student's applications stay: they are what links
+  // the application back to the report. Everything else goes.
+  const keptOnClear = (groups || []).reduce((n, g) => n + g.items.filter((it) => isApplied(it)).length, 0);
+  const runClearAll = async () => {
+    setClearBusy(true);
+    setError(''); setErrorRetry(null);
+    try {
+      const keep = new Set();
+      (groups || []).forEach((g) => g.items.forEach((it) => { if (isApplied(it)) keep.add(favouriteAppKey(it)); }));
+      await clearAllFavourites(runId, { keep });
+      setGroups((prev) => (prev || [])
+        .map((g) => ({ ...g, items: g.items.filter((it) => isApplied(it)) }))
+        .filter((g) => g.items.length > 0));
+      setClearAsk(false);
+    } catch (e) {
+      fail(e, 'clear your favourites', runClearAll);
+    } finally {
+      setClearBusy(false);
+    }
+  };
 
   // Preview a MIX of categories (one from each in turn) rather than four of the
   // same type, so the card shows the variety of what the student has saved.
@@ -315,7 +341,8 @@ export default function FavouritesCard({ runId, onExplore, onOpenReport, initial
     if (!cascadePrompt) return;
     setCascadeBusy(true);
     try {
-      await deleteFavouriteRows(cascadePrompt.children.map((c) => c.id));
+      const { data: { user: me } } = await supabase.auth.getUser();
+      await deleteFavouriteRows(cascadePrompt.children.map((c) => c.id), { userId: me?.id || null, runId, items: cascadePrompt.children });
       const goneTitles = new Set(cascadePrompt.children.map((c) => `${c.item_type}|${c.item_title}`));
       setGroups((prev) => (prev || [])
         .map((g) => ({ ...g, items: g.items.filter((it) => !goneTitles.has(`${it.type}|${it.title}`)) }))
@@ -578,10 +605,11 @@ export default function FavouritesCard({ runId, onExplore, onOpenReport, initial
                         {s.graduateJobs != null ? <span className="rk-course-stat"><b>{s.graduateJobs}%</b> graduate jobs</span> : null}
                         {s.employment != null ? <span className="rk-course-stat"><b>{s.employment}%</b> in work or study</span> : null}
                         {s.satisfaction != null ? <span className="rk-course-stat"><b>{s.satisfaction}%</b> satisfaction</span> : null}
-                        {s.typicalGrades ? <span className="rk-course-stat"><b>{s.typicalGrades}</b> typical offer</span> : null}
+                        {s.typicalGrades && !entryComparisonNote(detail.title, detail.subtitle) ? <span className="rk-course-stat"><b>{s.typicalGrades}</b> typical entry grades</span> : null}
                         {s.offerRate != null ? <span className="rk-course-stat"><b>{Math.round(s.offerRate * 100)}%</b> offer rate</span> : null}
                         {s.tef ? <span className="rk-course-stat"><b>{s.tef}</b> TEF</span> : null}
-                        {s.typicalGrades && chances({ type: 'course', stats: s }) ? <span className="rk-course-stat rk-course-stat--band">Your chances: {chances({ type: 'course', stats: s })}</span> : null}
+                        {s.typicalGrades && chances({ type: 'course', stats: s, title: detail.title, subtitle: detail.subtitle }) ? <span className="rk-course-stat rk-course-stat--band">Your chances: {chances({ type: 'course', stats: s, title: detail.title, subtitle: detail.subtitle })}</span> : null}
+                        {entryComparisonNote(detail.title, detail.subtitle) ? <span className="rk-course-stats__note">{entryComparisonNote(detail.title, detail.subtitle)}</span> : null}
                         <span className="rk-course-stats__note">For this subject area at {detail.subtitle}. Source: Office for Students, UCAS.</span>
                         {chancesTip ? <span className="rk-course-stats__note fav-chances-tip">{chancesTip}</span> : null}
                       </div>
@@ -613,10 +641,30 @@ export default function FavouritesCard({ runId, onExplore, onOpenReport, initial
               </div>
             ) : (
             <>
-            <div className="fav-modal-title">Your favourites</div>
+            <div className="fav-modal-titlerow">
+              <div className="fav-modal-title">Your favourites</div>
+              {total > keptOnClear && !clearAsk ? (
+                <button type="button" className="fav-clear-all" data-no-autofocus onClick={() => setClearAsk(true)}>Clear all</button>
+              ) : null}
+            </div>
+            {clearAsk ? (
+              <div className="fav-item fav-item--confirm fav-clear-confirm" role="group" aria-label="Clear all favourites?">
+                <span className="fav-item-main">
+                  <span className="fav-item-title">
+                    Remove all {total - keptOnClear} favourites?{keptOnClear > 0 ? ` The ${keptOnClear} in your applications will stay. Remove those applications first if you want them gone too.` : ''} This cannot be undone.
+                  </span>
+                </span>
+                <span className="fav-confirm-actions">
+                  <button type="button" className="fav-btn fav-btn--danger" disabled={clearBusy} onClick={runClearAll}>
+                    {clearBusy ? 'Clearing…' : 'Clear all'}
+                  </button>
+                  <button type="button" className="fav-btn fav-btn--ghost" disabled={clearBusy} onClick={() => setClearAsk(false)}>Cancel</button>
+                </span>
+              </div>
+            ) : null}
             <div className="fav-modal-sub">
               {total > 0
-                ? 'Saved from your latest run. Tap one to open it, or remove any you no longer want.'
+                ? `Your favourites from your ${stage === 'school' ? 'school' : 'university'} reports. Tap one to open it, or remove any you no longer want.`
                 : 'Nothing saved yet. Like a career world, pathway, degree or role in your report and it will appear here.'}
             </div>
             <InlineError compact message={error} onRetry={errorRetry || undefined} />

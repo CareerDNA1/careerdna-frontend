@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient';
+import { stageRunIds, newestPerItem, clearItemAcrossStage } from './favouriteScope';
 import { pathwayWorld, canonicalWorldId } from './canonicalIds';
 import { fetchNonUniRoutes } from './fetchNonUniRoutes';
 import { notifyFavouritesChanged } from './savedItems';
@@ -41,18 +42,20 @@ export const CHILD_TYPE_LABELS = {
 export async function findChildFavourites({ userId, runId, parent }) {
   if (!userId || !runId || !parent || !parent.type) return [];
   if (!['career_world', 'pathway', 'subject'].includes(parent.type)) return [];
+  // The stage's one favourites list (utils/favouriteScope): newest answer per item.
+  const scopeIds = await stageRunIds(userId, runId);
   const { data, error } = await supabase
     .from('result_feedback')
-    .select('id, item_type, item_id, item_title, item_meta')
+    .select('id, item_type, item_id, item_title, item_meta, reaction, updated_at, created_at')
     .eq('user_id', userId)
-    .eq('assessment_run_id', runId)
+    .in('assessment_run_id', scopeIds)
     .eq('feedback_scope', 'item_reaction')
-    .eq('reaction', 'like')
+    .in('reaction', ['like', 'dislike'])
     .in('item_type', CHILD_TYPES);
   if (error) throw error;
   const pid = parent.type === 'career_world' ? canonicalWorldId(parent.id, parent.title) : String(parent.id || '');
   const ptitle = norm(parent.title);
-  const rows = data || [];
+  const rows = newestPerItem(data || []).filter((r) => r.reaction === 'like');
   const metaOf = (row) => ((row.item_meta && typeof row.item_meta === 'object') ? row.item_meta : {});
 
   // Apprenticeships liked before their pathway was stored: resolve the parent
@@ -126,6 +129,8 @@ export async function findChildFavourites({ userId, runId, parent }) {
     const m = metaOf(row);
     return {
       id: row.id,
+      raw_type: row.item_type,
+      item_id: row.item_id,
       // Older uni-flow pathway families are stored as 'role'; label them as
       // what they are.
       item_type: normaliseFavouriteType(row.item_type, row.item_id, row.item_title),
@@ -137,11 +142,21 @@ export async function findChildFavourites({ userId, runId, parent }) {
   });
 }
 
-export async function deleteFavouriteRows(ids = []) {
+// ids: the rows found above. items (optional, the same children list) also
+// clears each item's copies on the stage's other reports.
+export async function deleteFavouriteRows(ids = [], { userId = null, runId = null, items = [] } = {}) {
   const clean = (ids || []).filter(Boolean);
   if (!clean.length) return 0;
   const { error } = await supabase.from('result_feedback').delete().in('id', clean);
   if (error) throw error;
+  if (userId && runId && items.length) {
+    const scopeIds = await stageRunIds(userId, runId);
+    await clearItemAcrossStage({
+      userId, runIds: scopeIds,
+      itemTypes: items.map((c) => c.raw_type || c.item_type),
+      itemIds: items.map((c) => c.item_id),
+    });
+  }
   notifyFavouritesChanged();
   return clean.length;
 }

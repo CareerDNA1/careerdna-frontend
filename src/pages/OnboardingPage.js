@@ -122,10 +122,10 @@ export default function OnboardingPage() {
           setIntroResponses={setAnswers}
           onStartSurvey={() => setStep('confirm')}
           submitLabel="Continue"
-          heading={prefilled ? 'Is this still right?' : 'Tell us where you are'}
+          heading={prefilled ? 'Is this still right?' : 'Tell us about you'}
           introText={prefilled
-            ? 'We have filled this in from your last report. Check it, change anything that is out of date, then continue. You can update it any time from your profile.'
-            : 'A few quick questions so CareerDNA knows where you are and can tailor everything to you. You only do this once; you can update it any time from your profile.'}
+            ? 'We have filled this in from your last report. Check it, change anything that is out of date, then continue.'
+            : 'A few quick questions about you and your studies, so CareerDNA can tailor your results to you. You only need to do this once, so please check your answers carefully.'}
         />
       ) : (
         <section className="onboarding-confirm" aria-labelledby="onboardingConfirmTitle">
@@ -138,7 +138,7 @@ export default function OnboardingPage() {
             {answers.uniSubject ? <div><dt>Course</dt><dd>{answers.uniSubject}</dd></div> : null}
             {Array.isArray(answers.schoolSubjects) && answers.schoolSubjects.length ? <div><dt>Subject of interest</dt><dd>{answers.schoolSubjects.join(', ')}</dd></div> : null}
           </dl>
-          <p className="onboarding-confirm__note">Your date of birth is fixed once confirmed. Everything else you can change later from your profile.</p>
+          <p className="onboarding-confirm__note">Please check these before you confirm. Your date of birth and country are fixed; to correct either, email support@mycareerdna.io. Your status and your school or university can be updated once a school year, when you make a new report.</p>
           {error ? <InlineError message={error} onRetry={handleConfirm} /> : null}
           <div className="onboarding-confirm__actions">
             <button type="button" className="onboarding-confirm__secondary" onClick={() => setStep('form')} disabled={saving}>Change something</button>

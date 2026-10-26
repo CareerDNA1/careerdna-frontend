@@ -359,6 +359,10 @@
   color: #0f6e56; font-weight: 700;
 }
 .fav-applied--sm { font-size: 0.7rem; }
+/* Colour follows the application's outcome (same tones as Your applications). */
+.fav-applied--blue { color: #2f6fed; }
+.fav-applied--amber { color: #9a5b00; }
+.fav-applied--grey { color: #64748b; }
 .fav-chances-tip { color: #4b5c6b; }
 
 
@@ -389,3 +393,9 @@
 
 .fav-inline-link { border: 0; background: none; padding: 0; font: inherit; color: #2f6fed; font-weight: 650; cursor: pointer; }
 .fav-inline-link:hover { text-decoration: underline; }
+
+/* "Clear all" sits on the title row; it turns into the same inline confirm as a single remove. */
+.fav-modal-titlerow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-right: 40px; }
+.fav-clear-all { background: none; border: 0; padding: 4px 2px; font: inherit; font-size: 0.8rem; font-weight: 500; color: #8a96a8; cursor: pointer; }
+.fav-clear-all:hover { color: #b42318; text-decoration: underline; }
+.fav-clear-confirm { margin: 10px 0 4px; }

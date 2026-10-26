@@ -131,7 +131,9 @@
 .acad-select--fixed { cursor: default; background: #f7f9fc; color: #33475b; }
 .acad-select--fixed svg { color: #64748b; }
 .acad-row .apps-menu { min-width: 120px; }
-.acad-row-remove--blank { border-color: transparent; background: transparent; pointer-events: none; }
+/* Placeholder that keeps the locked Maths / English rows aligned: invisible.
+   Doubled class so it wins over .acad-row-remove, which is declared below. */
+.acad-row-remove.acad-row-remove--blank { border-color: transparent; background: transparent; box-shadow: none; pointer-events: none; }
 .acad-section-note { margin: 6px 0 0; font-size: 0.76rem; color: #64748b; line-height: 1.45; }
 .acad-row-remove {
   flex: 0 0 auto;
@@ -193,3 +195,14 @@
 .acad-btn--head { padding: 4px 12px; min-height: 26px; font-size: 0.72rem; box-shadow: 0 2px 8px rgba(47, 111, 237, 0.15); }
 .acad-card.fav-card--clickable { cursor: pointer; transition: box-shadow 0.15s ease, border-color 0.15s ease; }
 .acad-card.fav-card--clickable:hover { border-color: #cddbf0; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.07); }
+
+.acad-epq-note { margin: 6px 0 0; font-size: 0.8rem; line-height: 1.45; color: #64748b; }
+
+/* "Clear all grades": quiet red link on the left of the actions bar, then an inline confirm. */
+.acad-clear-all { margin-right: auto; background: none; border: 0; padding: 4px 2px; font: inherit; font-size: 0.8rem; font-weight: 500; color: #8a96a8; cursor: pointer; }
+.acad-clear-all:hover { color: #b42318; text-decoration: underline; }
+.acad-clear-confirm { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 14px; border: 1px solid #f6cfca; background: #fff8f7; border-radius: 12px; color: #4b5c6b; font-size: 0.88rem; line-height: 1.4; }
+.acad-clear-actions { display: inline-flex; gap: 8px; margin-left: auto; }
+.acad-btn--danger { background: #b42318; color: #fff; border-color: #b42318; }
+.acad-btn--danger:hover { background: #9b1e14; }
+.acad-btn--danger:disabled { opacity: 0.6; cursor: default; }

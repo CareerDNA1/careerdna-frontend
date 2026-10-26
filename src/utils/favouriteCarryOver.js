@@ -29,6 +29,11 @@ import { stageFromAnswers } from './academicStatus';
 // come back when the student returns to a school report, and the same for
 // university). With no report of that stage, nothing is copied.
 export async function carryOverFavourites({ fromRunId, toRunId, toStage = null } = {}) {
+  // Retired: favourites are now one list per stage, read from every report of
+  // that stage (utils/favouriteScope.js), so nothing needs copying onto a new
+  // report. Kept as a no-op so existing callers keep working.
+  return { copied: 0 };
+  // eslint-disable-next-line no-unreachable
   if (!toRunId) return { copied: 0 };
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { copied: 0 };

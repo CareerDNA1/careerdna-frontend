@@ -227,7 +227,7 @@ export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = 
                   aria-pressed={reaction === 'like'}
                   aria-label="Sounds interesting"
                   data-selection-tooltip="true"
-                  data-tooltip-body={reaction === 'like' ? 'Added to favourites' : 'Sounds interesting'}
+                  data-tooltip-body={reaction === 'like' ? 'In your favourites. Click again to remove it.' : 'Add to favourites'}
                 >
                   <span className="cdna-item-action-icon" aria-hidden="true"><ThumbsUp size={18} weight="duotone" /></span>
                 </button>
@@ -351,18 +351,23 @@ export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = 
                 onClick={(e) => {
                   const activating = reaction !== 'like';
                   const btn = e.currentTarget;
-                  onReact('like');
+                  // Swap the hint before the save re-renders the card.
                   if (activating) {
                     btn.setAttribute('data-tooltip-body', 'Added to favourites');
-                    window.requestAnimationFrame(() => {
-                      showSelectionTooltip(btn);
-                      window.setTimeout(() => { hideSelectionTooltip(); if (btn.blur) btn.blur(); }, 1200);
-                    });
+                    showSelectionTooltip(btn);
                   } else {
                     hideSelectionTooltip();
                   }
+                  onReact('like');
+                  if (activating) {
+                    window.setTimeout(() => { hideSelectionTooltip(); if (btn.blur) btn.blur(); }, 1400);
+                  }
                 }}
                 aria-pressed={reaction === 'like'}
+                data-selection-tooltip="true"
+                data-tooltip-body={reaction === 'like' ? 'In your favourites. Click again to remove it.' : 'Add to favourites'}
+                onMouseEnter={(e) => { e.currentTarget.setAttribute('data-tooltip-body', reaction === 'like' ? 'In your favourites. Click again to remove it.' : 'Add to favourites'); showSelectionTooltip(e.currentTarget); }}
+                onMouseLeave={() => hideSelectionTooltip()}
               >
                 <Smiley size={18} weight="bold" aria-hidden="true" /> Like this
               </button>

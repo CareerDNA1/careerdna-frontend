@@ -455,7 +455,7 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
         <h2>Your university routes</h2>
         <p className="selection-explorer__intro-text">
           The university degrees that lead into the career worlds you liked. Pick a career world to see
-          its range of degrees and how well each one fits you. Prefer to earn while you learn? The
+          its range of degrees. Prefer to earn while you learn? The
           Training &amp; Work tab shows the apprenticeship and work routes instead.
         </p>
       </div>
@@ -471,8 +471,15 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
         <div className="selection-explorer__layout selection-explorer__layout--stacked">
           <PathwayPicker
             options={orderedGroups.map((g) => {
-              const degrees = (Array.isArray(g.relevantRoutes) ? g.relevantRoutes.length : 0)
-                + (Array.isArray(g.otherRoutes) ? g.otherRoutes.length : (Array.isArray(g.routes) ? g.routes.length : 0));
+              // Count every distinct degree the panel lists for this world:
+              // the ones under the liked pathways plus the rest of the world.
+              const seen = new Set();
+              const add = (list) => (Array.isArray(list) ? list : []).forEach((r) => seen.add(String(r?.id || r?.title || '')));
+              add(g.relevantRoutes);
+              add(Array.isArray(g.otherRoutes) ? g.otherRoutes : g.routes);
+              (Array.isArray(g.pathwayGroups) ? g.pathwayGroups : []).forEach((pg) => { add(pg.primary); add(pg.adjacent); });
+              seen.delete('');
+              const degrees = seen.size;
               return {
                 value: g.pathwayId || g.pathwayTitle,
                 label: g.pathwayTitle,
@@ -578,7 +585,7 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
                       <>
                         {relevant.length ? (
                           <>
-                            <div className="fs-detail-heading">Most relevant to the pathways you liked</div>
+                            <div className="fs-detail-heading">Degrees for the pathways you liked</div>
                             {renderList(relevant)}
                             {other.length ? (
                               <div className="fs-detail-heading" style={{ marginTop: 28 }}>Other degrees in this career world</div>

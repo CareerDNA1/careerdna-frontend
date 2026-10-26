@@ -71,6 +71,7 @@ export default function ResetPasswordPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const [infoMsg, setInfoMsg] = useState('');
   const [loading, setLoading] = useState(false);
   const [checkingRecoveryLink, setCheckingRecoveryLink] = useState(hasRecoveryParams());
@@ -230,15 +231,13 @@ export default function ResetPasswordPage() {
     setErrorMsg('');
     setInfoMsg('');
 
-    if (password !== confirmPassword) {
-      setErrorMsg('Passwords do not match.');
-      return;
-    }
-
-    if (!isStrongPassword(password)) {
-      setErrorMsg(PASSWORD_RULES_TEXT);
-      return;
-    }
+    // Problems are shown in red under the box they belong to.
+    const next = {};
+    if (!isStrongPassword(password)) next.password = PASSWORD_RULES_TEXT;
+    if (!confirmPassword) next.confirmPassword = 'Please type your new password again.';
+    else if (password !== confirmPassword) next.confirmPassword = 'Passwords do not match.';
+    setFieldErrors(next);
+    if (Object.keys(next).length) return;
 
     setLoading(true);
 
@@ -352,18 +351,17 @@ export default function ResetPasswordPage() {
           ) : null}
 
           {!checkingRecoveryLink && isRecoveryMode ? (
-            <form className="auth-form" onSubmit={handleUpdatePassword}>
-              <label className="auth-label">
+            <form className="auth-form" onSubmit={handleUpdatePassword} noValidate>
+              <label className={`auth-label${fieldErrors.password ? ' has-field-error' : ''}`}>
                 New password
                 <span className="auth-password-wrap">
                   <input
                     className="auth-input auth-input--password-toggle"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => { setPassword(e.target.value); setFieldErrors((f) => ({ ...f, password: '' })); }}
                     autoComplete="new-password"
-                    minLength={8}
-                    required
+                    aria-invalid={Boolean(fieldErrors.password)}
                   />
                   <button
                     type="button"
@@ -374,20 +372,20 @@ export default function ResetPasswordPage() {
                     <EyeIcon hidden={!showPassword} />
                   </button>
                 </span>
+                {fieldErrors.password ? <span className="auth-field-error" role="alert">{fieldErrors.password}</span> : null}
                 <PasswordRequirements password={password} />
               </label>
 
-              <label className="auth-label">
+              <label className={`auth-label${fieldErrors.confirmPassword ? ' has-field-error' : ''}`}>
                 Confirm new password
                 <span className="auth-password-wrap">
                   <input
                     className="auth-input auth-input--password-toggle"
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={(e) => { setConfirmPassword(e.target.value); setFieldErrors((f) => ({ ...f, confirmPassword: '' })); }}
                     autoComplete="new-password"
-                    minLength={8}
-                    required
+                    aria-invalid={Boolean(fieldErrors.confirmPassword)}
                   />
                   <button
                     type="button"
@@ -398,6 +396,7 @@ export default function ResetPasswordPage() {
                     <EyeIcon hidden={!showConfirmPassword} />
                   </button>
                 </span>
+                {fieldErrors.confirmPassword ? <span className="auth-field-error" role="alert">{fieldErrors.confirmPassword}</span> : null}
               </label>
 
               <button className="auth-button" type="submit" disabled={loading}>

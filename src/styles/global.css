@@ -209,9 +209,10 @@ textarea:focus-visible {
   overscroll-behavior: contain;
   touch-action: pan-y;
 }
-[role="dialog"][aria-modal="true"] * {
-  overscroll-behavior: contain;
-}
+/* Not applied to every element inside the dialog: in Chrome, overflow:hidden
+   boxes (rounded cards) with overscroll-behavior:contain swallow the mouse
+   wheel, so a dialog could only be scrolled with its scrollbar. The scrolling
+   boxes that need it set it themselves, and the page behind is pinned. */
 html.cdna-scroll-locked {
   overscroll-behavior: none;
 }

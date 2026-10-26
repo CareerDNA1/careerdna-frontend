@@ -44,7 +44,7 @@ function coerceArray(x) {
  */
 export async function fetchAiSummary(input) {
   if (!input || typeof input !== 'object') {
-    throw new Error('fetchAiSummary: input must be an object.');
+    throw new Error('Something went wrong. Please try again.');
   }
 
   let {
@@ -138,10 +138,10 @@ export async function fetchAiSummary(input) {
 
   // Client-side guard to avoid 400s:
   if (!payload.status) {
-    throw new Error('Status is required (school | undergraduate | postgraduate).');
+    throw new Error('Something went wrong. Please try again.');
   }
   if (payload.status !== 'school' && !payload.uniSubject) {
-    throw new Error('For non-school users, a non-empty uniSubject is required.');
+    throw new Error('Please choose the subject you study, then try again.');
   }
 
   // Strip undefined keys

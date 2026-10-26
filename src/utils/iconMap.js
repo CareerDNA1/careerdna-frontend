@@ -68,6 +68,24 @@ const ENVIRONMENT_ICON_MAP = {
   independentandselfdirected: <TbUser {...tbProps} />,
   fieldbasedandexploratory: <TbBinoculars {...tbProps} />,
   purposedrivenandmissionled: <TbFlag {...tbProps} />,
+  // Current Work Styles titles (environments2.json). The keys above are the
+  // earlier titles and stay for old saved items.
+  structuredandprocessdriven: <TbChecklist {...tbProps} />,
+  steadysecureandpredictable: <TbAnchor {...tbProps} />,
+  fastpacedandhighpressure: <TbBolt {...tbProps} />,
+  targetdrivenandcompetitive: <TbTargetArrow {...tbProps} />,
+  customerandpublicfacing: <TbHeadset {...tbProps} />,
+  closeknitteam: <TbUsers {...tbProps} />,
+  caringandsupportive: <TbHeartHandshake {...tbProps} />,
+  missionledandpublicservice: <TbFlag {...tbProps} />,
+  researchanddeepthinking: <TbSearch {...tbProps} />,
+  safetycriticalandhighlyregulated: <TbLock {...tbProps} />,
+  handsonworkshopandsite: <TbTool {...tbProps} />,
+  outdoorsandonthemove: <TbMountain {...tbProps} />,
+  studioandcreative: <TbPalette {...tbProps} />,
+  startupandfastchanging: <TbRocket {...tbProps} />,
+  independentandselfdirectedinclremoteandfreelance: <TbUser {...tbProps} />,
+  learninganddevelopmentrich: <TbChartArrowsVertical {...tbProps} />,
 };
 
 const CAREER_WORLD_ICON_MAP = {
@@ -530,6 +548,9 @@ const SUBJECT_ICON_MAP = {
   illustration: <TbPencil {...tbProps} />,
   // Land / animal, property, hospitality, heritage degrees (were hitting fallback)
   veterinarymedicine: <TbStethoscope {...tbProps} />,
+  animalscience: <TbDna {...tbProps} />,
+  agriculture: <TbPlant2 {...tbProps} />,
+  forestry: <TbTree {...tbProps} />,
   realestateandproperty: <TbBuildingSkyscraper {...tbProps} />,
   hospitalitytourismandeventsmanagement: <TbBuilding {...tbProps} />,
   heritageandmuseumstudies: <TbBuildingBank {...tbProps} />,

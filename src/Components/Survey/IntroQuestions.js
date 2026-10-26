@@ -42,7 +42,7 @@ function UnderAgeModal({ onChangeDate, onSignOut, busy }) {
           The date of birth you entered means you are under 13. If that was a slip, go back and correct it. If it is right, we cannot continue and will sign you out.
         </p>
         <p style={{ margin: '0 0 22px', color: '#52667f', fontSize: 14, lineHeight: 1.6 }}>
-          A parent, guardian or your school can email hello@mycareerdna.io to ask about access.
+          A parent, guardian or your school can email support@mycareerdna.io to ask about access.
         </p>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, flexWrap: 'wrap' }}>
           <button
@@ -759,6 +759,26 @@ const IntroQuestions = ({
   };
   const setIntroResponses = setIntroResponsesProp ?? setResponses ?? (() => {});
   const handleSubmit = onStartSurvey || onNext;
+
+  // Phones and tablets: a "fixed" menu is placed against the visible screen,
+  // which moves when the keyboard opens, so the menu landed far above its box.
+  // There the menus sit on the page instead, and short lists are not
+  // searchable so tapping them does not bring up the keyboard at all.
+  // They also must not scroll the form to show the menu: that scroll set off
+  // closeMenuOnScroll, so the menu closed the instant it opened.
+  const isTouchDevice = typeof window !== 'undefined'
+    && typeof window.matchMedia === 'function'
+    && window.matchMedia('(pointer: coarse)').matches;
+  const selectMenuPosition = isTouchDevice ? 'absolute' : 'fixed';
+  // Touch: the menu is drawn inside the form, right under its box, so it
+  // scrolls with the form and nothing needs to close it on scroll (focusing a
+  // search box or the keyboard opening scrolls the form, which used to close
+  // the menu the moment it opened). Desktop keeps the floating menu, which
+  // closes on scroll because it cannot follow the page.
+  const selectMenuPortal = isTouchDevice || typeof document === 'undefined' ? null : document.body;
+  const selectCloseOnScroll = isTouchDevice
+    ? false
+    : (e) => !(e?.target && e.target.closest && e.target.closest('.introSelect__menu-list'));
   const finalSubmitLabel = overrideNextLabel || submitLabel;
 
   const [isComplete, setIsComplete] = useState(false);
@@ -1170,11 +1190,12 @@ const IntroQuestions = ({
           aria-label="Which country are you currently living in?"
           classNamePrefix="introSelect"
           menuPlacement="auto"
-          menuPosition="fixed"
+          menuPosition={selectMenuPosition}
+          menuShouldScrollIntoView={!isTouchDevice}
               maxMenuHeight={260}
               minMenuHeight={200}
-          menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-          closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
+          menuPortalTarget={selectMenuPortal}
+          closeMenuOnScroll={selectCloseOnScroll}
           options={countryOptions}
           value={flatCountryOptions.find(opt => opt.value === introResponses.country) || null}
           isDisabled={isLockedField('country')}
@@ -1218,12 +1239,14 @@ const IntroQuestions = ({
             aria-label={"What’s your current status?"}
             classNamePrefix="introSelect"
           menuPlacement="auto"
-          menuPosition="fixed"
+          menuPosition={selectMenuPosition}
+          menuShouldScrollIntoView={!isTouchDevice}
               maxMenuHeight={260}
               minMenuHeight={200}
-          menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-          closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
+          menuPortalTarget={selectMenuPortal}
+          closeMenuOnScroll={selectCloseOnScroll}
             options={statusOptions}
+          isSearchable={!isTouchDevice}
             value={statusOptions.find(opt => opt.value === statusGroup) || null}
             isDisabled={isLockedField('status')}
             onChange={handleStatusGroupChange}
@@ -1247,12 +1270,14 @@ const IntroQuestions = ({
             aria-label="Are you an undergraduate or postgraduate student?"
             classNamePrefix="introSelect"
           menuPlacement="auto"
-          menuPosition="fixed"
+          menuPosition={selectMenuPosition}
+          menuShouldScrollIntoView={!isTouchDevice}
               maxMenuHeight={260}
               minMenuHeight={200}
-          menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-          closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
+          menuPortalTarget={selectMenuPortal}
+          closeMenuOnScroll={selectCloseOnScroll}
             options={universityLevelOptions}
+          isSearchable={!isTouchDevice}
             value={universityLevelOptions.find(opt => opt.value === status) || null}
             isDisabled={isLockedField('status')}
             onChange={handleUniversityLevelChange}
@@ -1283,12 +1308,14 @@ const IntroQuestions = ({
             aria-label="Which year of your course are you in?"
             classNamePrefix="introSelect"
             menuPlacement="auto"
-            menuPosition="fixed"
+            menuPosition={selectMenuPosition}
+          menuShouldScrollIntoView={!isTouchDevice}
               maxMenuHeight={260}
               minMenuHeight={200}
-            menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-            closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
+            menuPortalTarget={selectMenuPortal}
+            closeMenuOnScroll={selectCloseOnScroll}
             options={courseYearOptions}
+          isSearchable={!isTouchDevice}
             value={courseYearOptions.find(opt => opt.value === introResponses.courseYear) || null}
             isDisabled={isLockedField('courseYear')}
             onChange={selected => handleCourseYearChange(selected.value)}
@@ -1350,12 +1377,14 @@ const IntroQuestions = ({
                 aria-label="What year group are you in?"
                 classNamePrefix="introSelect"
                 menuPlacement="auto"
-                menuPosition="fixed"
+                menuPosition={selectMenuPosition}
+          menuShouldScrollIntoView={!isTouchDevice}
               maxMenuHeight={260}
               minMenuHeight={200}
-                menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-                closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
+                menuPortalTarget={selectMenuPortal}
+                closeMenuOnScroll={selectCloseOnScroll}
                 options={schoolYearOptions}
+          isSearchable={!isTouchDevice}
                 value={schoolYearOptions.find(opt => opt.value === introResponses.schoolYear) || null}
                 isDisabled={isLockedField('schoolYear')}
                 onChange={selected => handleChange('schoolYear', selected.value)}
@@ -1376,11 +1405,13 @@ const IntroQuestions = ({
               aria-label="Do you plan to go to university?"
               classNamePrefix="introSelect"
           menuPlacement="auto"
-          menuPosition="fixed"
+          menuPosition={selectMenuPosition}
+          menuShouldScrollIntoView={!isTouchDevice}
               maxMenuHeight={260}
               minMenuHeight={200}
-          menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-          closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
+          menuPortalTarget={selectMenuPortal}
+          closeMenuOnScroll={selectCloseOnScroll}
+                      isSearchable={!isTouchDevice}
                       options={[
                 { value: 'yes', label: 'Yes' },
                 { value: 'no', label: 'No' },
@@ -1412,12 +1443,14 @@ const IntroQuestions = ({
               aria-label={"What’s your next step right now?"}
               classNamePrefix="introSelect"
           menuPlacement="auto"
-          menuPosition="fixed"
+          menuPosition={selectMenuPosition}
+          menuShouldScrollIntoView={!isTouchDevice}
               maxMenuHeight={260}
               minMenuHeight={200}
-          menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-          closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
+          menuPortalTarget={selectMenuPortal}
+          closeMenuOnScroll={selectCloseOnScroll}
                       options={schoolScopeOptions}
+          isSearchable={!isTouchDevice}
               value={schoolScopeOptions.find(opt => opt.value === introResponses.schoolScope) || null}
               onChange={selected => handleChange('schoolScope', selected.value)}
               onBlur={() => setFieldTouched('schoolScope')}
@@ -1433,11 +1466,12 @@ const IntroQuestions = ({
               aria-label="Which subjects interest you most?"
               classNamePrefix="introSelect"
               menuPlacement="auto"
-              menuPosition="fixed"
+              menuPosition={selectMenuPosition}
+          menuShouldScrollIntoView={!isTouchDevice}
               maxMenuHeight={260}
               minMenuHeight={200}
-              menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
-              closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest('.introSelect__menu-list'))}
+              menuPortalTarget={selectMenuPortal}
+              closeMenuOnScroll={selectCloseOnScroll}
               filterOption={subjectStartsWithFilter}
                       isMulti
               options={schoolSubjectOptions}
@@ -1497,12 +1531,14 @@ const IntroQuestions = ({
               aria-label={"What’s your next step right now?"}
               classNamePrefix="introSelect"
           menuPlacement="auto"
-          menuPosition="fixed"
+          menuPosition={selectMenuPosition}
+          menuShouldScrollIntoView={!isTouchDevice}
               maxMenuHeight={260}
               minMenuHeight={200}
-          menuPortalTarget={typeof document !== "undefined" ? document.body : null}
-          closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest(".introSelect__menu-list"))}
+          menuPortalTarget={selectMenuPortal}
+          closeMenuOnScroll={selectCloseOnScroll}
                       options={uniOptions}
+          isSearchable={!isTouchDevice}
               value={uniOptions.find(opt => opt.value === introResponses.uniNeed) || null}
               onChange={selected => handleChange('uniNeed', selected.value)}
               onBlur={() => setFieldTouched('uniNeed')}
@@ -1519,11 +1555,12 @@ const IntroQuestions = ({
               aria-label="What subject are you studying (or did you study)?"
               classNamePrefix="introSelect"
               menuPlacement="auto"
-              menuPosition="fixed"
+              menuPosition={selectMenuPosition}
+          menuShouldScrollIntoView={!isTouchDevice}
               maxMenuHeight={260}
               minMenuHeight={200}
-              menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
-              closeMenuOnScroll={(e) => !(e?.target && e.target.closest && e.target.closest('.introSelect__menu-list'))}
+              menuPortalTarget={selectMenuPortal}
+              closeMenuOnScroll={selectCloseOnScroll}
               filterOption={subjectStartsWithFilter}
                       options={universitySubjectOptions}
               value={universitySubjectOptions.find(opt => opt.value === introResponses.uniSubject) || null}

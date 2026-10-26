@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient';
+import { stageRunIds, newestPerItem, clearItemAcrossStage } from './favouriteScope';
 
 // Saving live items (a university course, a job advert) to favourites.
 //
@@ -74,15 +75,15 @@ export async function getSavedIds(itemType) {
   const { userId, runId } = await getContext();
   if (!userId || !runId || !itemType) return new Set();
   try {
+    const scopeIds = await stageRunIds(userId, runId);
     const { data } = await supabase
       .from('result_feedback')
-      .select('item_id')
+      .select('item_id, item_type, reaction, updated_at, created_at')
       .eq('user_id', userId)
-      .eq('assessment_run_id', runId)
+      .in('assessment_run_id', scopeIds)
       .eq('feedback_scope', 'item_reaction')
-      .eq('item_type', itemType)
-      .eq('reaction', 'like');
-    return new Set((data || []).map((r) => r.item_id).filter(Boolean));
+      .eq('item_type', itemType);
+    return new Set(newestPerItem(data || []).filter((r) => r.reaction === 'like').map((r) => r.item_id).filter(Boolean));
   } catch (_) {
     return new Set();
   }
@@ -93,16 +94,17 @@ export async function getReactions(itemType) {
   const { userId, runId } = await getContext();
   if (!userId || !runId || !itemType) return new Map();
   try {
+    const scopeIds = await stageRunIds(userId, runId);
     const { data } = await supabase
       .from('result_feedback')
-      .select('item_id, reaction')
+      .select('item_id, item_type, reaction, updated_at, created_at')
       .eq('user_id', userId)
-      .eq('assessment_run_id', runId)
+      .in('assessment_run_id', scopeIds)
       .eq('feedback_scope', 'item_reaction')
       .eq('item_type', itemType)
       .in('reaction', ['like', 'dislike']);
     const out = new Map();
-    (data || []).forEach((r) => { if (r.item_id && r.reaction) out.set(r.item_id, r.reaction); });
+    newestPerItem(data || []).forEach((r) => { if (r.item_id && r.reaction) out.set(r.item_id, r.reaction); });
     return out;
   } catch (_) {
     return new Map();
@@ -150,15 +152,19 @@ async function setItemReactionNow({ itemType, itemId, itemTitle, itemMeta = null
   const { userId, runId } = await getContext();
   if (!userId || !runId || !itemType || !itemId) return null;
 
+  // One favourites list per stage: the item may sit on any report of it.
+  const scopeIds = await stageRunIds(userId, runId);
   const findExisting = async () => {
     const { data, error } = await supabase
       .from('result_feedback')
       .select('id')
       .eq('user_id', userId)
-      .eq('assessment_run_id', runId)
+      .in('assessment_run_id', scopeIds)
       .eq('feedback_scope', 'item_reaction')
       .eq('item_type', itemType)
       .eq('item_id', itemId)
+      .order('updated_at', { ascending: false })
+      .limit(1)
       .maybeSingle();
     if (error) throw error;
     return data;
@@ -167,10 +173,7 @@ async function setItemReactionNow({ itemType, itemId, itemTitle, itemMeta = null
   const existing = await findExisting();
 
   if (remove) {
-    if (existing?.id) {
-      const { error } = await supabase.from('result_feedback').delete().eq('id', existing.id);
-      if (error) throw error;
-    }
+    await clearItemAcrossStage({ userId, runIds: scopeIds, itemTypes: [itemType], itemIds: [itemId] });
     notifyFavouritesChanged();
     return '';
   }
@@ -187,9 +190,12 @@ async function setItemReactionNow({ itemType, itemId, itemTitle, itemMeta = null
     updated_at: new Date().toISOString(),
   };
 
-  const write = async (payload, id) => (id
-    ? supabase.from('result_feedback').update(payload).eq('id', id)
-    : supabase.from('result_feedback').insert(payload));
+  // An existing row stays on the report it was made on; only new rows go here.
+  const write = async (payload, id) => {
+    if (!id) return supabase.from('result_feedback').insert(payload);
+    const { assessment_run_id: _keepRun, ...changes } = payload;
+    return supabase.from('result_feedback').update(changes).eq('id', id);
+  };
 
   let { error } = await write(row, existing?.id);
   if (error && error.code === '23505' && !existing?.id) {
@@ -204,6 +210,11 @@ async function setItemReactionNow({ itemType, itemId, itemTitle, itemMeta = null
     ({ error } = await write(withoutMeta, existing?.id));
   }
   if (error) throw error;
+  // One row per item per stage: drop copies on the stage's other reports.
+  try {
+    const kept = existing?.id ? existing : await findExisting();
+    await clearItemAcrossStage({ userId, runIds: scopeIds, itemTypes: [itemType], itemIds: [itemId], keepId: kept?.id || null });
+  } catch (_) { /* the reaction itself is saved */ }
   notifyFavouritesChanged();
   return reaction;
 }

@@ -52,7 +52,7 @@ export default function NotFoundPage() {
             <span aria-hidden="true">·</span>
             <a href="/trust-security#accessibility">Accessibility</a>
             <span aria-hidden="true">·</span>
-            <a href="mailto:hello@mycareerdna.io">Contact</a>
+            <a href="mailto:support@mycareerdna.io">Contact</a>
             <span aria-hidden="true">·</span>
             <a href="#report-problem">Report a problem</a>
           </nav>

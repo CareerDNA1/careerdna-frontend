@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { PaperPlaneTilt, X, Plus, ArrowLeft, CaretRight, Briefcase, GraduationCap, CalendarBlank, WarningCircle, MapPin, Clock, NotePencil, CalendarPlus } from 'phosphor-react';
+import { PaperPlaneTilt, X, Plus, ArrowLeft, CaretRight, Briefcase, GraduationCap, CalendarBlank, WarningCircle, MapPin, Clock, NotePencil, CalendarPlus, CheckCircle } from 'phosphor-react';
 import {
   APPLICATION_STATUSES, APPLICATION_STATUS_LABEL, APPLICATION_STATUS_TONE, APPLICATION_KINDS, APPLICATION_KIND_LABEL, MANUAL_KINDS_FOR_STAGE,
   OPEN_STATUSES, addManualApplication, updateApplicationStatus, updateApplicationNote, updateApplicationEvent, removeApplication,
   isStale, formatDate, formatDateTime, calendarLinks, applicationKindForFavourite, applicationRowCount,
   UCAS_LABEL, UCAS_TONE, UCAS_MAX_CHOICES, UCAS_DECISION_OPTIONS, UCAS_PHASE_TEXT, UCAS_PHASE_TONE,
   isUcasChoice, ucasOf, ucasLive, ucasPhase, ucasClearingOf, sortUcasChoices, ucasSetDecision, ucasWithdraw, ucasUnwithdraw,
+  entryComparisonNote,
 } from '../../utils/applications';
 import './FavouritesCard.css';
 import UcasPanel from './UcasPanel';
@@ -39,6 +40,9 @@ const KIND_STYLE = {
 
 // candidates: favourite ads/courses not yet applied for ({ type, id, title, subtitle, meta });
 // onApplyFavourite(item): mark one as applied (owned by the profile page).
+// "3 of 5 choices", or the real number once the student is over the five.
+const ucasCountText = (n) => (n > UCAS_MAX_CHOICES ? `${n} choices, ${n - UCAS_MAX_CHOICES} over the five` : `${n} of ${UCAS_MAX_CHOICES} choices`);
+
 export default function ApplicationsCard({ apps, onChange, runId, stage = 'university', isUniversity = false, candidates = [], onApplyFavourite, predictedGrades = [], schoolYear = '', onEnterGrades, openSignal = 0, openFocus = null }) {
   const list = Array.isArray(apps) ? apps : [];
   const [open, setOpen] = useState(false);
@@ -47,6 +51,10 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
   const [picking, setPicking] = useState(false); // choosing from favourites
   const [ucasOpen, setUcasOpen] = useState(false); // the UCAS application page
   const [applyingKey, setApplyingKey] = useState('');
+  // "Add from favourites": the list as it was when the picker opened, so an
+  // item stays in place showing "Applied" once marked, instead of vanishing.
+  const [pickList, setPickList] = useState([]);
+  const [pickDone, setPickDone] = useState(() => new Set());
   const [busy, setBusy] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [noteDraft, setNoteDraft] = useState('');
@@ -119,10 +127,19 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
   const applyCandidate = async (item) => {
     if (typeof onApplyFavourite !== 'function') return;
     const key = `${item.type}|${item.id}`;
-    try { setApplyingKey(key); setError(''); await onApplyFavourite(item); }
+    try { setApplyingKey(key); setError(''); await onApplyFavourite(item); setPickDone((cur) => new Set(cur).add(key)); }
     catch (e) { fail(e, 'add this application', () => applyCandidate(item)); }
     finally { setApplyingKey(''); }
   };
+  // Snapshot the candidates when the picker opens; later additions are appended.
+  useEffect(() => {
+    if (picking) { setPickList(candidates); setPickDone(new Set()); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [picking]);
+  const pickRows = (() => {
+    const seen = new Set(pickList.map((c) => `${c.type}|${c.id}`));
+    return [...pickList, ...candidates.filter((c) => !seen.has(`${c.type}|${c.id}`))];
+  })();
   const back = () => { if (detail && isUcasChoice(detail, stage)) setUcasOpen(true); setDetailId(''); setConfirmRemove(false); setNoteEditing(false); setCondEditing(false); setChancesTip(''); setEventEditing(false); setCalPrompt(false); setError(''); };
   const replace = (next) => onChange(list.map((a) => (a.id === next.id ? next : a)));
   const setDecision = async (app, value) => {
@@ -280,7 +297,7 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
                 <span className="fav-prev-ic" style={{ background: '#e1f5ee', color: '#0f6e56' }} aria-hidden="true"><GraduationCap size={16} weight="bold" /></span>
                 <span className="fav-prev-main">
                   <span className="fav-prev-title">UCAS application</span>
-                  <span className="fav-prev-sub">{Math.min(ucasLiveChoices.length, UCAS_MAX_CHOICES)} of {UCAS_MAX_CHOICES} choices</span>
+                  <span className="fav-prev-sub">{ucasCountText(ucasLiveChoices.length)}</span>
                 </span>
                 <span className={`apps-pill apps-pill--${UCAS_PHASE_TONE[ucasPhaseNow]}`}>{ucasPhaseLabel}</span>
               </div>
@@ -348,9 +365,11 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
                           {detail.organisation || m.source ? (
                             <div className="fav-prev-sub" style={{ whiteSpace: 'normal' }}>{detail.organisation}{m.source ? ` · via ${m.source}` : ''}</div>
                           ) : null}
-                          {ucas(detail) && m.stats?.typicalGrades ? (
+                          {ucas(detail) && entryComparisonNote(detail.title, detail.organisation) ? (
+                            <div className="fav-prev-sub apps-detail-chances" style={{ whiteSpace: 'normal' }}>{entryComparisonNote(detail.title, detail.organisation)}</div>
+                          ) : ucas(detail) && m.stats?.typicalGrades ? (
                             <div className="fav-prev-sub apps-detail-chances">
-                              <span>Typical offer <b>{m.stats.typicalGrades}</b></span>
+                              <span>Typical entry grades <b>{m.stats.typicalGrades}</b></span>
                               <ChancesPill predicted={predictedGrades} typicalGrades={m.stats.typicalGrades}
                                 onTap={() => setChancesTip((cur) => (cur ? '' : chancesExplanation(chancesFor(predictedGrades, m.stats.typicalGrades)?.key, m.stats.typicalGrades)))} />
                             </div>
@@ -503,11 +522,11 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
                     <div className="fav-modal-sub">Saved ads and courses you have not applied for yet. Mark the ones you have applied for.</div>
                     <div className="fav-group-head">
                       <span className="fav-group-label">From your favourites</span>
-                      <span className="fav-group-count">{candidates.length}</span>
+                      <span className="fav-group-count">{pickRows.filter((c) => !pickDone.has(`${c.type}|${c.id}`)).length}</span>
                     </div>
-                    {candidates.length ? (
+                    {pickRows.length ? (
                       <div className="fav-items">
-                        {candidates.map((c) => {
+                        {pickRows.map((c) => {
                           const key = `${c.type}|${c.id}`;
                           const kind = applicationKindForFavourite(c);
                           const { Icon, tint, fg } = KIND_STYLE[kind] || KIND_STYLE.other;
@@ -518,9 +537,17 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
                                 <span className="fav-item-title">{c.title}</span>
                                 {c.subtitle ? <span className="fav-item-sub">{c.subtitle}</span> : null}
                               </span>
-                              <button type="button" className="fav-apply fav-apply--sm" disabled={applyingKey === key} onClick={() => applyCandidate(c)}>
-                                {applyingKey === key ? 'Saving…' : (stage === 'school' && c.type === 'course' ? 'Add to UCAS choices' : 'Mark as applied')}
-                              </button>
+                              {pickDone.has(key) ? (
+                                <span className="fav-apply fav-apply--done" role="status">
+                                  <CheckCircle size={15} weight="fill" aria-hidden="true" />
+                                  {stage === 'school' && c.type === 'course' ? 'Added to UCAS' : 'Applied'}
+                                </span>
+                              ) : (
+                                <button type="button" className="fav-apply fav-apply--sm" disabled={applyingKey === key} onClick={() => applyCandidate(c)}>
+                                  <PaperPlaneTilt size={15} weight="bold" aria-hidden="true" />
+                                  {applyingKey === key ? 'Saving…' : (stage === 'school' && c.type === 'course' ? 'Add to UCAS choices' : 'Mark as applied')}
+                                </button>
+                              )}
                             </div>
                           );
                         })}
@@ -587,7 +614,7 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
                           <span className="fav-item-ic" style={{ background: '#e1f5ee', color: '#0f6e56' }} aria-hidden="true"><GraduationCap size={17} weight="bold" /></span>
                           <span className="fav-item-main">
                             <span className="fav-item-title">UCAS application</span>
-                            <span className="fav-item-sub">{Math.min(ucasLiveChoices.length, UCAS_MAX_CHOICES)} of {UCAS_MAX_CHOICES} choices</span>
+                            <span className="fav-item-sub">{ucasCountText(ucasLiveChoices.length)}</span>
                           </span>
                           <span className={`apps-pill apps-pill--${UCAS_PHASE_TONE[ucasPhaseNow]}`}>{ucasPhaseLabel}</span>
                           <CaretRight size={16} weight="bold" className="fav-item-chev" aria-hidden="true" />
