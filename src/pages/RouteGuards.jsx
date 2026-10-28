@@ -85,6 +85,10 @@ export function RequireAuth() {
   // While onboarding is incomplete, every route change re-reads the profile
   // (so finishing /welcome releases the redirect); afterwards it is constant.
   const recheckKey = onboarded ? '' : location.pathname;
+  // The route the latest profile read was made for. Leaving /welcome after
+  // Confirm must wait for the fresh read; acting on the old "not onboarded"
+  // answer bounced the student back to /welcome before showing the profile.
+  const [checkedKey, setCheckedKey] = useState(null);
   const completeProfileUserIdRef = useRef('');
 
   useEffect(() => {
@@ -124,8 +128,10 @@ export function RequireAuth() {
         // their last report and only confirm them.
         setOnboarded(Boolean(profile?.onboarding_completed_at));
         setProfileState(complete ? 'complete' : 'incomplete');
+        setCheckedKey(recheckKey);
       } catch (_) {
         if (cancelled) return;
+        setCheckedKey(recheckKey);
         completeProfileUserIdRef.current = '';
         setProfileState('incomplete');
       }
@@ -162,6 +168,9 @@ export function RequireAuth() {
   }
 
   if (!onboarded && location.pathname !== '/welcome') {
+    // Still reading the profile for this route (for example straight after
+    // Confirm on /welcome): wait for the answer instead of redirecting.
+    if (checkedKey !== location.pathname) return <RouteWait />;
     return <Navigate to="/welcome" replace state={{ from: location }} />;
   }
 
