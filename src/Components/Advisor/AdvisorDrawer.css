@@ -160,7 +160,9 @@
 .advisor-backdrop { display: none; }
 @media (max-width: 760px), (max-height: 500px) and (max-width: 1000px) {
   body.cdna-advisor-lock { overflow: hidden; touch-action: none; }
-  .advisor-backdrop { display: block; position: fixed; inset: 0; z-index: 94990; background: rgba(15, 23, 42, 0.35); }
+  .advisor-backdrop { display: block; position: fixed; inset: 0; z-index: 94990; background: rgba(15, 23, 42, 0.35); touch-action: none; }
+  /* Scrolling inside the sheet never hands over to the page behind it. */
+  .advisor-drawer, .advisor-drawer .career-advisor-messages { overscroll-behavior: contain; }
   .advisor-drawer__head { cursor: grab; touch-action: none; }
 }
 

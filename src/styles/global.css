@@ -74,6 +74,15 @@ body {
    stops iOS Safari zooming out to fit an element that overflows the screen. */
 html { overflow-x: clip; }
 
+/* iOS Safari "text autosizing" enlarges text when the phone is turned sideways,
+   and keeps it enlarged after turning back if the page was pinned by a dialog
+   (e.g. rankings). Fixing the text size on the root stops it for the whole app. */
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 *,
 *::before,
 *::after {

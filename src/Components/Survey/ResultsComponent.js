@@ -712,105 +712,63 @@ function strengthTraitTier(score) {
   return bandTier(bandForScore(score));
 }
 
-// Replace inline mentions of subdimension names in a strength's narrative with the
-// same coloured trait pills, so "your Data Curiosity" becomes the actual pill.
-function pillifyStrengthNarrative(li, subdimScores = {}) {
-  // The narrative uses subdimension DISPLAY labels ("Analytical Curiosity"); the
-  // score map is keyed by camelCase keys ("analyticalCuriosity"). Match labels,
-  // then look up the score via the label->key map.
+// ---- Bold green trait and profile names in report prose ----
+// One routine for every prose block (Summary, Strengths, Environments). It
+// catches names however the writer formatted them:
+//   * plain text, any case, "&" or "and" ("Leading and Starting Things");
+//   * already bold, exactly the name ("**Empathy**") -> recoloured green;
+//   * bold with extra words or punctuation ("**your Empathy,**",
+//     "**Thinker and Explorer**") -> the names inside it are made green.
+// Before, only the first and second cases were handled, so a bold phrase that
+// was not exactly one name stayed bold black.
+const SUMMARY_PROFILE_NAMES = ['Achiever', 'Connector', 'Creator', 'Explorer', 'Organizer', 'Thinker', 'Visionary'];
+
+function traitLabels() {
   const dims = Array.isArray(DIMENSIONS) ? DIMENSIONS : [];
-  const nameToKey = makeNameToKeyMap(dims);
   const labels = [];
   dims.forEach((d) => (d.subdimensions || []).forEach((s) => { if (s?.label) labels.push(s.label); }));
   labels.push(...Object.keys(TRAIT_RENAMES)); // reports written before the v5 renames
-  if (!labels.length) return;
-  const scoreFor = (label) => {
-    const key = nameToKey[norm(label)];
-    return key ? subdimScores[key] : undefined;
-  };
-  const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const ordered = [...new Set(labels)].sort((a, b) => b.length - a.length);
-  const re = new RegExp('(' + ordered.map(escapeRe).join('|') + ')', 'g');
-
-  const textNodes = [];
-  const collect = (node) => {
-    for (let child = node.firstChild; child; child = child.nextSibling) {
-      if (child.nodeType === 3) {
-        textNodes.push(child);
-      } else if (child.nodeType === 1) {
-        const el = child;
-        if (el.tagName === 'STRONG') continue; // keep the title untouched
-        if (el.classList && (
-          el.classList.contains('cdna-strength-traits') ||
-          el.classList.contains('cdna-card-icon') ||
-          el.classList.contains('cdna-strength-icon') ||
-          el.classList.contains('cdna-item-rail') ||
-          el.classList.contains('cdna-strength-trait')
-        )) continue;
-        collect(el);
-      }
-    }
-  };
-  collect(li);
-
-  textNodes.forEach((textNode) => {
-    const text = textNode.nodeValue;
-    re.lastIndex = 0;
-    if (!re.test(text)) return;
-    re.lastIndex = 0;
-    const frag = document.createDocumentFragment();
-    let last = 0;
-    let m;
-    while ((m = re.exec(text)) !== null) {
-      const name = m[0];
-      if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
-      const span = document.createElement('span');
-      span.className = 'cdna-strength-trait-text';
-      span.textContent = name;
-      frag.appendChild(span);
-      last = m.index + name.length;
-    }
-    if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
-    if (textNode.parentNode) textNode.parentNode.replaceChild(frag, textNode);
-  });
+  return labels;
 }
 
-// Summary paragraph: bold + green every profile (archetype) name and
-// dimension/subdimension name, matching the match-narrative treatment. Profile
-// names arrive already bold (from markdown **Creator**), so we just recolour
-// those; plain trait names get wrapped.
-const SUMMARY_PROFILE_NAMES = ['Achiever', 'Connector', 'Creator', 'Explorer', 'Organizer', 'Thinker', 'Visionary'];
+const normName = (s) => String(s || '')
+  .toLowerCase()
+  .replace(/['\u2019]s\b/g, '')
+  .replace(/&/g, ' and ')
+  .replace(/[^a-z0-9 -]+/g, ' ')
+  .replace(/\s+/g, ' ')
+  .trim()
+  .replace(/^(your|the|a|an) /, '')
+  .replace(/ (profile|profiles|trait|traits)$/, '');
 
-function greenifyProfileAndTraitNames(container) {
-  if (!container) return;
-  const dims = Array.isArray(DIMENSIONS) ? DIMENSIONS : [];
-  const labels = [...SUMMARY_PROFILE_NAMES];
-  dims.forEach((d) => (d.subdimensions || []).forEach((s) => { if (s?.label) labels.push(s.label); }));
-  labels.push(...Object.keys(TRAIT_RENAMES)); // reports written before the v5 renames
-  if (!labels.length) return;
-  const nameSet = new Set(labels.map((l) => l.toLowerCase()));
-  const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const ordered = [...new Set(labels)].sort((a, b) => b.length - a.length);
-  const re = new RegExp('(' + ordered.map(escapeRe).join('|') + ')', 'g');
+function greenNamesIn(container, labels, { skip } = {}) {
+  if (!container || !labels.length) return;
+  const nameSet = new Set(labels.map(normName));
+  const escapeRe = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const variants = new Set();
+  labels.forEach((l) => { variants.add(l); if (l.includes('&')) variants.add(l.replace(/&/g, 'and')); });
+  const alt = [...variants].sort((a, b) => b.length - a.length)
+    .map((t) => escapeRe(t).replace(/ +/g, '\\s+'));
+  // Case-sensitive on purpose: the prose capitalises trait names, and ordinary
+  // words like "pace" or "security" in lower case must stay plain.
+  const re = new RegExp('\\b(' + alt.join('|') + ')\\b', 'g');
+  const isSkipped = (el) => Boolean(skip && skip(el));
 
-  // Existing bold profile/trait names -> recolour green.
+  // Bold runs that are exactly a name: recolour.
   container.querySelectorAll('strong, b').forEach((el) => {
-    if (nameSet.has(String(el.textContent || '').trim().toLowerCase())) {
-      el.classList.add('cdna-strength-trait-text');
-    }
+    if (isSkipped(el)) return;
+    if (nameSet.has(normName(el.textContent))) el.classList.add('cdna-strength-trait-text');
   });
 
-  // Plain-text occurrences -> wrap in a bold-green span.
+  // Every other text node, including inside bold runs that hold more than a name.
   const textNodes = [];
   const collect = (node) => {
     for (let child = node.firstChild; child; child = child.nextSibling) {
-      if (child.nodeType === 3) {
-        textNodes.push(child);
-      } else if (child.nodeType === 1) {
-        const el = child;
-        if (el.tagName === 'STRONG' || el.tagName === 'B') continue;
-        if (el.classList && el.classList.contains('cdna-strength-trait-text')) continue;
-        collect(el);
+      if (child.nodeType === 3) textNodes.push(child);
+      else if (child.nodeType === 1) {
+        if (child.classList && child.classList.contains('cdna-strength-trait-text')) continue;
+        if (isSkipped(child)) continue;
+        collect(child);
       }
     }
   };
@@ -825,17 +783,36 @@ function greenifyProfileAndTraitNames(container) {
     let last = 0;
     let m;
     while ((m = re.exec(text)) !== null) {
-      const name = m[0];
       if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
       const span = document.createElement('span');
       span.className = 'cdna-strength-trait-text';
-      span.textContent = name;
+      span.textContent = m[0];
       frag.appendChild(span);
-      last = m.index + name.length;
+      last = m.index + m[0].length;
     }
     if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
     if (textNode.parentNode) textNode.parentNode.replaceChild(frag, textNode);
   });
+}
+
+// Strengths and environments: trait names in the card narrative. The card
+// title (inside the header) and the decorations are left alone.
+function pillifyStrengthNarrative(li) {
+  greenNamesIn(li, traitLabels(), {
+    skip: (el) => Boolean(el.classList && (
+      el.classList.contains('cdna-strength-header') ||
+      el.classList.contains('cdna-strength-traits') ||
+      el.classList.contains('cdna-card-icon') ||
+      el.classList.contains('cdna-strength-icon') ||
+      el.classList.contains('cdna-item-rail') ||
+      el.classList.contains('cdna-strength-trait')
+    )) || Boolean(el.closest && el.closest('.cdna-strength-header')),
+  });
+}
+
+// Summary paragraph: profile names and trait names.
+function greenifyProfileAndTraitNames(container) {
+  greenNamesIn(container, [...SUMMARY_PROFILE_NAMES, ...traitLabels()]);
 }
 
 function decorateAnalysisSignals(root, analysisMeta, itemReactions = {}, subdimScores = {}) {
@@ -984,7 +961,7 @@ function decorateAnalysisSignals(root, analysisMeta, itemReactions = {}, subdimS
             if (!el.textContent.trim() && !el.querySelector('img,svg')) el.remove();
           });
         }
-        pillifyStrengthNarrative(li, subdimScores);
+        pillifyStrengthNarrative(li);
       }
 
       const signal = titleMap?.get(itemTitleKey) || null;
@@ -3130,7 +3107,7 @@ export default function ResultsComponent({
         <>
           <h2 className="analysis-section-title">Your traits</h2>
           <p>
-            Your CareerDNA is built around four core areas: <strong>Who You Are</strong>, <strong>What You Love</strong>, <strong>What Matters</strong>, and <strong>How You Work Best</strong>.
+            Your CareerDNA is built around four core areas: <strong className="cdna-intro-green">Who You Are</strong>, <strong className="cdna-intro-green">What You Love</strong>, <strong className="cdna-intro-green">What Matters</strong>, and <strong className="cdna-intro-green">How You Work Best</strong>.
             Together, they capture your key psychological drivers, including your behaviour, interests, values and working preferences.
             Each area is broken down into subdimensions, which show where your natural tendencies are strongest. Each level shows how strongly your answers leaned towards that trait. The chart below visualises these patterns.
             There are no “good” or “bad” scores. Lower scores simply reflect different preferences, not weaknesses. What matters is the overall pattern and what it suggests about where you are most likely to thrive.

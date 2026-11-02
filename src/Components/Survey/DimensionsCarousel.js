@@ -49,6 +49,32 @@ const DIMENSION_META = {
   },
 };
 
+// Phone label column: at most this share of the chart width, so the bars keep
+// enough room. Labels are measured in the chart's own font.
+const LABEL_COL_MAX = 0.5;
+let measureCtx = null;
+const measureLabel = (text, size) => {
+  try {
+    if (!measureCtx) measureCtx = document.createElement("canvas").getContext("2d");
+    measureCtx.font = `700 ${size}px ${ChartJS.defaults.font.family}`;
+    return measureCtx.measureText(String(text || "")).width;
+  } catch (_) { return Infinity; }
+};
+
+// Split a label into at most two lines at the space nearest the middle,
+// so "Leading & Starting Things" becomes ["Leading &", "Starting Things"].
+const wrapTwoLines = (s, max = 15) => {
+  const text = String(s || "");
+  if (text.length <= max || !text.includes(" ")) return text;
+  const mid = text.length / 2;
+  let best = -1;
+  for (let i = 0; i < text.length; i += 1) {
+    // never start the second line with "&"
+    if (text[i] === " " && text[i + 1] !== "&" && (best < 0 || Math.abs(i - mid) < Math.abs(best - mid))) best = i;
+  }
+  return best < 0 ? text : [text.slice(0, best), text.slice(best + 1)];
+};
+
 const truncate = (s, n = 30) =>
   String(s).length > n ? String(s).slice(0, n - 1) + "…" : s;
 
@@ -349,6 +375,11 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
             tooltip: { enabled: false, external: externalTooltipRightOfBar },
           },
           interaction: { mode: "nearest", intersect: true, axis: "xy" },
+          // Phones: the definition opens on a tap only. Chart.js normally reacts
+          // to touchstart/touchmove too, so a swipe to the next group that began
+          // on a bar popped the definition up. The browser sends no click for a
+          // swipe, so listening to click alone ignores swipes.
+          ...(isMobile ? { events: ["click"] } : {}),
           scales: {
             x: {
               beginAtZero: true,
@@ -387,20 +418,29 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
             y: {
               grid: { display: false },
               border: { display: false },
-              // On phones, guarantee the label column a share of the chart so a
-              // late font load or a long name can never clip the label.
+              // Phones: the label column is only as wide as the longest label
+              // (labels sit flush left), so the bars get the rest of the width.
+              // Capped at half the chart; longer names wrap to two lines. The
+              // chart is laid out again once the web font has loaded.
               afterFit: (scale) => {
                 if (!isMobile) return;
                 const w = scale.chart && scale.chart.width ? scale.chart.width : 0;
-                if (w) scale.width = Math.max(scale.width, Math.round(w * 0.44));
+                if (w) scale.width = Math.min(scale.width, Math.round(w * LABEL_COL_MAX));
               },
               ticks: {
                 color: "#334155",
                 padding: 10,
-                font: { size: isMobile ? 12 : 14, weight: "700" },
+                crossAlign: isMobile ? "far" : "near", // phones: labels flush left
+                font: { size: isMobile ? 11 : 14, weight: "700", lineHeight: 1.15 },
                 callback: function (v) {
                   const label = this.getLabelForValue ? this.getLabelForValue(v) : String(v);
-                  return truncate(label, isMobile ? 22 : 30);
+                  if (!isMobile) return truncate(label, 30);
+                  // Phones: one line whenever the name fits in the label column
+                  // (up to half the chart); otherwise two lines, never cut off.
+                  const chartW = (this.chart && this.chart.width) || 0;
+                  const room = chartW * LABEL_COL_MAX - 12; // minus tick padding
+                  if (chartW && measureLabel(label, 11) <= room) return label;
+                  return wrapTwoLines(label, 1);
                 },
               },
             },
@@ -450,12 +490,15 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
   const onTouchStart = (e) => {
     // Keep this inner swiper's gestures from bubbling to any outer swipe deck.
     e.stopPropagation();
+    // A swipe on the tab strip scrolls the strip only; it must not drag the charts.
+    if (tabsRef.current && tabsRef.current.contains(e.target)) { touch.current.dragging = false; return; }
     touch.current = { x: e.touches[0].clientX, dragging: true };
   };
   const onTouchMove = (e) => {
     if (!touch.current.dragging) return;
     e.stopPropagation();
     const dx = e.touches[0].clientX - touch.current.x;
+    if (Math.abs(dx) > 8) hideSubdimTooltip(); // an open definition does not ride along with the swipe
     if (trackRef.current) {
       trackRef.current.style.transition = "none";
       trackRef.current.style.transform = `translateX(calc(${-index * slideWidthPct}% + ${dx}px))`;
@@ -504,6 +547,12 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
           justifyContent: isMobile ? "flex-start" : "center",
           flexWrap: "nowrap",
           overflowX: "auto",
+          // Sideways only, like the main section menu: no vertical wobble, no
+          // pull past the ends.
+          overflowY: "hidden",
+          touchAction: "pan-x",
+          overscrollBehaviorX: "contain",
+          WebkitOverflowScrolling: "touch",
           borderBottom: "1px solid #e6eaf0",
           marginBottom: 12,
         }}
@@ -524,7 +573,7 @@ export default function DimensionsCarousel({ dimensions, scores, maxPerDimension
               fontWeight: i === index ? 650 : 550,
               fontSize: isMobile ? "0.85rem" : "0.92rem",
               padding: isMobile ? "7px 10px" : "8px 14px",
-              marginBottom: "-1px",
+              marginBottom: 0,
               cursor: "pointer",
               whiteSpace: "nowrap",
               fontFamily: "'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif",

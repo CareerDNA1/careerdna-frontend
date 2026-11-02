@@ -4,7 +4,7 @@ import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank } from './R
 import { CAREER_WORLD_DEFINITIONS, PATHWAY_DEFINITIONS } from '../../utils/selectionDefinitions';
 import { ARCHETYPE_DEFINITIONS, getArchetypeDefinition } from '../../utils/archetypeDefinitions';
 import SUBDIMENSION_DEFINITIONS from '../../utils/subdimensionDefinitions';
-import { canonicalTraitName } from '../../utils/traitNames';
+import { canonicalTraitName, TRAIT_RENAMES } from '../../utils/traitNames';
 import DIMENSIONS from '../../utils/Dimensions';
 import { getCareerWorldIcon, getPathwayIcon } from '../../utils/iconMap';
 import { fetchNonUniRoutes, peekNonUniRoutes } from '../../utils/fetchNonUniRoutes';
@@ -1952,6 +1952,7 @@ const NARRATIVE_HIGHLIGHT_LABELS = (() => {
   const out = [];
   DIMENSIONS.forEach((d) => (d.subdimensions || []).forEach((sd) => { if (sd.label) out.push(sd.label); }));
   Object.keys(ARCHETYPE_DEFINITIONS).forEach((k) => out.push(k));
+  Object.keys(TRAIT_RENAMES || {}).forEach((k) => out.push(k)); // narratives written before the v5 renames
   return out;
 })();
 

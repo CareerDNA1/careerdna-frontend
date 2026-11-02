@@ -2983,3 +2983,13 @@ body:has(#results-root),
 /* Phones in landscape (up to 1000px wide and 500px tall) use the same report
    layout as phones held upright: the horizontal section tab bar on top. Every
    phone-layout rule above uses this pair of conditions (2 Nov 2026). */
+
+/* Names called out in a tab's intro text (e.g. the four areas on Your traits):
+   the same bold green as trait and profile names in the report prose. */
+.cdna-intro-green,
+#results-root .cdna-intro-green {
+  font-weight: 700;
+  color: #28692b;
+  -webkit-hyphens: none;
+  hyphens: none;
+}

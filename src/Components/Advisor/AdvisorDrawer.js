@@ -8,6 +8,7 @@ import { advisorContextFor, advisorGeneralQuestions } from '../../utils/advisorQ
 import { getMyAcademicProfile, hasAcademicData } from '../../utils/academicProfile';
 import { getFavouritesByCategory } from '../../utils/favourites';
 import { listApplications } from '../../utils/applications';
+import { lockPageScroll, unlockPageScroll } from '../../utils/scrollLock';
 import './AdvisorDrawer.css';
 
 // "Your Advisor": one persistent panel for the whole results area. On wide
@@ -72,12 +73,26 @@ export default function AdvisorDrawer({ assessmentRunId, stage = '' }) {
     return () => { document.body.classList.remove('cdna-advisor-open'); document.documentElement.classList.remove('cdna-advisor-open'); document.body.classList.remove('cdna-advisor-lock'); };
   }, [open]);
 
+  // Phones: pin the page behind the open sheet. overflow:hidden on <body> (the
+  // class above) is ignored by iOS Safari for touch, so the page kept scrolling
+  // under the finger, most of all when the swipe started on the text box at the
+  // bottom. The shared lock pins <body> in place and puts it back on close.
+  useEffect(() => {
+    if (!open || !isPhone()) return undefined;
+    lockPageScroll();
+    return () => unlockPageScroll();
+  }, [open]);
+
   // Move keyboard focus into the drawer when it opens and back to the tab when it closes.
   useEffect(() => {
     if (!open) return undefined;
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const t = window.setTimeout(() => {
-      const target = document.querySelector('.advisor-drawer textarea, .advisor-drawer input, .advisor-drawer__close');
+      // On phones, focusing the text box pops the keyboard up and scrolls the
+      // sheet; focus the close button there and let the student tap the box.
+      const target = isPhone()
+        ? document.querySelector('.advisor-drawer__close')
+        : document.querySelector('.advisor-drawer textarea, .advisor-drawer input, .advisor-drawer__close');
       if (target && !document.querySelector('[role="dialog"][aria-modal="true"]')) target.focus({ preventScroll: true });
     }, 60);
     return () => {
