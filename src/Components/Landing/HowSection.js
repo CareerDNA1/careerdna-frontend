@@ -27,7 +27,7 @@ const steps = [
     variant: 'how-card--discover',
     icon: ClipboardCheck,
     title: 'Build your CareerDNA',
-        body: 'Answer 100 carefully designed questions about how you think, what motivates you and how you like to work. In about 15 minutes, CareerDNA builds a detailed picture of the patterns that make you unique.',
+        body: 'Answer 108 carefully designed questions about how you think, what motivates you and how you like to work. In about 15 minutes, CareerDNA builds a detailed picture of the patterns that make you unique.',
     detailTitle: 'Assessment explores',
     detailType: 'bullets',
     details: [
@@ -41,12 +41,12 @@ const steps = [
     variant: 'how-card--profile',
     icon: UserRound,
     title: 'Discover your career identity',
-    body: 'Your answers are transformed into a personal CareerDNA profile: your strengths, motivations and the way you work best, mapped across 25 traits and seven career profiles. It’s the clearest read of yourself you’ve probably ever had on a page.',
+    body: 'Your answers are transformed into a personal CareerDNA profile: your strengths, motivations and the way you work best, mapped across 27 traits and seven career profiles. It’s the clearest read of yourself you’ve probably ever had on a page.',
     detailTitle: 'Your profile shows',
     detailType: 'chips',
     details: [
       { icon: Grip, label: '7 Career Profiles' },
-      { icon: ChartBarBig, label: '25 Dimensions' },
+      { icon: ChartBarBig, label: '27 Traits' },
       { icon: Gauge, label: 'Profile clarity' },
       { icon: UserRound, label: 'Self-insight' },
     ],

@@ -28,6 +28,12 @@ export default function SurveyComponent({
   const wrapperRef = useRef(null);
   const [showTip, setShowTip] = useState(false);
   const [showCompletionScreen, setShowCompletionScreen] = useState(false);
+  // Touch screens have no hover, so the option name ("Agree" etc.) is shown on
+  // the tapped button for a moment before moving to the next question.
+  const TAP_LABEL_MS = 450;
+  const [tapLabel, setTapLabel] = useState(null);
+  const tapTimerRef = useRef(null);
+  useEffect(() => () => { if (tapTimerRef.current) window.clearTimeout(tapTimerRef.current); }, []);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
 
   // Survey card styling applied inline (immune to CSS hot-reload/caching issues):
@@ -109,7 +115,7 @@ export default function SurveyComponent({
 
   const selectedVal = answers?.[currentQuestion?.id]?.value;
 
-  const handleAnswer = (value) => {
+  const commitAnswer = (value) => {
     // Drop focus from the tapped button so its :focus/:active styling doesn't
     // carry over onto the same-position button of the next question.
     if (typeof document !== 'undefined' && document.activeElement && typeof document.activeElement.blur === 'function') {
@@ -119,6 +125,19 @@ export default function SurveyComponent({
     if (isLast) {
       window.setTimeout(() => setShowCompletionScreen(true), 0);
     }
+  };
+
+  const handleAnswer = (value) => {
+    if (tapTimerRef.current) return; // a tap is already showing its label
+    const touch = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+      && window.matchMedia('(hover: none)').matches;
+    if (!touch) { commitAnswer(value); return; }
+    setTapLabel(value);
+    tapTimerRef.current = window.setTimeout(() => {
+      tapTimerRef.current = null;
+      setTapLabel(null);
+      commitAnswer(value);
+    }, TAP_LABEL_MS);
   };
 
   const handleCompletionBack = () => {
@@ -191,7 +210,7 @@ export default function SurveyComponent({
             key={n}
             type="button"
             onClick={() => handleAnswer(n)}
-            className={`likert-option likert-option--${n} ${selectedVal === n ? 'selected' : ''}`}
+            className={`likert-option likert-option--${n} ${selectedVal === n || tapLabel === n ? 'selected' : ''} ${tapLabel === n ? 'likert-option--tapped' : ''}`}
             aria-label={`${LIKERT_OPTION_NAMES[n]} (${n} of 5)`}
             aria-pressed={selectedVal === n}
             data-anchor={LIKERT_OPTION_NAMES[n]}
@@ -321,6 +340,23 @@ export default function SurveyComponent({
         {isForced ? forcedParts?.prompt : currentQuestion.text}
       </p>
 
+      {/* Guidance opens directly under the question, above the answer scale,
+          so it reads in order (question, help, answer) where the student is
+          already looking, and never covers the 1 to 5 buttons. */}
+      {currentQuestion?.tip && showTip && (
+        <div className="survey-tip__box survey-tip__box--inline" role="note">
+          <button
+            type="button"
+            className="survey-tip__close"
+            onClick={() => setShowTip(false)}
+            aria-label="Close guidance"
+          >
+            ×
+          </button>
+          {currentQuestion.tip}
+        </div>
+      )}
+
       <div className="survey-question">
         {isForced ? renderForcedButtons() : renderLikertButtons()}
       </div>
@@ -373,14 +409,6 @@ export default function SurveyComponent({
           )}
         </div>
       </div>
-
-      {/* Guidance now flows in below the footer (pushes the card taller) instead
-          of floating over the answer scale, so it never covers the 4/5 buttons. */}
-      {currentQuestion?.tip && showTip && (
-        <div className="survey-tip__box" role="note">
-          {currentQuestion.tip}
-        </div>
-      )}
 
         </>
       )}

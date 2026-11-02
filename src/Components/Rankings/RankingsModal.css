@@ -475,3 +475,28 @@
 .rk-via { display: block; width: fit-content; margin-bottom: 4px; padding: 1px 7px; border-radius: 999px; background: #eef4ff; color: #2f6fed; font-size: 0.66rem; font-weight: 700; cursor: help; }
 
 .rk-foot--licence { margin-top: 4px; opacity: 0.85; }
+
+/* Short screens (phones in landscape, ~350 to 520px tall), 2 Nov 2026.
+   The table used to be the only scrolling part, squeezed between the header and
+   the notes, so only the column titles and part of one row were visible. Here the
+   whole modal scrolls instead, and the table keeps a usable height of its own
+   (its header row still sticks while you scroll the universities). */
+@media (max-height: 520px) {
+  .rk-overlay { padding: 8px; align-items: flex-start; }
+  .rk-modal {
+    max-height: calc(100vh - 16px);
+    max-height: calc(100dvh - 16px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 14px 14px 12px;
+  }
+  .rk-table-outer { flex: 0 0 auto; }
+  .rk-table-wrap {
+    flex: 1 1 auto;
+    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px);
+  }
+  .rk-title { font-size: 1.05rem; }
+  .rk-foot { margin-top: 8px; }
+}

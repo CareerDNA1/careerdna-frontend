@@ -100,16 +100,15 @@
 
 /* ── CTA — fixed to viewport bottom, always visible ── */
 
+/* In the page flow below the tips (not pinned to the window), so it scrolls
+   with the content and never sits on top of the text on shorter laptop
+   screens. */
 .instp-left-cta {
-  position: fixed;
-  bottom: 22px;
-  left: 0;
-  right: 0;
-  z-index: 40;
+  position: static;
+  margin-top: 28px;
   display: flex;
   justify-content: center;
   align-items: center;
-  will-change: transform; /* keeps it on its own GPU layer during scroll */
 }
 
 .instp-left-cta .panel-cta,

@@ -9,11 +9,15 @@ import {
   Legend,
 } from "chart.js";
 
-import QUESTIONS from "../../utils/questions";
+import { getBankQuestions, CURRENT_BANK_VERSION } from "../../utils/banks";
+
 import { computeClarityPercents, CLARITY } from "../../utils/selfAwarenessSummary";
 import { readProgress } from "../../Hooks/useProgress";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
+
+// Fallback only (callers pass claritySummary): the current bank.
+const QUESTIONS = getBankQuestions(CURRENT_BANK_VERSION);
 
 const CDNA_BAR_THICKNESS_DESKTOP = 38;
 const CDNA_BAR_THICKNESS_MOBILE = 28;

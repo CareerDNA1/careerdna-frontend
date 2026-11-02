@@ -4,7 +4,8 @@ import { BrainCircuit, Send } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AccountNavbar from '../Components/Common/AccountNavbar';
 import { useAuth } from '../context/AuthContext';
-import { resumableProgress } from '../Hooks/useProgress';
+import { resumableProgress, readProgressVersions } from '../Hooks/useProgress';
+import { getBankForm, runIsOnOlderBank } from '../utils/banks';
 import { takeProfileStale, markProfileStale } from '../utils/profileCache';
 import { stageRunIds, newestPerItem } from '../utils/favouriteScope';
 import { supabase } from '../utils/supabaseClient';
@@ -662,6 +663,8 @@ export default function ProfilePage() {
   const [cancelDowngradeOpen, setCancelDowngradeOpen] = useState(false);
   const [cancellingDowngrade, setCancellingDowngrade] = useState(false);
   const [retakeConfirmOpen, setRetakeConfirmOpen] = useState(false);
+  // New report asked for while the latest assessment is on the older question bank.
+  const [newAssessmentNeededOpen, setNewAssessmentNeededOpen] = useState(false);
   const [showAllRuns, setShowAllRuns] = useState(false);
   const [satDismissed, setSatDismissed] = useState(false);
   const [academicHasData, setAcademicHasData] = useState(false);
@@ -784,7 +787,7 @@ export default function ProfilePage() {
     // (profiles.current_run_id) or, when nothing is pinned, the newest run.
     const profileData = await getMyProfile();
     const [runData, runCount, currentFull, sittingList] = await Promise.all([
-      listAssessmentRuns(20, 'id, created_at, survey_taken_at, intro_answers_json, output_version'),
+      listAssessmentRuns(20, 'id, created_at, survey_taken_at, intro_answers_json, output_version, bank_version'),
       getAssessmentRunCount(),
       getCurrentAssessmentRun(profileData?.current_run_id || null),
       listAssessmentSittings().catch((e) => { console.warn('Assessment count failed:', e?.message || e); return null; }),
@@ -1188,6 +1191,9 @@ export default function ProfilePage() {
     // stored yet (before sql/24 is run).
     const run = latestAssessment || currentRun || latestRun;
     if (!run) return;
+    // Answers on the older question bank are not used for new reports: the
+    // student is asked to take the new assessment (first report free).
+    if (runIsOnOlderBank(run)) { setNewAssessmentNeededOpen(true); return; }
     setErrorMsg('');
     setErrorRetry(null);
     const a = (profile && profile.academic_status) || run.intro_answers_json || {};
@@ -1487,6 +1493,7 @@ export default function ProfilePage() {
     ? new Date(latestAssessment.survey_taken_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
     : '';
   const canMakeReport = Boolean(latestAssessment || currentRun || latestRun);
+  const latestOnOlderBank = canMakeReport && runIsOnOlderBank(latestAssessment || currentRun || latestRun);
 
   // Your Advisor on this page talks about next steps, favourites, grades and applications.
   useEffect(() => {
@@ -1522,7 +1529,8 @@ export default function ProfilePage() {
   // and finally apply. University leavers keep the shorter roadmap.
   // An assessment saved on this device but not yet turned into a report.
   const draft = resumableProgress(user?.id);
-  const draftTotal = 100;
+  // The bank the unfinished survey is on (a survey started before v2 finishes on v1).
+  const draftTotal = getBankForm(readProgressVersions().bank).length;
   const draftComplete = !!draft && draft.answered >= draftTotal;
   const draftLabel = draft
     ? (draftComplete ? 'See your results' : `Continue your assessment (${draft.answered} of ${draftTotal} answered)`)
@@ -2097,7 +2105,7 @@ export default function ProfilePage() {
                 <>
                   <p>
                     {draftComplete
-                      ? 'You have answered all 100 questions. Your answers are saved and your results are one click away.'
+                      ? `You have answered all ${draftTotal} questions. Your answers are saved and your results are one click away.`
                       : `You have an assessment in progress: ${draft.answered} of ${draftTotal} questions answered. Your answers are saved on this device.`}
                   </p>
                   <button type="button" className="profile-btn-hover-primary" style={btnPrimary} onClick={continueDraft}>
@@ -2230,6 +2238,52 @@ export default function ProfilePage() {
       </div>
 
 
+      {newAssessmentNeededOpen ? (
+        <div className="profile-retake-confirm-overlay" onClick={() => setNewAssessmentNeededOpen(false)}>
+          <section
+            className="profile-retake-confirm-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="newAssessmentNeededTitle"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="profile-retake-confirm-close"
+              onClick={() => setNewAssessmentNeededOpen(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
+
+            <h3 id="newAssessmentNeededTitle">Take the new assessment</h3>
+            <p>
+              We have improved the CareerDNA model and assessment, drawing on feedback, data and the work of our behavioural scientists. To make a new report, please take the new assessment first. Your first report from it is free.
+            </p>
+            <p>
+              Your existing reports stay exactly as they are, and you can open them at any time.
+            </p>
+
+            <div className="profile-retake-confirm-actions">
+              <button
+                type="button"
+                className="profile-retake-confirm-secondary"
+                onClick={() => setNewAssessmentNeededOpen(false)}
+              >
+                Not now
+              </button>
+              <button
+                type="button"
+                className="profile-retake-confirm-primary"
+                onClick={() => { setNewAssessmentNeededOpen(false); navigate('/start'); }}
+              >
+                Start the new assessment
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
       {retakeConfirmOpen ? (
         <div className="profile-retake-confirm-overlay" onClick={closeRetakeConfirmModal}>
           <section
@@ -2250,7 +2304,7 @@ export default function ProfilePage() {
 
             <h3 id="retakeConfirmTitle">Start a new assessment?</h3>
             <p>
-              You will answer the questions again. Your new answers create a brand new report, saved to your account alongside your existing ones, so none of your current reports change. This uses one assessment credit.
+              You will answer the questions again. Your new answers create a brand new report, saved to your account alongside your existing ones, so none of your current reports change. {latestOnOlderBank ? 'This is the new CareerDNA assessment, and your first report from it is free.' : 'This uses one assessment credit.'}
             </p>
 
             <div className="profile-retake-confirm-actions">

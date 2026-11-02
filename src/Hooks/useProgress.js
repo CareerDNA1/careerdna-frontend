@@ -5,6 +5,7 @@
 // locking mid-survey. It is tagged with the user id that started it, so a
 // different account on the same device never sees it.
 import { useCallback } from 'react';
+import { progressVersions, CURRENT_BANK_VERSION } from '../utils/banks';
 
 const KEY = 'cdna_progress_v1';
 const JUMP_KEY = 'cdna_jump_last';
@@ -14,14 +15,39 @@ function store() {
   try { return window.localStorage; } catch { return null; }
 }
 
+// An unfinished survey started on an older question bank (no bank stamp, or
+// a stamp other than the current bank) is discarded, so the student starts
+// the new assessment instead of finishing the old one (decision 1 Nov 2026).
+// Item ids are reused across banks, so those answers cannot be carried over.
+function isOlderBankDraft(p) {
+  if (!p || typeof p !== 'object') return false;
+  const hasAnswers = p.answers && typeof p.answers === 'object' && Object.keys(p.answers).length > 0;
+  return hasAnswers && p.bank !== CURRENT_BANK_VERSION;
+}
+
 export function readProgress() {
   try {
     const s = store();
     const raw = s ? s.getItem(KEY) : null;
-    return raw ? JSON.parse(raw) : {};
+    const p = raw ? JSON.parse(raw) : {};
+    if (isOlderBankDraft(p)) {
+      if (s) s.removeItem(KEY);
+      try {
+        sessionStorage.removeItem(KEY);
+        sessionStorage.removeItem(JUMP_KEY);
+        sessionStorage.removeItem(SUBDIMS_KEY);
+      } catch { /* ignore */ }
+      return {};
+    }
+    return p;
   } catch {
     return {};
   }
+}
+
+// Bank versions for the survey stored on this device (see utils/banks).
+export function readProgressVersions() {
+  return progressVersions(readProgress());
 }
 
 export function writeProgress(patch) {

@@ -32,6 +32,7 @@
 // Bands (ClarityChart): High 70 and above, Developing 50 to 69, else Low.
 
 import { computeResponseStyle } from "./responseStyle";
+import { presentationFormFor } from "./banks";
 
 export const CLARITY = Object.freeze({
   wConsistency: 0.5,
@@ -191,7 +192,7 @@ export function computeClarityPercents(questions, answers, opts = {}) {
     opts.responseStyle && typeof opts.responseStyle === "object"
       ? opts.responseStyle
       : answers && typeof answers === "object" && Object.keys(answers).length
-      ? computeResponseStyle(answers)
+      ? computeResponseStyle(answers, presentationFormFor(questions))
       : null;
   const severity = style?.severity || "none";
   const cap =

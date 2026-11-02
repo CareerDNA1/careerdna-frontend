@@ -1,6 +1,9 @@
 // src/utils/scoreSubdimensions.js
 // Compute per-subdimension 0–100% scores from raw answers + questions.
 // It respects: type: 'likert' (1–5), type: 'forced' ('A'→1, 'B'→5), and reverse flags.
+// Trait names come out under their current names (bank v1 names are mapped,
+// see utils/traitNames.js), so every bank reports the same labels.
+import { canonicalTraitName } from './traitNames';
 
 const LIKERT_MIN = 1;
 const LIKERT_MAX = 5;
@@ -35,7 +38,7 @@ export function scoreSubdimensions(answers, questions) {
   // Build subdimension → list of question records
   const buckets = new Map();
   for (const q of questions) {
-    const sub = (q?.subdimension || '').trim();
+    const sub = canonicalTraitName(q?.subdimension);
     if (!sub) continue;
     if (!buckets.has(sub)) buckets.set(sub, []);
     buckets.get(sub).push(q);

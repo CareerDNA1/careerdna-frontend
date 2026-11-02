@@ -11,7 +11,8 @@
 //
 // Forced A/B handling is retained below but disabled — no v2 questions use type:'forced'.
 
-import archetypeWeights from './archetypeWeights';
+import archetypeWeights from './archetypeWeights_v2';
+import { canonicalTraitName } from './traitNames';
 import { scoreSubdimensions } from './scoreSubdimensions';
 
 function getArchetypeKeys(weights) {
@@ -20,7 +21,9 @@ function getArchetypeKeys(weights) {
 }
 
 // `weights` defaults to the current matrix; callers scoring a saved run pass
-// the matrix of that run's bank (see utils/banks).
+// the matrix of that run's bank (see utils/banks). Matrix rows are matched to
+// scores by current trait name, so a bank v1 matrix and a v2 matrix give the
+// same archetype scores for the same v1 trait scores.
 export function calculateResults(answers, questions, weights = archetypeWeights) {
   // ── Step 1: BD scores (0–100) via scoreSubdimensions ────────────────────────
   const bdRows = scoreSubdimensions(answers, questions || []);
@@ -45,7 +48,7 @@ export function calculateResults(answers, questions, weights = archetypeWeights)
   });
 
   for (const [bdName, weightRow] of Object.entries(weights)) {
-    const bdScore = bdScoreMap[bdName];
+    const bdScore = bdScoreMap[canonicalTraitName(bdName)];
     if (bdScore === undefined) continue; // BD not answered / not in questions
 
     for (const [arch, w] of Object.entries(weightRow)) {

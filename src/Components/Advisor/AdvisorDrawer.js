@@ -16,7 +16,8 @@ import './AdvisorDrawer.css';
 // tab, an "Ask your advisor" button anywhere in the app, or a swipe from the
 // right edge (up from the bottom bar on phones); closed by the ×, Escape, the
 // tab again, or a swipe back. The open state is remembered.
-const PHONE = '(max-width: 760px)';
+// Phones held upright, and phones in landscape (short and not too wide).
+const PHONE = '(max-width: 760px), (max-height: 500px) and (max-width: 1000px)';
 const isPhone = () => window.matchMedia(PHONE).matches;
 
 // stage: 'school' or 'university' (the report's viewer status). The drawer
@@ -140,6 +141,70 @@ export default function AdvisorDrawer({ assessmentRunId, stage = '' }) {
     return () => clearTimeout(t);
   }, [open, context?.title]);
 
+  // Keep the pill beside the page content on every screen size (2 Nov 2026).
+  // Vertically: at the bottom of the window, or level with the page footer when
+  // the page ends above the bottom (tall portrait screens). Horizontally: just
+  // to the right of the main content column when there is room (very wide
+  // screens), otherwise in the corner as before.
+  const tabRef = useRef(null);
+  const [tabPos, setTabPos] = useState(null);
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const EDGE = 22;      // distance from the window edge in the default corner
+    const GAP = 24;       // space between the content column and the pill
+    let raf = 0;
+    const measure = () => {
+      raf = 0;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      // Phones keep the centred bar; short wide screens (phones in landscape) keep
+      // the compact corner button from the stylesheet.
+      if (window.matchMedia(PHONE).matches || vh <= 520) { setTabPos(null); return; }
+      let bottom = EDGE;
+      const footerBottom = Array.from(document.querySelectorAll('footer[aria-label="CareerDNA footer"]'))
+        .map((el) => el.getBoundingClientRect())
+        .filter((r) => r.height > 0)
+        .reduce((m, r) => Math.max(m, r.bottom), 0);
+      if (footerBottom > 0) {
+        const gap = vh - footerBottom;
+        if (gap > 0) bottom = Math.round(gap + EDGE);
+      }
+      let right = EDGE;
+      const anchors = Array.from(document.querySelectorAll('.profile-shell, #results-root .section-card'));
+      const contentRight = anchors.map((el) => el.getBoundingClientRect()).filter((r) => r.width > 0).reduce((m, r) => Math.max(m, r.right), 0);
+      const pillWidth = tabRef.current ? tabRef.current.offsetWidth : 150;
+      if (contentRight > 0) {
+        const room = vw - contentRight;
+        if (room >= pillWidth + GAP + EDGE) right = Math.round(room - GAP - pillWidth);
+      }
+      setTabPos(bottom === EDGE && right === EDGE ? null : { bottom, right });
+    };
+    const schedule = () => { if (!raf) raf = window.requestAnimationFrame(measure); };
+    schedule();
+    window.addEventListener('resize', schedule);
+    window.addEventListener('scroll', schedule, { passive: true });
+    // body never changes size when the page is shorter than the window
+    // (html/body have min-height: 100%), so watch the page itself: any change
+    // to the app's content (sections opening, data arriving) re-measures.
+    const root = document.getElementById('root') || document.body;
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(schedule) : null;
+    if (ro) {
+      ro.observe(root);
+      Array.from(root.children).forEach((el) => ro.observe(el));
+    }
+    const mo = typeof MutationObserver !== 'undefined' ? new MutationObserver(schedule) : null;
+    if (mo) mo.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style', 'open'] });
+    const late = [300, 1000, 2500].map((ms) => window.setTimeout(schedule, ms));
+    return () => {
+      window.removeEventListener('resize', schedule);
+      window.removeEventListener('scroll', schedule);
+      if (ro) ro.disconnect();
+      if (mo) mo.disconnect();
+      late.forEach((t) => window.clearTimeout(t));
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, []);
+
   if (!assessmentRunId) return null;
 
   const contextTitle = context?.title ? `Ask about ${context.title}` : 'Ask anything about your results';
@@ -153,6 +218,8 @@ export default function AdvisorDrawer({ assessmentRunId, stage = '' }) {
         <button
           type="button"
           className={`advisor-tab${dragging ? ' is-dragging' : ''}${showHint ? ' show-hint' : ''}`}
+          ref={tabRef}
+          style={tabPos || undefined}
           onClick={() => openAdvisor()}
           aria-label="Open Your Advisor"
           aria-expanded={false}

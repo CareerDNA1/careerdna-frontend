@@ -6,7 +6,9 @@
 html:has(#results-root),
 body:has(#results-root),
 #root:has(#results-root) {
-  background: #f0f5ff;
+  /* One flat colour behind the whole results page, the same colour the header
+     gradient fades into, so tall or wide screens never show a seam. */
+  background: #f8fafc;
 }
 
 #results-root {
@@ -17,7 +19,9 @@ body:has(#results-root),
   color: #222;
   font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   line-height: 1.6;
-  background: linear-gradient(180deg, #f0f5ff 0%, #f8fafc 100%);
+  /* Gradient over a fixed 900px, then flat: identical on normal screens, no
+     stretched band on tall ones. */
+  background: linear-gradient(180deg, #f0f5ff 0px, #f8fafc 900px, #f8fafc 100%);
   display: flex;
   flex-direction: column;
 }
@@ -528,6 +532,10 @@ body:has(#results-root),
    than the page running out of height and leaving the intro on screen. */
 .swipe-deck {
   min-height: calc(100vh - 120px);
+  /* Capped (2 Nov 2026): on tall portrait monitors (e.g. 1440 x 2560) the full
+     window height left a long empty white card under short sections. Normal
+     screens are under the cap, so their scroll behaviour is unchanged. */
+  min-height: min(calc(100vh - 120px), 1000px);
 }
 
 /* Direction-aware slide when the active section changes (swipe or tab tap), so
@@ -993,7 +1001,7 @@ body:has(#results-root),
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 500px) and (max-width: 1000px) {
   #results-root {
     padding: calc(var(--account-navbar-height, 56px) + 36px) 18px 40px;
   }
@@ -1177,7 +1185,7 @@ body:has(#results-root),
 /* PHONE: make each analysis item read as a tidy, self-contained card —
    subtle surface, its own padding, the bold label on its own line above the
    text, and the zoom/thumb controls in a clean row at the bottom. */
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 500px) and (max-width: 1000px) {
   /* Single column so the text uses the FULL card width; more inner padding so
      it isn't squeezed against the border. Relative so the thumbs can pin to the
      top-right corner. */
@@ -1718,7 +1726,7 @@ body:has(#results-root),
 /* PHONE: move the analysis tab menu to the TOP as a horizontal scroll strip so
    the content gets the full width (side tabs squeeze it to a sliver). Placed
    last + !important so it beats the earlier `!important` two-column rules. */
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 500px) and (max-width: 1000px) {
   /* App-style horizontal tab bar on top: single scrollable row with an
      underline for the active section. minmax(0,1fr) + min-width:0 keep it from
      stretching the column past the card (which was clipping the content). */
@@ -1863,7 +1871,10 @@ body:has(#results-root),
 .results-footer {
   width: 100%;
   max-width: 760px;
-  margin: auto auto 0;
+  /* Footer sits directly under the content (2 Nov 2026). It used to be pushed to
+     the bottom of the window (margin-top: auto), which left a large gap above it
+     on tall portrait screens. Same behaviour as the profile page now. */
+  margin: 0 auto;
   padding: 70px 20px 0;
   text-align: center;
   border-top: 1px solid rgba(47, 111, 237, 0.10);
@@ -1904,9 +1915,9 @@ body:has(#results-root),
   line-height: 1.5;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 500px) and (max-width: 1000px) {
   .results-footer {
-    margin: auto auto 0;
+    margin: 0 auto;
     padding-top: 56px;
   }
 }
@@ -2071,7 +2082,7 @@ body:has(#results-root),
   box-shadow: 0 0 0 3px rgba(47, 111, 237, 0.1);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 500px) and (max-width: 1000px) {
   .results-feedback-card {
     padding: 20px 16px;
     border-radius: 16px;
@@ -2249,7 +2260,7 @@ body:has(#results-root),
   background: rgba(255, 255, 255, 0.52);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 500px) and (max-width: 1000px) {
   .results-feedback-card {
     padding: 16px 0 0;
     border-radius: 0;
@@ -2396,7 +2407,7 @@ body:has(#results-root),
   position: relative;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 500px) and (max-width: 1000px) {
   .results-feedback-card {
     max-width: 100%;
     padding-top: 18px;
@@ -2512,7 +2523,7 @@ body:has(#results-root),
   cursor: default;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 500px) and (max-width: 1000px) {
   /* Two-per-row grid so all four options fit evenly instead of a 3 + 1 wrap. */
   .results-feedback-rating {
     display: grid;
@@ -2658,7 +2669,7 @@ body:has(#results-root),
    result accordions (traits, clarity). Narrow phone columns read better justified.
    Scoped to #results-root only, and non-!important so inline-centred utility text
    (e.g. the "Tap a bar" chart hints) stays centred. */
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-height: 500px) and (max-width: 1000px) {
   #results-root p,
   #results-root li {
     text-align: left;
@@ -2957,3 +2968,18 @@ body:has(#results-root),
 .analysis-box .markdown-content p {
   max-width: 80ch;
 }
+
+/* Section menu: whenever it is the vertical sidebar (wider than 768px), its items
+   are left aligned. An older 920px rule centred them for a wrapped tab row that
+   is no longer used, which centred the sidebar on tablets and phones in
+   landscape (2 Nov 2026). Below 769px the menu is the horizontal tab bar. */
+@media (min-width: 1001px), (min-width: 769px) and (min-height: 501px) {
+  .analysis-tab-button,
+  .analysis-tab-button__label {
+    text-align: left !important;
+  }
+}
+
+/* Phones in landscape (up to 1000px wide and 500px tall) use the same report
+   layout as phones held upright: the horizontal section tab bar on top. Every
+   phone-layout rule above uses this pair of conditions (2 Nov 2026). */

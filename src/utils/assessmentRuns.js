@@ -7,7 +7,7 @@ import { saveIdentityProfile } from './identityProfile';
 import { calculateResults } from './calculateResults';
 import { scoreSubdimensions } from './scoreSubdimensions';
 import { computeClarityPercents } from './selfAwarenessSummary';
-import { getBankQuestions, getBankWeights, runVersions, currentVersions } from './banks';
+import { getBankQuestions, getBankWeights, runVersions, currentVersions, runIsOnOlderBank } from './banks';
 import { carryOverFavourites } from './favouriteCarryOver';
 import { clearRunCache } from './savedItems';
 import { getAcademicStatus, snapshotAnswers, stageFromAnswers } from './academicStatus';
@@ -96,15 +96,18 @@ export function assessmentNumbersFor(runs) {
 // (findExistingRunForSurvey) and updates it with the full results and the
 // report, so no second row is created. Never throws: a failure here must not
 // stop the student reaching their results.
-export async function saveSurveyAnswersOnFinish({ nonce = '', introAnswers = {}, surveyAnswers = {} } = {}) {
+export async function saveSurveyAnswersOnFinish({ nonce = '', introAnswers = {}, surveyAnswers = {}, versions = null } = {}) {
   try {
     if (!surveyAnswers || typeof surveyAnswers !== 'object' || !Object.keys(surveyAnswers).length) return null;
     const existing = await findExistingRunForSurvey({ nonce, surveyAnswers });
     if (existing?.id) return existing;
-    const scored = rescoreRunFromAnswers({ survey_answers_json: surveyAnswers });
+    // Scored and stamped on the bank the survey was answered on.
+    const stamp = { ...currentVersions(), ...(versions || {}) };
+    const scored = rescoreRunFromAnswers({ survey_answers_json: surveyAnswers, bank_version: stamp.bank, scoring_version: stamp.scoring, form: stamp.form });
     return await saveAssessmentRun({
       introAnswers: introAnswers || {},
       surveyAnswers,
+      versions: stamp,
       resultsJson: {
         archetypes: scored?.archetypes || {},
         subdimensionRows: scored?.subdimensionRows || [],
@@ -511,6 +514,13 @@ export async function updateAssessmentRun(runId, patch) {
 
 export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswers = {}) {
   if (!run) throw new Error('Saved run is required.');
+  // Answers given on an older question bank are not used for new reports:
+  // the student takes the new assessment instead (its first report is free).
+  if (runIsOnOlderBank(run)) {
+    const err = new Error('CareerDNA has a new assessment. To make a new report, please take the new assessment first. Your first report from it is free.');
+    err.code = 'OLDER_BANK';
+    throw err;
+  }
 
   // The profile lists runs with a slim payload (no results_json) for speed, so a
   // run object passed in from the list may not carry its archetypes. Fetch the
@@ -564,6 +574,7 @@ export async function rerunAssessmentWithOutputParameters(run, updatedIntroAnswe
     subdimensionRows,
     claritySummary,
     surveyAnswers: run.survey_answers_json || null,
+    bankVersion: runVersions(run).bank,
   });
 
   const newRun = await saveAssessmentRun({
@@ -604,6 +615,7 @@ export async function runAiSummaryForSavedRun(runId, { bypassQualityGate = false
     subdimensionRows: subdimensions,
     claritySummary,
     surveyAnswers: run.survey_answers_json || null,
+    bankVersion: runVersions(run).bank,
   });
 
   if (!archetypes || !Object.keys(archetypes).length) {

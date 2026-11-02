@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { writeProgress, clearProgress, resumableProgress } from '../Hooks/useProgress';
+import { CURRENT_BANK_VERSION } from '../utils/banks';
 import { getAcademicStatus, snapshotAnswers } from '../utils/academicStatus';
 
 function makeNonce(len = 16) {
@@ -43,6 +44,7 @@ export default function Start() {
       writeProgress({
         started: true,
         startedAt: Date.now(),
+        bank: CURRENT_BANK_VERSION, // the bank this survey is answered on
         nonce: makeNonce(),
         ownerId: user?.id || null,
         index: 0,

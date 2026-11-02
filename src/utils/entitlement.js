@@ -17,6 +17,9 @@ export async function fetchEntitlement() {
   const advisorUnlimited = Boolean(e.advisorUnlimited);
   return {
     plan: String(e.plan || 'free').toLowerCase(),
+    // First report on the new assessment for someone whose earlier assessment
+    // was on the older question bank: free (the backend decides and enforces).
+    freeNewAssessmentReport: Boolean(e.freeNewAssessmentReport),
     reports: {
       unlimited: reportsUnlimited,
       used: num(e.reportsUsed),

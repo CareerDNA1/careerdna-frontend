@@ -1,5 +1,7 @@
 // utils/Dimensions.js
-// CareerDNA v2 — 25 behavioural dimensions across 4 CIDs.
+// CareerDNA v5 (question bank v2): 27 traits across 4 groups. Labels must match
+// the trait names in questions_v2.js; bank v1 names are mapped to these by
+// utils/traitNames.js before anything is shown.
 // Default export MUST be an ARRAY for the chart.
 
 const DIMENSIONS = [
@@ -22,10 +24,10 @@ const DIMENSIONS = [
       { key: "analyticalCuriosity",      label: "Analytical Curiosity",       shortLabel: "Analytical"    },
       { key: "creativeExpression",       label: "Creative Expression",        shortLabel: "Creativity"    },
       { key: "helpingCaring",            label: "Helping & Caring",           shortLabel: "Helping"       },
-      { key: "entrepreneurialDrive",     label: "Entrepreneurial Drive",      shortLabel: "Entrepreneurial" },
-      { key: "technicalCuriosity",       label: "Technical Curiosity",        shortLabel: "Technical"     },
-      { key: "culturalGlobalCuriosity",  label: "Cultural & Global Curiosity", shortLabel: "Cultural"     },
-      { key: "dataCuriosity",            label: "Data Curiosity",             shortLabel: "Data"          },
+      { key: "leadingEnterprising",      label: "Leading & Starting Things",     shortLabel: "Leading"       },
+      { key: "handsOnTechnical",         label: "Hands-On & Technical",       shortLabel: "Hands-On"      },
+      { key: "societyWorldCuriosity",    label: "Society & World Curiosity",  shortLabel: "Society"       },
+      { key: "numbersDataCuriosity",     label: "Numbers & Data Curiosity",   shortLabel: "Numbers"       },
     ],
   },
   {
@@ -35,9 +37,10 @@ const DIMENSIONS = [
       { key: "purposeImpact", label: "Purpose & Impact", shortLabel: "Purpose"     },
       { key: "autonomy",      label: "Autonomy",         shortLabel: "Autonomy"    },
       { key: "belonging",     label: "Belonging",        shortLabel: "Belonging"   },
-      { key: "achievement",   label: "Achievement",      shortLabel: "Achievement" },
+      { key: "recognitionReward", label: "Recognition & Reward", shortLabel: "Recognition" },
       { key: "security",      label: "Security",         shortLabel: "Security"    },
       { key: "mastery",       label: "Mastery",          shortLabel: "Mastery"     },
+      { key: "workLifeBalance", label: "Work-Life Balance", shortLabel: "Balance"   },
     ],
   },
   {
@@ -50,6 +53,7 @@ const DIMENSIONS = [
       { key: "precision",      label: "Precision",      shortLabel: "Precision"      },
       { key: "pace",           label: "Pace",           shortLabel: "Pace"           },
       { key: "variety",        label: "Variety",        shortLabel: "Variety"        },
+      { key: "activeOutdoors", label: "Active & Outdoors", shortLabel: "Active"     },
     ],
   },
 ];

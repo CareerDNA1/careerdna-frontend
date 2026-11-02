@@ -16,6 +16,8 @@
 // a fallback for runs saved before raw answers were available to the gate.
 
 import { computeResponseStyle, primaryResponseStyleFlag } from './responseStyle';
+import { getBankForm, LEGACY_BANK_VERSION } from './banks';
+import { BAND_CUTS } from './bands';
 
 const toNumber = (value) => {
   const n = Number(value);
@@ -60,11 +62,19 @@ export function calculateProfileQualityGate({
   claritySummary = null,
   surveyAnswers = null,
   responseStyle = null,
+  // Bank the answers belong to, so the style checks read them against the
+  // right items and presentation order. Unstamped answers are bank v1.
+  bankVersion = LEGACY_BANK_VERSION,
 } = {}) {
   const archetypeScores = Object.values(archetypes || {})
     .map(scoreFromPossibleObject)
     .filter(Number.isFinite);
   const archetypeCountAtOrAbove50 = archetypeScores.filter((score) => score >= 50).length;
+  // Highest profile, for the "no clear profile" check below.
+  const topArchetype = Object.entries(archetypes || {})
+    .map(([name, v]) => ({ name, score: scoreFromPossibleObject(v) }))
+    .filter((a) => Number.isFinite(a.score))
+    .sort((a, b) => b.score - a.score)[0] || null;
   const passesArchetypeGate = archetypeCountAtOrAbove50 >= 2;
 
   const traitScores = (Array.isArray(subdimensionRows) ? subdimensionRows : [])
@@ -79,7 +89,7 @@ export function calculateProfileQualityGate({
     responseStyle && typeof responseStyle === 'object'
       ? responseStyle
       : surveyAnswers && typeof surveyAnswers === 'object' && Object.keys(surveyAnswers).length
-      ? computeResponseStyle(surveyAnswers)
+      ? computeResponseStyle(surveyAnswers, getBankForm(bankVersion || LEGACY_BANK_VERSION))
       : null;
 
   const primaryFlag = style ? primaryResponseStyleFlag(style) : null;
@@ -96,7 +106,19 @@ export function calculateProfileQualityGate({
   // Legacy clarity check only when there is no response-style evidence.
   const passesClarityGate = style ? true : legacyClarityPasses(claritySummary);
 
+  // No clear profile (2 Nov 2026): the answers pass every style check, but no
+  // profile reaches the Good band (55), so the report would name a profile
+  // that is not a real match. About 4 in 100 clean runs in simulation. Treated
+  // like the other style flags: retake recommended, Continue anyway allowed.
+  const noClearProfile =
+    !!topArchetype && topArchetype.score < BAND_CUTS.good &&
+    styleSeverity !== 'severe' && styleSeverity !== 'block';
+  const effectiveFlag = noClearProfile && !primaryFlag
+    ? { code: 'no_clear_profile', severity: 'severe', topArchetype }
+    : (noClearProfile ? { ...primaryFlag, code: 'no_clear_profile', severity: 'severe', topArchetype } : primaryFlag);
+
   const failedChecks = [];
+  if (noClearProfile) failedChecks.push('no_clear_profile');
   if (!passesArchetypeGate) failedChecks.push('archetype_signal');
   if (!passesTraitGate) failedChecks.push('trait_signal');
   if (!passesClarityGate) failedChecks.push('clarity_signal');
@@ -105,7 +127,7 @@ export function calculateProfileQualityGate({
   // Hard block: nothing to report on, or an obvious non-attempt.
   const hardBlock = !passesArchetypeGate || !passesTraitGate || styleSeverity === 'block';
   // Soft block: the student is told what happened and may continue anyway.
-  const shouldBlockAnalysis = hardBlock || !passesClarityGate || styleSeverity === 'severe';
+  const shouldBlockAnalysis = hardBlock || !passesClarityGate || styleSeverity === 'severe' || noClearProfile;
 
   return {
     shouldBlockAnalysis,
@@ -118,7 +140,9 @@ export function calculateProfileQualityGate({
     goodTraitCount,
     developingClarityCount: null,
     responseStyle: style,
-    primaryFlag,
+    primaryFlag: hardBlock ? primaryFlag : effectiveFlag,
+    topArchetype,
+    noClearProfile,
     failedChecks,
   };
 }
@@ -144,6 +168,11 @@ export function getProfileQualityGateMessage(gate = {}) {
       return 'You chose the same answer many times in a row. Runs like that usually mean the questions were not being read, so the report would be built on answers that do not reflect you.';
     case 'midpoint':
       return 'You chose the middle option most of the time. The middle is fine when it is true, but with this many the report cannot tell what you lean towards.';
+    case 'no_clear_profile': {
+      const top = gate?.primaryFlag?.topArchetype || gate?.topArchetype;
+      const lead = top ? `Your highest is ${top.name} at ${Math.round(top.score)}, ` : 'Your highest profile is ';
+      return `None of your seven profiles comes out clearly. ${lead}below the ${BAND_CUTS.good} needed for a clear match, so a report would describe you through profiles that do not really fit. This usually happens when many answers sit close to the middle or pull in different directions. We strongly recommend retaking: for each statement, think of a real example from school, hobbies, friends or work, and use the agree or disagree end whenever a statement clearly does or does not sound like you.`;
+    }
     case 'contradiction':
       return 'Inside the same areas, your answers often contradict each other. That usually means some questions were misread, so the scores for those areas are not reliable.';
     default:
@@ -163,6 +192,8 @@ export function getProfileQualityCaveat(gate = {}) {
       return 'A note on this report: your answers included long runs of the same option in a row, which usually means some questions were answered without being read. The trait scores behind this report, and the matches built from them, may describe the pattern of clicking rather than you. Treat what follows as a rough first look, and retake the questionnaire when you have a quiet moment.';
     case 'midpoint':
       return 'A note on this report: you chose the middle option for a large share of the questions, so many traits sit close together and the questionnaire could not tell which ones matter most to you. The matches below are less certain than usual and may change if you retake with clearer answers. Liking and disliking the worlds and pathways as you read will also sharpen them.';
+    case 'no_clear_profile':
+      return 'A note on this report: none of your seven profiles reached a clear match, so the profiles, worlds and pathways below show only slight leanings rather than a clear picture of you. Treat them as a starting point, and retake the questionnaire, thinking of real examples for each statement, for a sharper result.';
     case 'contradiction':
       return 'A note on this report: within several traits, your answers to related questions pointed in opposite directions, which usually means some questions were misread. The scores for those traits are less reliable than usual, so a few of the matches below may be stronger or weaker than they should be. Retaking the questionnaire when you have a quiet moment will give a steadier picture.';
     default:

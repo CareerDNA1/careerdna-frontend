@@ -1,0 +1,262 @@
+// utils/archetypeWeights_v2.js
+// CareerDNA bank v2: 27 sub-dimensions x 7 archetypes (46 non-zero weights).
+// Source of truth: CareerDNA_v5.xlsx, Weight Matrix sheet. Generated.
+// NOTE: careerdna-backend/data/cdna/subdim_matrix.js must mirror this file
+// exactly (checked by scripts/checkModel.js).
+
+const archetypeWeights = {
+
+  // WHO YOU ARE
+  "Originality": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 1,
+    Explorer: 0.4,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 0.8
+  },
+  "Reliability": {
+    Achiever: 0.6,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 1,
+    Thinker: 0,
+    Visionary: 0
+  },
+  "Resilience": {
+    Achiever: 0.5,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 0.5
+  },
+  "Adaptability": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 0.3,
+    Explorer: 1,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 0.3
+  },
+  "Social Confidence": {
+    Achiever: 0,
+    Connector: 1,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 0.2
+  },
+  "Empathy": {
+    Achiever: 0,
+    Connector: 1,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 0
+  },
+
+  // WHAT YOU LOVE
+  "Analytical Curiosity": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 0.4,
+    Organizer: 0,
+    Thinker: 1,
+    Visionary: 0
+  },
+  "Creative Expression": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 1,
+    Explorer: 0,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 0
+  },
+  "Helping & Caring": {
+    Achiever: 0,
+    Connector: 1,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 0
+  },
+  "Leading & Starting Things": {
+    Achiever: 0.4,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 1
+  },
+  "Hands-On & Technical": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 0.6,
+    Explorer: 0,
+    Organizer: 0,
+    Thinker: 0.5,
+    Visionary: 0
+  },
+  "Society & World Curiosity": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 0.8,
+    Organizer: 0,
+    Thinker: 0.4,
+    Visionary: 0
+  },
+  "Numbers & Data Curiosity": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 0.6,
+    Thinker: 0.6,
+    Visionary: 0
+  },
+
+  // WHAT MATTERS TO YOU
+  "Purpose & Impact": {
+    Achiever: 0,
+    Connector: 0.3,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 1
+  },
+  "Autonomy": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 0.5,
+    Explorer: 0,
+    Organizer: 0,
+    Thinker: 0.5,
+    Visionary: 0.5
+  },
+  "Belonging": {
+    Achiever: 0,
+    Connector: 1,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 0
+  },
+  "Recognition & Reward": {
+    Achiever: 1,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 0
+  },
+  "Security": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 0.6,
+    Thinker: 0,
+    Visionary: 0
+  },
+  "Mastery": {
+    Achiever: 0.5,
+    Connector: 0,
+    Creator: 0.5,
+    Explorer: 0,
+    Organizer: 0,
+    Thinker: 1,
+    Visionary: 0
+  },
+  "Work-Life Balance": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 0.5,
+    Thinker: 0,
+    Visionary: 0
+  },
+
+  // HOW YOU WORK BEST
+  "Structure": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 1,
+    Thinker: 0,
+    Visionary: 0
+  },
+  "Collaboration": {
+    Achiever: 0,
+    Connector: 1,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 0
+  },
+  "Independence": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 0,
+    Thinker: 1,
+    Visionary: 0
+  },
+  "Precision": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 0,
+    Organizer: 1,
+    Thinker: 0.5,
+    Visionary: 0
+  },
+  "Pace": {
+    Achiever: 0.6,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 0.5,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 0
+  },
+  "Variety": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 1,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 0
+  },
+  "Active & Outdoors": {
+    Achiever: 0,
+    Connector: 0,
+    Creator: 0,
+    Explorer: 0.6,
+    Organizer: 0,
+    Thinker: 0,
+    Visionary: 0
+  }
+
+};
+
+export default archetypeWeights;

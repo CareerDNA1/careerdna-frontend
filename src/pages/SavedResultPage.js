@@ -10,6 +10,8 @@ import {
   rescoreRunFromAnswers,
 } from '../utils/assessmentRuns';
 import { runIsStale } from '../utils/outputVersion';
+import { runVersions, runIsOnOlderBank } from '../utils/banks';
+import { canonicalTraitName } from '../utils/traitNames';
 import InlineError from '../Components/Common/InlineError';
 import { friendlyError } from '../utils/friendlyError';
 import './ProfilePage.css';
@@ -78,6 +80,7 @@ export default function SavedResultPage() {
       subdimensionRows: Array.isArray(currentSaved?.subdimensionRows) ? currentSaved.subdimensionRows : [],
       claritySummary: currentSaved?.claritySummary || null,
       surveyAnswers: run?.survey_answers_json || null,
+      bankVersion: runVersions(run).bank,
     });
 
     if ((!bypassQualityGate && currentGate.shouldBlockAnalysis) || currentGate.hardBlock) {
@@ -137,22 +140,29 @@ export default function SavedResultPage() {
   const savedSummary = reportLimitReached ? 'REPORT_LIMIT_REACHED' : (run?.summary_markdown || '');
   const savedAnalysisMeta = saved?.analysisMeta || null;
   const savedIntroName = saved?.introName || '';
+  // Saved rows of a report with no answers keep the trait names of their day;
+  // they are shown under the current names (utils/traitNames).
   const savedSubdimensionRows = rescored?.subdimensionRows
-    || (Array.isArray(saved?.subdimensionRows) ? saved.subdimensionRows : []);
+    || (Array.isArray(saved?.subdimensionRows)
+      ? saved.subdimensionRows.map((row) => (row && row.name ? { ...row, name: canonicalTraitName(row.name) } : row))
+      : []);
   const savedClaritySummary = rescored?.claritySummary || saved?.claritySummary || null;
   const savedProfileQualityGate = calculateProfileQualityGate({
     archetypes: savedArchetypes,
     subdimensionRows: savedSubdimensionRows,
     claritySummary: savedClaritySummary,
     surveyAnswers: run?.survey_answers_json || null,
+    bankVersion: runVersions(run).bank,
   });
 
   // Non-blocking: if this result was generated under an older output version,
   // show a banner offering a re-run. It never blocks access to the old result.
-  const isStale = !loading && !errorMsg && !!run && runIsStale(run);
+  // A report on an older question bank is shown as it was: it is never sent
+  // to re-run (new reports need the new assessment, see ProfilePage).
+  const isStale = !loading && !errorMsg && !!run && runIsStale(run) && !runIsOnOlderBank(run);
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f5f7fb', paddingTop: '96px' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', paddingTop: '96px' }}>
       <AccountNavbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
 
       {loading ? (
@@ -200,6 +210,7 @@ export default function SavedResultPage() {
       ) : (
         <>
           <ResultsComponent
+            bankVersion={run ? runVersions(run).bank : undefined}
             results={savedArchetypes}
             initialAiSummary={savedSummary}
             loadingSummary={loadingSummary}

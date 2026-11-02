@@ -4,8 +4,11 @@ import Button from '../Common/Button';
 import instructionsGraphic from '../../Assets/images/instructions_graphic.webp';
 import logo from '../../Assets/images/logo-career-dna.png';
 import './Instructions.css';
+import { getBankForm, CURRENT_BANK_VERSION } from '../../utils/banks';
 
 const iconProps = { size: 18, weight: 'duotone' };
+// New surveys run on the current question bank (108 questions in v2).
+const questionCount = getBankForm(CURRENT_BANK_VERSION).length;
 
 const instructionItems = [
   {
@@ -14,7 +17,7 @@ const instructionItems = [
   },
   {
     icon: <Timer {...iconProps} />,
-    text: <>There are <strong>100 short questions</strong>, each answered on a scale from 1 to 5. Most people finish in <strong>about 15 minutes</strong> in one sitting, and your progress <strong>saves automatically</strong> as you go.</>,
+    text: <>There are <strong>{questionCount} short questions</strong>, each answered on a scale from 1 to 5. Most people finish in <strong>about 15 minutes</strong> in one sitting, and your progress <strong>saves automatically</strong> as you go.</>,
   },
   {
     icon: <Headphones {...iconProps} />,
@@ -30,7 +33,7 @@ const instructionItems = [
   },
   {
     icon: <Lightbulb {...iconProps} />,
-    text: <>Not sure what a question means? Tap <strong>Not sure? Get some guidance</strong> under it for a short explanation and an example. Use it as often as you like.</>,
+    text: <>Not sure what a question means? Select <strong>Not sure? Get some guidance</strong> below the answers for a short explanation that helps you think it through. Use it as often as you like.</>,
   },
 ];
 

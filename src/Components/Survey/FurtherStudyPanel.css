@@ -28,7 +28,10 @@
    stacking into one very tall block. */
 .fs-degree-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* Two columns only when each can be at least 260px; otherwise one. Sized by
+     the card, not the screen, so a narrow card on a wide-ish screen (phone in
+     landscape, tablet with the sidebar) no longer pushes text past the card. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 12px 26px;
 }
 @media (max-width: 640px) {

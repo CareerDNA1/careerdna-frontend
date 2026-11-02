@@ -4,15 +4,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import SurveyWrapper from '../Components/Survey/SurveyWrapper';
 import './SurveyQuestions.css';
 import SurveyComponent from '../Components/Survey/SurveyComponent';
-import { getBankForm, CURRENT_BANK_VERSION, CURRENT_FORM } from '../utils/banks';
 import { useSurveyEngine } from '../Hooks/useSurveyEngine';
 import { readProgress, writeProgress, clearProgress } from '../Hooks/useProgress';
 import ResumeSurveyModal from '../Components/Survey/ResumeSurveyModal';
 import StraightLineNudgeModal from '../Components/Survey/StraightLineNudgeModal';
 import { saveSurveyAnswersOnFinish } from '../utils/assessmentRuns';
 
-// New surveys always run on the current bank in its current form.
-const QUESTIONS = getBankForm(CURRENT_BANK_VERSION, CURRENT_FORM);
+// The question list comes from the survey engine: the current bank for a new
+// survey, or the bank an unfinished survey was started on (utils/banks).
 
 const TOTAL_SURVEY_MIN = 15; // evenly split across all questions; matches the "about 15 minutes" shown on the landing page and instructions
 
@@ -28,7 +27,7 @@ const STRAIGHT_LINE_NUDGE_MAX_SHOWS = 2;
 export default function SurveyQuestions() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { answers, setAnswers } = useSurveyEngine();
+  const { answers, setAnswers, questions: QUESTIONS, versions } = useSurveyEngine();
   const progress = readProgress();
 
   // Flatten questions if grouped by sections
@@ -38,7 +37,7 @@ export default function SurveyQuestions() {
       return QUESTIONS.flatMap(section => section.items || []);
     }
     return QUESTIONS;
-  }, []);
+  }, [QUESTIONS]);
 
   // Index local to this page (answers are in engine). Restored from saved
   // progress so a reload lands on the question the student was on.
@@ -219,6 +218,7 @@ export default function SurveyQuestions() {
       nonce: p.nonce,
       introAnswers: p.introResponses || {},
       surveyAnswers: p.answers || {},
+      versions,
     });
 
     // Go to results

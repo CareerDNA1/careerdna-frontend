@@ -3,12 +3,14 @@ import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { fetchAiSummary } from '../utils/fetchAiSummary';
 import { friendlyError } from '../utils/friendlyError';
 import { readProgress, writeProgress } from './useProgress';
-import { getBankForm, currentVersions, CURRENT_BANK_VERSION, CURRENT_FORM } from '../utils/banks';
+import { getBankForm, getBankWeights, progressVersions } from '../utils/banks';
 import { calculateResults } from '../utils/calculateResults';
 import scoreSubdimensions from '../utils/scoreSubdimensions';
 
-// New surveys always run on the current bank in its current form.
-const QUESTIONS = getBankForm(CURRENT_BANK_VERSION, CURRENT_FORM);
+// New surveys run on the current bank in its current form. A survey that was
+// already under way on this device when a new bank went live is finished and
+// scored on the bank it was started on (see progressVersions in utils/banks):
+// item ids are reused across banks, so its answers only make sense there.
 
 function normalizeStatus(raw) {
   const s = String(raw || '').trim().toLowerCase();
@@ -33,6 +35,12 @@ function coerceArray(x) {
 
 export function useSurveyEngine(initialIntroResponses) {
   const persisted = readProgress();
+  // Fixed for the life of this survey (first render); stamped into progress below.
+  const versionsRef = useRef(null);
+  if (!versionsRef.current) versionsRef.current = progressVersions(persisted);
+  const versions = versionsRef.current;
+  const QUESTIONS = useMemo(() => getBankForm(versions.bank, versions.form), [versions]);
+  const WEIGHTS = useMemo(() => getBankWeights(versions.bank, versions.scoring), [versions]);
 
   const [introResponsesState, setIntroResponses] = useState(
     persisted.introResponses || initialIntroResponses || {}
@@ -51,7 +59,8 @@ export function useSurveyEngine(initialIntroResponses) {
     if (!p.nonce) {
       writeProgress({ nonce: `cdna-${Date.now()}-${Math.random().toString(36).slice(2, 8)}` });
     }
-  }, []);
+    if (p.bank !== versions.bank) writeProgress({ bank: versions.bank });
+  }, [versions]);
 
   useEffect(() => {
     writeProgress({ answers });
@@ -67,8 +76,8 @@ export function useSurveyEngine(initialIntroResponses) {
   const archetypes = useMemo(() => {
     if (!answers || typeof answers !== 'object') return {};
     if (!Array.isArray(QUESTIONS)) return {};
-    return calculateResults(answers, QUESTIONS).archetypeScores;
-  }, [answers]);
+    return calculateResults(answers, QUESTIONS, WEIGHTS).archetypeScores;
+  }, [answers, QUESTIONS, WEIGHTS]);
 
   const results = archetypes;
 
@@ -76,7 +85,7 @@ export function useSurveyEngine(initialIntroResponses) {
     if (!answers || typeof answers !== 'object') return [];
     if (!Array.isArray(QUESTIONS)) return [];
     return scoreSubdimensions(answers, QUESTIONS);
-  }, [answers]);
+  }, [answers, QUESTIONS]);
 
   useEffect(() => {
     try {
@@ -111,7 +120,7 @@ export function useSurveyEngine(initialIntroResponses) {
       }
 
       const payload = {
-        versions: currentVersions(), // a fresh survey is always on the current bank
+        versions, // the bank this survey was answered on
         archetypes: archetypes || {},
         age: ageValue || undefined,
         status: normStatus || undefined,
@@ -152,7 +161,7 @@ export function useSurveyEngine(initialIntroResponses) {
         setLoading(false);
       }
     }
-  }, [introResponsesState, archetypes, subdimensionScores]);
+  }, [introResponsesState, archetypes, subdimensionScores, versions]);
 
   return {
     introResponses: introResponsesState,
@@ -172,6 +181,7 @@ export function useSurveyEngine(initialIntroResponses) {
 
     // helpful passthroughs for pages that destructure these
     questions: QUESTIONS,
+    versions,
     state: { answers, questions: QUESTIONS, introResponses: introResponsesState },
   };
 }

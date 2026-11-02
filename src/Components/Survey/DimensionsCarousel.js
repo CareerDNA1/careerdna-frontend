@@ -9,6 +9,7 @@ import {
   Legend,
 } from "chart.js";
 import SUBDIMENSION_DEFINITIONS from "../../utils/subdimensionDefinitions";
+import { canonicalTraitName } from "../../utils/traitNames";
 import { bandForScore, bandBlocks } from "../../utils/bands";
 import whoImage from "../../Assets/images/who_you_are.jpg";
 import loveImage from "../../Assets/images/what_you_love.jpg";
@@ -64,9 +65,12 @@ function getDimensionSignal(score = 0) {
 // tier colour. Standout green, Strong amber, Good blue, Lower grey.
 // Unified thresholds: 75 / 65 / 55.
 function getBandColors(score = 0) {
-  if (score >= 80) return { bg: "#9fe1cb", border: "#8ad9c1", hover: "#78d2b6" };
-  if (score >= 70) return { bg: "#fac775", border: "#f4bd60", hover: "#f2b74f" };
-  if (score >= 60) return { bg: "#b5d4f4", border: "#a1c8f1", hover: "#90bdec" };
+  // Colour follows the same band as the bar length (utils/bands.js), so a
+  // Standout bar is always green, Strong amber, Good blue.
+  const band = bandForScore(score);
+  if (band === "Standout") return { bg: "#9fe1cb", border: "#8ad9c1", hover: "#78d2b6" };
+  if (band === "Strong") return { bg: "#fac775", border: "#f4bd60", hover: "#f2b74f" };
+  if (band === "Good") return { bg: "#b5d4f4", border: "#a1c8f1", hover: "#90bdec" };
   return { bg: "#d3d1c7", border: "#c6c3b7", hover: "#bfbcae" };
 }
 
@@ -157,7 +161,7 @@ function externalTooltipRightOfBar(ctx) {
 
   const label = dp.label ?? "";
   const def =
-    SUBDIMENSION_DEFINITIONS[label] ||
+    SUBDIMENSION_DEFINITIONS[canonicalTraitName(label)] ||
     (key && SUBDIMENSION_DEFINITIONS[key]) ||
     `Definition not found for "${label}"${key ? ` (expected key: ${key})` : ""}.`;
 

@@ -7,7 +7,7 @@ import ResultsComponent from '../Components/Survey/ResultsComponent';
 import { useSurveyEngine } from '../Hooks/useSurveyEngine';
 
 import scoreSubdimensions from '../utils/scoreSubdimensions';
-import { getBankQuestions, CURRENT_BANK_VERSION } from '../utils/banks';
+import { getBankQuestions } from '../utils/banks';
 import { computeClarityPercents } from '../utils/selfAwarenessSummary';
 import { saveAssessmentRun, updateAssessmentRun, findExistingRunForSurvey, hasSurveyAnswers } from '../utils/assessmentRuns';
 import { useAuth } from '../context/AuthContext';
@@ -15,8 +15,8 @@ import { readProgress, clearProgress } from '../Hooks/useProgress';
 import { markProfileStale } from '../utils/profileCache';
 import { calculateProfileQualityGate } from '../utils/profileQualityGate';
 
-// A fresh survey landing here was answered on the current bank.
-const QUESTIONS = getBankQuestions(CURRENT_BANK_VERSION);
+// The survey landing here is scored on the bank it was answered on, which the
+// survey engine reads from the saved progress (utils/banks progressVersions).
 
 // Safe JSON getter from localStorage
 function getJSON(key, fallback = {}) {
@@ -46,6 +46,7 @@ export default function ResultsPage() {
     introResponses,
     answers,
     questions,
+    versions,
     state,
   } = useSurveyEngine();
 
@@ -69,7 +70,7 @@ export default function ResultsPage() {
   const questionsFallback =
     (Array.isArray(questions) && questions.length ? questions : null) ||
     (Array.isArray(state?.questions) && state.questions.length ? state.questions : null) ||
-    QUESTIONS;
+    getBankQuestions(versions?.bank);
 
   // --- subdimensions (for dimensions carousel & for PDF) ---
   const subdimensionRows = scoreSubdimensions(answersFallback, questionsFallback);
@@ -84,6 +85,7 @@ export default function ResultsPage() {
     subdimensionRows,
     claritySummary,
     surveyAnswers: answersFallback,
+    bankVersion: versions?.bank,
   });
 
   useEffect(() => {
@@ -186,6 +188,7 @@ export default function ResultsPage() {
             surveyAnswers: answersFallback || {},
             resultsJson: resultsPayload,
             summaryMarkdown: trimmedSummary,
+            versions,
           });
         } catch (saveErr) {
           // Release the slot so a retry can save instead of being blocked.
@@ -219,10 +222,11 @@ export default function ResultsPage() {
     answersFallback,
     subdimensionRows,
     claritySummary,
+    versions,
   ]);
 
   const renderPageShell = (content) => (
-    <div style={{ minHeight: '100vh', background: '#f5f7fb', paddingTop: '96px' }}>
+    <div style={{ minHeight: '100vh', background: '#f8fafc', paddingTop: '96px' }}>
       <AccountNavbar menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
       {content}
     </div>
@@ -286,6 +290,7 @@ export default function ResultsPage() {
 
   return renderPageShell(
     <ResultsComponent
+      bankVersion={versions?.bank}
       results={archetypes}
       initialAiSummary={summary}
       loadingSummary={!!loading}

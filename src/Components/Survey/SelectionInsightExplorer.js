@@ -4,6 +4,7 @@ import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank } from './R
 import { CAREER_WORLD_DEFINITIONS, PATHWAY_DEFINITIONS } from '../../utils/selectionDefinitions';
 import { ARCHETYPE_DEFINITIONS, getArchetypeDefinition } from '../../utils/archetypeDefinitions';
 import SUBDIMENSION_DEFINITIONS from '../../utils/subdimensionDefinitions';
+import { canonicalTraitName } from '../../utils/traitNames';
 import DIMENSIONS from '../../utils/Dimensions';
 import { getCareerWorldIcon, getPathwayIcon } from '../../utils/iconMap';
 import { fetchNonUniRoutes, peekNonUniRoutes } from '../../utils/fetchNonUniRoutes';
@@ -206,7 +207,7 @@ Object.keys(SUBDIMENSION_DEFINITIONS).forEach((defKey) => {
 });
 
 function getSubdimensionDefinition(label = '') {
-  const lookup = definitionLookupKey(label);
+  const lookup = definitionLookupKey(canonicalTraitName(label));
   // 1) direct match against a definition's own (compacted) label
   let raw = SUBDIMENSION_DEFINITION_BY_COMPACT[lookup];
   // 2) resolve aliases / keys to the canonical key, then match that

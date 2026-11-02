@@ -26,9 +26,9 @@ const scienceCards = [
     detailTitle: 'Built on',
     detailType: 'stats',
     details: [
-      { icon: ClipboardCheck, value: '100', label: 'Assessment Items' },
+      { icon: ClipboardCheck, value: '108', label: 'Assessment Items' },
       { icon: Grip, value: '4', label: 'Career Identity Dimensions' },
-      { icon: UsersRound, value: '25', label: 'Behavioural Traits' },
+      { icon: UsersRound, value: '27', label: 'Behavioural Traits' },
       { icon: Database, value: '7', label: 'Career Identity Profiles' },
     ],
   },

@@ -12,6 +12,8 @@ import dnaWhiteLogo from '../../Assets/images/logo-dna-white.png';
 import DimensionsCarousel from './DimensionsCarousel';
 import SwipeDeck from './SwipeDeck';
 import DIMENSIONS from '../../utils/Dimensions';
+import { TRAIT_RENAMES } from '../../utils/traitNames';
+import { CURRENT_BANK_VERSION } from '../../utils/banks';
 import ClarityChart from './ClarityChart';
 import SelectionInsightExplorer from './SelectionInsightExplorer';
 import AdvisorDrawer from '../Advisor/AdvisorDrawer';
@@ -720,6 +722,7 @@ function pillifyStrengthNarrative(li, subdimScores = {}) {
   const nameToKey = makeNameToKeyMap(dims);
   const labels = [];
   dims.forEach((d) => (d.subdimensions || []).forEach((s) => { if (s?.label) labels.push(s.label); }));
+  labels.push(...Object.keys(TRAIT_RENAMES)); // reports written before the v5 renames
   if (!labels.length) return;
   const scoreFor = (label) => {
     const key = nameToKey[norm(label)];
@@ -783,6 +786,7 @@ function greenifyProfileAndTraitNames(container) {
   const dims = Array.isArray(DIMENSIONS) ? DIMENSIONS : [];
   const labels = [...SUMMARY_PROFILE_NAMES];
   dims.forEach((d) => (d.subdimensions || []).forEach((s) => { if (s?.label) labels.push(s.label); }));
+  labels.push(...Object.keys(TRAIT_RENAMES)); // reports written before the v5 renames
   if (!labels.length) return;
   const nameSet = new Set(labels.map((l) => l.toLowerCase()));
   const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -1536,6 +1540,9 @@ export default function ResultsComponent({
   initialSection,
   initialTab,
   initialFocus,
+  // Question bank of the answers on this page (utils/banks). Only answers on
+  // the current bank can use the free first report on the new assessment.
+  bankVersion = CURRENT_BANK_VERSION,
 }) {
   // The vocational ("Explore other career worlds") section is only relevant to
   // students who are unsure about university or not planning to go. The intro asks
@@ -1635,6 +1642,7 @@ export default function ResultsComponent({
   const [reportPlan, setReportPlan] = useState('');
   const [reportUnlimited, setReportUnlimited] = useState(false);
   const [reportsRemaining, setReportsRemaining] = useState(null);
+  const [freeNewAssessmentReport, setFreeNewAssessmentReport] = useState(false);
   const [reportInfoLoaded, setReportInfoLoaded] = useState(false);
   // Which locked analysis tab the viewer last tapped (drives the teaser copy in
   // the locked placeholder). Empty means show the generic teaser.
@@ -2041,7 +2049,8 @@ export default function ResultsComponent({
   // whether the plain generate button shows; `isFreeViewer` decides whether an
   // out-of-reports viewer sees the subscribe upsell or the "you've used your
   // reports" prompt.
-  const canRunReport = reportUnlimited || !reportInfoLoaded || (reportsRemaining == null ? true : reportsRemaining > 0);
+  const reportIsFree = freeNewAssessmentReport && String(bankVersion || '') === CURRENT_BANK_VERSION;
+  const canRunReport = reportIsFree || reportUnlimited || !reportInfoLoaded || (reportsRemaining == null ? true : reportsRemaining > 0);
   const isFreeViewer = reportInfoLoaded && ['', 'free'].includes(reportPlan);
 
   // Phone tab strip: hide the right-edge fade/chevron once there's nothing more
@@ -2201,6 +2210,7 @@ export default function ResultsComponent({
             setReportPlan(ent.plan);
             setReportUnlimited(ent.reports.unlimited);
             setReportsRemaining(ent.reports.unlimited ? null : ent.reports.remaining);
+            setFreeNewAssessmentReport(Boolean(ent.freeNewAssessmentReport));
           } catch {
             if (cancelled) return;
             setReportPlan(String(profile?.plan || '').toLowerCase());
@@ -3475,7 +3485,7 @@ export default function ResultsComponent({
                               // it only shows when the viewer cannot generate a report: a free
                               // viewer, or a subscriber with no reports left. A subscriber with
                               // reports remaining sees the greyed tabs without the lock.
-                              const showLockIcon = analysisLocked && reportInfoLoaded && (isFreeViewer || !canRunReport);
+                              const showLockIcon = analysisLocked && reportInfoLoaded && ((isFreeViewer && !reportIsFree) || !canRunReport);
                               const sidebarTabs = analysisLocked ? lockedAnalysisTabs : analysisTabsWithDiscoverMore;
                               return sidebarTabs.map((tab) => {
                                 const isActive = analysisLocked
@@ -3544,7 +3554,11 @@ export default function ResultsComponent({
                               />
                               Run CareerDNA Analysis
                             </Button>
-                            {!reportUnlimited && reportsRemaining != null && reportsRemaining > 0 ? (
+                            {reportIsFree && !reportUnlimited ? (
+                              <p className="results-locked__reports-left">
+                                This report is free: it is your first on the new CareerDNA assessment.
+                              </p>
+                            ) : !reportUnlimited && reportsRemaining != null && reportsRemaining > 0 ? (
                               <p className="results-locked__reports-left">
                                 Generating uses one report. You have {reportsRemaining} report{reportsRemaining === 1 ? '' : 's'} left.
                               </p>

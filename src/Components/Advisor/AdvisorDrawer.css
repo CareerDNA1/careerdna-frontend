@@ -113,7 +113,7 @@
 }
 
 /* Phones: bottom bar + bottom sheet */
-@media (max-width: 760px) {
+@media (max-width: 760px), (max-height: 500px) and (max-width: 1000px) {
   .advisor-tab {
     right: auto; left: 50%; bottom: calc(10px + env(safe-area-inset-bottom)); transform: translateX(-50%);
     height: 36px; padding: 0 14px 0 5px; gap: 7px;
@@ -158,7 +158,7 @@
 /* Phones: no page scrolling behind the open sheet, and a dimmed backdrop that
    closes it on tap. Desktop keeps the page scrollable beside the drawer. */
 .advisor-backdrop { display: none; }
-@media (max-width: 760px) {
+@media (max-width: 760px), (max-height: 500px) and (max-width: 1000px) {
   body.cdna-advisor-lock { overflow: hidden; touch-action: none; }
   .advisor-backdrop { display: block; position: fixed; inset: 0; z-index: 94990; background: rgba(15, 23, 42, 0.35); }
   .advisor-drawer__head { cursor: grab; touch-action: none; }
@@ -174,3 +174,12 @@
 
 /* Hide the Advisor launcher while any dialog is open (the page is scroll locked). */
 html.cdna-scroll-locked .advisor-tab { display: none; }
+
+/* Short windows wider than a phone (e.g. a small laptop window),
+   2 Nov 2026: the full pill covered page content, so it becomes a round icon
+   button in the corner. Same action, same position, a quarter of the size. */
+@media (max-height: 520px) and (min-width: 1001px) {
+  .advisor-tab { right: 12px; bottom: 12px; width: 42px; height: 42px; padding: 0; justify-content: center; gap: 0; }
+  .advisor-tab__label, .advisor-tab__hint { display: none; }
+  .advisor-tab__icon { width: 30px; height: 30px; }
+}

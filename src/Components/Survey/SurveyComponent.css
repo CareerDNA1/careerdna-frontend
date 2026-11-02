@@ -779,6 +779,12 @@
 }
 @media (hover: none) {
   .likert-option::after { display: none; }
+  /* Touch: show the name on the tapped option for a moment (see TAP_LABEL_MS). */
+  .likert-option.likert-option--tapped::after {
+    display: block;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 .likert-option--1 { border-color: #d9e5fb; }
@@ -1524,5 +1530,72 @@
   }
   .survey-bottom-actions {
     margin-top: 12px !important;
+  }
+}
+
+/* Guidance box: a close (x) in the top-right corner, like the other white
+   tooltips. The box keeps room on the right so the text never runs under it. */
+.survey-tip__box {
+  position: relative !important;
+  padding-right: 40px !important;
+}
+.survey-tip__close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #64748b;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+.survey-tip__close:hover,
+.survey-tip__close:focus-visible {
+  background: #eef2f7;
+  color: #1e293b;
+  outline: none;
+}
+
+
+
+/* Guidance box, final position (2 Nov 2026): inline under the question text,
+   above the answer scale. Fades and slides in gently so the scale moving down
+   reads as intentional, not as a jump. Overrides the earlier footer placement. */
+.survey-tip__box.survey-tip__box--inline {
+  position: relative !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 100% !important;
+  max-width: 640px !important;
+  margin: -6px auto 22px !important;
+  padding: 12px 40px 12px 14px !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(47, 128, 237, 0.18) !important;
+  background: #f5f9ff !important;
+  color: #40566d !important;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+  text-align: left !important;
+  box-shadow: none !important;
+  animation: surveyTipIn 180ms ease-out;
+}
+@keyframes surveyTipIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .survey-tip__box.survey-tip__box--inline { animation: none; }
+}
+@media (max-width: 600px) {
+  .survey-tip__box.survey-tip__box--inline {
+    margin: -4px auto 16px !important;
+    font-size: 13px !important;
   }
 }

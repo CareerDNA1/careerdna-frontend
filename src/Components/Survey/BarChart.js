@@ -27,9 +27,12 @@ const getProfileLevel = (score = 0) => bandForScore(score);
 // tier colour. Standout green, Strong amber, Good blue, Lower grey.
 // Unified thresholds: 75 / 65 / 55.
 function getBandColors(score = 0) {
-  if (score >= 80) return { background: "#9fe1cb", border: "#8ad9c1", hover: "#78d2b6" };
-  if (score >= 70) return { background: "#fac775", border: "#f4bd60", hover: "#f2b74f" };
-  if (score >= 60) return { background: "#b5d4f4", border: "#a1c8f1", hover: "#90bdec" };
+  // Colour follows the same band as the bar length (utils/bands.js), so a
+  // Standout bar is always green, Strong amber, Good blue.
+  const band = bandForScore(score);
+  if (band === "Standout") return { background: "#9fe1cb", border: "#8ad9c1", hover: "#78d2b6" };
+  if (band === "Strong") return { background: "#fac775", border: "#f4bd60", hover: "#f2b74f" };
+  if (band === "Good") return { background: "#b5d4f4", border: "#a1c8f1", hover: "#90bdec" };
   return { background: "#d3d1c7", border: "#c6c3b7", hover: "#bfbcae" };
 }
 

@@ -4,56 +4,19 @@ import { apiFetch, ApiError } from '../utils/apiFetch';
 import AccountNavbar from '../Components/Common/AccountNavbar';
 import OpsPanel from '../Components/Admin/OpsPanel';
 import { canonicalItem } from '../utils/canonicalIds';
+import DIMENSIONS from '../utils/Dimensions';
+import { canonicalTraitName } from '../utils/traitNames';
 import './AdminDashboard.css';
 
 const ARCHETYPES = ['Explorer', 'Organizer', 'Visionary', 'Creator', 'Connector', 'Thinker', 'Achiever'];
 
-const DIMENSION_GROUPS = [
-  {
-    name: 'Who You Are',
-    subdimensions: [
-      'Curiosity & Openness',
-      'Reliability & Focus',
-      'Emotional Stability',
-      'Uncertainty Tolerance',
-      'Perseverance',
-      'Sociability & Extroversion',
-    ],
-  },
-  {
-    name: 'What You Love',
-    subdimensions: [
-      'Investigative Curiosity',
-      'Creative Expression',
-      'Helping Orientation',
-      'Entrepreneurial Drive',
-      'Hands-On Engagement',
-      'Novelty & Variety Seeking',
-    ],
-  },
-  {
-    name: 'What Matters',
-    subdimensions: [
-      'Purpose & Impact',
-      'Independence & Autonomy',
-      'Stability & Predictability',
-      'Recognition & Visibility',
-      'Financial Ambition',
-      'Belonging & Connection',
-    ],
-  },
-  {
-    name: 'How You Work Best',
-    subdimensions: [
-      'Pace & Intensity Preference',
-      'Organisation & Systems Orientation',
-      'Clarity & Structure Preference',
-      'Team Collaboration',
-      'Independent Working Approach',
-      'Attention to Detail',
-    ],
-  },
-];
+// Trait groups come from the same list the report uses (utils/Dimensions), so
+// the admin view always matches the live model. Saved rows with bank v1 trait
+// names are mapped to the current names when read.
+const DIMENSION_GROUPS = DIMENSIONS.map((group) => ({
+  name: group.label,
+  subdimensions: (group.subdimensions || []).map((sd) => sd.label),
+}));
 
 const SUBDIMENSION_TO_DIMENSION = DIMENSION_GROUPS.reduce((acc, group) => {
   group.subdimensions.forEach((name) => {
@@ -134,7 +97,7 @@ function readSubdimensionRows(results = {}) {
 
   return rows
     .map((row) => {
-      const name = String(row?.name || row?.title || row?.label || row?.subdimension || row?.code || '').trim();
+      const name = canonicalTraitName(row?.name || row?.title || row?.label || row?.subdimension || row?.code || '');
       const score = normalizeScore(row?.score_pct ?? row?.score ?? row?.percentage ?? row?.value ?? row?.adjusted);
       const dimension = row?.dimension || SUBDIMENSION_TO_DIMENSION[normaliseName(name)] || 'Other';
       if (!name || score == null) return null;
