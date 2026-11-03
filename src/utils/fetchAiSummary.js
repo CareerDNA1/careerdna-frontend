@@ -42,7 +42,8 @@ function coerceArray(x) {
  *    [{ code, name, score_pct, n_items, ...optional fields }]
  *  - subdimensions: alias; if present we prefer it (lets you pass pre-shaped data)
  */
-export async function fetchAiSummary(input) {
+// Builds the request body shared by /api/summary and /api/report-meta.
+function buildSummaryPayload(input) {
   if (!input || typeof input !== 'object') {
     throw new Error('Something went wrong. Please try again.');
   }
@@ -146,6 +147,24 @@ export async function fetchAiSummary(input) {
 
   // Strip undefined keys
   Object.keys(payload).forEach(k => payload[k] === undefined && delete payload[k]);
+  return payload;
+}
+
+// Rebuild the structured part of a saved report (cards, bands, pills) from its
+// scores. Free, no AI: used when a report's text was saved without it.
+export async function fetchReportMeta(input) {
+  const payload = buildSummaryPayload(input);
+  const data = await apiFetch('/api/report-meta', {
+    method: 'POST',
+    auth: 'required',
+    timeoutMs: 30000,
+    body: payload,
+  });
+  return data?.analysisMeta || null;
+}
+
+export async function fetchAiSummary(input) {
+  const payload = buildSummaryPayload(input);
 
   let data;
   try {

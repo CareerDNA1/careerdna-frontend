@@ -1,6 +1,6 @@
 import { invalidateStageRuns } from './favouriteScope';
 import { supabase } from './supabaseClient';
-import { fetchAiSummary } from './fetchAiSummary';
+import { fetchAiSummary, fetchReportMeta } from './fetchAiSummary';
 import { calculateProfileQualityGate } from './profileQualityGate';
 import { OUTPUT_VERSION } from './outputVersion';
 import { saveIdentityProfile } from './identityProfile';
@@ -667,4 +667,40 @@ export async function runAiSummaryForSavedRun(runId, { bypassQualityGate = false
   });
 
   return updatedRun;
+}
+
+// A saved report whose text exists but whose structured part (analysisMeta) is
+// missing shows as plain text with no cards. That part is deterministic, so it
+// can be rebuilt from the saved scores at no cost and stored back on the run.
+// Returns the rebuilt analysisMeta, or null when nothing needed doing.
+export function reportNeedsMetaRepair(run) {
+  if (!run) return false;
+  const summary = String(run.summary_markdown || '').trim();
+  if (!summary || summary.startsWith('\u26a0') || /^REPORT_/.test(summary)) return false;
+  const meta = run.results_json?.analysisMeta;
+  return !(meta && typeof meta === 'object' && meta.sections && typeof meta.sections === 'object');
+}
+
+export async function repairReportMeta(run) {
+  if (!reportNeedsMetaRepair(run)) return null;
+  const savedResults = run.results_json || {};
+  const rescored = rescoreRunFromAnswers(run);
+  const archetypes = rescored?.archetypes || savedResults.archetypes || {};
+  const subdimensions = rescored?.subdimensionRows
+    || (Array.isArray(savedResults.subdimensionRows) ? savedResults.subdimensionRows : []);
+  if (!archetypes || !Object.keys(archetypes).length) return null;
+  const analysisMeta = await fetchReportMeta({
+    versions: runVersions(run),
+    archetypes,
+    introResponses: run.intro_answers_json || {},
+    subdimensions,
+  });
+  if (!analysisMeta || !analysisMeta.sections) return null;
+  try {
+    await updateAssessmentRun(run.id, { results_json: { ...savedResults, analysisMeta } });
+  } catch (err) {
+    // Still show the repaired layout this time even if saving it failed.
+    console.warn('Could not store the rebuilt report layout:', err?.message || err);
+  }
+  return analysisMeta;
 }

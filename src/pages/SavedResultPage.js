@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import ResultsComponent from '../Components/Survey/ResultsComponent';
 import AccountNavbar from '../Components/Common/AccountNavbar';
@@ -8,6 +8,8 @@ import {
   runAiSummaryForSavedRun,
   rerunAssessmentWithOutputParameters,
   rescoreRunFromAnswers,
+  reportNeedsMetaRepair,
+  repairReportMeta,
 } from '../utils/assessmentRuns';
 import { runIsStale } from '../utils/outputVersion';
 import { runVersions, runIsOnOlderBank } from '../utils/banks';
@@ -50,6 +52,30 @@ export default function SavedResultPage() {
   useEffect(() => {
     if (run && runId) savedRunCache.set(runId, run);
   }, [run, runId]);
+
+  // Self-repair: a report saved with its text but without its structured part
+  // (cards, bands, pills) is rebuilt from its scores, free, then shown and
+  // stored, instead of falling back to plain text. One attempt per run.
+  const metaRepairTried = useRef('');
+  const mountedRef = useRef(true);
+  useEffect(() => { mountedRef.current = true; return () => { mountedRef.current = false; }; }, []);
+  useEffect(() => {
+    if (!run || !run.id || metaRepairTried.current === run.id || !reportNeedsMetaRepair(run)) return;
+    metaRepairTried.current = run.id;
+    const target = run;
+    (async () => {
+      try {
+        const analysisMeta = await repairReportMeta(target);
+        if (mountedRef.current && analysisMeta) {
+          setRun((cur) => (cur && cur.id === target.id
+            ? { ...cur, results_json: { ...(cur.results_json || {}), analysisMeta } }
+            : cur));
+        }
+      } catch (err) {
+        console.warn('Report layout repair failed:', err?.message || err);
+      }
+    })();
+  }, [run]);
 
   useEffect(() => {
     let cancelled = false;

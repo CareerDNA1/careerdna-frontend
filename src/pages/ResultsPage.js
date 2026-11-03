@@ -118,7 +118,20 @@ export default function ResultsPage() {
         // A concurrent effect run (summary streaming in, or a StrictMode
         // double-invoke) has already claimed the insert — bail so we don't
         // create a duplicate assessment run for the same survey.
-        if (existingSavedRunId === 'pending') return;
+        if (existingSavedRunId === 'pending') {
+          // Without a report yet there is nothing to add: the save in progress
+          // covers it. With a report, wait for that save to finish (up to 30s)
+          // and then store the report on it. Returning here used to drop the
+          // report's structured part when the first save was slow.
+          if (!trimmedSummary) return;
+          for (let i = 0; i < 60 && existingSavedRunId === 'pending'; i += 1) {
+            // eslint-disable-next-line no-await-in-loop
+            await new Promise((r) => setTimeout(r, 500));
+            if (cancelled) return;
+            try { existingSavedRunId = sessionStorage.getItem(saveKey) || ''; } catch { existingSavedRunId = ''; }
+          }
+          if (!existingSavedRunId || existingSavedRunId === 'pending') return;
+        }
 
         if (existingSavedRunId && existingSavedRunId !== '1') {
           if (!cancelled) setAssessmentRunId(existingSavedRunId);
@@ -166,8 +179,18 @@ export default function ResultsPage() {
             sessionStorage.setItem(saveKey, existingRun.id);
           } catch {}
           try {
+            // Never wipe what is already saved. Coming back to this page in a
+            // new session (no report in memory) used to overwrite the stored
+            // report structure with null while the report text stayed, so the
+            // report then showed as plain text with no cards (3 Nov 2026).
+            const prev = (existingRun.results_json && typeof existingRun.results_json === 'object') ? existingRun.results_json : {};
+            const mergedResults = {
+              ...prev,
+              ...resultsPayload,
+              analysisMeta: resultsPayload.analysisMeta || prev.analysisMeta || null,
+            };
             await updateAssessmentRun(existingRun.id, {
-              results_json: resultsPayload,
+              results_json: mergedResults,
               // Keep the stored answers in step with the results they produced.
               survey_answers_json: answersFallback || {},
               ...(trimmedSummary ? { summary_markdown: trimmedSummary } : {}),
