@@ -67,6 +67,20 @@ export function applyResultsFilter(items, filter, opts = {}) {
 
 // Top-right filter control (button + popover). Presentational: the parent owns
 // the filter state and applies applyResultsFilter to its own list.
+// A section heading with a small Show N / Hide button at its right, used for
+// the "other ..." part of a list (other pathways, other degrees, other worlds).
+// The heading reads as a section of the page rather than another card.
+export function OtherSectionHead({ title, count, open, onToggle }) {
+  return (
+    <div className="nu-other-head">
+      <div className="fs-detail-heading nu-other-head__title">{title}</div>
+      <button type="button" className="nu-show-other" onClick={onToggle} aria-expanded={open}>
+        {open ? 'Hide' : `Show ${count}`}
+      </button>
+    </div>
+  );
+}
+
 export default function ResultsFilterBar({ filter, onChange, groups = ['route', 'band', 'favourites'], align = 'right' }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);

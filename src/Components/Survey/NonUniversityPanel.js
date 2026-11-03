@@ -1139,15 +1139,18 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
                     <div className="pathway-role-list">{relevantGroups.map(renderCard)}</div>
                     {otherGroups.length ? (
                       <>
-                        <button
-                          type="button"
-                          className="nu-show-other"
-                          onClick={() => setShowOther((v) => !v)}
-                          aria-expanded={showOther}
-                        >
-                          {showOther ? 'Hide' : 'Show'} other pathways in this career world ({otherGroups.length})
-                        </button>
-                        {showOther ? (
+                        <div className="nu-other-head">
+                          <div className="fs-detail-heading nu-other-head__title">Other pathways in this career world</div>
+                          <button
+                            type="button"
+                            className="nu-show-other"
+                            onClick={() => setShowOther((v) => !v)}
+                            aria-expanded={showOther}
+                          >
+                            {(showOther) ? 'Hide' : `Show ${otherGroups.length}`}
+                          </button>
+                        </div>
+                        {(showOther) ? (
                           <div className="pathway-role-list">{otherGroups.map(renderCard)}</div>
                         ) : null}
                       </>

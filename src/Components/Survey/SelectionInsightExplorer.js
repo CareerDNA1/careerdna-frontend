@@ -2197,14 +2197,17 @@ function DetailPanel({ item, onItemReaction, savedReactions = {}, nonUniByTitle 
               <div className="pathway-role-list">{main.map(renderPathway)}</div>
               {extra.length ? (
                 <>
-                  <button
-                    type="button"
-                    className="nu-show-other"
-                    onClick={() => setShowOtherPw((v) => !v)}
-                    aria-expanded={showOtherPw}
-                  >
-                    {showOtherPw ? 'Hide' : 'Show'} other pathways in this career world ({extra.length})
-                  </button>
+                  <div className="nu-other-head">
+                    <div className="fs-detail-heading nu-other-head__title">Other pathways in this career world</div>
+                    <button
+                      type="button"
+                      className="nu-show-other"
+                      onClick={() => setShowOtherPw((v) => !v)}
+                      aria-expanded={showOtherPw}
+                    >
+                      {showOtherPw ? 'Hide' : `Show ${extra.length}`}
+                    </button>
+                  </div>
                   {showOtherPw ? (
                     <div className="pathway-role-list">{extra.map(renderPathway)}</div>
                   ) : null}

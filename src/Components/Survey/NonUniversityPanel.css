@@ -247,18 +247,7 @@ a.nu-standard__link:hover { text-decoration: underline; }
 .nu-standard--accordion .selection-chevron.is-open { transform: rotate(180deg); }
 
 /* Collapsed "other pathways" toggle (Training & Work) */
-.nu-show-other {
-  margin: 22px 0 10px;
-  background: none;
-  border: none;
-  padding: 6px 0;
-  color: #2f6fed;
-  font-size: 0.92rem;
-  font-weight: 700;
-  cursor: pointer;
-  letter-spacing: 0.01em;
-}
-.nu-show-other:hover { text-decoration: underline; }
+/* .nu-show-other styles live in ResultsFilter.css (shared by Pathways and Training tabs). */
 
 /* "Leads to" jobs subtitle under each Training pathway card title */
 .nu-title-col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
@@ -632,7 +621,14 @@ a.nu-standard__link:hover { text-decoration: underline; }
   .nu-wayin-openings { font-size: 0.85rem; }
 }
 
-.nu-source-note { margin: 18px 0 0; color: #5e6f88; font-size: 0.78rem; line-height: 1.5; }
+.nu-source-note {
+  margin: 26px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid #edf1f7;
+  color: #7a889b;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
 
 /* Loading state for live openings: same spinner as the live jobs boxes. */
 .nu-vac-loading { display: inline-flex; align-items: center; gap: 7px; }

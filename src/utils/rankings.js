@@ -36,7 +36,11 @@ export async function loadRankingSubjectIndex() {
       countByTitle,
     };
   } catch (_) {
-    rankingIndexCache = { ids: new Set(), titles: new Set(), countById: new Map(), countByTitle: new Map() };
+    // A failed load (slow or dropped connection, server restarting) is NOT
+    // cached: before, one failure hid the rankings panel on every degree card
+    // until the page was reloaded. Return an empty index for now and let the
+    // caller try again.
+    return { ids: new Set(), titles: new Set(), countById: new Map(), countByTitle: new Map(), failed: true };
   }
   return rankingIndexCache;
 }

@@ -1767,7 +1767,7 @@ body:has(#results-root),
     position: absolute;
     left: 14px;
     bottom: 1px;
-    height: 48px;
+    height: 54px;
     width: 18px;
     background: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0));
     pointer-events: none;
@@ -1787,7 +1787,7 @@ body:has(#results-root),
     top: auto !important;
     right: 0 !important;
     bottom: 1px !important;
-    height: 48px !important;
+    height: 54px !important;
     width: 56px !important;
     display: flex !important;
     align-items: center !important;
@@ -1817,7 +1817,9 @@ body:has(#results-root),
     flex-direction: row !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
-    gap: 2px !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 8px 40px 10px 0 !important; /* right room so the last pill clears the chevron */
     min-width: 0 !important;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
@@ -1833,24 +1835,33 @@ body:has(#results-root),
     border: none !important;
     border-bottom: 2px solid transparent !important;
     border-radius: 0 !important;
-    background: transparent !important;
-    padding: 15px 13px !important;
+    /* Phone tabs are pills (3 Nov 2026): the old grey text with a thin
+       underline was hard to see, and the current tab could be off-screen. */
+    border: 1px solid #dfe7f3 !important;
+    border-radius: 999px !important;
+    background: #f3f6fb !important;
+    padding: 8px 14px !important;
     min-height: 0 !important;
-    color: #64748b !important;
-    font-weight: 550 !important;
+    color: #33475b !important;
+    font-size: 0.86rem !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
     box-shadow: none !important;
-  }
-  /* First label starts exactly at the shared inset, level with the pill. */
-  .analysis-tabs-sidebar__list > .analysis-tab-button:first-child {
-    padding-left: 0 !important;
   }
 
   .analysis-tab-button.is-active {
-    background: transparent !important;
-    border-bottom: 2px solid #2f6fed !important;
-    color: #2f6fed !important;
+    background: #2f6fed !important;
+    border: 1px solid #2f6fed !important;
+    color: #ffffff !important;
     font-weight: 650 !important;
-    box-shadow: none !important;
+    box-shadow: 0 4px 12px rgba(47, 111, 237, 0.28) !important;
+  }
+  .analysis-tab-button.is-active .analysis-tab-button__label,
+  .analysis-tab-button.is-active svg { color: #ffffff !important; }
+  /* Locked tabs (report not generated yet) stay visibly muted. */
+  .analysis-tab-button--locked:not(.is-active) {
+    background: #f8fafc !important;
+    color: #8a97a4 !important;
   }
 
   .analysis-tab-button__label {

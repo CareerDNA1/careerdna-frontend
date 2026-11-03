@@ -290,6 +290,22 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
   const rkGridCols = ['30px', 'var(--rk-uni-col, minmax(0, 1fr))', ...rkCols.map((c) => `${c.width}px`)].join(' ');
   const rkTableMinWidth = 30 + 200 + rkCols.reduce((s, c) => s + c.width, 0);
 
+  // Source notes and the methodology link. On short screens (phones held
+  // sideways) they sit at the end of the scrolling table instead of below it,
+  // so the table is the only thing that scrolls and the header never leaves.
+  const rkNotes = (
+    <>
+    <p className="rk-foot">
+      Official data: Office for Students (Discover Uni, August 2026 release) and UCAS 2025. Dotted figures rest on a broad subject area or a small cohort; hover or tap one to see why.
+      {showChances ? ' Your chances use typical A-level offers only; always check each course\u2019s own requirements.' : ''}
+      {' '}<button type="button" className="rk-method-link" onClick={() => setShowMethod(true)}>Full methodology</button>
+    </p>
+    <p className="rk-foot rk-foot--licence">
+      Contains public sector information licensed under the Open Government Licence v3.0. The CareerDNA Ranking is one input to your decision, not advice: always check each university’s own course pages and entry requirements before applying.
+    </p>
+    </>
+  );
+
   return (
     <div className="rk-overlay" role="dialog" aria-modal="true" aria-label="University rankings"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
@@ -309,6 +325,13 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
               ) : (subjectTitle || 'Loading…')}
             </div>
           </div>
+          {/* Sort sits on the right of the header so the table starts higher. */}
+          {(!loading && academicLoaded && !error) ? (
+            <div className="rk-controls">
+              <span className="rk-controls-label">Sort by</span>
+              <PickMenu options={SORTS.map((s) => ({ value: s.key, label: s.label }))} value={sortKey} ariaLabel="Sort by" triggerClass="rk-sort" onSelect={setSortKey} />
+            </div>
+          ) : null}
         </div>
 
         {(loading || !academicLoaded) ? (
@@ -319,11 +342,6 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
           </div>
         ) : (
           <>
-            <div className="rk-controls">
-              <span className="rk-controls-label">Sort by</span>
-              <PickMenu options={SORTS.map((s) => ({ value: s.key, label: s.label }))} value={sortKey} ariaLabel="Sort by" triggerClass="rk-sort" onSelect={setSortKey} />
-            </div>
-
             {!showChances ? (
               <p className="rk-chances-prompt">
                 Add your predicted A-levels on your <a href="/profile">profile</a> to see your chances at each university.
@@ -422,17 +440,11 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                   );
                 })}
               </div>
+              <div className="rk-notes rk-notes--inside">{rkNotes}</div>
               </div>
             </div>
 
-            <p className="rk-foot">
-              Official data: Office for Students (Discover Uni, August 2026 release) and UCAS 2025. Dotted figures rest on a broad subject area or a small cohort; hover or tap one to see why.
-              {showChances ? ' Your chances use typical A-level offers only; always check each course\u2019s own requirements.' : ''}
-              {' '}<button type="button" className="rk-method-link" onClick={() => setShowMethod(true)}>Full methodology</button>
-            </p>
-            <p className="rk-foot rk-foot--licence">
-              Contains public sector information licensed under the Open Government Licence v3.0. The CareerDNA Ranking is one input to your decision, not advice: always check each university’s own course pages and entry requirements before applying.
-            </p>
+            <div className="rk-notes rk-notes--below">{rkNotes}</div>
           </>
         )}
 

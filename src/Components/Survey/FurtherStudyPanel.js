@@ -5,7 +5,7 @@ import { fetchFurtherStudy, peekFurtherStudyCache } from '../../utils/fetchFurth
 import { showSelectionTooltip, hideSelectionTooltip, PathwayReactionRow } from './SelectionInsightExplorer';
 import PathwayPicker, { readRemembered } from './PathwayPicker';
 import { getSubjectIcon, getCareerWorldIcon } from '../../utils/iconMap';
-import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank } from './ResultsFilter';
+import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank, OtherSectionHead } from './ResultsFilter';
 import { loadRankingSubjectIndex } from '../../utils/rankings';
 import InlineError, { StillWorkingNote } from '../Common/InlineError';
 import { friendlyError } from '../../utils/friendlyError';
@@ -276,8 +276,19 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
   const [rankIndex, setRankIndex] = useState(null);
   useEffect(() => {
     let cancelled = false;
-    loadRankingSubjectIndex().then((idx) => { if (!cancelled) setRankIndex(idx); });
-    return () => { cancelled = true; };
+    let timer = null;
+    let tries = 0;
+    // Retry a failed load a few times (5s, 10s, 20s) so a slow connection does
+    // not leave the degree cards without their rankings panel.
+    const load = () => {
+      loadRankingSubjectIndex().then((idx) => {
+        if (cancelled) return;
+        setRankIndex(idx);
+        if (idx && idx.failed && tries < 3) { tries += 1; timer = setTimeout(load, 5000 * 2 ** (tries - 1)); }
+      });
+    };
+    load();
+    return () => { cancelled = true; if (timer) clearTimeout(timer); };
   }, []);
   const subjectHasRankings = (r) => {
     if (!rankIndex || !r) return false;
@@ -358,6 +369,10 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
   const hasSelectedRef = useRef(false);
   // One degree open at a time across both the relevant and other lists.
   const [openRouteKey, setOpenRouteKey] = useState('');
+  // "Other degrees in this career world" starts collapsed (Show N / Hide);
+  // closed again whenever another career world is picked.
+  const [showOtherDegrees, setShowOtherDegrees] = useState(false);
+  useEffect(() => { setShowOtherDegrees(false); }, [activeKey]);
   const [studyFilter, setStudyFilter] = useState(emptyFilter());
   const isDegreeLiked = (r) => savedReactions[r?.id || r?.title] === 'like';
 
@@ -568,10 +583,22 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
                             </>
                           ) : null}
                           {otherOnly.length ? (
-                            <>
-                              <div className="fs-detail-heading" style={{ marginTop: 28 }}>Other degrees in this career world</div>
-                              {renderList(otherOnly)}
-                            </>
+                            relevantDeduped.length ? (
+                              <>
+                                <OtherSectionHead
+                                  title="Other degrees in this career world"
+                                  count={otherOnly.length}
+                                  open={showOtherDegrees}
+                                  onToggle={() => setShowOtherDegrees((v) => !v)}
+                                />
+                                {(showOtherDegrees) ? renderList(otherOnly) : null}
+                              </>
+                            ) : (
+                              <>
+                                <div className="fs-detail-heading">Degrees you could study for this career world</div>
+                                {renderList(otherOnly)}
+                              </>
+                            )
                           ) : null}
                         </>
                       );
@@ -588,13 +615,23 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
                             <div className="fs-detail-heading">Degrees for the pathways you liked</div>
                             {renderList(relevant)}
                             {other.length ? (
-                              <div className="fs-detail-heading" style={{ marginTop: 28 }}>Other degrees in this career world</div>
+                              <>
+                                <OtherSectionHead
+                                  title="Other degrees in this career world"
+                                  count={other.length}
+                                  open={showOtherDegrees}
+                                  onToggle={() => setShowOtherDegrees((v) => !v)}
+                                />
+                                {(showOtherDegrees) ? renderList(other) : null}
+                              </>
                             ) : null}
                           </>
                         ) : (
-                          <div className="fs-detail-heading">Degrees you could study for this career world</div>
+                          <>
+                            <div className="fs-detail-heading">Degrees you could study for this career world</div>
+                            {other.length ? renderList(other) : null}
+                          </>
                         )}
-                        {other.length ? renderList(other) : null}
                       </>
                     );
                   })()}

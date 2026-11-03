@@ -52,11 +52,17 @@
 
 .rk-head {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 10px;
-  margin: 0 40px 14px 0;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0 40px 12px 0;
 }
+.rk-head > :first-child { min-width: 0; }
+/* Sort sits at the right of the header. */
+.rk-head .rk-controls { margin: 0 0 0 auto; flex: 0 0 auto; }
+/* Notes: shown below the table normally, at the end of the table on short screens. */
+.rk-notes--inside { display: none; }
 .rk-title { font-size: 1.14rem; font-weight: 700; color: #12233c; letter-spacing: -0.02em; }
 .rk-sub { font-size: 0.8rem; color: #6b7788; margin-top: 3px; }
 .rk-sub-area { font-weight: 700; color: #2f6fed; }
@@ -476,27 +482,42 @@
 
 .rk-foot--licence { margin-top: 4px; opacity: 0.85; }
 
-/* Short screens (phones in landscape, ~350 to 520px tall), 2 Nov 2026.
-   The table used to be the only scrolling part, squeezed between the header and
-   the notes, so only the column titles and part of one row were visible. Here the
-   whole modal scrolls instead, and the table keeps a usable height of its own
-   (its header row still sticks while you scroll the universities). */
+/* Short screens (phones held sideways, ~320 to 520px tall), 3 Nov 2026.
+   One scroll area only: the table. The header (title, subject, sort) stays put
+   on a single line, the column titles stick to the top of the table, and the
+   source notes sit at the end of the table rows. Before, the whole pop-up
+   scrolled AND the table scrolled inside it, so the header scrolled away and a
+   swipe up moved the table instead of bringing the header back. */
 @media (max-height: 520px) {
-  .rk-overlay { padding: 8px; align-items: flex-start; }
+  .rk-overlay {
+    padding: 6px max(8px, env(safe-area-inset-right)) 6px max(8px, env(safe-area-inset-left));
+    align-items: stretch;
+  }
   .rk-modal {
-    max-height: calc(100vh - 16px);
-    max-height: calc(100dvh - 16px);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
-    padding: 14px 14px 12px;
+    max-height: none;
+    height: 100%;
+    overflow: hidden;
+    padding: 8px 12px 8px;
+    border-radius: 14px;
   }
-  .rk-table-outer { flex: 0 0 auto; }
-  .rk-table-wrap {
-    flex: 1 1 auto;
-    max-height: calc(100vh - 40px);
-    max-height: calc(100dvh - 40px);
+  .rk-close { top: 6px; right: 8px; width: 28px; height: 28px; font-size: 1.05rem; }
+  .rk-head { flex-wrap: nowrap; align-items: center; margin: 0 34px 6px 0; gap: 10px; }
+  .rk-head > :first-child { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; row-gap: 0; }
+  .rk-title { font-size: 0.92rem; white-space: nowrap; }
+  .rk-sub { margin-top: 0; font-size: 0.74rem; }
+  .rk-controls-label { display: none; }
+  .rk-sort { padding: 4px 8px; font-size: 0.74rem; }
+  .rk-chances-prompt, .rk-prereq-warn { margin: 0 0 6px; padding: 5px 9px; font-size: 0.72rem; }
+  .rk-table-outer { flex: 1 1 auto; min-height: 0; }
+  .rk-table-wrap { max-height: none; }
+  .rk-row { padding: 6px 10px; }
+  .rk-notes--below { display: none; }
+  .rk-notes--inside {
+    display: block;
+    position: sticky;
+    left: 0;
+    width: min(100%, calc(100vw - 60px));
+    padding: 8px 10px 4px;
   }
-  .rk-title { font-size: 1.05rem; }
-  .rk-foot { margin-top: 8px; }
+  .rk-notes--inside .rk-foot { margin-top: 0; }
 }

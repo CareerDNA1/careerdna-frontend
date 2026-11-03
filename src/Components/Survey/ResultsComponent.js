@@ -20,7 +20,7 @@ import AdvisorDrawer from '../Advisor/AdvisorDrawer';
 import { setAdvisorContext, openAdvisor } from '../../utils/advisorPanel';
 import { fetchSelectionInsights } from '../../utils/fetchSelectionInsights';
 import CareerWorldsAccordion from './CareerWorldsAccordion';
-import ResultsFilterBar, { emptyFilter as emptyResultsFilter } from './ResultsFilter';
+import ResultsFilterBar, { emptyFilter as emptyResultsFilter, applyResultsFilter, OtherSectionHead } from './ResultsFilter';
 import { CAREER_WORLD_SHORT_DEFINITIONS, CAREER_WORLD_LONG_DEFINITIONS, CAREER_WORLD_DEFINITIONS, PATHWAY_DEFINITIONS, PATHWAY_UNI_LONG_DEFINITIONS } from '../../utils/selectionDefinitions';
 import FurtherStudyPanel from './FurtherStudyPanel';
 import NonUniversityPanel from './NonUniversityPanel';
@@ -1583,6 +1583,12 @@ export default function ResultsComponent({
   // One shared filter for the uni Career Pathways tab (drives both the matched
   // and adjacent pathway groups). Uni students don't get the "Ways in" group.
   const [pathwayTabFilter, setPathwayTabFilter] = useState(emptyResultsFilter());
+  // Career Worlds tab: one filter for the main list and the "Other career
+  // worlds" section; the lower-match worlds and the university "Adjacent career
+  // pathways" group start collapsed behind a Show N / Hide heading.
+  const [cwTabFilter, setCwTabFilter] = useState(emptyResultsFilter());
+  const [showLowerWorlds, setShowLowerWorlds] = useState(false);
+  const [showAdjacentPathways, setShowAdjacentPathways] = useState(false);
   // id -> { title, type } for every reacted item, so liked pathways can be
   // resolved (title + world) without depending on any loaded insight.
   const [itemReactionMeta, setItemReactionMeta] = useState({});
@@ -2085,14 +2091,20 @@ export default function ResultsComponent({
 
   // Keep the active tab centred in the horizontal strip on phone, so the current
   // section is always visible along with what sits on either side of it.
+  // Applies to both strips (profile tabs and report tabs); the report strip was
+  // missed before, so on a phone the current tab (e.g. University) could sit
+  // off-screen and the strip looked like it had nothing selected.
   useEffect(() => {
-    const list = profileTabsListRef.current;
-    if (!list) return;
-    const active = list.querySelector('.analysis-tab-button.is-active');
-    if (!active) return;
-    const target = active.offsetLeft - (list.clientWidth - active.clientWidth) / 2;
-    list.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
-  }, [activeProfileTab, activeAnalysisTab, openTopSection]);
+    [profileTabsListRef.current, analysisTabsListRef.current].forEach((list) => {
+      if (!list || list.scrollWidth <= list.clientWidth + 1) return;
+      const active = list.querySelector('.analysis-tab-button.is-active');
+      if (!active) return;
+      const lr = list.getBoundingClientRect();
+      const ar = active.getBoundingClientRect();
+      const target = list.scrollLeft + (ar.left - lr.left) - (list.clientWidth - ar.width) / 2;
+      list.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+    });
+  }, [activeProfileTab, activeAnalysisTab, activeTab, openTopSection]);
 
   const analysisQualityGate = useMemo(() => (
     profileQualityGate && typeof profileQualityGate === 'object'
@@ -3249,27 +3261,71 @@ export default function ResultsComponent({
               {renderNextStep('roleexplorer')}
             </>
           ) : tab.key === 'careerworlds' && careerWorldAccordionItems.length ? (() => {
-            const allCw = [...careerWorldAccordionItems, ...careerWorldLowerAccordionItems];
+            const lowerVisible = applyResultsFilter(careerWorldLowerAccordionItems, cwTabFilter, {
+              isLiked: (w) => resolvedItemReactions[w.id] === 'like',
+            });
+            const lowerOpen = showLowerWorlds;
             return (
               <>
                 <h2 className="cw-accordion-group__heading">Your career worlds</h2>
                 <CareerWorldsAccordion
-                  worlds={allCw}
+                  worlds={careerWorldAccordionItems}
                   savedReactions={resolvedItemReactions}
                   onItemReaction={handleNestedItemReaction}
+                  filter={cwTabFilter}
+                  onFilterChange={setCwTabFilter}
                   introText={[
                     'Career worlds are broad areas of work that may suit how you naturally think, learn and engage. Open each one to see what it is, why it fits you, and how your traits line up, then like the ones you are drawn to.',
                     'Every world here is shown the same way, whether you are planning on university or not. Some are entered through a degree, some through work, training or an apprenticeship, and many can be entered either way. When you open Career Pathways you will see exactly how you get into each one.',
                   ].join('\n')}
                 />
+                {lowerVisible.length ? (
+                  <>
+                    <OtherSectionHead
+                      title="Other career worlds"
+                      count={lowerVisible.length}
+                      open={lowerOpen}
+                      onToggle={() => setShowLowerWorlds((v) => !v)}
+                    />
+                    {lowerOpen ? (
+                      <CareerWorldsAccordion
+                        worlds={careerWorldLowerAccordionItems}
+                        savedReactions={resolvedItemReactions}
+                        onItemReaction={handleNestedItemReaction}
+                        filter={cwTabFilter}
+                        onFilterChange={setCwTabFilter}
+                        hideFilterBar
+                        introText=""
+                      />
+                    ) : null}
+                  </>
+                ) : null}
                 {renderNextStep('careerworlds')}
               </>
             );
           })() : tab.key === 'pathways' && careerPathwayAccordionGroups.length ? (
             <>
-              {careerPathwayAccordionGroups.map((group, gi) => (
+              {careerPathwayAccordionGroups.map((group, gi) => {
+                // The adjacent group starts collapsed behind a Show N / Hide
+                // heading; the count follows the active filter.
+                const collapsible = group.key === 'adjacent' && gi > 0;
+                const groupOpen = !collapsible || showAdjacentPathways;
+                const shown = collapsible
+                  ? applyResultsFilter(group.items, pathwayTabFilter, { isLiked: (w) => resolvedItemReactions[w.id] === 'like' })
+                  : group.items;
+                if (collapsible && !shown.length) return null;
+                return (
                 <div key={group.key} className="cw-accordion-group">
-                  <h2 className="cw-accordion-group__heading">{group.heading}</h2>
+                  {collapsible ? (
+                    <OtherSectionHead
+                      title={group.heading}
+                      count={shown.length}
+                      open={groupOpen}
+                      onToggle={() => setShowAdjacentPathways((v) => !v)}
+                    />
+                  ) : (
+                    <h2 className="cw-accordion-group__heading">{group.heading}</h2>
+                  )}
                   {gi === 0 ? (
                     <>
                       <div className="cw-accordion__intro">
@@ -3284,19 +3340,22 @@ export default function ResultsComponent({
                       </div>
                     </>
                   ) : null}
-                  <CareerWorldsAccordion
-                    worlds={group.items}
-                    savedReactions={resolvedItemReactions}
-                    onItemReaction={handleNestedItemReaction}
-                    itemType="pathway"
-                    iconFor={getPathwayIcon}
-                    filter={pathwayTabFilter}
-                    onFilterChange={setPathwayTabFilter}
-                    hideFilterBar
-                    introText=""
-                  />
+                  {groupOpen ? (
+                    <CareerWorldsAccordion
+                      worlds={group.items}
+                      savedReactions={resolvedItemReactions}
+                      onItemReaction={handleNestedItemReaction}
+                      itemType="pathway"
+                      iconFor={getPathwayIcon}
+                      filter={pathwayTabFilter}
+                      onFilterChange={setPathwayTabFilter}
+                      hideFilterBar
+                      introText=""
+                    />
+                  ) : null}
                 </div>
-              ))}
+                );
+              })}
               {renderNextStep('pathways')}
             </>
           ) : (

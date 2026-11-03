@@ -1599,3 +1599,22 @@
     font-size: 13px !important;
   }
 }
+
+/* Touch screens (3 Nov 2026): phones keep the :hover state on whatever sits
+   under the last tap. The next question's button in the same spot (e.g. 5 after
+   answering 5) then showed the darker hover ring and lift as if pre-selected.
+   On devices without a real hover, the hover look is switched off; the tapped
+   and selected states are unchanged. */
+@media (hover: none) {
+  .likert-buttons button:hover:not(.selected),
+  .likert-option:hover:not(.selected) {
+    transform: none;
+    box-shadow: none;
+  }
+  .likert-option--1:hover:not(.selected) { border-color: #d9e5fb; }
+  .likert-option--2:hover:not(.selected) { border-color: #d0dffa; }
+  .likert-option--3:hover:not(.selected) { border-color: #c7d9f8; }
+  .likert-option--4:hover:not(.selected) { border-color: #bdd2f8; }
+  .likert-option--5:hover:not(.selected) { border-color: #b2cafa; }
+  .likert-option { -webkit-tap-highlight-color: transparent; }
+}

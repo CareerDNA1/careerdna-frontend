@@ -1752,3 +1752,16 @@
 
 /* Advert card: "via" pill and the saved bookmark sit together top-right. */
 .role-jobcard__top-right { display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+
+/* University and Training & Work tabs (3 Nov 2026): the Filter button sits on
+   the same line as the first section heading, at the right, instead of on a row
+   of its own floating above it. */
+.selection-detail-card > .selection-explorer__toolbar:has(+ .fs-detail-heading) {
+  float: right;
+  margin: -2px 0 0 12px !important; /* the heading's top margin collapses through the card, so 0 lines up with it */
+  position: relative;
+  z-index: 2;
+}
+.selection-detail-card > .selection-explorer__toolbar + .fs-detail-heading { margin-top: 20px; padding-top: 0; }
+.selection-detail-card > .selection-explorer__toolbar:has(+ .fs-detail-heading) .results-filter__btn { margin-top: 0; }
+.selection-detail-card .pathway-role-list { clear: both; }
