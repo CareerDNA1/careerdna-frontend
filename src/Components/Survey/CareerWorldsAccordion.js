@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import './CareerWorldsAccordion.css';
 import ResultsFilterBar, { applyResultsFilter, emptyFilter } from './ResultsFilter';
 import { ThumbsUp, ThumbsDown, Smiley, SmileyMeh, BookmarkSimple } from 'phosphor-react';
-import { ItemPills, showSelectionTooltip, hideSelectionTooltip, getMatchTooltipBody } from './SelectionInsightExplorer';
+import { ItemPills, showSelectionTooltip, hideSelectionTooltip, getMatchTooltipBody, flashFavouriteNote } from './SelectionInsightExplorer';
 import { getCareerWorldIcon, getPathwayIcon } from '../../utils/iconMap';
 
 function compactKey(value) {
@@ -223,11 +223,13 @@ export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = 
                 <button
                   type="button"
                   className={`cdna-item-action cdna-item-action--like ${reaction === 'like' ? 'is-active' : ''}`}
-                  onClick={() => onReact('like')}
+                  onClick={(e) => { e.stopPropagation(); flashFavouriteNote(e.currentTarget, reaction !== 'like'); onReact('like'); }}
                   aria-pressed={reaction === 'like'}
                   aria-label="Sounds interesting"
-                  data-selection-tooltip="true"
+                  data-selection-tooltip="manual"
                   data-tooltip-body={reaction === 'like' ? 'In your favourites. Click again to remove it.' : 'Add to favourites'}
+                  onMouseEnter={(e) => { if (canHover()) showSelectionTooltip(e.currentTarget); }}
+                  onMouseLeave={() => hideSelectionTooltip()}
                 >
                   <span className="cdna-item-action-icon" aria-hidden="true"><ThumbsUp size={18} weight="duotone" /></span>
                 </button>
@@ -349,24 +351,13 @@ export function WorldCard({ world, open, onToggle, reaction, onReact, iconFor = 
                 type="button"
                 className={`cw-react-btn cw-react-btn--like ${reaction === 'like' ? 'is-active' : ''}`}
                 onClick={(e) => {
-                  const activating = reaction !== 'like';
-                  const btn = e.currentTarget;
-                  // Swap the hint before the save re-renders the card.
-                  if (activating) {
-                    btn.setAttribute('data-tooltip-body', 'Added to favourites');
-                    showSelectionTooltip(btn);
-                  } else {
-                    hideSelectionTooltip();
-                  }
+                  flashFavouriteNote(e.currentTarget, reaction !== 'like');
                   onReact('like');
-                  if (activating) {
-                    window.setTimeout(() => { hideSelectionTooltip(); if (btn.blur) btn.blur(); }, 1400);
-                  }
                 }}
                 aria-pressed={reaction === 'like'}
-                data-selection-tooltip="true"
+                data-selection-tooltip="manual"
                 data-tooltip-body={reaction === 'like' ? 'In your favourites. Click again to remove it.' : 'Add to favourites'}
-                onMouseEnter={(e) => { e.currentTarget.setAttribute('data-tooltip-body', reaction === 'like' ? 'In your favourites. Click again to remove it.' : 'Add to favourites'); showSelectionTooltip(e.currentTarget); }}
+                onMouseEnter={(e) => { if (!canHover()) return; e.currentTarget.setAttribute('data-tooltip-body', reaction === 'like' ? 'In your favourites. Click again to remove it.' : 'Add to favourites'); showSelectionTooltip(e.currentTarget); }}
                 onMouseLeave={() => hideSelectionTooltip()}
               >
                 <Smiley size={18} weight="bold" aria-hidden="true" /> Like this

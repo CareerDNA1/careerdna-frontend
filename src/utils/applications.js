@@ -79,15 +79,28 @@ async function currentUser() {
 const SELECT = 'id, assessment_run_id, kind, item_type, item_id, title, organisation, url, closing_date, item_meta, status, applied_at, note, history, created_at, updated_at';
 
 export async function listApplications() {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return [];
-  // Stable order: newest application first, unaffected by later status edits.
-  const { data, error } = await supabase
-    .from('applications')
-    .select(SELECT)
-    .eq('user_id', user.id)
-    .order('applied_at', { ascending: false })
-    .order('created_at', { ascending: false });
+  // The profile page loads many things at once. Asking the sign-in server for
+  // the user on every call (getUser) competes with all of them and sometimes
+  // fails, which showed "Your applications could not be loaded" for no real
+  // reason. The signed-in session is already in the browser, so read it there;
+  // the database's own row rules still decide what this user may see.
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id;
+  if (!userId) return [];
+  // A brief network hiccup gets two quick retries before it counts as a failure.
+  let data = null;
+  let error = null;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    if (attempt) await new Promise((r) => setTimeout(r, attempt * 700));
+    // Stable order: newest application first, unaffected by later status edits.
+    ({ data, error } = await supabase
+      .from('applications')
+      .select(SELECT)
+      .eq('user_id', userId)
+      .order('applied_at', { ascending: false })
+      .order('created_at', { ascending: false }));
+    if (!error) break;
+  }
   if (error) throw error;
   // Display tidy only (acronym capitals); the stored row is not rewritten.
   return (data || []).map((a) => (a.organisation ? { ...a, organisation: tidyOrgName(a.organisation) } : a));

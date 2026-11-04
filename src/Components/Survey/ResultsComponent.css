@@ -3004,3 +3004,28 @@ body:has(#results-root),
   -webkit-hyphens: none;
   hyphens: none;
 }
+
+/* ===== Phone spacing, one rule set for every results tab (4 Nov 2026) =====
+   Measured on a 402px-wide phone: text inside a card started 60px from the
+   screen edge because four frames each added their own side padding
+   (page 18 + report card 10 + tab panel 8 + inner panel 8, then 14 to 16 in
+   each card). Now: page 10, report card 10, panels 0, cards 12, so card text
+   starts about 33px in and every tab lines up the same way. */
+@media (max-width: 640px) {
+  #results-root { padding-left: 10px !important; padding-right: 10px !important; }
+  #results-root .section-card { padding-left: 10px !important; padding-right: 10px !important; }
+  #results-root .analysis-tabs-panel { padding-left: 0 !important; padding-right: 0 !important; }
+
+  /* Cards: same 12px side padding everywhere. */
+  #results-root .cw-accordion-item__head,
+  #results-root .pathway-role-item__toggle { padding-left: 12px !important; padding-right: 12px !important; }
+  #results-root .cw-accordion-item__body { padding-left: 12px !important; padding-right: 12px !important; }
+  #results-root .pathway-role-item__body { padding-left: 12px !important; padding-right: 12px !important; }
+
+  /* "Ways in": the label and the route names flow on the same lines with
+     tight spacing, instead of the label alone on a line and a wide gap
+     before the last route. */
+  #results-root .cw-route-chips--body { gap: 4px 12px; }
+  #results-root .cw-route-chips--body .cw-route-chips { display: contents; }
+  #results-root .cw-route-chips--body .cw-route-chip { min-height: 22px; }
+}

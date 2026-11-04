@@ -81,6 +81,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
   const [reloadTick, setReloadTick] = useState(0);
   const [entitlement, setEntitlement] = useState(null);
   const [limitReached, setLimitReached] = useState(false);
+  const [showTopUp, setShowTopUp] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const messagesRef = useRef(null);
   const latestAssistantRef = useRef(null);
@@ -343,6 +344,16 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
 
   return (
     <section className={`career-advisor-shell ${embedded ? 'is-embedded' : ''} ${isDrawer ? 'is-drawer' : ''}`} aria-label="Your Advisor">
+      {showTopUp && (
+        <ReportLimitModal
+          mode="advisor"
+          intent="buy"
+          currentPlan={entitlement?.plan || 'free'}
+          entitlement={entitlement}
+          onClose={() => setShowTopUp(false)}
+          onApplyCoupon={handleApplyCoupon}
+        />
+      )}
       {showLimitModal && (
         <ReportLimitModal
           mode="advisor"
@@ -485,13 +496,19 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
               </div>
             ) : null}
 
-            {entitlement ? (
-              <div className={`career-advisor-credit-note ${limitReached || !hasAdvisorRemaining ? 'is-empty' : ''}`}>
-                {advisorUnlimited
-                  ? 'Unlimited advisor questions'
-                  : `${Math.max(0, Number(advisorRemaining || 0))} advisor question${Math.max(0, Number(advisorRemaining || 0)) === 1 ? '' : 's'} remaining`}
-              </div>
-            ) : null}
+            {/* Allowance shown only when it is about to run out (2, 1 or none
+                left), with a Top up link that opens the same top-up window as
+                the Profile page, without leaving this page. */}
+            {entitlement && !advisorUnlimited && Math.max(0, Number(advisorRemaining || 0)) <= 2 ? (() => {
+              const left = Math.max(0, Number(advisorRemaining || 0));
+              return (
+                <div className={`career-advisor-credit-note ${limitReached || !hasAdvisorRemaining ? 'is-empty' : ''}`}>
+                  {left === 0 ? 'No questions left' : `${left} question${left === 1 ? '' : 's'} left`}
+                  {' · '}
+                  <button type="button" className="career-advisor-topup" onClick={() => setShowTopUp(true)}>Top up</button>
+                </div>
+              );
+            })() : null}
 
             {loadError && !loading ? (
               <InlineError compact message={loadError} onRetry={() => setReloadTick((t) => t + 1)} />

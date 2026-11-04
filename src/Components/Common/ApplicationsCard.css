@@ -140,3 +140,7 @@
 .apps-card .fav-prev-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.3; }
 .apps-card .fav-prev-main { min-width: 96px; }
 .apps-card .fav-prev .apps-pill { max-width: 46%; overflow: hidden; text-overflow: ellipsis; }
+
+/* Loading / could not load: shown inside the card, never as a separate box. */
+.apps-state { color: #64748b; }
+.apps-retry { margin-top: 8px; }

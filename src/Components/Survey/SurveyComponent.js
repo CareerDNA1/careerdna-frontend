@@ -32,6 +32,10 @@ export default function SurveyComponent({
   // the tapped button for a moment before moving to the next question.
   const TAP_LABEL_MS = 450;
   const [tapLabel, setTapLabel] = useState(null);
+  // A new question's buttons show no hover look until the person touches or
+  // moves over them: phones keep a "hover" on whatever sits under the last tap,
+  // which made the same-numbered button on the next question look pre-chosen.
+  const [hoverArmed, setHoverArmed] = useState(false);
   const tapTimerRef = useRef(null);
   useEffect(() => () => { if (tapTimerRef.current) window.clearTimeout(tapTimerRef.current); }, []);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -114,6 +118,13 @@ export default function SurveyComponent({
   }, [currentIndex]);
 
   const selectedVal = answers?.[currentQuestion?.id]?.value;
+  const currentQuestionId = currentQuestion?.id;
+  useEffect(() => {
+    setHoverArmed(false);
+    // Drop focus left on the previous answer so no focus ring carries over.
+    const el = typeof document !== 'undefined' ? document.activeElement : null;
+    if (el && el.classList && el.classList.contains('likert-option')) el.blur();
+  }, [currentQuestionId]);
 
   const commitAnswer = (value) => {
     // Drop focus from the tapped button so its :focus/:active styling doesn't
@@ -204,7 +215,9 @@ export default function SurveyComponent({
         <span>Disagree</span>
       </div>
 
-      <div className="likert-buttons likert-buttons--premium" role="group" aria-label="Your answer" key={currentQuestion?.id}>
+      <div className={`likert-buttons likert-buttons--premium${hoverArmed ? '' : ' likert-buttons--fresh'}`} role="group" aria-label="Your answer" key={currentQuestion?.id}
+        onPointerMove={(e) => { if (e.pointerType === 'mouse') setHoverArmed(true); }}
+        onPointerDown={() => setHoverArmed(true)}>
         {[1, 2, 3, 4, 5].map((n) => (
           <button
             key={n}

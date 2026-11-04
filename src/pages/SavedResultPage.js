@@ -14,6 +14,7 @@ import {
 import { runIsStale } from '../utils/outputVersion';
 import { runVersions, runIsOnOlderBank } from '../utils/banks';
 import { canonicalTraitName } from '../utils/traitNames';
+import { withCurrentEnvNames } from '../utils/envNames';
 import InlineError from '../Components/Common/InlineError';
 import { friendlyError } from '../utils/friendlyError';
 import './ProfilePage.css';
@@ -164,7 +165,7 @@ export default function SavedResultPage() {
   const rescored = run ? rescoreRunFromAnswers(run) : null;
   const savedArchetypes = rescored?.archetypes || saved?.archetypes || {};
   const savedSummary = reportLimitReached ? 'REPORT_LIMIT_REACHED' : (run?.summary_markdown || '');
-  const savedAnalysisMeta = saved?.analysisMeta || null;
+  const savedAnalysisMeta = withCurrentEnvNames(saved?.analysisMeta || null);
   const savedIntroName = saved?.introName || '';
   // Saved rows of a report with no answers keep the trait names of their day;
   // they are shown under the current names (utils/traitNames).

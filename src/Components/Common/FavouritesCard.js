@@ -84,7 +84,9 @@ const REPORT_TYPES = new Set(['career_world', 'pathway', 'subject', 'role', 'app
 // or opens its external link for saved jobs/courses.
 // appliedKeys: Set of `${type}|${id}` already in the applications tracker;
 // onApply(item): mark a favourite ad/course as applied (owned by the profile page).
-export default function FavouritesCard({ runId, onExplore, onOpenReport, initialGroups, insightCtx, appliedKeys, onApply, onOpenApplications, stage = 'university', predictedGrades = [] }) {
+export default function FavouritesCard({ openSignal = 0, runId, onExplore, onOpenReport, initialGroups, insightCtx, appliedKeys, onApply, onOpenApplications, stage = 'university', predictedGrades = [], loadState = 'ready', onRetry }) {
+  // loadState from the parent: 'loading' | 'error' | 'ready'. While not ready the
+  // card shows that inside itself, never an empty list that looks like nothing is saved.
   // Grades band for a saved course (Safe / Match / Stretch / Ambitious), same as the rankings table.
   const [chancesTip, setChancesTip] = useState('');
   const chances = (item, size = 'sm') => (item && item.type === 'course' && item.stats?.typicalGrades && !entryComparisonNote(item.title, item.subtitle))
@@ -355,6 +357,12 @@ export default function FavouritesCard({ runId, onExplore, onOpenReport, initial
     }
   };
 
+  // The profile's Favourites stat tile asks for the popup (ignores the initial 0).
+  useEffect(() => {
+    if (openSignal && loadState === 'ready') setOpen(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openSignal]);
+
   if (loading) return null;
 
   // Discreet link at the top right of an opened favourite: jump to the matching
@@ -404,6 +412,7 @@ export default function FavouritesCard({ runId, onExplore, onOpenReport, initial
   // popup itself or on buttons/links are left alone.
   const openFromCard = (e) => {
     if (e.target.closest('.fav-overlay, button, a, input, select, textarea')) return;
+    if (loadState !== 'ready') return;
     setOpen(true);
   };
 
@@ -423,14 +432,21 @@ export default function FavouritesCard({ runId, onExplore, onOpenReport, initial
           <Heart size={18} weight="fill" aria-hidden="true" />
           Your favourites
         </span>
-        {total > 0 ? (
+        {loadState === 'ready' && total > 0 ? (
           <button type="button" className="fav-btn fav-btn--primary fav-btn--head" onClick={() => setOpen(true)}>
             View all {total}
           </button>
         ) : null}
       </div>
 
-      {total > 0 ? (
+      {loadState === 'loading' ? (
+        <p className="fav-empty">Loading your favourites&hellip;</p>
+      ) : loadState === 'error' ? (
+        <div>
+          <p className="fav-empty">Your favourites could not be loaded right now.</p>
+          <button type="button" className="fav-btn fav-btn--head" onClick={onRetry}>Try again</button>
+        </div>
+      ) : total > 0 ? (
         <div className="fav-preview">
           {previewItems.map((item) => {
             const meta = favTypeMeta(item);
@@ -455,7 +471,7 @@ export default function FavouritesCard({ runId, onExplore, onOpenReport, initial
           {' '}and it saves here.
         </p>
       )}
-      {total > 0 ? <p className="fav-foot fav-foot--card">Like worlds, pathways, degrees, courses and routes in your report to add more.</p> : null}
+      {loadState === 'ready' && total > 0 ? <p className="fav-foot fav-foot--card">Like worlds, pathways, degrees, courses and routes in your report to add more.</p> : null}
 
       {open ? (
         <div className="fav-overlay" role="dialog" aria-modal="true" aria-label="Your favourites"

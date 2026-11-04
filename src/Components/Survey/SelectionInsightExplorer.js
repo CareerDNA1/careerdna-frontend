@@ -955,6 +955,23 @@ function SubjectAccordionItem({ item }) {
 // on — no hover tooltips (matches the career-world card behaviour).
 // `extra`: an optional third control rendered in the same row and style (e.g.
 // "Mark as applied" on a saved ad).
+// Only devices with a real mouse get hover hints. On phones a tap also fires
+// mouseenter, which left "Add to favourites" or "Click again to remove it"
+// stuck on screen; phones get just the short confirmation below.
+export function canHover() {
+  return typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+    && window.matchMedia('(hover: hover)').matches;
+}
+
+// After Like this is pressed: "Added to favourites" or "Removed from
+// favourites" for a moment, then the note closes by itself (all devices).
+export function flashFavouriteNote(btn, adding) {
+  if (!btn) return;
+  btn.setAttribute('data-tooltip-body', adding ? 'Added to favourites' : 'Removed from favourites');
+  showSelectionTooltip(btn);
+  window.setTimeout(() => { hideSelectionTooltip(); if (btn.blur) btn.blur(); }, 1400);
+}
+
 export function PathwayReactionRow({ reaction = '', onReact, label = 'Feedback', extra = null }) {
   return (
     <div className={`cdna-react-row${extra ? ' cdna-react-row--three' : ''}`} aria-label={label}>
@@ -962,25 +979,13 @@ export function PathwayReactionRow({ reaction = '', onReact, label = 'Feedback',
         type="button"
         className={`cdna-react-btn cdna-react-btn--like ${reaction === 'like' ? 'is-active' : ''}`}
         onClick={(e) => {
-          const activating = reaction !== 'like';
-          const btn = e.currentTarget;
-          // Swap the hint before the save re-renders the card, so the hover text
-          // "Add to favourites" is replaced at once by "Added to favourites".
-          if (activating) {
-            btn.setAttribute('data-tooltip-body', 'Added to favourites');
-            showSelectionTooltip(btn);
-          } else {
-            hideSelectionTooltip();
-          }
+          flashFavouriteNote(e.currentTarget, reaction !== 'like');
           onReact('like', e);
-          if (activating) {
-            window.setTimeout(() => { hideSelectionTooltip(); if (btn.blur) btn.blur(); }, 1400);
-          }
         }}
         aria-pressed={reaction === 'like'}
-        data-selection-tooltip="true"
+        data-selection-tooltip="manual"
         data-tooltip-body={reaction === 'like' ? 'In your favourites. Click again to remove it.' : 'Add to favourites'}
-        onMouseEnter={(e) => { e.currentTarget.setAttribute('data-tooltip-body', reaction === 'like' ? 'In your favourites. Click again to remove it.' : 'Add to favourites'); showSelectionTooltip(e.currentTarget); }}
+        onMouseEnter={(e) => { if (!canHover()) return; e.currentTarget.setAttribute('data-tooltip-body', reaction === 'like' ? 'In your favourites. Click again to remove it.' : 'Add to favourites'); showSelectionTooltip(e.currentTarget); }}
         onMouseLeave={() => hideSelectionTooltip()}
       >
         <Smiley size={18} weight="bold" aria-hidden="true" /> Like this

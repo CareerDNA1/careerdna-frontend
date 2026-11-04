@@ -79,3 +79,42 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     storage: cdnaAuthStorage,
   },
 });
+
+// getUser() asks the sign-in server every time. The profile page alone made
+// about 20 of these at once, and when one failed (a blip, a slow token
+// refresh) the caller got "no user" and quietly showed an empty list: empty
+// favourites, "applications could not be loaded". Now:
+//   - calls made at the same moment share one request,
+//   - a confirmed answer is reused for a minute for the same sign-in,
+//   - if the server cannot be reached, the user from the signed-in session is
+//     used. A real "signed out / token rejected" answer is still passed on.
+// Reading data stays safe: the database's own row rules decide what each
+// signed-in user may see.
+const originalGetUser = supabase.auth.getUser.bind(supabase.auth);
+let getUserInFlight = null;
+let getUserCache = { token: '', at: 0, res: null };
+supabase.auth.getUser = async (jwt) => {
+  if (jwt) return originalGetUser(jwt);
+  let session = null;
+  try { ({ data: { session } } = await supabase.auth.getSession()); } catch (_) { session = null; }
+  if (!session) return originalGetUser();
+  const token = session.access_token || '';
+  if (getUserCache.res && getUserCache.token === token && Date.now() - getUserCache.at < 60000) {
+    return getUserCache.res;
+  }
+  if (!getUserInFlight) {
+    getUserInFlight = originalGetUser().finally(() => { getUserInFlight = null; });
+  }
+  let res;
+  try { res = await getUserInFlight; } catch (err) { res = { data: { user: null }, error: err }; }
+  if (res?.data?.user) {
+    getUserCache = { token, at: Date.now(), res };
+    return res;
+  }
+  const status = Number(res?.error?.status || 0);
+  const rejected = status === 401 || status === 403;
+  if (!rejected && session.user) {
+    return { data: { user: session.user }, error: null };
+  }
+  return res;
+};

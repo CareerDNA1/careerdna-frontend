@@ -367,7 +367,7 @@ export async function getLatestAssessmentRun() {
 // example, only lists run dates/status, so it skips the heavy jsonb/markdown
 // columns (results_json, summary_markdown, survey_answers_json) which otherwise
 // balloon the payload to megabytes across 20 runs and make the page crawl.
-export async function listAssessmentRuns(limit = 20, columns = '*') {
+export async function listAssessmentRuns(limit = 20, columns = '*', offset = 0) {
   const {
     data: { user },
     error: userError,
@@ -381,7 +381,7 @@ export async function listAssessmentRuns(limit = 20, columns = '*') {
     .select(columns)
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
-    .limit(limit);
+    .range(offset, offset + limit - 1);
 
   if (error) throw error;
   return data || [];

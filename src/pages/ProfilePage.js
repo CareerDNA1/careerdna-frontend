@@ -435,6 +435,32 @@ function takeProfileCache(userId) {
   return profileBundleCache;
 }
 
+// Journey progress bar with a small rocket that flies from the start to the
+// student's progress when the profile opens, then keeps hovering there.
+function JourneyRocketBar({ pct = 0 }) {
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    const t = window.setTimeout(() => setShown(Math.max(0, Math.min(100, pct))), 150);
+    return () => window.clearTimeout(t);
+  }, [pct]);
+  return (
+    <div className="profile-jcard-track" aria-hidden="true">
+      <div className="profile-jcard-bar">
+        <div className="profile-jcard-bar__fill" style={{ width: `${shown}%` }} />
+      </div>
+      <svg className="profile-jcard-rocket" style={{ left: `max(${shown}%, 44px)` }} width="50" height="28" viewBox="0 0 50 28">
+        <g className="profile-jcard-rocket__body">
+          <path className="profile-jcard-rocket__flame" d="M2 14c4-4 8-5 12-4v8c-4 1-8 0-12-4z" fill="#ff9f43" />
+          <path d="M6 14c3-2 5-2.5 8-2v4c-3 .5-5 0-8-2z" fill="#ffd166" />
+          <path d="M14 9h20c6 0 11 3 13 5-2 2-7 5-13 5H14z" fill="#2f6fed" />
+          <path d="M17 9l-4-6h7l6 6zM17 19l-4 6h7l6-6z" fill="#1f4fb8" />
+          <circle cx="35" cy="14" r="3" fill="#cfe0ff" stroke="#1f4fb8" strokeWidth="1.2" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -554,6 +580,8 @@ export default function ProfilePage() {
   // Full favourites data, loaded once at the profile level and passed into the
   // favourites card so it renders together with everything else (no late pop-in).
   const [favGroups, setFavGroups] = useState(null);
+  const [favLoadError, setFavLoadError] = useState(false);
+  const [favReload, setFavReload] = useState(0);
   const satPromptRef = useRef(false);
 
   useEffect(() => {
@@ -561,11 +589,24 @@ export default function ProfilePage() {
     if (!user?.id) return undefined; // wait for the user
     if (!runId) { setFavGroups([]); setFavForRun('none'); return undefined; }
     let cancelled = false;
-    getFavouritesByCategory(runId)
-      .then((groups) => { if (!cancelled) { setFavGroups(groups || []); setFavForRun(runId); } })
-      .catch(() => { if (!cancelled) { setFavGroups([]); setFavForRun(runId); } });
+    setFavLoadError(false);
+    // A failed load used to show an empty list ("Like a career world...") as if
+    // nothing was saved. Now: two quick retries, then a clear message inside the
+    // card with Try again. The saved favourites are never shown as empty by mistake.
+    (async () => {
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        if (attempt) await new Promise((r) => setTimeout(r, attempt * 700));
+        if (cancelled) return;
+        try {
+          const groups = await getFavouritesByCategory(runId);
+          if (!cancelled) { setFavGroups(groups || []); setFavForRun(runId); }
+          return;
+        } catch (_) { /* try again */ }
+      }
+      if (!cancelled) { setFavLoadError(true); setFavForRun(runId); }
+    })();
     return () => { cancelled = true; };
-  }, [currentRun?.id, user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentRun?.id, user?.id, favReload]); // eslint-disable-line react-hooks/exhaustive-deps
   // Saves made inside a popup (a live ad saved from an opened role card, say)
   // announce themselves; reload so the favourites card and count stay current.
   useEffect(() => {
@@ -595,6 +636,7 @@ export default function ProfilePage() {
     if (!user?.id) return undefined;
     let cancelled = false;
     setAppsLoadError(false);
+    setApplications(null);
     listApplications()
       .then((rows) => { if (!cancelled) setApplications(rows || []); })
       .catch(() => { if (!cancelled) { setApplications(null); setAppsLoadError(true); } });
@@ -665,11 +707,40 @@ export default function ProfilePage() {
   const [retakeConfirmOpen, setRetakeConfirmOpen] = useState(false);
   // New report asked for while the latest assessment is on the older question bank.
   const [newAssessmentNeededOpen, setNewAssessmentNeededOpen] = useState(false);
-  const [showAllRuns, setShowAllRuns] = useState(false);
+  // Recent reports: 3 shown at first, then 30 more per press of "Show more".
+  const RUNS_PREVIEW = 3;
+  const RUNS_PAGE = 30;
+  const RUN_LIST_COLUMNS = 'id, created_at, survey_taken_at, intro_answers_json, output_version, bank_version';
+  const [runsShown, setRunsShown] = useState(RUNS_PREVIEW);
+  const [runsLoadingMore, setRunsLoadingMore] = useState(false);
+  const [runsMoreError, setRunsMoreError] = useState(false);
+  const showMoreRuns = async () => {
+    if (runsLoadingMore) return;
+    const target = Math.min(totalRuns || Infinity, runsShown + RUNS_PAGE);
+    setRunsMoreError(false);
+    if (runs.length < target) {
+      setRunsLoadingMore(true);
+      try {
+        const more = await listAssessmentRuns(target - runs.length, RUN_LIST_COLUMNS, runs.length);
+        setRuns((prev) => {
+          const seen = new Set(prev.map((r) => r.id));
+          return [...prev, ...more.filter((r) => !seen.has(r.id))];
+        });
+      } catch (e) {
+        console.warn('Loading more reports failed:', e?.message || e);
+        setRunsMoreError(true);
+        setRunsLoadingMore(false);
+        return;
+      }
+      setRunsLoadingMore(false);
+    }
+    setRunsShown(target);
+  };
   const [satDismissed, setSatDismissed] = useState(false);
   const [academicHasData, setAcademicHasData] = useState(false);
   const [gradesOpenSignal, setGradesOpenSignal] = useState(0);
   const [appsOpenSignal, setAppsOpenSignal] = useState(0);
+  const [favOpenSignal, setFavOpenSignal] = useState(0); // stat tile opens the favourites popup
   // Set when a favourite asks to open Your applications on its own entry.
   const [appsOpenFocus, setAppsOpenFocus] = useState(null);
 
@@ -787,7 +858,7 @@ export default function ProfilePage() {
     // (profiles.current_run_id) or, when nothing is pinned, the newest run.
     const profileData = await getMyProfile();
     const [runData, runCount, currentFull, sittingList] = await Promise.all([
-      listAssessmentRuns(20, 'id, created_at, survey_taken_at, intro_answers_json, output_version, bank_version'),
+      listAssessmentRuns(20, 'id, created_at, survey_taken_at, intro_answers_json, output_version, bank_version', 0),
       getAssessmentRunCount(),
       getCurrentAssessmentRun(profileData?.current_run_id || null),
       listAssessmentSittings().catch((e) => { console.warn('Assessment count failed:', e?.message || e); return null; }),
@@ -1888,56 +1959,51 @@ export default function ProfilePage() {
               </div>
             ) : null}
             <div className="profile-stats">
-              <div className={`profile-stat profile-stat--journey${statTileProps('assessments').className}`}>
-                {statTileProps('assessments').note}
-                <span className="profile-stat-ic" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></svg>
-                </span>
-                <div className="profile-stat-body">
-                  <span className="profile-stat-num">{Math.max(Number(profile?.assessments_taken) || 0, Number(totalSurveys) || 0)}</span>
-                  <span className="profile-stat-label">Assessments</span>
-                </div>
-              </div>
-              <div className={`profile-stat profile-stat--runs${statTileProps('reports').className}`}>
-                {statTileProps('reports').note}
-                <span className="profile-stat-ic" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 4v4h4" /><path d="M12 8v4l3 2" /></svg>
-                </span>
-                <div className="profile-stat-body">
-                  <span className="profile-stat-num">{totalRuns}</span>
-                  <span className="profile-stat-label">Reports</span>
-                </div>
-              </div>
-              <div className={`profile-stat profile-stat--advisor${statTileProps('questions').className}`}>
-                {statTileProps('questions').note}
-                <span className="profile-stat-ic" aria-hidden="true">
-                  <BrainCircuit size={20} aria-hidden="true" focusable="false" />
-                </span>
-                <div className="profile-stat-body">
-                  <span className="profile-stat-num">{Number(profile?.advisor_questions_used || 0)}</span>
-                  <span className="profile-stat-label">Questions asked</span>
-                </div>
-              </div>
-              <div className={`profile-stat profile-stat--fav${statTileProps('favourites').className}`}>
-                {statTileProps('favourites').note}
-                <span className="profile-stat-ic" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 21s-7-4.5-9.5-8.5C.5 8.5 3 5 6.5 5 8.5 5 10 6 12 8c2-2 3.5-3 5.5-3C21 5 23.5 8.5 21.5 12.5 19 16.5 12 21 12 21z" /></svg>
-                </span>
-                <div className="profile-stat-body">
-                  <span className="profile-stat-num">{favCount == null ? '…' : favCount}</span>
-                  <span className="profile-stat-label">Favourites</span>
-                </div>
-              </div>
-              <div className={`profile-stat profile-stat--apps${statTileProps('applications').className}`}>
-                {statTileProps('applications').note}
-                <span className="profile-stat-ic" aria-hidden="true">
-                  <Send size={19} aria-hidden="true" focusable="false" />
-                </span>
-                <div className="profile-stat-body">
-                  <span className="profile-stat-num">{applicationTracked == null ? '…' : applicationTracked}</span>
-                  <span className="profile-stat-label">Applications</span>
-                </div>
-              </div>
+              {(() => {
+                // Linked stat tiles. Assessments is folded into Reports: both led
+                // to the same place (the report list below).
+                const nAssess = Math.max(Number(profile?.assessments_taken) || 0, Number(totalSurveys) || 0);
+                const chev = (
+                  <svg className="profile-stat-go" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+                );
+                const tile = (key, cls, icon, num, label, sub, onClick, aria, celebrateKeys = [key]) => {
+                  const k = celebrateKeys.find((c) => celebrate[c]) || key;
+                  return (
+                    <button type="button" key={key} className={`profile-stat ${cls}${statTileProps(k).className}`} onClick={onClick} aria-label={aria}>
+                      {statTileProps(k).note}
+                      <span className="profile-stat-ic" aria-hidden="true">{icon}</span>
+                      <span className="profile-stat-body">
+                        <span className="profile-stat-num">{num}</span>
+                        <span className="profile-stat-label">{label}</span>
+                        {sub ? <span className="profile-stat-sub">{sub}</span> : null}
+                      </span>
+                      {chev}
+                    </button>
+                  );
+                };
+                return [
+                  tile('reports', 'profile-stat--runs',
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 4v4h4" /><path d="M12 8v4l3 2" /></svg>,
+                    totalRuns, 'Reports', `from ${nAssess} ${nAssess === 1 ? 'assessment' : 'assessments'}`,
+                    () => { const el = document.getElementById('profile-recent-reports'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
+                    `${totalRuns} reports from ${nAssess} assessments. Go to your reports`, ['reports', 'assessments']),
+                  tile('questions', 'profile-stat--advisor',
+                    <BrainCircuit size={20} aria-hidden="true" focusable="false" />,
+                    Number(profile?.advisor_questions_used || 0), 'Questions asked', 'Open your advisor',
+                    () => openAdvisor(),
+                    `${Number(profile?.advisor_questions_used || 0)} questions asked. Open your advisor`),
+                  tile('favourites', 'profile-stat--fav',
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 21s-7-4.5-9.5-8.5C.5 8.5 3 5 6.5 5 8.5 5 10 6 12 8c2-2 3.5-3 5.5-3C21 5 23.5 8.5 21.5 12.5 19 16.5 12 21 12 21z" /></svg>,
+                    favCount == null ? '…' : favCount, 'Favourites', 'View all',
+                    () => setFavOpenSignal((n) => n + 1),
+                    `${favCount == null ? '' : favCount} favourites. View all`),
+                  tile('applications', 'profile-stat--apps',
+                    <Send size={19} aria-hidden="true" focusable="false" />,
+                    applicationTracked == null ? '…' : applicationTracked, 'Applications', 'View all',
+                    () => setAppsOpenSignal((n) => n + 1),
+                    `${applicationTracked == null ? '' : applicationTracked} applications. View all`),
+                ];
+              })()}
             </div>
 
             <section className="profile-jcard" aria-label={journeyNextStep ? `Your journey. Next step: ${journeyNextStep.label}` : 'Your journey'}>
@@ -1947,9 +2013,7 @@ export default function ProfilePage() {
                   <span className="profile-jcard-pill">{journeyDoneCount} of {journeyTotal} steps done</span>
                 </span>
               </div>
-              <div className="profile-jcard-bar" aria-hidden="true">
-                <div className="profile-jcard-bar__fill" style={{ width: `${journeyTotal ? Math.round((journeyDoneCount / journeyTotal) * 100) : 0}%` }} />
-              </div>
+              <JourneyRocketBar pct={journeyTotal ? Math.round((journeyDoneCount / journeyTotal) * 100) : 0} />
               <button
                 type="button"
                 className="profile-jcard-next"
@@ -2030,24 +2094,20 @@ export default function ProfilePage() {
 
         {/* Favourites (left) + grades (right, school only) from the latest run. */}
         {overviewReady && latestRun ? (
-          <div className={`profile-favrow${latestStatus === 'school' ? ' profile-favrow--three' : ''}`}>
-            <FavouritesCard runId={latestRun.id} onExplore={exploreFavourite} onOpenReport={() => openRun(latestRun.id)} initialGroups={favGroups} appliedKeys={appliedKeys} onApply={handleApplyFromFavourite} onOpenApplications={(target) => setAppsOpenFocus((cur) => ({ ...target, n: ((cur && cur.n) || 0) + 1 }))} stage={applicationStage} predictedGrades={academicProfileData?.predicted_alevels || []} insightCtx={{
+          <div className="profile-favrow">
+            <FavouritesCard openSignal={favOpenSignal} loadState={favLoadError ? 'error' : (favGroups === null ? 'loading' : 'ready')} onRetry={() => setFavReload((n) => n + 1)} runId={latestRun.id} onExplore={exploreFavourite} onOpenReport={() => openRun(latestRun.id)} initialGroups={favGroups} appliedKeys={appliedKeys} onApply={handleApplyFromFavourite} onOpenApplications={(target) => setAppsOpenFocus((cur) => ({ ...target, n: ((cur && cur.n) || 0) + 1 }))} stage={applicationStage} predictedGrades={academicProfileData?.predicted_alevels || []} insightCtx={{
               archetypes: latestRun?.results_json?.archetypes || null,
               subdimensions: latestRun?.results_json?.subdimensionRows || [],
               summaryMarkdown: latestRun?.summary_markdown || '',
               likedPathways: (favGroups || []).filter((g) => g.type === 'pathway').flatMap((g) => g.items.map((it) => ({ id: it.id, title: it.title }))),
               likedWorlds: (favGroups || []).filter((g) => g.type === 'career_world').flatMap((g) => g.items.map((it) => ({ id: it.id, title: it.title }))),
             }} />
-            {latestStatus === 'school' ? (
-              gradesLoadError
-                ? <InlineError message="Your grades could not be loaded." onRetry={() => setPersonalReload((n) => n + 1)} />
-                : <AcademicProfileCard openSignal={gradesOpenSignal} initialProfile={academicProfileData} onSaved={(ap) => { setAcademicHasData(hasAcademicData(ap)); setAcademicProfileData(ap || null); }} />
-            ) : null}
+            {/* Right column: applications, with grades (school only) underneath. */}
+            <div className="profile-sidecol">
             {/* Applications tracker: everything the student has applied for. */}
-            {appsLoadError ? (
-              <InlineError message="Your applications could not be loaded." onRetry={() => setPersonalReload((n) => n + 1)} />
-            ) : (
             <ApplicationsCard
+              loadState={appsLoadError ? 'error' : (applications === null ? 'loading' : 'ready')}
+              onRetry={() => setPersonalReload((n) => n + 1)}
               apps={stageApplications || []}
               onChange={(next) => setApplications((prev) => {
                 // The card only sees this stage's rows; keep the other stage's rows as they are.
@@ -2065,13 +2125,16 @@ export default function ProfilePage() {
               candidates={(favGroups || []).flatMap((g) => g.items).filter((it) => (it.type === 'job' || it.type === 'course') && !appliedKeys.has(`${it.type}|${it.id}`))}
               onApplyFavourite={handleApplyFromFavourite}
             />
-            )}
+            {latestStatus === 'school' ? (
+              <AcademicProfileCard loadError={gradesLoadError} onRetry={() => setPersonalReload((n) => n + 1)} openSignal={gradesOpenSignal} initialProfile={academicProfileData} onSaved={(ap) => { setAcademicHasData(hasAcademicData(ap)); setAcademicProfileData(ap || null); }} />
+            ) : null}
+            </div>
           </div>
         ) : null}
 
         {/* Recent assessments */}
         {overviewReady ? (
-        <section className="profile-card">
+        <section className="profile-card" id="profile-recent-reports">
           <div className="profile-card-header">
             <div className="profile-card-header-left">
               <h2 className="profile-card-title">Recent reports</h2>
@@ -2130,7 +2193,7 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="profile-runs">
-              {(showAllRuns ? runs : runs.slice(0, 3)).map((run, idx) => (
+              {runs.slice(0, runsShown).map((run, idx) => (
                 <div
                   key={run.id}
                   className={`profile-run-row${latestRun?.id === run.id ? ' is-current' : ''}`}
@@ -2226,11 +2289,22 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {runs.length > 3 ? (
+          {(totalRuns || runs.length) > RUNS_PREVIEW ? (
             <div className="profile-card-footer">
-              <button type="button" className="profile-showall" onClick={() => setShowAllRuns((v) => !v)}>
-                {showAllRuns ? 'Show less' : `View all ${totalRuns}`}
-              </button>
+              {runsShown < (totalRuns || runs.length) ? (
+                <button type="button" className="profile-showall" onClick={showMoreRuns} disabled={runsLoadingMore}>
+                  {runsLoadingMore
+                    ? 'Loading…'
+                    : runsMoreError
+                      ? 'Could not load more. Try again'
+                      : `Show ${Math.min(RUNS_PAGE, (totalRuns || runs.length) - runsShown)} more (${Math.min(runsShown, runs.length)} of ${totalRuns || runs.length})`}
+                </button>
+              ) : null}
+              {runsShown > RUNS_PREVIEW ? (
+                <button type="button" className="profile-showall" onClick={() => setRunsShown(RUNS_PREVIEW)}>
+                  Show less
+                </button>
+              ) : null}
             </div>
           ) : null}
         </section>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { GraduationCap, LockSimple, Plus, X } from 'phosphor-react';
+import { BookOpen, Books, GraduationCap, LockSimple, Notebook, Plus, X } from 'phosphor-react';
 import {
   getMyAcademicProfile,
   saveMyAcademicProfile,
@@ -43,7 +43,7 @@ function subjectOptions(all, rows, i) {
 
 // Self-entered academic profile on the Profile page: GCSEs + predicted A-levels.
 // Optional; sharpens university matches (reach / match / safe) when present.
-export default function AcademicProfileCard({ openSignal = 0, onSaved, initialProfile }) {
+export default function AcademicProfileCard({ openSignal = 0, onSaved, initialProfile, loadError = false, onRetry }) {
   // When the parent preloads the profile (initialProfile), use it directly so the
   // grades card appears with the rest of the page rather than fetching again.
   const preloaded = initialProfile !== undefined;
@@ -111,7 +111,7 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
   // Open the editor when the parent bumps openSignal (e.g. the roadmap's
   // "Enter your grades" step). Ignores the initial 0.
   useEffect(() => {
-    if (openSignal) startEdit();
+    if (openSignal && !loadError) startEdit();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openSignal]);
 
@@ -163,7 +163,9 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
     <section
       className="acad-card fav-card--clickable"
       onClick={(e) => {
-        if (editing || e.target.closest('.acad-overlay, button, a, input, select, textarea')) return;
+        // Never open the editor on grades that failed to load: saving it would
+        // replace the real grades with an empty set.
+        if (loadError || editing || e.target.closest('.acad-overlay, button, a, input, select, textarea')) return;
         startEdit();
       }}
     >
@@ -172,40 +174,47 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
           <GraduationCap size={18} weight="bold" aria-hidden="true" />
           Your grades
         </span>
+        {loadError ? null : (
         <button type="button" className="acad-btn acad-btn--primary acad-btn--head" onClick={startEdit}>
           {filled ? 'Edit grades' : 'Add grades'}
         </button>
+        )}
       </div>
 
       {notice ? <p className="acad-notice">{notice}</p> : null}
 
-      {filled ? (
-        <div className="acad-view">
-          <div className="acad-view-row">
-            <span className="acad-view-key">Predicted A-levels</span>
-            <span className="acad-chips">
-              {(ap.predicted_alevels || []).filter((r) => r.subject).map((r, i) => (
-                <span className="acad-chip" key={i}>{r.subject}{r.grade ? ` ${r.grade}` : ''}</span>
-              ))}
-            </span>
-          </div>
-          <div className="acad-view-row">
-            <span className="acad-view-key">GCSEs</span>
-            <span className="acad-chips">
-              {(ap.gcses || []).filter((r) => r.subject).map((r, i) => (
-                <span className="acad-chip acad-chip--gcse" key={i}>{r.subject}{r.grade ? ` ${r.grade}` : ''}</span>
-              ))}
-            </span>
-          </div>
-          {ap.epq_grade ? (
-            <div className="acad-view-row">
-              <span className="acad-view-key">EPQ</span>
-              <span className="acad-chips"><span className="acad-chip">Extended Project {ap.epq_grade}</span></span>
-            </div>
-          ) : null}
-          <p className="acad-foot">Keep these up to date. They power Your chances in the university rankings and let Your Advisor compare your grades with the degrees and routes you save.</p>
+      {loadError ? (
+        <div className="acad-empty">
+          <p>Your grades could not be loaded right now.</p>
+          <button type="button" className="acad-btn acad-btn--head" style={{ marginTop: 8 }} onClick={onRetry}>Try again</button>
         </div>
-      ) : (
+      ) : filled ? (() => {
+        // Compact summary: one line per section. The full list lives in the editor.
+        const fmt = (r) => `${r.subject}${r.grade ? ` ${r.grade}` : ''}`;
+        const als = (ap.predicted_alevels || []).filter((r) => r.subject);
+        const gcs = (ap.gcses || []).filter((r) => r.subject);
+        const core = GCSE_COMPULSORY.map((c) => gcs.find((r) => sameSubject(r.subject, c))).filter((r) => r && r.grade);
+        // Same row style as Favourites and Applications: icon tile, title,
+        // detail line, short badge on the right.
+        const alGrades = als.map((r) => r.grade).filter(Boolean).join('');
+        const row = (key, Icon, tint, fg, title, sub, badge) => (
+          <div className="fav-prev acad-prev" key={key}>
+            <span className="fav-prev-ic" style={{ background: tint, color: fg }} aria-hidden="true"><Icon size={16} weight="bold" /></span>
+            <span className="fav-prev-main">
+              <span className="fav-prev-title">{title}</span>
+              <span className="fav-prev-sub">{sub}</span>
+            </span>
+            {badge ? <span className="acad-badge" style={{ background: tint, color: fg }}>{badge}</span> : null}
+          </div>
+        );
+        return (
+          <div className="fav-preview acad-preview">
+            {row('al', BookOpen, '#eaf1fe', '#1f4fb8', 'Predicted A-levels', als.length ? als.map(fmt).join(', ') : 'None added yet', alGrades)}
+            {row('gc', Books, '#eef2f8', '#33475b', 'GCSEs', gcs.length ? (core.length ? core.map(fmt).join(', ') : gcs.slice(0, 2).map(fmt).join(', ')) : 'None added yet', gcs.length ? `${gcs.length} ${gcs.length === 1 ? 'subject' : 'subjects'}` : '')}
+            {ap.epq_grade ? row('epq', Notebook, '#efeafc', '#4a2f9e', 'Extended Project', 'EPQ', ap.epq_grade) : null}
+          </div>
+        );
+      })() : (
         <div className="acad-empty">
           <p>Add your GCSEs and predicted A-levels to see your chances in the rankings.</p>
         </div>
@@ -223,7 +232,7 @@ export default function AcademicProfileCard({ openSignal = 0, onSaved, initialPr
           <div className="acad-modal">
             <button type="button" className="acad-modal-close" onClick={cancelEdit} aria-label="Close">×</button>
             <div className="acad-modal-title">Your grades</div>
-            <div className="acad-modal-sub">Add your GCSEs and predicted A-levels to personalise your university matches.</div>
+            <div className="acad-modal-sub">Keep these up to date. They show your chances in the university rankings and let your advisor compare your grades with the degrees and routes you save.</div>
             {error ? <p className="acad-error">{error}</p> : null}
             <div className="acad-edit">
               <div className="acad-section">

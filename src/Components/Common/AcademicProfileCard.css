@@ -61,6 +61,12 @@
 .acad-chip--gcse { background: #eef2f8; border-color: #dfe7f2; color: #33475b; }
 
 .acad-foot { margin: auto 0 0; padding-top: 12px; color: #64748b; font-size: 0.78rem; line-height: 1.45; }
+/* Phones: the card is no longer stretched to match a neighbour, so the note
+   sits straight under the grades instead of being pushed to the bottom. */
+@media (max-width: 768px) {
+  .acad-view { justify-content: flex-start; }
+  .acad-foot { margin-top: 0; padding-top: 0; }
+}
 
 /* Editor popup (modal). */
 .acad-overlay {
@@ -206,3 +212,11 @@
 .acad-btn--danger { background: #b42318; color: #fff; border-color: #b42318; }
 .acad-btn--danger:hover { background: #9b1e14; }
 .acad-btn--danger:disabled { opacity: 0.6; cursor: default; }
+
+/* Compact summary on the profile (one line per section). */
+.acad-view--compact { margin-top: 10px; gap: 4px; flex: 0 0 auto; justify-content: flex-start; }
+.acad-line { margin: 0; color: #56657a; font-size: 0.86rem; line-height: 1.55; }
+.acad-line-key { font-weight: 700; color: #12233c; margin-right: 6px; }
+/* Grade rows reuse the favourites row layout; only the badge is new. */
+.acad-preview { margin-top: 8px; }
+.acad-badge { flex: 0 0 auto; font-size: 0.78rem; font-weight: 700; border-radius: 999px; padding: 3px 10px; white-space: nowrap; letter-spacing: 0.02em; }

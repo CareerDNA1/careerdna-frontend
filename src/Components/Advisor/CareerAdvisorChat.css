@@ -1475,3 +1475,11 @@
   align-items: center !important;
   gap: 8px !important;
 }
+
+/* "Top up" link in the questions-left note (only shown at 2, 1 or 0 left). */
+.career-advisor-topup {
+  border: 0; background: none; padding: 0; margin: 0;
+  font: inherit; font-weight: 700; color: #2f6fed; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.career-advisor-topup:hover { color: #1f56c6; }

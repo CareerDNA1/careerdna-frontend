@@ -1618,3 +1618,21 @@
   .likert-option--5:hover:not(.selected) { border-color: #b2cafa; }
   .likert-option { -webkit-tap-highlight-color: transparent; }
 }
+
+/* Fresh question (4 Nov 2026): until the person touches or moves over the
+   buttons, none shows a hover or focus look, so the button sitting where the
+   last tap landed cannot look already chosen. The chosen answer still shows. */
+.likert-buttons--fresh .likert-option:not(.selected),
+.likert-buttons--fresh .likert-option:not(.selected):hover,
+.likert-buttons--fresh .likert-option:not(.selected):focus {
+  transform: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+.likert-buttons--fresh .likert-option--1:not(.selected) { border-color: #d9e5fb !important; }
+.likert-buttons--fresh .likert-option--2:not(.selected) { border-color: #d0dffa !important; }
+.likert-buttons--fresh .likert-option--3:not(.selected) { border-color: #c7d9f8 !important; }
+.likert-buttons--fresh .likert-option--4:not(.selected) { border-color: #bdd2f8 !important; }
+.likert-buttons--fresh .likert-option--5:not(.selected) { border-color: #b2cafa !important; }
+.likert-buttons--fresh .likert-option:not(.selected)::after { opacity: 0 !important; }
+.likert-option:focus:not(:focus-visible) { outline: none; }

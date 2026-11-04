@@ -570,7 +570,14 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
                       let relevantDeduped = applyResultsFilter(Array.from(byKey.values()), studyFilter, { isLiked: isDegreeLiked });
                       relevantDeduped.sort((a, b) => (b.leadsTo.length - a.leadsTo.length) || (Number(b.signalPct || 0) - Number(a.signalPct || 0)));
                       const inRel = new Set(relevantDeduped.map((r) => String(r.id || r.title)));
-                      const otherOnly = other.filter((r) => !inRel.has(String(r.id || r.title)));
+                      // Every degree of this world that is not already listed above.
+                      // Uses the world's full list: a world degree marked "relevant"
+                      // only because it leads to a liked pathway in ANOTHER world
+                      // was in neither list before, so it was counted on the world
+                      // button but never shown (3 Nov 2026).
+                      const worldAll = Array.isArray(active.routes) ? active.routes : [...relevantAll, ...otherAll];
+                      const otherOnly = applyResultsFilter(worldAll, studyFilter, { isLiked: isDegreeLiked })
+                        .filter((r) => !inRel.has(String(r.id || r.title)));
                       if (!relevantDeduped.length && !otherOnly.length) {
                         return <p className="results-filter-empty">None of your favourites are in this list. Try clearing the filter.</p>;
                       }

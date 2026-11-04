@@ -43,7 +43,9 @@ const KIND_STYLE = {
 // "3 of 5 choices", or the real number once the student is over the five.
 const ucasCountText = (n) => (n > UCAS_MAX_CHOICES ? `${n} choices, ${n - UCAS_MAX_CHOICES} over the five` : `${n} of ${UCAS_MAX_CHOICES} choices`);
 
-export default function ApplicationsCard({ apps, onChange, runId, stage = 'university', isUniversity = false, candidates = [], onApplyFavourite, predictedGrades = [], schoolYear = '', onEnterGrades, openSignal = 0, openFocus = null }) {
+export default function ApplicationsCard({ apps, onChange, runId, stage = 'university', isUniversity = false, candidates = [], onApplyFavourite, predictedGrades = [], schoolYear = '', onEnterGrades, openSignal = 0, openFocus = null, loadState = 'ready', onRetry }) {
+  // loadState: 'loading' | 'error' | 'ready'. The card always shows; while the
+  // list is loading or could not load, the message sits inside it.
   const list = Array.isArray(apps) ? apps : [];
   const [open, setOpen] = useState(false);
   const [detailId, setDetailId] = useState('');
@@ -267,6 +269,7 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
   // The whole card opens the popup; clicks inside the popup or on controls are left alone.
   const openFromCard = (e) => {
     if (e.target.closest('.fav-overlay, button, a, input, select, textarea')) return;
+    if (loadState !== 'ready') return;
     setOpen(true);
   };
 
@@ -278,7 +281,7 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
           <PaperPlaneTilt size={18} weight="fill" aria-hidden="true" />
           Your applications
         </span>
-        {list.length ? (
+        {loadState !== 'ready' ? null : list.length ? (
           <button type="button" className="fav-btn fav-btn--primary fav-btn--head" onClick={() => setOpen(true)}>
             View all {rowCount}
           </button>
@@ -289,7 +292,14 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
         )}
       </div>
 
-      {list.length ? (
+      {loadState === 'loading' ? (
+        <div className="apps-empty"><p className="apps-empty-text apps-state">Loading your applications&hellip;</p></div>
+      ) : loadState === 'error' ? (
+        <div className="apps-empty">
+          <p className="apps-empty-text apps-state">Your applications could not be loaded right now.</p>
+          <button type="button" className="fav-btn fav-btn--head apps-retry" onClick={onRetry}>Try again</button>
+        </div>
+      ) : list.length ? (
         <>
           <div className="fav-preview">
             {ucasChoices.length ? (
@@ -312,8 +322,8 @@ export default function ApplicationsCard({ apps, onChange, runId, stage = 'unive
             : <>Tap <strong>Mark as applied</strong> on a favourite once you have applied, and follow it here.</>}</p>
         </div>
       )}
-      {rowCount > 0 ? <p className="fav-foot fav-foot--card">Record what you have applied to and track closing dates, interviews and outcomes here.</p> : null}
-      {staleCount ? (
+      {loadState === 'ready' && rowCount > 0 ? <p className="fav-foot fav-foot--card">Record what you have applied to and track closing dates, interviews and outcomes here.</p> : null}
+      {loadState === 'ready' && staleCount ? (
         <p className="apps-nudge"><WarningCircle size={15} weight="fill" aria-hidden="true" />
           {staleCount === 1 ? 'One application closed over two weeks ago with no update. Heard anything?' : `${staleCount} applications closed over two weeks ago with no update. Heard anything?`}
         </p>

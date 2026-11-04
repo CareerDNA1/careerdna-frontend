@@ -219,18 +219,28 @@
 /* Overview stats strip (Journey / Favourites / Assessments). */
 .profile-stats {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 18px;
 }
+/* Each tile is a link: reports list, advisor, favourites, applications. */
 .profile-stat {
-  border: none;
+  border: 1px solid transparent;
   border-radius: 16px;
-  padding: 15px 16px;
+  padding: 12px 14px;
   display: flex;
   align-items: center;
   gap: 12px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
 }
+.profile-stat:hover { transform: translateY(-1px); border-color: rgba(15, 23, 42, 0.08); box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06); }
+.profile-stat:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
+.profile-stat-go { margin-left: auto; flex: 0 0 auto; width: 20px; height: 20px; opacity: 0.6; color: #12233c; transition: transform 0.12s ease, opacity 0.12s ease; }
+.profile-stat:hover .profile-stat-go { opacity: 0.85; transform: translateX(2px); }
+.profile-stat-sub { font-size: 0.72rem; opacity: 0.75; color: inherit; }
 .profile-stat-ic {
   width: 38px; height: 38px; border-radius: 11px;
   display: flex; align-items: center; justify-content: center;
@@ -243,39 +253,36 @@
 .profile-stat--journey { background: #e6f1fb; }
 .profile-stat--journey .profile-stat-ic { background: #378add; }
 .profile-stat--journey .profile-stat-num { color: #0c447c; }
-.profile-stat--journey .profile-stat-label { color: #185fa5; }
+.profile-stat--journey .profile-stat-label, .profile-stat--journey .profile-stat-sub, .profile-stat--journey .profile-stat-go { color: #185fa5; }
 .profile-stat--fav { background: #fbeaf0; }
 .profile-stat--fav .profile-stat-ic { background: #d4537e; }
 .profile-stat--fav .profile-stat-num { color: #72243e; }
-.profile-stat--fav .profile-stat-label { color: #993556; }
+.profile-stat--fav .profile-stat-label, .profile-stat--fav .profile-stat-sub, .profile-stat--fav .profile-stat-go { color: #993556; }
 .profile-stat--runs { background: #e1f5ee; }
 .profile-stat--runs .profile-stat-ic { background: #1d9e75; }
 .profile-stat--runs .profile-stat-num { color: #04342c; }
-.profile-stat--runs .profile-stat-label { color: #0f6e56; }
+.profile-stat--runs .profile-stat-label, .profile-stat--runs .profile-stat-sub, .profile-stat--runs .profile-stat-go { color: #0f6e56; }
 .profile-stat--advisor { background: #eef0fb; }
 .profile-stat--advisor .profile-stat-ic { background: #5b5fc7; }
 .profile-stat--advisor .profile-stat-num { color: #24276b; }
-.profile-stat--advisor .profile-stat-label { color: #3f43a3; }
+.profile-stat--advisor .profile-stat-label, .profile-stat--advisor .profile-stat-sub, .profile-stat--advisor .profile-stat-go { color: #3f43a3; }
 .profile-stat--apps { background: #fff4de; }
 .profile-stat--apps .profile-stat-ic { background: #e08a1e; }
 .profile-stat--apps .profile-stat-num { color: #5c3a00; }
-.profile-stat--apps .profile-stat-label { color: #9a5b00; }
-/* Five tiles: on narrower screens lay them out as a row of three then a row
-   of two, so nothing sits on its own. */
+.profile-stat--apps .profile-stat-label, .profile-stat--apps .profile-stat-sub, .profile-stat--apps .profile-stat-go { color: #9a5b00; }
+/* Four tiles: two by two on tablets and phones, icon beside the number. */
 @media (max-width: 900px) {
-  .profile-stats { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-  .profile-stat { grid-column: span 2; }
-  .profile-stat:nth-child(4), .profile-stat:nth-child(5) { grid-column: span 3; }
+  .profile-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 560px) {
-  /* Keep the three stats as a compact row (icon over number) instead of three
-     tall stacked blocks. */
-  .profile-stats { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
-  .profile-stat { flex-direction: column; align-items: flex-start; gap: 6px; padding: 11px 12px; min-width: 0; }
-  .profile-stat-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+  .profile-stats { gap: 8px; }
+  .profile-stat { gap: 9px; padding: 14px 10px 14px 11px; min-height: 68px; min-width: 0; border-radius: 14px; }
+  .profile-stat-body { min-width: 0; }
+  .profile-stat-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; font-size: 0.74rem; }
   .profile-stat-ic { width: 30px; height: 30px; border-radius: 9px; }
   .profile-stat-num { font-size: 1.15rem; }
-  .profile-stat-label { font-size: 0.72rem; }
+  .profile-stat-sub { display: none; }
+  .profile-stat-go { width: 18px; height: 18px; opacity: 0.7; }
 }
 
 /* Favourites (left) + grades (right) row. */
@@ -289,6 +296,10 @@
 /* Both middle cards fill the row so Favourites and Grades are always equal height. */
 .profile-favrow > * { height: 100%; min-width: 0; }
 .profile-favrow--single { grid-template-columns: minmax(0, 1fr); }
+/* Right column: applications fills the space, grades sits compactly below. */
+.profile-sidecol { display: flex; flex-direction: column; gap: 12px; }
+.profile-sidecol > .apps-card, .profile-sidecol > section:first-child { flex: 1 1 auto; }
+.profile-sidecol > .acad-card { flex: 0 0 auto; margin-bottom: 0; }
 /* School: favourites | grades | applications. University: favourites | applications. */
 .profile-favrow--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 @media (max-width: 1100px) {
@@ -548,6 +559,10 @@
   background: #fafbfc;
   border-top: 1px solid rgba(47, 111, 237, 0.06);
   text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 18px;
 }
 
 .profile-card-footer-text {
@@ -3792,7 +3807,26 @@
   height: 100%;
   border-radius: 999px;
   background: #2f6fed;
-  transition: width 400ms ease;
+  transition: width 1.6s cubic-bezier(0.3, 0.8, 0.3, 1);
+}
+/* Rocket riding the progress bar: flies in on open, then hovers. */
+.profile-jcard-track { position: relative; padding-top: 14px; margin-bottom: 18px; }
+.profile-jcard-track .profile-jcard-bar { margin: 0; }
+.profile-jcard-rocket {
+  position: absolute;
+  bottom: -11px;
+  transform: translateX(-94%);
+  transition: left 1.6s cubic-bezier(0.3, 0.8, 0.3, 1);
+  pointer-events: none;
+  overflow: visible;
+}
+.profile-jcard-rocket__body { animation: cdna-rocket-hover 1.2s ease-in-out infinite; }
+.profile-jcard-rocket__flame { transform-box: fill-box; transform-origin: right center; animation: cdna-rocket-flame 0.12s ease-in-out infinite alternate; }
+@keyframes cdna-rocket-hover { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes cdna-rocket-flame { from { transform: scaleX(0.75); } to { transform: scaleX(1.15); } }
+@media (prefers-reduced-motion: reduce) {
+  .profile-jcard-bar__fill, .profile-jcard-rocket { transition: none; }
+  .profile-jcard-rocket__body, .profile-jcard-rocket__flame { animation: none; }
 }
 .profile-jcard-next {
   width: 100%;
@@ -4101,3 +4135,10 @@
 .profile-footer-links a { color: #2f6fed; font-weight: 600; text-decoration: none; }
 .profile-footer-links a:hover, .profile-footer-links a:focus-visible { text-decoration: underline; }
 .profile-footer-copy { margin: 0; color: rgba(75, 95, 118, 0.58); font-size: 0.78rem; line-height: 1.5; }
+
+/* Card titles on the profile page match the other panels (Your grades,
+   Your applications, Favourites) at every screen size. */
+h2.profile-card-title {
+  font-size: 1.02rem;
+  color: #12233c;
+}

@@ -48,6 +48,7 @@ const TEF_STYLE = {
 const METRIC_NAME = { gradjobs: 'graduate-level jobs', salary: 'graduate salary', employment: 'in work or study', meaningful: 'career readiness', continuation: 'continuation', satisfaction: 'student satisfaction', entry: 'entry standards' };
 function scoreCell(u) {
   const filled = Array.isArray(u.scoredAsAverage) ? u.scoredAsAverage.filter((m) => METRIC_NAME[m]) : [];
+  if (u.score == null) return '–';
   if (!filled.length) return Math.round(u.score);
   const names = filled.map((m) => METRIC_NAME[m]);
   const list = names.length === 1 ? names[0] : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
@@ -155,6 +156,19 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
     return () => { cancelled = true; };
   }, []);
 
+  // A saved course id ends with the course URL, and universities change their
+  // course URLs between dataset years. Match a course to an existing saved or
+  // dismissed record on university + title alone, so it still shows as saved
+  // and toggling it updates that record rather than creating a second one.
+  const savedByBase = useMemo(() => {
+    const m = new Map();
+    const base = (id) => { const s = String(id); const i = s.lastIndexOf('::'); return i > 0 ? s.slice(0, i) : s; };
+    [...savedCourses, ...dislikedCourses].forEach((id) => { const b = base(id); if (!m.has(b)) m.set(b, id); });
+    return { m, base };
+  }, [savedCourses, dislikedCourses]);
+  const resolveCourseId = (id) => (savedCourses.has(id) || dislikedCourses.has(id)
+    ? id : (savedByBase.m.get(savedByBase.base(id)) || id));
+
   // Optimistic update; if the save fails, put the buttons back and say so.
   const applyCourseReaction = (id, next, remove) => {
     setSavedCourses((prev) => { const n = new Set(prev); if (!remove && next === 'like') n.add(id); else n.delete(id); return n; });
@@ -252,7 +266,8 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
     // Universities with limited data (fewer than two graduate-outcome figures)
     // sit after the ranked ones whatever the sort, so a thin record never
     // leapfrogs a full one on a single number.
-    const ranked = (u) => (u.ranked === false ? 0 : 1);
+    // Universities with no graduate figures this year come last of all.
+    const ranked = (u) => (u.noGraduateData ? 0 : u.ranked === false ? 1 : 2);
     list.sort((a, b) => (ranked(b) - ranked(a)) || (Number(b[field] || 0) - Number(a[field] || 0)));
     return list;
   }, [data, sortKey]);
@@ -296,7 +311,7 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
   const rkNotes = (
     <>
     <p className="rk-foot">
-      Official data: Office for Students (Discover Uni, August 2026 release) and UCAS 2025. Dotted figures rest on a broad subject area or a small cohort; hover or tap one to see why.
+      Official data: Office for Students (Discover Uni 2026 dataset, published October 2026) and UCAS 2025. Dotted figures rest on a broad subject area or a small cohort; hover or tap one to see why.
       {showChances ? ' Your chances use typical A-level offers only; always check each course\u2019s own requirements.' : ''}
       {' '}<button type="button" className="rk-method-link" onClick={() => setShowMethod(true)}>Full methodology</button>
     </p>
@@ -321,6 +336,7 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                   <span className="rk-sub-area">{data.titleFiltered ? data.subject : titleCase(data.rankedBy || data.subject)}</span>
                   {` · ${data.count} universities`}
                   {data.limitedCount ? <span className="rk-sub-limited">{` · ${data.limitedCount} more with limited data`}</span> : null}
+                  {data.noDataCount ? <span className="rk-sub-limited">{` · ${data.noDataCount} more with no graduate data this year`}</span> : null}
                 </>
               ) : (subjectTitle || 'Loading…')}
             </div>
@@ -385,13 +401,15 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                   return (
                     <div className="rk-rowgroup" key={key}>
                       <div className={`rk-row${u.ranked === false ? ' rk-row--limited' : ''}`} style={{ gridTemplateColumns: rkGridCols }}>
-                        <div className="rk-rank">{u.ranked === false || !u.rank ? '–' : u.rank}</div>
+                        <div className="rk-rank" title={u.jointRank ? 'Joint rank: same score as another university' : undefined}>{u.ranked === false || !u.rank ? '–' : `${u.jointRank ? '=' : ''}${u.rank}`}</div>
                         <div className="rk-uni">
                           {u.via ? (
                             <span className="rk-via" {...tipProps(`Via ${u.via}`, `This university has no separate ${subjName || 'subject'} degree; its ${u.via} degree is the route in, and the row uses that degree\u2019s published figures.`)}>via {u.via}</span>
                           ) : null}
-                          {u.ranked === false ? (
-                            <span className="rk-limited" {...tipProps('Limited data', 'Listed but not ranked: fewer than two of the four graduate-outcome figures (graduate-level jobs, salary, in work or study, career readiness) were published for this subject here, or the provider is rated Requires improvement by the Office for Students, or fewer than half of its students across all subjects continue past the first year.')}>Limited data</span>
+                          {u.noGraduateData ? (
+                            <span className="rk-limited" {...tipProps('No graduate data this year', 'This university teaches the subject, but the Office for Students published no graduate-outcome figures for it here this year (usually because too few graduates answered the survey). It is listed so you can still see it, with its entry, satisfaction and continuation figures where published, but it has no score and no rank.')}>No graduate data</span>
+                          ) : u.ranked === false ? (
+                            <span className="rk-limited" {...tipProps('Limited data', 'Listed but not ranked: fewer than two of the four graduate-outcome figures (graduate-level jobs, salary, in work or study, career readiness) were published for this subject here, or all of them come only from the broad subject group, or the provider is rated Requires improvement by the Office for Students, or fewer than half of its students across all subjects continue past the first year.')}>Limited data</span>
                           ) : null}
                           {courses.length ? (
                             <button type="button" className="rk-uni-btn" onClick={() => toggleCourses(key)}
@@ -412,7 +430,7 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                       {isOpen && courses.length ? (
                         <div className="rk-courses">
                           {courses.map((c, ci) => {
-                            const cid = courseKey(u.institution, c);
+                            const cid = resolveCourseId(courseKey(u.institution, c));
                             const saved = savedCourses.has(cid);
                             return (
                               <button
@@ -456,9 +474,9 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
               <div className="rk-course-modal__title">How the CareerDNA Ranking works</div>
               <div className="rk-method">
                 <h4>What it measures</h4>
-                <p>How well a university&rsquo;s graduates in this subject do after they leave, built only from official data published by the Office for Students (Discover Uni, August 2026 release); UCAS offer rates are shown alongside but not scored. Every university is scored by the same rule; nothing in the score depends on who is reading it.</p>
+                <p>How well a university&rsquo;s graduates in this subject do after they leave, built only from official data published by the Office for Students (Discover Uni 2026 dataset, published October 2026); UCAS offer rates are shown alongside but not scored. Every university is scored by the same rule; nothing in the score depends on who is reading it.</p>
                 <h4>Data years</h4>
-                <p>The August 2026 release is the latest available. Graduate outcomes (jobs, salary, work or study, readiness) come from the Graduate Outcomes survey of the 2022-23 cohort, interviewed 15 months after finishing; where a cohort was small, two survey years are pooled (2021-23). Continuation is the 2022-23 intake, entry tariffs are 2023-24 entrants and satisfaction is the 2025 National Student Survey; each of these is also pooled over two years where a cohort was small. Offer rates are the UCAS 2025 cycle. Newer graduate data does not yet exist for any ranking.</p>
+                <p>These rankings use the Discover Uni 2026 dataset, published by the Office for Students in October 2026. Graduate outcomes (jobs, salary, work or study, readiness) come from the Graduate Outcomes survey of the 2023-24 cohort, interviewed 15 months after finishing; where a cohort was small, two survey years are pooled (2022-24). Continuation is the 2023-24 intake, entry tariffs are 2024-25 entrants and satisfaction is the 2026 National Student Survey; each of these is also pooled over two years where a cohort was small. Offer rates are the UCAS 2025 cycle.</p>
                 <h4>The seven measures and their weights</h4>
                 <p><b>Graduate-level jobs (25%)</b>: share of graduates in professional or managerial work 15 months after finishing. <b>Graduate salary (20%)</b>: median salary 15 months after finishing. <b>Continuation (15%)</b>: share of students who continue past the first year. <b>In work or study (10%)</b>: share in any work or further study at 15 months. <b>Career readiness (10%)</b>: average of graduates saying their activity is on track with their plans and that they use what they learned. <b>Entry standards (10%)</b>: average UCAS tariff of entrants. <b>Student satisfaction (10%)</b>: average of the National Student Survey themes.</p>
                 <h4>How the score is built</h4>
@@ -468,9 +486,9 @@ export default function RankingsModal({ subjectId, subjectTitle, onClose }) {
                 <h4>Which courses count</h4>
                 <p>Every full-time degree the Office for Students tags with the subject. Where a university runs several such courses they share one row; which figure the row uses is explained below. Degrees at each university whose title matches the subject are listed under it, where we have them. For some specialised subjects the Office for Students publishes figures only for a broader area (named in the figure tooltips); those subjects use the broader area&rsquo;s figures and list only universities offering a degree with a matching title, numbered in order. A few universities teach a subject only inside an umbrella degree (Cambridge Natural Sciences; Cambridge, Oxford and Durham general Engineering); they appear in those subject tables through that degree, marked &ldquo;via&rdquo;, scored on its published figures.</p>
                 <h4>Which figure is used</h4>
-                <p>The Office for Students publishes each figure at the most specific level the cohort allows. Where it has published a pooled figure for the subject at a university, that figure is used on its own. Where only individual course figures exist, they are combined, weighted by cohort. Where neither exists because the subject cohort was too small, the figure for the broad subject area is used and marked with a dotted underline; hover or tap it to see the area and the cohort. Figures resting on fewer than 30 graduates are also dotted.</p>
+                <p>The Office for Students publishes each figure at the most specific level the cohort allows. Where it has published a pooled figure for the subject at a university, that figure is used on its own. Where only individual course figures exist, they are combined, weighted by cohort. Where neither exists because the subject cohort was too small, the figure for the broad subject area is used and marked with a dotted underline; hover or tap it to see the area and the cohort. Figures resting on fewer than 30 graduates are also dotted. No figure resting on fewer than 10 graduates or students is shown or scored.</p>
                 <h4>Missing figures</h4>
-                <p>Where no figure is published at all, the table shows a dash and the score treats that measure as the subject average, which is noted on the score. A university with fewer than two of the four graduate-outcome measures is listed after the ranked universities without a rank.</p>
+                <p>Where no figure is published at all, the table shows a dash and the score treats that measure as the subject average, which is noted on the score. A university with fewer than two of the four graduate-outcome measures, or whose graduate-outcome figures all come from the broad subject group rather than the subject itself, is listed after the ranked universities without a rank. A university that teaches the subject but has no graduate-outcome figure published for it this year is listed last, A to Z, with no score and no rank.</p>
                 <h4>Shown but not scored</h4>
                 <p><b>TEF</b>: the Office for Students&rsquo; Gold, Silver or Bronze teaching rating. <b>Offer rate</b>: the share of UCAS main scheme applicants who received an offer in the 2025 cycle, for the broad subject area, rounded; a lower rate means more competitive. <b>Your chances</b>: if you have entered predicted grades, how they compare with the university&rsquo;s typical A-level offer for this subject; it does not account for required subjects, GCSEs or admissions tests, so always check each course&rsquo;s own requirements.</p>
               </div>
