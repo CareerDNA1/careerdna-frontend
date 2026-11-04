@@ -12,6 +12,7 @@ const state = {
   prefill: '',        // a question to place in the input when the drawer opens
   prefillSend: false, // send the prefilled question straight away
   facts: { stage: '', grades: false, saved: false, applied: false }, // what the student has done so far
+  available: 0,       // how many advisor drawers are mounted (0 = no advisor on this page)
 };
 const listeners = new Set();
 
@@ -79,7 +80,15 @@ export function clearAdvisorPrefill() {
 }
 
 export function getAdvisorPanelState() {
-  return { open: state.open, context: state.context, prefill: state.prefill, prefillSend: state.prefillSend, facts: state.facts };
+  return { open: state.open, context: state.context, prefill: state.prefill, prefillSend: state.prefillSend, facts: state.facts, available: state.available > 0 };
+}
+
+// The drawer registers itself while mounted, so the top bar knows to show its
+// "Your Advisor" button. Returns the matching unregister function.
+export function registerAdvisorAvailable() {
+  state.available += 1;
+  emit();
+  return () => { state.available = Math.max(0, state.available - 1); emit(); };
 }
 
 export function useAdvisorPanel() {

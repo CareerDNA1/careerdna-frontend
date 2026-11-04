@@ -4142,3 +4142,119 @@ h2.profile-card-title {
   font-size: 1.02rem;
   color: #12233c;
 }
+
+
+/* ===== Journey: one line. The blue fill runs through the step circles (done =
+   filled with a tick, current = white with a glow) and the rocket hovers above
+   the current step. Thin 3px track. ===== */
+.profile-jrail { padding-top: 40px !important; }
+.profile-jrail-step + .profile-jrail-step::before { height: 3px; background: #e3e9f2; }
+.profile-jrail-step.is-done + .profile-jrail-step::before { background: #2f6fed; }
+.profile-jrail-step.is-done .profile-jrail-dot { background: #2f6fed; border-color: #2f6fed; color: #fff; }
+.profile-jrail-step.is-current .profile-jrail-dot {
+  width: 32px; height: 32px; margin: -2px 0;
+  background: #fff; border: 2px solid #2f6fed; color: #2f6fed;
+  box-shadow: 0 0 0 5px rgba(47, 111, 237, 0.14);
+}
+.profile-jrail-step.is-current .profile-jrail-dot svg { width: 15px; height: 15px; }
+.profile-jrail-rocket {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  list-style: none;
+  pointer-events: none;
+  z-index: 2;
+  will-change: transform;
+  transition: transform 1.6s cubic-bezier(0.3, 0.8, 0.3, 1);
+}
+.profile-jrail-rocket.is-still { transition: none; }
+.profile-jrail-rocket svg { display: block; overflow: visible; }
+.profile-jcard-next { margin-top: 14px; }
+@media (max-width: 720px) {
+  .profile-jrail { padding-top: 38px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .profile-jrail-rocket { transition: none; }
+}
+
+/* ===== Dashboard grid. The rule:
+   row 1 = Favourites | Applications, row 2 = Recent reports | Grades.
+   Cards in the same row are always the same height, so edges line up.
+   The reports list shows 3 rows and scrolls inside its card when more are
+   loaded, so it never grows the page. Stacks on narrow screens. ===== */
+.profile-dash {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas: "fav apps" "reports grades" "insights insights";
+  gap: 14px;
+  align-items: stretch;
+  margin-bottom: 18px;
+}
+.profile-dash--nogrades { grid-template-areas: "fav apps" "reports insights"; }
+.profile-dash > .ins-card { grid-area: insights; margin: 0; }
+.profile-dash--single { grid-template-columns: minmax(0, 1fr); grid-template-areas: "reports"; }
+.profile-dash__main, .profile-dash .profile-sidecol { display: contents; }
+.profile-dash__main > .fav-card { grid-area: fav; height: auto !important; margin: 0 !important; }
+.profile-dash .profile-sidecol > .apps-card { grid-area: apps; }
+.profile-dash .profile-sidecol > .acad-card { grid-area: grades; }
+.profile-dash .profile-sidecol > * { height: auto !important; margin: 0 !important; min-width: 0; }
+.profile-dash #profile-recent-reports { grid-area: reports; margin: 0 !important; min-width: 0; display: flex; flex-direction: column; }
+/* Reports list: room for 3 rows, then it scrolls inside the card. */
+.profile-dash #profile-recent-reports .profile-runs { max-height: 252px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.profile-dash #profile-recent-reports .profile-card-footer { margin-top: auto; display: flex !important; flex-wrap: nowrap !important; justify-content: center; align-items: center; gap: 22px !important; }
+.profile-dash #profile-recent-reports .profile-card-footer .profile-showall { width: auto !important; display: inline-flex !important; margin: 0 !important; }
+
+/* Compact report rows (desktop): two short lines, no age / assessment line
+   (both are in the row's hover tooltip). */
+@media (min-width: 901px) {
+  .profile-dash .profile-run-row { padding: 10px 12px !important; gap: 12px !important; flex-wrap: nowrap !important; align-items: center !important; }
+  .profile-dash .profile-run-chip { width: 44px !important; height: 34px !important; font-size: 0.82rem !important; }
+  .profile-dash .profile-run-title { font-size: 0.92rem !important; }
+  .profile-dash .profile-run-details { flex-wrap: nowrap !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.8rem !important; }
+  .profile-dash .profile-run-details > span { flex: 0 0 auto; }
+  .profile-dash .profile-run-subject { flex: 0 1 auto !important; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .profile-dash .profile-run-age,
+  .profile-dash .profile-run-sep--age,
+  .profile-dash .profile-run-assessment { display: none !important; }
+  .profile-dash .profile-run-main { flex: 1 1 auto !important; min-width: 0 !important; }
+  .profile-dash .profile-run-chev, .profile-dash .profile-run-menu-wrap, .profile-dash .profile-run-chip { flex: 0 0 auto !important; }
+}
+
+/* Narrow screens: one column in the order favourites, applications, grades,
+   reports. The reports list keeps its own scroll. */
+@media (max-width: 900px) {
+  .profile-dash, .profile-dash--nogrades {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "fav" "apps" "grades" "reports" "insights";
+  }
+  .profile-dash #profile-recent-reports .profile-runs { max-height: 420px; }
+}
+
+/* Every report row keeps its full outline, including the last one. */
+.profile-dash #profile-recent-reports .profile-run-row:last-child { border-bottom: 1px solid rgb(214, 226, 248) !important; }
+
+/* Journey header: title on the left, two matching actions on the right. */
+.profile-jcard-head { justify-content: space-between; flex-wrap: wrap; row-gap: 10px; }
+.profile-jcard-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.profile-jcard-act {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 36px; padding: 0 16px; border-radius: 999px;
+  font: inherit; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.profile-jcard-act--pri { background: #2f6fed; color: #fff; border: 1px solid #2f6fed; }
+.profile-jcard-act--pri:hover { background: #245fd6; }
+.profile-jcard-act--sec { background: #fff; color: #2f6fed; border: 1px solid #c9d8f5; }
+.profile-jcard-act--sec:hover { background: #f4f8ff; border-color: #9dbbf5; }
+.profile-jcard-act:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
+.profile-jcard-act__short { display: none; }
+@media (max-width: 560px) {
+  /* Phones: title, progress pill and the Report button share one line,
+     with the button on the right. */
+  .profile-jcard-head { flex-wrap: nowrap !important; gap: 8px !important; }
+  .profile-jcard-title { min-width: 0; gap: 8px; flex-wrap: wrap; }
+  .profile-jcard-actions { width: auto; margin-left: auto; flex: 0 0 auto; flex-wrap: nowrap; }
+  .profile-jcard-act { height: 32px; padding: 0 11px; font-size: 0.8rem; gap: 5px; }
+  .profile-jcard-act__long { display: none; }
+  .profile-jcard-act__short { display: inline; }
+}

@@ -1483,3 +1483,95 @@
   text-decoration: underline; text-underline-offset: 2px;
 }
 .career-advisor-topup:hover { color: #1f56c6; }
+
+/* ===== Suggested questions: one swipeable row (phone) / wrapped cards (wide). ===== */
+.cdna-sugg { margin: 6px 0 8px; min-width: 0; }
+.cdna-sugg__head { display: flex; justify-content: space-between; align-items: center; font-size: 0.74rem; color: #5e6f88; margin: 0 2px 6px; }
+.cdna-sugg__swipe { display: none; }
+.cdna-sugg__row { display: flex; flex-wrap: wrap; gap: 8px; }
+.cdna-sugg__chip {
+  flex: 0 1 auto;
+  max-width: 100%;
+  text-align: left;
+  font: inherit;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: #1f4fb8;
+  background: #eef4ff;
+  border: 1px solid #d6e3fb;
+  border-radius: 14px;
+  padding: 8px 11px;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+.cdna-sugg__chip:hover:not(:disabled) { background: #e3edff; border-color: #bcd2f7; }
+.cdna-sugg__chip:disabled { opacity: 0.55; cursor: default; }
+.cdna-sugg__dots { display: none; }
+
+/* Drawer and phones: a single row you swipe sideways, with dots. */
+.advisor-drawer .cdna-sugg__row,
+.cdna-sugg__row--swipe {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+}
+.advisor-drawer .cdna-sugg__row::-webkit-scrollbar { display: none; }
+.advisor-drawer .cdna-sugg__chip { flex: 0 0 auto; width: 74%; max-width: 230px; scroll-snap-align: start; }
+.advisor-drawer .cdna-sugg__swipe { display: inline; }
+.advisor-drawer .cdna-sugg__dots { display: flex; gap: 4px; justify-content: center; padding-top: 6px; }
+.cdna-sugg__dots span { width: 5px; height: 5px; border-radius: 999px; background: #cfd8e6; transition: width 0.2s ease, background 0.2s ease; }
+.cdna-sugg__dots span.is-on { width: 12px; background: #2f6fed; }
+@media (max-width: 640px) {
+  .cdna-sugg__row { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .cdna-sugg__row::-webkit-scrollbar { display: none; }
+  .cdna-sugg__chip { flex: 0 0 auto; width: 74%; max-width: 230px; scroll-snap-align: start; }
+  .cdna-sugg__swipe { display: inline; }
+  .cdna-sugg__dots { display: flex; gap: 4px; justify-content: center; padding-top: 6px; }
+}
+
+/* Swipe row: arrow buttons at the edges, drag with the mouse, no text selection. */
+.cdna-sugg__track { position: relative; }
+.cdna-sugg__row { user-select: none; -webkit-user-select: none; }
+.cdna-sugg__row.is-dragging { scroll-snap-type: none !important; cursor: grabbing; }
+.cdna-sugg__row.is-dragging .cdna-sugg__chip { pointer-events: none; }
+.cdna-sugg__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid #d6e3fb;
+  background: #fff;
+  color: #2f6fed;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+  padding: 0;
+}
+.cdna-sugg__arrow:hover { background: #eef4ff; }
+.cdna-sugg__arrow--right { right: -2px; }
+.cdna-sugg__arrow--left { left: -2px; }
+.cdna-sugg__dots { display: flex !important; gap: 4px; justify-content: center; padding-top: 6px; }
+/* The card copy that glides into the message box. */
+.cdna-sugg__ghost {
+  position: fixed;
+  z-index: 10000;
+  pointer-events: none;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: #1f4fb8;
+  background: #eef4ff;
+  border: 1px solid #bcd2f7;
+  border-radius: 14px;
+  padding: 8px 11px;
+  box-shadow: 0 8px 22px rgba(47, 111, 237, 0.22);
+  transition: transform 0.42s cubic-bezier(0.3, 0.8, 0.3, 1), width 0.42s ease, background 0.42s ease, box-shadow 0.42s ease, opacity 0.42s ease;
+}
+.cdna-sugg__ghost.is-landing { background: #ffffff; color: #243447; box-shadow: none; opacity: 0.6; }

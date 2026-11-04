@@ -32,3 +32,10 @@ _archive/
 careerdna-backend/
 
 Discover Uni database Oct 26/
+
+# Raw data downloads never go in git (GitHub limit 100 MB per file).
+# Keep them in Claude/Projects/CareerDNA/Data sources/ instead.
+kis*.xml
+Discover Uni*/
+__pycache__/
+*.pyc

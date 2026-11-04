@@ -84,7 +84,7 @@ const REPORT_TYPES = new Set(['career_world', 'pathway', 'subject', 'role', 'app
 // or opens its external link for saved jobs/courses.
 // appliedKeys: Set of `${type}|${id}` already in the applications tracker;
 // onApply(item): mark a favourite ad/course as applied (owned by the profile page).
-export default function FavouritesCard({ openSignal = 0, runId, onExplore, onOpenReport, initialGroups, insightCtx, appliedKeys, onApply, onOpenApplications, stage = 'university', predictedGrades = [], loadState = 'ready', onRetry }) {
+export default function FavouritesCard({ previewLimit = 4, openSignal = 0, runId, onExplore, onOpenReport, initialGroups, insightCtx, appliedKeys, onApply, onOpenApplications, stage = 'university', predictedGrades = [], loadState = 'ready', onRetry }) {
   // loadState from the parent: 'loading' | 'error' | 'ready'. While not ready the
   // card shows that inside itself, never an empty list that looks like nothing is saved.
   // Grades band for a saved course (Safe / Match / Stretch / Ambitious), same as the rankings table.
@@ -295,10 +295,10 @@ export default function FavouritesCard({ openSignal = 0, runId, onExplore, onOpe
     const lists = (groups || []).map((g) => g.items.slice());
     const out = [];
     let picked = true;
-    while (out.length < 4 && picked) {
+    while (out.length < previewLimit && picked) {
       picked = false;
       for (const list of lists) {
-        if (out.length >= 4) break;
+        if (out.length >= previewLimit) break;
         if (list.length) { out.push(list.shift()); picked = true; }
       }
     }

@@ -1,0 +1,13 @@
+/* Advisor face (AdvisorAvatar): the picture brings its own circle, so the
+   holders drop their tinted background and let it fill the space. */
+.career-advisor-avatar:has(.cdna-advisor-face),
+.advisor-drawer__avatar:has(.cdna-advisor-face),
+.advisor-tab__icon:has(.cdna-advisor-face) { background: transparent !important; box-shadow: none !important; padding: 0 !important; }
+.career-advisor-avatar .cdna-advisor-face,
+.advisor-drawer__avatar .cdna-advisor-face,
+.advisor-tab__icon .cdna-advisor-face { width: 100% !important; height: 100% !important; }
+.cdna-advisor-face__eye { transform-box: fill-box; transform-origin: center; animation: cdna-advisor-blink 4.5s infinite; }
+@keyframes cdna-advisor-blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.1); } }
+.cdna-advisor-face__head { animation: cdna-advisor-bob 2.6s ease-in-out infinite; }
+@keyframes cdna-advisor-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.5px); } }
+@media (prefers-reduced-motion: reduce) { .cdna-advisor-face__eye, .cdna-advisor-face__head { animation: none; } }

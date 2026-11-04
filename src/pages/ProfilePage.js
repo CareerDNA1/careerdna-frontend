@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { BrainCircuit, Send } from 'lucide-react';
+import { Headset, Send } from 'lucide-react';
+import InsightsCard from '../Components/Common/InsightsCard';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AccountNavbar from '../Components/Common/AccountNavbar';
 import { useAuth } from '../context/AuthContext';
@@ -435,31 +436,9 @@ function takeProfileCache(userId) {
   return profileBundleCache;
 }
 
-// Journey progress bar with a small rocket that flies from the start to the
-// student's progress when the profile opens, then keeps hovering there.
-function JourneyRocketBar({ pct = 0 }) {
-  const [shown, setShown] = useState(0);
-  useEffect(() => {
-    const t = window.setTimeout(() => setShown(Math.max(0, Math.min(100, pct))), 150);
-    return () => window.clearTimeout(t);
-  }, [pct]);
-  return (
-    <div className="profile-jcard-track" aria-hidden="true">
-      <div className="profile-jcard-bar">
-        <div className="profile-jcard-bar__fill" style={{ width: `${shown}%` }} />
-      </div>
-      <svg className="profile-jcard-rocket" style={{ left: `max(${shown}%, 44px)` }} width="50" height="28" viewBox="0 0 50 28">
-        <g className="profile-jcard-rocket__body">
-          <path className="profile-jcard-rocket__flame" d="M2 14c4-4 8-5 12-4v8c-4 1-8 0-12-4z" fill="#ff9f43" />
-          <path d="M6 14c3-2 5-2.5 8-2v4c-3 .5-5 0-8-2z" fill="#ffd166" />
-          <path d="M14 9h20c6 0 11 3 13 5-2 2-7 5-13 5H14z" fill="#2f6fed" />
-          <path d="M17 9l-4-6h7l6 6zM17 19l-4 6h7l6-6z" fill="#1f4fb8" />
-          <circle cx="35" cy="14" r="3" fill="#cfe0ff" stroke="#1f4fb8" strokeWidth="1.2" />
-        </g>
-      </svg>
-    </div>
-  );
-}
+// When the journey rocket last flew in (see the rocket effect in ProfilePage).
+let rocketLastFlyAt = 0;
+const ROCKET_REPLAY_MS = 20000;
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
@@ -514,11 +493,6 @@ export default function ProfilePage() {
     setErrorMsg(friendlyError(err, context).message);
     setErrorRetry(retry ? () => retry : null);
   };
-  // Phone flag — used to shorten the run action label so the buttons fit on one
-  // line beside the run number.
-  const [isPhone, setIsPhone] = useState(
-    typeof window !== 'undefined' && window.innerWidth <= 600
-  );
 
   // Bumped whenever favourites change on this page (remove, Clear all, cascade)
   // so the journey steps are worked out again without a reload.
@@ -1578,6 +1552,18 @@ export default function ProfilePage() {
   // One rule everywhere: a school report gets the school roadmap and UCAS;
   // every other report (university, graduate, other) gets the shorter roadmap.
   const isUniversity = stageForStatus(latestStatus) !== 'school';
+  // Steps stay ticked once done: unliking something later must not take a
+  // student's progress away. Kept per stage on the profile (journey_done) so it
+  // follows them across devices; this device remembers too, as a fallback.
+  const journeyStageKey = isUniversity ? 'university' : 'school';
+  const journeyStoreKey = user?.id ? `cdna_journey_done_${user.id}_${journeyStageKey}` : '';
+  const [stickyDone, setStickyDone] = useState(() => new Set());
+  useEffect(() => {
+    const fromProfile = Array.isArray(profile?.journey_done?.[journeyStageKey]) ? profile.journey_done[journeyStageKey] : [];
+    let fromDevice = [];
+    try { fromDevice = journeyStoreKey ? JSON.parse(localStorage.getItem(journeyStoreKey) || '[]') : []; } catch (_) { fromDevice = []; }
+    setStickyDone(new Set([...fromProfile, ...(Array.isArray(fromDevice) ? fromDevice : [])]));
+  }, [profile?.journey_done, journeyStageKey, journeyStoreKey]);
   const journeyDone = {
     survey: Boolean(latestRun),
     profile: Boolean(latestArchetypes && Object.keys(latestArchetypes).length),
@@ -1621,8 +1607,22 @@ export default function ProfilePage() {
     ] : []),
     // Terminal step for everyone: completes when the first application is tracked.
     { key: 'apply', label: isUniversity ? 'Apply for graduate roles or further study' : 'Apply for university or training/work' },
-  ].map((step) => ({ ...step, done: Boolean(journeyDone[step.key]) }));
+  ].map((step) => ({ ...step, done: Boolean(journeyDone[step.key]) || stickyDone.has(step.key) }));
   const journeyCurrentIdx = journeySteps.findIndex((s) => !s.done);
+  // Record newly completed steps (once the page's data has loaded).
+  const liveDoneKey = Object.keys(journeyDone).filter((k) => journeyDone[k]).sort().join(',');
+  useEffect(() => {
+    if (!user?.id || !journeyStoreKey) return;
+    const fresh = Object.keys(journeyDone).filter((k) => journeyDone[k] && !stickyDone.has(k));
+    if (!fresh.length) return;
+    const merged = [...new Set([...stickyDone, ...fresh])];
+    setStickyDone(new Set(merged));
+    try { localStorage.setItem(journeyStoreKey, JSON.stringify(merged)); } catch (_) { /* ignore */ }
+    const next = { ...(profile?.journey_done || {}), [journeyStageKey]: merged };
+    // Saved on the profile when the journey_done column exists; ignored otherwise.
+    supabase.from('profiles').update({ journey_done: next }).eq('id', user.id).then(() => {}, () => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [liveDoneKey, journeyStageKey, user?.id]);
   // Overview journey summary: progress ring + the single next step.
   const journeyTotal = journeySteps.length;
   const journeyDoneCount = journeySteps.filter((s) => s.done).length;
@@ -1828,13 +1828,8 @@ export default function ProfilePage() {
     if (!rail) return undefined;
     // Wait a frame so the rail has its real width before we centre the current step.
     const raf = window.requestAnimationFrame(() => {
-      if (rail.scrollWidth > rail.clientWidth + 4) {
-        const cur = rail.querySelector('[data-current="1"]');
-        if (cur) {
-          const left = cur.offsetLeft - (rail.clientWidth - cur.offsetWidth) / 2;
-          rail.scrollTo({ left: Math.max(0, left) });
-        }
-      }
+      // Scrolling to the current step (or the end) is done by the rocket
+      // effect below, so the row glides along with the rocket.
       updateJourneyRailEdges();
     });
     window.addEventListener('resize', updateJourneyRailEdges);
@@ -1842,6 +1837,63 @@ export default function ProfilePage() {
       window.cancelAnimationFrame(raf);
       window.removeEventListener('resize', updateJourneyRailEdges);
     };
+  }, [journeyCurrentKey, overviewReady, journeySteps.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Rocket riding the step rail: starts at the first step when the profile
+  // opens, then flies to the current step (or the last one when all are done).
+  const [rocketX, setRocketX] = useState(null);
+  useEffect(() => {
+    const rail = journeyRailRef.current;
+    if (!rail) return undefined;
+    const place = (animate) => {
+      const steps = rail.querySelectorAll('.profile-jrail-step');
+      if (!steps.length) return;
+      const target = rail.querySelector('[data-current="1"]') || steps[steps.length - 1];
+      const centre = (el) => el.offsetLeft + el.offsetWidth / 2;
+      if (animate === true) {
+        setRocketX({ x: centre(steps[0]), still: true });
+        // Phones: the row scrolls sideways. Glide it from the start to the
+        // current step (or right to the end when all steps are done) in step
+        // with the rocket, so you watch it fly instead of finding it off screen.
+        const max = rail.scrollWidth - rail.clientWidth;
+        let scrollTo = null;
+        if (max > 4) {
+          rail.scrollLeft = 0;
+          const isDoneAll = !rail.querySelector('[data-current="1"]');
+          scrollTo = isDoneAll ? max : Math.max(0, Math.min(max, centre(target) - rail.clientWidth / 2));
+        }
+        // Start once the page has settled (data still arriving makes the
+        // browser skip frames), then: rocket glides via a GPU transform and
+        // the row uses the browser's own smooth scroll.
+        const go = () => {
+          setRocketX({ x: centre(target), still: false });
+          if (scrollTo == null) return;
+          const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (reduce) { rail.scrollLeft = scrollTo; updateJourneyRailEdges(); return; }
+          // Snap points would pull the glide back to a step part-way, so
+          // snapping is off until it finishes.
+          rail.style.scrollSnapType = 'none';
+          rail.scrollTo({ left: scrollTo, behavior: 'smooth' });
+          window.setTimeout(() => { rail.style.scrollSnapType = ''; updateJourneyRailEdges(); }, 1700);
+        };
+        window.setTimeout(() => {
+          if (typeof window.requestIdleCallback === 'function') window.requestIdleCallback(go, { timeout: 1200 });
+          else go();
+        }, 250);
+      } else {
+        // 'glide': move smoothly from where it is; resize: jump into place.
+        setRocketX({ x: centre(target), still: animate !== 'glide' });
+      }
+    };
+    const raf = window.requestAnimationFrame(() => {
+      // Fly in once per visit. The page can be rebuilt a few times while it
+      // loads (sign-in refresh, data arriving), so the marker lives outside
+      // the component; a fresh fly-in only after being away for a while.
+      if (Date.now() - rocketLastFlyAt > ROCKET_REPLAY_MS) { rocketLastFlyAt = Date.now(); place(true); } else { place('glide'); }
+    });
+    const onResize = () => place(false);
+    window.addEventListener('resize', onResize);
+    return () => { window.cancelAnimationFrame(raf); window.removeEventListener('resize', onResize); };
   }, [journeyCurrentKey, overviewReady, journeySteps.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const JOURNEY_SHORT = {
@@ -1988,7 +2040,7 @@ export default function ProfilePage() {
                     () => { const el = document.getElementById('profile-recent-reports'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
                     `${totalRuns} reports from ${nAssess} assessments. Go to your reports`, ['reports', 'assessments']),
                   tile('questions', 'profile-stat--advisor',
-                    <BrainCircuit size={20} aria-hidden="true" focusable="false" />,
+                    <Headset size={20} aria-hidden="true" focusable="false" />,
                     Number(profile?.advisor_questions_used || 0), 'Questions asked', 'Open your advisor',
                     () => openAdvisor(),
                     `${Number(profile?.advisor_questions_used || 0)} questions asked. Open your advisor`),
@@ -2012,22 +2064,17 @@ export default function ProfilePage() {
                   Your journey
                   <span className="profile-jcard-pill">{journeyDoneCount} of {journeyTotal} steps done</span>
                 </span>
+                {/* Open the current report. The next step is the highlighted step on the line below. */}
+                <div className="profile-jcard-actions">
+                  {latestRun?.id ? (
+                    <button type="button" className="profile-jcard-act profile-jcard-act--sec" onClick={() => openRun(latestRun.id)}>
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /><path d="M9 13h6M9 17h4" /></svg>
+                      <span className="profile-jcard-act__long">Open report</span>
+                      <span className="profile-jcard-act__short">Report</span>
+                    </button>
+                  ) : null}
+                </div>
               </div>
-              <JourneyRocketBar pct={journeyTotal ? Math.round((journeyDoneCount / journeyTotal) * 100) : 0} />
-              <button
-                type="button"
-                className="profile-jcard-next"
-                onClick={() => (journeyNextStep ? goToStep(journeyNextStep) : setAppsOpenSignal((n) => n + 1))}
-              >
-                <span className="profile-jcard-next__ic" aria-hidden="true">
-                  {journeyNextStep ? renderJourneyIcon(journeyNextStep.key) : renderJourneyIcon('apply')}
-                </span>
-                <span className="profile-jcard-next__text">
-                  <span className="profile-jcard-next__label">{journeyNextStep ? 'Next step' : 'All steps done'}</span>
-                  <span className="profile-jcard-next__name">{journeyNextStep ? journeyNextStep.label : 'Keep your applications up to date'}</span>
-                </span>
-                <svg className="profile-jcard-next__chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
-              </button>
               <div className={`profile-jrail-wrap${journeyRailEdges.left ? ' can-left' : ''}${journeyRailEdges.right ? ' can-right' : ''}`}>
                 <button type="button" className="profile-jrail-arrow profile-jrail-arrow--left" aria-label="Earlier steps" onClick={() => scrollJourneyRail(-1)}>
                   <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -2036,6 +2083,19 @@ export default function ProfilePage() {
                   <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </button>
               <ol className="profile-jrail" aria-label="Journey steps" ref={journeyRailRef} onScroll={updateJourneyRailEdges}>
+                {rocketX ? (
+                  <li className={`profile-jrail-rocket${rocketX.still ? ' is-still' : ''}`} aria-hidden="true" style={{ transform: `translateX(${rocketX.x}px) translateX(-50%)` }}>
+                    <svg viewBox="0 0 50 28" width="40" height="22">
+                      <g className="profile-jcard-rocket__body">
+                        <path className="profile-jcard-rocket__flame" d="M2 14c4-4 8-5 12-4v8c-4 1-8 0-12-4z" fill="#ff9f43" />
+                        <path d="M6 14c3-2 5-2.5 8-2v4c-3 .5-5 0-8-2z" fill="#ffd166" />
+                        <path d="M14 9h20c6 0 11 3 13 5-2 2-7 5-13 5H14z" fill="#2f6fed" />
+                        <path d="M17 9l-4-6h7l6 6zM17 19l-4 6h7l6-6z" fill="#1f4fb8" />
+                        <circle cx="35" cy="14" r="3" fill="#cfe0ff" stroke="#1f4fb8" strokeWidth="1.2" />
+                      </g>
+                    </svg>
+                  </li>
+                ) : null}
                 {journeySteps.map((step, i) => {
                   const isCurrent = journeyNextStep && journeyNextStep.key === step.key;
                   return (
@@ -2062,14 +2122,6 @@ export default function ProfilePage() {
                 })}
               </ol>
               </div>
-              {latestRun?.id ? (
-                <div className="profile-jcard-foot">
-                  <button type="button" className="profile-jcard-openlink" onClick={() => openRun(latestRun.id)}>
-                    Open current report
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="M13 6l6 6-6 6" /></svg>
-                  </button>
-                </div>
-              ) : null}
               {lockedHint ? createPortal(
                 <span className="profile-jrail-hint is-floating" role="tooltip" style={{ left: lockedHint.x, top: lockedHint.y }}>
                   Complete your assessment first
@@ -2092,222 +2144,231 @@ export default function ProfilePage() {
           />
         ) : null}
 
-        {/* Favourites (left) + grades (right, school only) from the latest run. */}
-        {overviewReady && latestRun ? (
-          <div className="profile-favrow">
-            <FavouritesCard openSignal={favOpenSignal} loadState={favLoadError ? 'error' : (favGroups === null ? 'loading' : 'ready')} onRetry={() => setFavReload((n) => n + 1)} runId={latestRun.id} onExplore={exploreFavourite} onOpenReport={() => openRun(latestRun.id)} initialGroups={favGroups} appliedKeys={appliedKeys} onApply={handleApplyFromFavourite} onOpenApplications={(target) => setAppsOpenFocus((cur) => ({ ...target, n: ((cur && cur.n) || 0) + 1 }))} stage={applicationStage} predictedGrades={academicProfileData?.predicted_alevels || []} insightCtx={{
-              archetypes: latestRun?.results_json?.archetypes || null,
-              subdimensions: latestRun?.results_json?.subdimensionRows || [],
-              summaryMarkdown: latestRun?.summary_markdown || '',
-              likedPathways: (favGroups || []).filter((g) => g.type === 'pathway').flatMap((g) => g.items.map((it) => ({ id: it.id, title: it.title }))),
-              likedWorlds: (favGroups || []).filter((g) => g.type === 'career_world').flatMap((g) => g.items.map((it) => ({ id: it.id, title: it.title }))),
-            }} />
-            {/* Right column: applications, with grades (school only) underneath. */}
-            <div className="profile-sidecol">
-            {/* Applications tracker: everything the student has applied for. */}
-            <ApplicationsCard
-              loadState={appsLoadError ? 'error' : (applications === null ? 'loading' : 'ready')}
-              onRetry={() => setPersonalReload((n) => n + 1)}
-              apps={stageApplications || []}
-              onChange={(next) => setApplications((prev) => {
-                // The card only sees this stage's rows; keep the other stage's rows as they are.
-                const others = (prev || []).filter((a) => !forStage([a], applicationStage).length);
-                return [...(next || []), ...others];
-              })}
-              runId={latestRun.id}
-              stage={applicationStage}
-              isUniversity={isUniversity}
-              predictedGrades={academicProfileData?.predicted_alevels || []}
-              schoolYear={latestRun?.intro_answers_json?.schoolYear || ''}
-              openSignal={appsOpenSignal}
-              openFocus={appsOpenFocus}
-              onEnterGrades={() => setGradesOpenSignal((n) => n + 1)}
-              candidates={(favGroups || []).flatMap((g) => g.items).filter((it) => (it.type === 'job' || it.type === 'course') && !appliedKeys.has(`${it.type}|${it.id}`))}
-              onApplyFavourite={handleApplyFromFavourite}
-            />
-            {latestStatus === 'school' ? (
-              <AcademicProfileCard loadError={gradesLoadError} onRetry={() => setPersonalReload((n) => n + 1)} openSignal={gradesOpenSignal} initialProfile={academicProfileData} onSaved={(ap) => { setAcademicHasData(hasAcademicData(ap)); setAcademicProfileData(ap || null); }} />
-            ) : null}
-            </div>
-          </div>
-        ) : null}
-
-        {/* Recent assessments */}
+        {/* Two-column dashboard. Left: favourites, then recent reports.
+            Right: applications, then grades (school). Cards keep their own
+            height, so a short list is a short card. Stacks on narrow screens. */}
         {overviewReady ? (
-        <section className="profile-card" id="profile-recent-reports">
-          <div className="profile-card-header">
-            <div className="profile-card-header-left">
-              <h2 className="profile-card-title">Recent reports</h2>
-              <span className="profile-card-count">
-                {loadingRuns
-                  ? <span className="profile-skel profile-skel--pill" aria-label="Loading" />
-                  : `${totalRuns} total`}
-              </span>
-            </div>
-            {totalRuns > 0 || latestAssessment ? (
-              <div className="profile-card-header-actions">
-                <button type="button" className="profile-btn-hover-ghost" style={btnOutlineSm} onClick={handleRetake}>
-                  New assessment
-                </button>
-                <button type="button" className="profile-btn-hover-primary" style={btnPrimarySm} onClick={openNewReport} disabled={!canMakeReport}>
-                  <PlayIcon />
-                  New report
-                </button>
-              </div>
-            ) : null}
-          </div>
-
-          {loadingRuns ? (
-            <div className="profile-runs-loading" aria-label="Loading saved runs" aria-busy="true">
-              <span className="profile-spinner" aria-hidden="true" />
-              <p className="profile-runs-loading-note">Loading your assessments&hellip;</p>
-            </div>
-          ) : runs.length === 0 ? (
-            <div className="profile-empty">
-              {draft ? (
-                <>
-                  <p>
-                    {draftComplete
-                      ? `You have answered all ${draftTotal} questions. Your answers are saved and your results are one click away.`
-                      : `You have an assessment in progress: ${draft.answered} of ${draftTotal} questions answered. Your answers are saved on this device.`}
-                  </p>
-                  <button type="button" className="profile-btn-hover-primary" style={btnPrimary} onClick={continueDraft}>
-                    {draftComplete ? 'See my results' : 'Continue my assessment'}
-                  </button>
-                </>
-              ) : latestAssessment ? (
-                <>
-                  <p>You have no reports at the moment. Your assessment{latestAssessmentDate ? ` from ${latestAssessmentDate}` : ''} is saved, so you can make a new report from it.</p>
-                  <button type="button" className="profile-btn-hover-primary" style={btnPrimary} onClick={openNewReport}>
-                    New report
-                  </button>
-                </>
-              ) : (
-                <>
-                  <p>You do not have any saved CareerDNA results yet.</p>
-                  <button type="button" className="profile-btn-hover-primary" style={btnPrimary} onClick={handleRetake}>
-                    Start your first assessment
-                  </button>
-                </>
-              )}
-            </div>
-          ) : (
-            <div className="profile-runs">
-              {runs.slice(0, runsShown).map((run, idx) => (
-                <div
-                  key={run.id}
-                  className={`profile-run-row${latestRun?.id === run.id ? ' is-current' : ''}`}
-                  role="button"
-                  tabIndex={0}
-                  onClick={(e) => { if (e.target.closest('.profile-run-menu-wrap')) return; openRun(run.id); }}
-                  onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('.profile-run-menu-wrap')) { e.preventDefault(); openRun(run.id); } }}
-                  aria-label={`Open report ${totalRuns - idx}`}
-                >
-                  <div className="profile-run-chip" aria-hidden="true">#{totalRuns - idx}</div>
-
-                  <div className="profile-run-main">
-                    <div className="profile-run-titleline">
-                      <span className="profile-run-title">Report {totalRuns - idx}</span>
-                      {latestRun?.id === run.id && <span className="profile-run-badge">Current</span>}
-                    </div>
-                    <div className="profile-run-details">
-                      <span>{compactDate(run.created_at)}</span>
-                      <span className="profile-run-sep">|</span>
-                      <span><strong>{ageValue(run)}</strong> yrs</span>
-                      <span className="profile-run-sep">|</span>
-                      {/* University runs: the subject is the blue label, so it is not repeated in the status line. */}
-                      <span>{(() => {
-                        const line = studentStatusLine(run) || statusLabel(run.intro_answers_json?.status);
-                        const st = String(run.intro_answers_json?.status || '');
-                        return (st === 'undergraduate' || st === 'postgraduate') ? line.split(', ').slice(0, 2).join(', ') : line;
-                      })()}</span>
-                      {subjectLabel(run) !== '—' && (
-                        <>
-                          <span className="profile-run-sep">|</span>
-                          <span className="profile-run-subject">{subjectLabel(run)}</span>
-                        </>
-                      )}
-                      {(() => {
-                        const sitting = assessmentOfRun(run, sittings);
-                        return sitting ? (
-                          <span className="profile-run-assessment">
-                            Assessment {sitting.number} ({shortDate(sitting.takenAt)})
-                          </span>
-                        ) : null;
-                      })()}
-                    </div>
+          <div className={`profile-dash${latestRun ? '' : ' profile-dash--single'}${latestRun && latestStatus !== 'school' ? ' profile-dash--nogrades' : ''}`}>
+            <div className="profile-dash__main">
+              {latestRun ? (
+                <FavouritesCard openSignal={favOpenSignal} loadState={favLoadError ? 'error' : (favGroups === null ? 'loading' : 'ready')} onRetry={() => setFavReload((n) => n + 1)} runId={latestRun.id} onExplore={exploreFavourite} onOpenReport={() => openRun(latestRun.id)} initialGroups={favGroups} appliedKeys={appliedKeys} onApply={handleApplyFromFavourite} onOpenApplications={(target) => setAppsOpenFocus((cur) => ({ ...target, n: ((cur && cur.n) || 0) + 1 }))} stage={applicationStage} predictedGrades={academicProfileData?.predicted_alevels || []} insightCtx={{
+                  archetypes: latestRun?.results_json?.archetypes || null,
+                  subdimensions: latestRun?.results_json?.subdimensionRows || [],
+                  summaryMarkdown: latestRun?.summary_markdown || '',
+                  likedPathways: (favGroups || []).filter((g) => g.type === 'pathway').flatMap((g) => g.items.map((it) => ({ id: it.id, title: it.title }))),
+                  likedWorlds: (favGroups || []).filter((g) => g.type === 'career_world').flatMap((g) => g.items.map((it) => ({ id: it.id, title: it.title }))),
+                }} />
+              ) : null}
+              <section className="profile-card" id="profile-recent-reports">
+                <div className="profile-card-header">
+                  <div className="profile-card-header-left">
+                    <h2 className="profile-card-title">Recent reports</h2>
+                    <span className="profile-card-count">
+                      {loadingRuns
+                        ? <span className="profile-skel profile-skel--pill" aria-label="Loading" />
+                        : `${totalRuns} total`}
+                    </span>
                   </div>
+                  {totalRuns > 0 || latestAssessment ? (
+                    <div className="profile-card-header-actions">
+                      <button type="button" className="profile-btn-hover-ghost" style={btnOutlineSm} onClick={handleRetake}>
+                        New assessment
+                      </button>
+                      <button type="button" className="profile-btn-hover-primary" style={btnPrimarySm} onClick={openNewReport} disabled={!canMakeReport}>
+                        <PlayIcon />
+                        New report
+                      </button>
+                    </div>
+                  ) : null}
+                </div>
 
-                  <svg className="profile-run-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+                {loadingRuns ? (
+                  <div className="profile-runs-loading" aria-label="Loading saved runs" aria-busy="true">
+                    <span className="profile-spinner" aria-hidden="true" />
+                    <p className="profile-runs-loading-note">Loading your assessments&hellip;</p>
+                  </div>
+                ) : runs.length === 0 ? (
+                  <div className="profile-empty">
+                    {draft ? (
+                      <>
+                        <p>
+                          {draftComplete
+                            ? `You have answered all ${draftTotal} questions. Your answers are saved and your results are one click away.`
+                            : `You have an assessment in progress: ${draft.answered} of ${draftTotal} questions answered. Your answers are saved on this device.`}
+                        </p>
+                        <button type="button" className="profile-btn-hover-primary" style={btnPrimary} onClick={continueDraft}>
+                          {draftComplete ? 'See my results' : 'Continue my assessment'}
+                        </button>
+                      </>
+                    ) : latestAssessment ? (
+                      <>
+                        <p>You have no reports at the moment. Your assessment{latestAssessmentDate ? ` from ${latestAssessmentDate}` : ''} is saved, so you can make a new report from it.</p>
+                        <button type="button" className="profile-btn-hover-primary" style={btnPrimary} onClick={openNewReport}>
+                          New report
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <p>You do not have any saved CareerDNA results yet.</p>
+                        <button type="button" className="profile-btn-hover-primary" style={btnPrimary} onClick={handleRetake}>
+                          Start your first assessment
+                        </button>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <div className="profile-runs">
+                    {runs.slice(0, runsShown).map((run, idx) => (
+                      <div
+                        key={run.id}
+                        className={`profile-run-row${latestRun?.id === run.id ? ' is-current' : ''}`}
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e) => { if (e.target.closest('.profile-run-menu-wrap')) return; openRun(run.id); }}
+                        onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && !e.target.closest('.profile-run-menu-wrap')) { e.preventDefault(); openRun(run.id); } }}
+                        aria-label={`Open report ${totalRuns - idx}`}
+                  title={(() => {
+                    const sitting = assessmentOfRun(run, sittings);
+                    return [`Age ${ageValue(run)}`, sitting ? `Assessment ${sitting.number} (${shortDate(sitting.takenAt)})` : ''].filter(Boolean).join(' · ');
+                  })()}
+                      >
+                        <div className="profile-run-chip" aria-hidden="true">#{totalRuns - idx}</div>
 
-                  <div className="profile-run-menu-wrap">
-                    <button
-                      type="button"
-                      className="profile-run-menu-btn"
-                      aria-label="More actions"
-                      aria-haspopup="true"
-                      aria-expanded={openRunMenuId === run.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // The reports list is the last thing on the page, so the
-                        // menu always opens upwards over the row.
-                        setRunMenuUp(true);
-                        setOpenRunMenuId(openRunMenuId === run.id ? null : run.id);
-                      }}
-                    >
-                      <MoreIcon />
-                    </button>
-                    {openRunMenuId === run.id ? (
-                      <div className={`profile-run-menu${runMenuUp ? ' profile-run-menu--up' : ''}`} role="menu" onClick={(e) => e.stopPropagation()}>
-                        {latestRun?.id !== run.id ? (
+                        <div className="profile-run-main">
+                          <div className="profile-run-titleline">
+                            <span className="profile-run-title">Report {totalRuns - idx}</span>
+                            {latestRun?.id === run.id && <span className="profile-run-badge">Current</span>}
+                          </div>
+                          <div className="profile-run-details">
+                            <span>{compactDate(run.created_at)}</span>
+                            <span className="profile-run-sep">|</span>
+                            <span className="profile-run-age"><strong>{ageValue(run)}</strong> yrs</span>
+                            <span className="profile-run-sep profile-run-sep--age">|</span>
+                            {/* University runs: the subject is the blue label, so it is not repeated in the status line. */}
+                            <span>{(() => {
+                              const line = studentStatusLine(run) || statusLabel(run.intro_answers_json?.status);
+                              const st = String(run.intro_answers_json?.status || '');
+                              return (st === 'undergraduate' || st === 'postgraduate') ? line.split(', ').slice(0, 2).join(', ') : line;
+                            })()}</span>
+                            {subjectLabel(run) !== '—' && (
+                              <>
+                                <span className="profile-run-sep">|</span>
+                                <span className="profile-run-subject">{subjectLabel(run)}</span>
+                              </>
+                            )}
+                            {(() => {
+                              const sitting = assessmentOfRun(run, sittings);
+                              return sitting ? (
+                                <span className="profile-run-assessment">
+                                  Assessment {sitting.number} ({shortDate(sitting.takenAt)})
+                                </span>
+                              ) : null;
+                            })()}
+                          </div>
+                        </div>
+
+                        <svg className="profile-run-chev" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+
+                        <div className="profile-run-menu-wrap">
                           <button
                             type="button"
-                            role="menuitem"
-                            className="profile-run-menu-item"
-                            onClick={() => { setOpenRunMenuId(null); handleSetCurrentRun(run.id); }}
-                            disabled={settingCurrentId === run.id}
+                            className="profile-run-menu-btn"
+                            aria-label="More actions"
+                            aria-haspopup="true"
+                            aria-expanded={openRunMenuId === run.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // The reports list is the last thing on the page, so the
+                              // menu always opens upwards over the row.
+                              setRunMenuUp(idx > 1);
+                              setOpenRunMenuId(openRunMenuId === run.id ? null : run.id);
+                            }}
                           >
-                            <PinIcon />
-                            {settingCurrentId === run.id ? 'Setting...' : 'Set as current report'}
+                            <MoreIcon />
                           </button>
-                        ) : null}
-                        <button
-                          type="button"
-                          role="menuitem"
-                          className="profile-run-menu-item profile-run-menu-item--danger"
-                          onClick={() => { setOpenRunMenuId(null); setDeleteConfirmRunId(run.id); }}
-                          disabled={deletingRunId === run.id}
-                        >
-                          <TrashIcon />
-                          {deletingRunId === run.id ? 'Deleting...' : 'Delete report'}
-                        </button>
+                          {openRunMenuId === run.id ? (
+                            <div className={`profile-run-menu${runMenuUp ? ' profile-run-menu--up' : ''}`} role="menu" onClick={(e) => e.stopPropagation()}>
+                              {latestRun?.id !== run.id ? (
+                                <button
+                                  type="button"
+                                  role="menuitem"
+                                  className="profile-run-menu-item"
+                                  onClick={() => { setOpenRunMenuId(null); handleSetCurrentRun(run.id); }}
+                                  disabled={settingCurrentId === run.id}
+                                >
+                                  <PinIcon />
+                                  {settingCurrentId === run.id ? 'Setting...' : 'Set as current report'}
+                                </button>
+                              ) : null}
+                              <button
+                                type="button"
+                                role="menuitem"
+                                className="profile-run-menu-item profile-run-menu-item--danger"
+                                onClick={() => { setOpenRunMenuId(null); setDeleteConfirmRunId(run.id); }}
+                                disabled={deletingRunId === run.id}
+                              >
+                                <TrashIcon />
+                                {deletingRunId === run.id ? 'Deleting...' : 'Delete report'}
+                              </button>
+                            </div>
+                          ) : null}
+                        </div>
                       </div>
+                    ))}
+                  </div>
+                )}
+
+                {(totalRuns || runs.length) > RUNS_PREVIEW ? (
+                  <div className="profile-card-footer">
+                    {runsShown < (totalRuns || runs.length) ? (
+                      <button type="button" className="profile-showall" onClick={showMoreRuns} disabled={runsLoadingMore}>
+                        {runsLoadingMore
+                          ? 'Loading…'
+                          : runsMoreError
+                            ? 'Could not load more. Try again'
+                            : `Show ${Math.min(RUNS_PAGE, (totalRuns || runs.length) - runsShown)} more (${Math.min(runsShown, runs.length)} of ${totalRuns || runs.length})`}
+                      </button>
+                    ) : null}
+                    {runsShown > RUNS_PREVIEW ? (
+                      <button type="button" className="profile-showall" onClick={() => setRunsShown(RUNS_PREVIEW)}>
+                        Show less
+                      </button>
                     ) : null}
                   </div>
+                ) : null}
+              </section>
+            </div>
+            {latestRun ? <InsightsCard stage={latestStatus === 'school' ? 'school' : 'university'} /> : null}
+            {/* Right column: applications, with grades (school only) underneath. */}
+            {latestRun ? (
+                <div className="profile-sidecol">
+                {/* Applications tracker: everything the student has applied for. */}
+                <ApplicationsCard
+                  loadState={appsLoadError ? 'error' : (applications === null ? 'loading' : 'ready')}
+                  onRetry={() => setPersonalReload((n) => n + 1)}
+                  apps={stageApplications || []}
+                  onChange={(next) => setApplications((prev) => {
+                    // The card only sees this stage's rows; keep the other stage's rows as they are.
+                    const others = (prev || []).filter((a) => !forStage([a], applicationStage).length);
+                    return [...(next || []), ...others];
+                  })}
+                  runId={latestRun.id}
+                  stage={applicationStage}
+                  isUniversity={isUniversity}
+                  predictedGrades={academicProfileData?.predicted_alevels || []}
+                  schoolYear={latestRun?.intro_answers_json?.schoolYear || ''}
+                  openSignal={appsOpenSignal}
+                  openFocus={appsOpenFocus}
+                  onEnterGrades={() => setGradesOpenSignal((n) => n + 1)}
+                  candidates={(favGroups || []).flatMap((g) => g.items).filter((it) => (it.type === 'job' || it.type === 'course') && !appliedKeys.has(`${it.type}|${it.id}`))}
+                  onApplyFavourite={handleApplyFromFavourite}
+                />
+                {latestStatus === 'school' ? (
+                  <AcademicProfileCard loadError={gradesLoadError} onRetry={() => setPersonalReload((n) => n + 1)} openSignal={gradesOpenSignal} initialProfile={academicProfileData} onSaved={(ap) => { setAcademicHasData(hasAcademicData(ap)); setAcademicProfileData(ap || null); }} />
+                ) : null}
                 </div>
-              ))}
-            </div>
-          )}
-
-          {(totalRuns || runs.length) > RUNS_PREVIEW ? (
-            <div className="profile-card-footer">
-              {runsShown < (totalRuns || runs.length) ? (
-                <button type="button" className="profile-showall" onClick={showMoreRuns} disabled={runsLoadingMore}>
-                  {runsLoadingMore
-                    ? 'Loading…'
-                    : runsMoreError
-                      ? 'Could not load more. Try again'
-                      : `Show ${Math.min(RUNS_PAGE, (totalRuns || runs.length) - runsShown)} more (${Math.min(runsShown, runs.length)} of ${totalRuns || runs.length})`}
-                </button>
-              ) : null}
-              {runsShown > RUNS_PREVIEW ? (
-                <button type="button" className="profile-showall" onClick={() => setRunsShown(RUNS_PREVIEW)}>
-                  Show less
-                </button>
-              ) : null}
-            </div>
-          ) : null}
-        </section>
+            ) : null}
+          </div>
         ) : null}
       </div>
 

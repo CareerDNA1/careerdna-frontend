@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'phosphor-react';
-import { BrainCircuit } from 'lucide-react';
+import AdvisorAvatar from './AdvisorAvatar';
 import CareerAdvisorChat from './CareerAdvisorChat';
-import { useAdvisorPanel, openAdvisor, closeAdvisor, toggleAdvisor, setAdvisorFacts } from '../../utils/advisorPanel';
+import { useAdvisorPanel, openAdvisor, closeAdvisor, toggleAdvisor, setAdvisorFacts, registerAdvisorAvailable } from '../../utils/advisorPanel';
 import { advisorContextFor, advisorGeneralQuestions } from '../../utils/advisorQuestions';
 import { getMyAcademicProfile, hasAcademicData } from '../../utils/academicProfile';
 import { getFavouritesByCategory } from '../../utils/favourites';
@@ -33,6 +33,12 @@ export default function AdvisorDrawer({ assessmentRunId, stage = '' }) {
     return resolved || rawContext;
   }, [rawContext, facts, stage]);
   const generalQuestions = useMemo(() => advisorGeneralQuestions(facts.stage || stage), [facts.stage, stage]);
+
+  // Tell the top bar an advisor is available here (it shows its own button).
+  useEffect(() => {
+    if (!assessmentRunId) return undefined;
+    return registerAdvisorAvailable();
+  }, [assessmentRunId]);
 
   // Load the facts once per report: stage, grades entered, favourites saved,
   // applications made. Refreshed when the drawer opens so new saves show.
@@ -156,43 +162,30 @@ export default function AdvisorDrawer({ assessmentRunId, stage = '' }) {
     return () => clearTimeout(t);
   }, [open, context?.title]);
 
-  // Keep the pill beside the page content on every screen size (2 Nov 2026).
-  // Vertically: at the bottom of the window, or level with the page footer when
-  // the page ends above the bottom (tall portrait screens). Horizontally: just
-  // to the right of the main content column when there is room (very wide
-  // screens), otherwise in the corner as before.
+  // Pill position: centred at the bottom of the window (stylesheet). It rises
+  // only when the page footer comes into view, so it never covers the footer.
   const tabRef = useRef(null);
   const [tabPos, setTabPos] = useState(null);
   useEffect(() => {
     if (typeof window === 'undefined') return undefined;
     const EDGE = 22;      // distance from the window edge in the default corner
-    const GAP = 24;       // space between the content column and the pill
     let raf = 0;
     const measure = () => {
       raf = 0;
-      const vw = window.innerWidth;
       const vh = window.innerHeight;
       // Phones keep the centred bar; short wide screens (phones in landscape) keep
       // the compact corner button from the stylesheet.
       if (window.matchMedia(PHONE).matches || vh <= 520) { setTabPos(null); return; }
       let bottom = EDGE;
-      const footerBottom = Array.from(document.querySelectorAll('footer[aria-label="CareerDNA footer"]'))
+      // Once the page footer scrolls into view, rise so the pill sits just
+      // above it instead of covering the footer links.
+      const footerTop = Array.from(document.querySelectorAll('footer[aria-label="CareerDNA footer"]'))
         .map((el) => el.getBoundingClientRect())
         .filter((r) => r.height > 0)
-        .reduce((m, r) => Math.max(m, r.bottom), 0);
-      if (footerBottom > 0) {
-        const gap = vh - footerBottom;
-        if (gap > 0) bottom = Math.round(gap + EDGE);
-      }
-      let right = EDGE;
-      const anchors = Array.from(document.querySelectorAll('.profile-shell, #results-root .section-card'));
-      const contentRight = anchors.map((el) => el.getBoundingClientRect()).filter((r) => r.width > 0).reduce((m, r) => Math.max(m, r.right), 0);
-      const pillWidth = tabRef.current ? tabRef.current.offsetWidth : 150;
-      if (contentRight > 0) {
-        const room = vw - contentRight;
-        if (room >= pillWidth + GAP + EDGE) right = Math.round(room - GAP - pillWidth);
-      }
-      setTabPos(bottom === EDGE && right === EDGE ? null : { bottom, right });
+        .reduce((m, r) => Math.min(m, r.top), Infinity);
+      if (footerTop < vh) bottom = Math.max(EDGE, Math.round(vh - footerTop + 14));
+      // Horizontally the pill is centred by the stylesheet; only lift it here.
+      setTabPos(bottom === EDGE ? null : { bottom });
     };
     const schedule = () => { if (!raf) raf = window.requestAnimationFrame(measure); };
     schedule();
@@ -222,8 +215,6 @@ export default function AdvisorDrawer({ assessmentRunId, stage = '' }) {
 
   if (!assessmentRunId) return null;
 
-  const contextTitle = context?.title ? `Ask about ${context.title}` : 'Ask anything about your results';
-
   // Rendered on <body>: the results page uses transforms for its swipe slider,
   // which would otherwise turn our fixed positioning into page-relative.
   return createPortal(
@@ -239,7 +230,7 @@ export default function AdvisorDrawer({ assessmentRunId, stage = '' }) {
           aria-label="Open Your Advisor"
           aria-expanded={false}
         >
-          <span className="advisor-tab__icon" aria-hidden="true"><BrainCircuit /></span>
+          <span className="advisor-tab__icon" aria-hidden="true"><AdvisorAvatar /></span>
           <span className="advisor-tab__label"><span className="advisor-tab__ask">Ask </span>Your Advisor</span>
           <span className="advisor-tab__hint" aria-hidden="true">{context?.title ? `Ask about ${context.title}` : 'Ask about your results'}</span>
         </button>
@@ -249,10 +240,9 @@ export default function AdvisorDrawer({ assessmentRunId, stage = '' }) {
       <aside className={`advisor-drawer${open ? ' is-open' : ''}`} role="region" aria-label="Your Advisor" aria-hidden={!open} inert={open ? undefined : true}>
         <div className="advisor-drawer__handle" onTouchStart={onHandleTouchStart} onTouchEnd={onHandleTouchEnd} aria-hidden="true"><span /></div>
         <header className="advisor-drawer__head" onTouchStart={onHandleTouchStart} onTouchEnd={onHandleTouchEnd}>
-          <span className="advisor-drawer__avatar career-advisor-avatar" aria-hidden="true"><BrainCircuit /></span>
+          <span className="advisor-drawer__avatar career-advisor-avatar" aria-hidden="true"><AdvisorAvatar /></span>
           <div className="advisor-drawer__titles">
             <div className="advisor-drawer__title">Your CareerDNA Advisor</div>
-            <div className="advisor-drawer__sub">{contextTitle}</div>
           </div>
           <button type="button" className="advisor-drawer__close" onClick={() => toggleAdvisor()} aria-label="Close Your Advisor">
             <X size={16} weight="bold" aria-hidden="true" />

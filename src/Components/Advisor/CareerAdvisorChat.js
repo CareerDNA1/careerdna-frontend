@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { renderSafeMarkdown } from '../../utils/renderSafeMarkdown';
 import { PaperPlaneRight } from 'phosphor-react';
-import { BrainCircuit } from 'lucide-react';
+import AdvisorAvatar from './AdvisorAvatar';
 import './CareerAdvisorChat.css';
 import ReportLimitModal from '../Common/ReportLimitModal';
 import { applyCouponCode } from '../../utils/applyCoupon';
@@ -44,7 +44,7 @@ function deriveUsedStarterPrompts(messages = [], prompts = []) {
 }
 
 function AdvisorAiIcon() {
-  return <BrainCircuit aria-hidden="true" focusable="false" />;
+  return <AdvisorAvatar />;
 }
 
 
@@ -68,11 +68,6 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
   const [starterPrompts, setStarterPrompts] = useState(FALLBACK_STARTER_PROMPTS);
   const [usedStarterPrompts, setUsedStarterPrompts] = useState([]);
   const [input, setInput] = useState('');
-  // Once a question is asked, the suggested questions step aside to give the
-  // answers room. They return the next time the advisor is opened (the chat
-  // mounts afresh) or when it is opened from a different section.
-  const [askedThisVisit, setAskedThisVisit] = useState(false);
-  useEffect(() => { setAskedThisVisit(false); }, [context?.title]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -213,9 +208,104 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
     }, 350);
   };
 
+  // Suggestion row: which card is in view (dots), whether there is more to
+  // either side (arrow buttons), mouse drag-to-scroll, and the "fly into the
+  // box" effect when a card is chosen.
+  const suggRowRef = useRef(null);
+  const [suggIdx, setSuggIdx] = useState(0);
+  const [suggEdges, setSuggEdges] = useState({ left: false, right: false });
+  const suggDragRef = useRef({ down: false, x: 0, start: 0, moved: false });
+  const suggFlyingRef = useRef(false);
+  const onSuggScroll = () => {
+    const row = suggRowRef.current;
+    if (!row || !row.children.length) return;
+    const first = row.children[0].offsetLeft;
+    let best = 0; let dist = Infinity;
+    Array.from(row.children).forEach((el, i) => {
+      const d = Math.abs(el.offsetLeft - first - row.scrollLeft);
+      if (d < dist) { dist = d; best = i; }
+    });
+    setSuggIdx(best);
+    const left = row.scrollLeft > 4;
+    const right = row.scrollLeft + row.clientWidth < row.scrollWidth - 4;
+    setSuggEdges((prev) => (prev.left === left && prev.right === right ? prev : { left, right }));
+  };
+  const suggStep = (dir) => {
+    const row = suggRowRef.current;
+    if (!row || !row.children.length) return;
+    const card = row.children[0].getBoundingClientRect().width + 8;
+    row.scrollBy({ left: dir * card, behavior: 'smooth' });
+  };
+  // Mouse: press and drag sideways scrolls the row; a drag never counts as a
+  // click. Touch screens scroll natively and do not fire a click after a swipe.
+  const onSuggPointerDown = (e) => {
+    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    const row = suggRowRef.current;
+    if (!row) return;
+    suggDragRef.current = { down: true, x: e.clientX, start: row.scrollLeft, moved: false };
+    const move = (ev) => {
+      const d = suggDragRef.current;
+      if (!d.down) return;
+      const dx = ev.clientX - d.x;
+      if (!d.moved && Math.abs(dx) > 6) { d.moved = true; row.classList.add('is-dragging'); }
+      if (d.moved) row.scrollLeft = d.start - dx;
+    };
+    const up = () => {
+      suggDragRef.current.down = false;
+      row.classList.remove('is-dragging');
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+      // Settle on the nearest card once the drag ends.
+      if (suggDragRef.current.moved) {
+        const first = row.children[0]?.offsetLeft || 0;
+        const near = Array.from(row.children).reduce((b, el) => (Math.abs(el.offsetLeft - first - row.scrollLeft) < Math.abs(b.offsetLeft - first - row.scrollLeft) ? el : b), row.children[0]);
+        if (near) row.scrollTo({ left: near.offsetLeft - first, behavior: 'smooth' });
+        // The click that follows this release is ignored, then clicks work again.
+        window.setTimeout(() => { suggDragRef.current.moved = false; }, 0);
+      }
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+  // Choosing a card: a copy of it glides down into the message box, the
+  // question appears there for a moment, then it is sent.
+  const chooseSuggestion = (prompt, el) => {
+    if (suggDragRef.current.moved) return;
+    if (sending || suggFlyingRef.current) return;
+    const box = textareaRef.current;
+    const reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!el || !box || reduce) { handleSend(prompt); return; }
+    suggFlyingRef.current = true;
+    const from = el.getBoundingClientRect();
+    const to = box.getBoundingClientRect();
+    const ghost = document.createElement('div');
+    ghost.className = 'cdna-sugg__ghost';
+    ghost.textContent = prompt;
+    Object.assign(ghost.style, { left: `${from.left}px`, top: `${from.top}px`, width: `${from.width}px` });
+    document.body.appendChild(ghost);
+    // Next frame: move it onto the message box.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      ghost.style.transform = `translate(${to.left + 12 - from.left}px, ${to.top + (to.height - from.height) / 2 - from.top}px)`;
+      ghost.style.width = `${Math.max(120, to.width - 24)}px`;
+      ghost.classList.add('is-landing');
+    }));
+    window.setTimeout(() => {
+      ghost.remove();
+      setInput(prompt);
+      window.setTimeout(() => {
+        suggFlyingRef.current = false;
+        handleSend(prompt);
+      }, 260);
+    }, 430);
+  };
+  useEffect(() => {
+    const t = window.setTimeout(onSuggScroll, 60);
+    return () => window.clearTimeout(t);
+  });
+
   const placeholder = useMemo(() => {
     if (sending) return 'Thinking…';
-    return context?.title ? `Ask about ${context.title}…` : 'Ask your advisor a question…';
+    return 'Ask me anything';
   }, [sending, context?.title]);
 
   const markStarterPromptUsed = (prompt = '') => {
@@ -235,7 +325,6 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
 
     if (!text) return;
 
-    setAskedThisVisit(true);
     if (textOverride) markStarterPromptUsed(text);
     shouldScrollAfterSendRef.current = true;
 
@@ -332,7 +421,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
     .filter((q) => q && !askedKeys.has(normalizePromptText(q).toLowerCase()));
   const generalPrompts = (Array.isArray(generalQuestions) && generalQuestions.length ? generalQuestions : starterPrompts)
     .filter((prompt) => !usedStarterPromptKeys.has(normalizePromptText(prompt).toLowerCase()) && !askedKeys.has(normalizePromptText(prompt).toLowerCase()));
-  const promptLimit = isDrawer ? (hasMessages ? 2 : 4) : (hasMessages ? 3 : 5);
+  const promptLimit = isDrawer ? 4 : 5; // one swipeable row, so a few more fit
   const visiblePrompts = [...contextPrompts, ...generalPrompts.filter((p) => !contextPrompts.includes(p))].slice(0, promptLimit);
   const disableAdvisorInput = sending;
   const sendTooltip = sending
@@ -478,21 +567,38 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
               <div ref={bottomRef} />
             </div>
 
-            {visiblePrompts.length > 0 && !askedThisVisit ? (
-              <div className="career-advisor-suggestions">
-                <div className="career-advisor-prompt-intro">{context?.title ? `About ${context.title}, or ask your own.` : 'Choose one of these questions or ask your own.'}</div>
-                <div className="career-advisor-prompts" aria-label="Suggested questions">
-                  {visiblePrompts.map((prompt) => (
-                    <button
-                      key={prompt}
-                      type="button"
-                      onClick={() => handleSend(prompt)}
-                      disabled={sending}
-                    >
-                      {prompt}
-                    </button>
-                  ))}
+            {/* Suggested questions: one swipeable row with a small "Try asking"
+                label. It steps aside while the student types and returns when
+                the box is empty. On wide panels the cards wrap instead. */}
+            {visiblePrompts.length > 0 && !input.trim() ? (
+              <div className="cdna-sugg">
+                <div className="cdna-sugg__head">
+                  <span>Try asking</span>
                 </div>
+                <div className="cdna-sugg__track">
+                  {suggEdges.left ? (
+                    <button type="button" className="cdna-sugg__arrow cdna-sugg__arrow--left" onClick={() => suggStep(-1)} aria-label="Previous suggestions">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+                    </button>
+                  ) : null}
+                  <div className="cdna-sugg__row" aria-label="Suggested questions" onScroll={onSuggScroll} onPointerDown={onSuggPointerDown} ref={suggRowRef}>
+                    {visiblePrompts.map((prompt) => (
+                      <button key={prompt} type="button" className="cdna-sugg__chip" onClick={(e) => chooseSuggestion(prompt, e.currentTarget)} disabled={sending} draggable={false}>
+                        {prompt}
+                      </button>
+                    ))}
+                  </div>
+                  {suggEdges.right ? (
+                    <button type="button" className="cdna-sugg__arrow cdna-sugg__arrow--right" onClick={() => suggStep(1)} aria-label="More suggestions">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+                    </button>
+                  ) : null}
+                </div>
+                {(suggEdges.left || suggEdges.right) ? (
+                  <div className="cdna-sugg__dots" aria-hidden="true">
+                    {visiblePrompts.map((p, i) => <span key={p} className={i === suggIdx ? 'is-on' : ''} />)}
+                  </div>
+                ) : null}
               </div>
             ) : null}
 

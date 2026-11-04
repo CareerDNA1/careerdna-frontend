@@ -194,3 +194,11 @@ html.cdna-scroll-locked .advisor-tab { display: none; }
   .advisor-tab__label, .advisor-tab__hint { display: none; }
   .advisor-tab__icon { width: 30px; height: 30px; }
 }
+
+
+/* Wider screens: the advisor button sits at the bottom centre of the screen. */
+@media (min-width: 761px) {
+  .advisor-tab { left: 50%; right: auto; translate: -50% 0; }
+  .advisor-tab__hint { right: auto; left: 50%; translate: -50% 0; }
+  .advisor-tab__hint::after { right: auto; left: 50%; margin-left: -6px; }
+}
