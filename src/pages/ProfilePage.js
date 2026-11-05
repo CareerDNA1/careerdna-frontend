@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Headset, Send } from 'lucide-react';
+import { Send } from 'lucide-react';
+import { AdvisorGlyph } from '../Components/Advisor/AdvisorAvatar';
 import InsightsCard from '../Components/Common/InsightsCard';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AccountNavbar from '../Components/Common/AccountNavbar';
@@ -2040,7 +2041,7 @@ export default function ProfilePage() {
                     () => { const el = document.getElementById('profile-recent-reports'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
                     `${totalRuns} reports from ${nAssess} assessments. Go to your reports`, ['reports', 'assessments']),
                   tile('questions', 'profile-stat--advisor',
-                    <Headset size={20} aria-hidden="true" focusable="false" />,
+                    <AdvisorGlyph size={20} />,
                     Number(profile?.advisor_questions_used || 0), 'Questions asked', 'Open your advisor',
                     () => openAdvisor(),
                     `${Number(profile?.advisor_questions_used || 0)} questions asked. Open your advisor`),

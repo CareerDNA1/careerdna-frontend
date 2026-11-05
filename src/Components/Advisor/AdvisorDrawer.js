@@ -255,6 +255,7 @@ export default function AdvisorDrawer({ assessmentRunId, stage = '' }) {
               variant="drawer"
               context={context}
               generalQuestions={generalQuestions}
+              active={open}
               prefill={prefill}
               prefillSend={prefillSend}
             />

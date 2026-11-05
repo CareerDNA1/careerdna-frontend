@@ -211,17 +211,35 @@ const CONTEXTS = {
 
 // Shown when there is no section context, and after the context questions.
 const GENERAL = {
+  // Kept in step with buildAdvisorStarterPrompts in the backend
+  // (src/lib/cdnaAdvisorPrompt.js). The chat rotates through these.
   school: [
     'How did you decide which career worlds match me best?',
     'Which A-level subjects fit my profile?',
     'How can I use this profile in university applications?',
     'What skills should I develop for my top pathways?',
+    'Is university or an apprenticeship the better route for me?',
+    'What could I write about in my personal statement?',
+    'What work experience would suit my profile?',
+    'Which degrees keep the most options open for me?',
+    'What should I be doing this term to get ahead?',
+    'Which of my strengths will employers value most?',
+    'Which careers might I be overlooking that suit me?',
+    'How do my predicted grades affect my options?',
   ],
   university: [
     'How did you decide which pathways match me best?',
     'How can I use this profile in my personal statement and CV?',
     'What skills should I develop for my top roles?',
     'What practical next steps should I take this month?',
+    'Which internships or placements suit my profile?',
+    'How do I talk about my strengths in an interview?',
+    'Which graduate schemes fit my profile best?',
+    'Would a master\'s help with my top pathways?',
+    'Which roles might I be overlooking that suit me?',
+    'How can I make my degree work for these careers?',
+    'Who should I be networking with, and how?',
+    'Which of my traits could hold me back at work?',
   ],
 };
 

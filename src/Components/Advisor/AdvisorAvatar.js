@@ -1,39 +1,32 @@
-import React, { useId } from 'react';
+import React from 'react';
 import './AdvisorAvatar.css';
 
-// The advisor's face: a big-eyed chibi mentor with a headset, on soft blue.
-// Fills whatever box it is placed in. Eyes blink now and then and the head
-// bobs gently (CSS, off for people who prefer reduced motion).
-export default function AdvisorAvatar({ className = '' }) {
-  const clip = `cdna-adv-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
+// The advisor's face: a teal speech bubble with two eyes and a smile, on a
+// white circle. Fills whatever box it is placed in. The eyes blink now and
+// then (CSS, off for people who prefer reduced motion).
+// The same bubble as a line icon in the current text colour, for coloured
+// icon boxes (the profile stat tile) that use outline icons.
+export function AdvisorGlyph({ size = 20 }) {
   return (
-    <svg className={`cdna-advisor-face ${className}`.trim()} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
-      <circle cx="32" cy="32" r="30" fill="#eaf1fe" stroke="#d6e3fb" strokeWidth="2" />
-      <clipPath id={clip}><circle cx="32" cy="32" r="29" /></clipPath>
-      <g clipPath={`url(#${clip})`}>
-        <path d="M19 64c1-8 6-12.5 13-12.5S44 56 45 64" fill="#2f6fed" />
-        <g className="cdna-advisor-face__head">
-          <circle cx="32" cy="33" r="15" fill="#f7d3b0" />
-          <path d="M17 31c0-10 7-16 15-16s15 6 15 16c-2-5-6-8-10-8-1 3-5 5-9 5s-7-1-9-3c-1 2-2 4-2 6z" fill="#4a3428" />
-          <path d="M15.5 33a16.5 16.5 0 0 1 33 0" stroke="#2f6fed" strokeWidth="3.2" fill="none" strokeLinecap="round" />
-          <rect x="12" y="29" width="6.5" height="11" rx="3.2" fill="#2f6fed" />
-          <rect x="45.5" y="29" width="6.5" height="11" rx="3.2" fill="#2f6fed" />
-          <path d="M48.5 39.5c0 4.5-3.5 7.5-9 7.5" stroke="#2f6fed" strokeWidth="2" fill="none" strokeLinecap="round" />
-          <circle cx="38.5" cy="47" r="2.2" fill="#2f6fed" />
-          <g className="cdna-advisor-face__eye">
-            <ellipse cx="26.5" cy="33" rx="3.1" ry="3.7" fill="#12233c" />
-            <circle cx="27.6" cy="31.7" r="1.1" fill="#fff" />
-          </g>
-          <g className="cdna-advisor-face__eye">
-            <ellipse cx="37.5" cy="33" rx="3.1" ry="3.7" fill="#12233c" />
-            <circle cx="38.6" cy="31.7" r="1.1" fill="#fff" />
-          </g>
-          <ellipse cx="21.5" cy="38.5" rx="3" ry="1.9" fill="#ff9aa2" opacity="0.75" />
-          <ellipse cx="42.5" cy="38.5" rx="3" ry="1.9" fill="#ff9aa2" opacity="0.75" />
-          <path d="M29 39.5c1.8 2 4.2 2 6 0" stroke="#12233c" strokeWidth="1.7" fill="none" strokeLinecap="round" />
-        </g>
-      </g>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+      <path d="M5 4h14a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-7l-4.5 3.5V18H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <circle cx="9" cy="10" r="1.3" fill="currentColor" />
+      <circle cx="15" cy="10" r="1.3" fill="currentColor" />
+      <path d="M9.5 13.2c1.4 1.1 3.6 1.1 5 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 }
 
+export default function AdvisorAvatar({ className = '' }) {
+  return (
+    <svg className={`cdna-advisor-face ${className}`.trim()} viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+      <circle cx="32" cy="32" r="31" fill="#fff" stroke="#cdeee5" strokeWidth="2" />
+      <g transform="translate(12 12.5) scale(1.6667)">
+        <path d="M5 4h14a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-7l-4.5 3.5V18H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z" fill="#0f9d8a" />
+        <circle className="cdna-advisor-face__eye" cx="9" cy="10.5" r="1.4" fill="#fff" />
+        <circle className="cdna-advisor-face__eye" cx="15" cy="10.5" r="1.4" fill="#fff" />
+        <path d="M9.5 13.6c1.4 1.1 3.6 1.1 5 0" stroke="#fff" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+      </g>
+    </svg>
+  );
+}

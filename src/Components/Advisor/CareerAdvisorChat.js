@@ -62,7 +62,7 @@ function renderPlainText(content = '') {
 // context: { section, title, questions } for what the student is looking at;
 // its questions lead the suggestions and tag the messages sent from there.
 // prefill / prefillSend: a question handed over by an "Ask your advisor" button.
-export default function CareerAdvisorChat({ assessmentRunId, embedded = false, variant = 'page', context = null, generalQuestions = null, prefill = '', prefillSend = false }) {
+export default function CareerAdvisorChat({ assessmentRunId, embedded = false, variant = 'page', context = null, generalQuestions = null, prefill = '', prefillSend = false, active = true }) {
   const [conversation, setConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [starterPrompts, setStarterPrompts] = useState(FALLBACK_STARTER_PROMPTS);
@@ -155,6 +155,13 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, prefill, prefillSend]);
 
+  // Closing the drawer throws away an unsent question, so the box is empty
+  // the next time it opens (a question handed over by a section button is
+  // placed after this, when the drawer opens again).
+  useEffect(() => {
+    if (!active) { setInput(''); setErrorMsg(''); }
+  }, [active]);
+
   // Scroll inside the message list only (never the page behind it).
   const scrollList = (top, smooth) => {
     const el = messagesRef.current;
@@ -225,9 +232,12 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
       const d = Math.abs(el.offsetLeft - first - row.scrollLeft);
       if (d < dist) { dist = d; best = i; }
     });
-    setSuggIdx(best);
     const left = row.scrollLeft > 4;
     const right = row.scrollLeft + row.clientWidth < row.scrollWidth - 4;
+    // At the far end the last card can never reach the left edge (two show
+    // at once), so light the last dot there instead of the one before it.
+    if (!right && left) best = row.children.length - 1;
+    setSuggIdx(best);
     setSuggEdges((prev) => (prev.left === left && prev.right === right ? prev : { left, right }));
   };
   const suggStep = (dir) => {
@@ -267,14 +277,26 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
     window.addEventListener('pointermove', move);
     window.addEventListener('pointerup', up);
   };
-  // Choosing a card: a copy of it glides down into the message box, the
-  // question appears there for a moment, then it is sent.
+  // Choosing a card: a copy of it glides down into the message box and the
+  // question is placed there, ready to edit. Nothing is sent until the
+  // student presses Send, so a stray tap never uses up a question.
+  const placeSuggestion = (prompt) => {
+    setInput(prompt);
+    const box = textareaRef.current;
+    if (box) {
+      window.requestAnimationFrame(() => {
+        box.focus();
+        const end = prompt.length;
+        try { box.setSelectionRange(end, end); } catch (_) { /* ignore */ }
+      });
+    }
+  };
   const chooseSuggestion = (prompt, el) => {
     if (suggDragRef.current.moved) return;
     if (sending || suggFlyingRef.current) return;
     const box = textareaRef.current;
     const reduce = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!el || !box || reduce) { handleSend(prompt); return; }
+    if (!el || !box || reduce) { placeSuggestion(prompt); return; }
     suggFlyingRef.current = true;
     const from = el.getBoundingClientRect();
     const to = box.getBoundingClientRect();
@@ -291,17 +313,27 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
     }));
     window.setTimeout(() => {
       ghost.remove();
-      setInput(prompt);
-      window.setTimeout(() => {
-        suggFlyingRef.current = false;
-        handleSend(prompt);
-      }, 260);
+      suggFlyingRef.current = false;
+      placeSuggestion(prompt);
     }, 430);
   };
   useEffect(() => {
     const t = window.setTimeout(onSuggScroll, 60);
     return () => window.clearTimeout(t);
   });
+  // The message box grows with its text (up to its CSS max-height, then it
+  // scrolls), so a placed suggestion is readable in full before sending.
+  // Set as an important inline style because some stylesheet rules pin the
+  // height with !important.
+  useEffect(() => {
+    const box = textareaRef.current;
+    if (!box) return;
+    box.style.removeProperty('height');
+    if (!input) return;
+    const min = parseFloat(window.getComputedStyle(box).minHeight) || 0;
+    const next = Math.max(min, box.scrollHeight + 2);
+    box.style.setProperty('height', `${next}px`, 'important');
+  }, [input]);
 
   const placeholder = useMemo(() => {
     if (sending) return 'Thinking…';
@@ -417,12 +449,27 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
     () => new Set(messages.filter((m) => m.role === 'user').map((m) => normalizePromptText(m.content).toLowerCase())),
     [messages]
   );
-  const contextPrompts = (Array.isArray(context?.questions) ? context.questions : [])
-    .filter((q) => q && !askedKeys.has(normalizePromptText(q).toLowerCase()));
-  const generalPrompts = (Array.isArray(generalQuestions) && generalQuestions.length ? generalQuestions : starterPrompts)
-    .filter((prompt) => !usedStarterPromptKeys.has(normalizePromptText(prompt).toLowerCase()) && !askedKeys.has(normalizePromptText(prompt).toLowerCase()));
+  const notAsked = (q) => q && !askedKeys.has(normalizePromptText(q).toLowerCase());
+  // 1) Follow-ups: the questions the advisor suggested at the end of its last
+  // answer. They lead whenever the latest message is an advisor answer (not
+  // a safeguarding reply) and some are still unasked.
+  const lastMessage = messages.length ? messages[messages.length - 1] : null;
+  const followUpPrompts = (!sending && lastMessage && lastMessage.role === 'assistant' && !lastMessage.flagged && !lastMessage.safeguarding
+    && Array.isArray(lastMessage.followUps) ? lastMessage.followUps : []).filter(notAsked);
+  // 2) Starters: the questions for the tab the student is on, then the general
+  // pool for their stage. The pool is rotated by how many questions they have
+  // asked, so it moves on even when they type their own questions.
+  const contextPrompts = (Array.isArray(context?.questions) ? context.questions : []).filter(notAsked);
+  const generalPool = (Array.isArray(generalQuestions) && generalQuestions.length ? generalQuestions : starterPrompts)
+    .filter((prompt) => notAsked(prompt) && !usedStarterPromptKeys.has(normalizePromptText(prompt).toLowerCase()));
+  const askedCount = askedKeys.size;
+  const rotateBy = generalPool.length ? (askedCount * 2) % generalPool.length : 0;
+  const generalPrompts = [...generalPool.slice(rotateBy), ...generalPool.slice(0, rotateBy)];
   const promptLimit = isDrawer ? 4 : 5; // one swipeable row, so a few more fit
-  const visiblePrompts = [...contextPrompts, ...generalPrompts.filter((p) => !contextPrompts.includes(p))].slice(0, promptLimit);
+  const showingFollowUps = followUpPrompts.length > 0;
+  const visiblePrompts = showingFollowUps
+    ? followUpPrompts.slice(0, 3)
+    : [...contextPrompts, ...generalPrompts.filter((p) => !contextPrompts.includes(p))].slice(0, promptLimit);
   const disableAdvisorInput = sending;
   const sendTooltip = sending
     ? 'Your advisor is thinking'
@@ -573,7 +620,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
             {visiblePrompts.length > 0 && !input.trim() ? (
               <div className="cdna-sugg">
                 <div className="cdna-sugg__head">
-                  <span>Try asking</span>
+                  <span>{showingFollowUps ? 'Ask next' : 'Try asking'}</span>
                 </div>
                 <div className="cdna-sugg__track">
                   {suggEdges.left ? (
@@ -581,7 +628,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
                       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
                     </button>
                   ) : null}
-                  <div className="cdna-sugg__row" aria-label="Suggested questions" onScroll={onSuggScroll} onPointerDown={onSuggPointerDown} ref={suggRowRef}>
+                  <div key={visiblePrompts.join('|')} className="cdna-sugg__row" aria-label={showingFollowUps ? 'Suggested follow-up questions' : 'Suggested questions'} onScroll={onSuggScroll} onPointerDown={onSuggPointerDown} ref={suggRowRef}>
                     {visiblePrompts.map((prompt) => (
                       <button key={prompt} type="button" className="cdna-sugg__chip" onClick={(e) => chooseSuggestion(prompt, e.currentTarget)} disabled={sending} draggable={false}>
                         {prompt}

@@ -8,6 +8,4 @@
 .advisor-tab__icon .cdna-advisor-face { width: 100% !important; height: 100% !important; }
 .cdna-advisor-face__eye { transform-box: fill-box; transform-origin: center; animation: cdna-advisor-blink 4.5s infinite; }
 @keyframes cdna-advisor-blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.1); } }
-.cdna-advisor-face__head { animation: cdna-advisor-bob 2.6s ease-in-out infinite; }
-@keyframes cdna-advisor-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.5px); } }
-@media (prefers-reduced-motion: reduce) { .cdna-advisor-face__eye, .cdna-advisor-face__head { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .cdna-advisor-face__eye { animation: none; } }
