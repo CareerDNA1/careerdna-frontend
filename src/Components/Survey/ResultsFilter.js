@@ -70,6 +70,24 @@ export function applyResultsFilter(items, filter, opts = {}) {
 // A section heading with a small Show N / Hide button at its right, used for
 // the "other ..." part of a list (other pathways, other degrees, other worlds).
 // The heading reads as a section of the page rather than another card.
+// "Only my favourites" is on and no other filter is: the list should show just
+// the saved items, as one plain list, or a short note when nothing is saved.
+export function isFavouritesOnly(filter) {
+  const f = filter || emptyFilter();
+  return Boolean(f.favouritesOnly) && !(f.routes || []).length && !(f.bands || []).length;
+}
+
+// The note shown when "Only my favourites" finds nothing. The like control on
+// cards is "Like this" or a thumbs up depending on the tab, so the note just
+// says "Like one".
+export function favouritesEmptyText(noun, where = '') {
+  return `You haven\u2019t saved any ${noun}${where ? ` in ${where}` : ''} yet. Like one and it will appear here.`;
+}
+
+export function FavouritesEmpty({ noun, where = '' }) {
+  return <p className="fs-none">{favouritesEmptyText(noun, where)}</p>;
+}
+
 export function OtherSectionHead({ title, count, open, onToggle }) {
   return (
     <div className="nu-other-head">

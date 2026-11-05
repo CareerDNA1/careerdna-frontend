@@ -9,7 +9,7 @@ import { showSelectionTooltip, hideSelectionTooltip, PathwayReactionRow, SignalB
 import PathwayPicker, { readRemembered } from './PathwayPicker';
 import { getReactions, setItemReaction, notifySaveFailed } from '../../utils/savedItems';
 import { getSubjectIcon, getPathwayIcon, getCareerWorldIcon } from '../../utils/iconMap';
-import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank } from './ResultsFilter';
+import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank, OtherSectionHead, FavouritesEmpty } from './ResultsFilter';
 import InlineError from '../Common/InlineError';
 import { friendlyError } from '../../utils/friendlyError';
 
@@ -1037,8 +1037,14 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
   const groups = useMemo(() => groupByPathway(worldRoutes), [worldRoutes]);
   const relevantGroupsAll = groups.filter((g) => likedPathwaySet.has(g.pathway));
   const otherGroupsAll = groups.filter((g) => !likedPathwaySet.has(g.pathway));
-  // Favourites filter: only the training/work pathways the student has liked here.
-  const isNonUniLiked = (g) => savedReactions[`nonuni:${g.pathway}`] === 'like';
+  // Favourites filter: a training pathway counts as saved when the student
+  // liked the pathway itself OR saved any apprenticeship inside it (those are
+  // stored one by one, and used to vanish when the filter was on).
+  const standardSaved = (r) => {
+    const key = r.standardLarsCode || r.standardName || r.occupation || '';
+    return key ? savedReactions[`apprenticeship:${key}`] === 'like' : false;
+  };
+  const isNonUniLiked = (g) => savedReactions[`nonuni:${g.pathway}`] === 'like' || (g.routes || []).some(standardSaved);
   const relevantGroups = applyResultsFilter(relevantGroupsAll, workFilter, { isLiked: isNonUniLiked });
   const otherGroups = applyResultsFilter(otherGroupsAll, workFilter, { isLiked: isNonUniLiked });
   const pbRank = (g) => bandRank(pathwayBands[g.pathway]);
@@ -1129,28 +1135,35 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
                     <ResultsFilterBar filter={workFilter} onChange={setWorkFilter} groups={['favourites']} />
                   </div>
                 ) : null}
+                {/* Same rule as the University tab (5 Nov 2026): ways in for
+                    your favourite pathways, then more pathways in this world.
+                    Training routes never cross worlds (each sits in one pathway
+                    of its own world), so there is no "other fields" group.
+                    With "Only my favourites" on: one plain list, or a note. */}
                 {!groups.length ? (
                   <p className="fs-none">No non-university routes mapped for this world yet.</p>
-                ) : (!relevantGroups.length && !otherGroups.length) ? (
-                  <p className="results-filter-empty">None of your favourites are in this world. Try clearing the filter.</p>
+                ) : workFilter.favouritesOnly ? (
+                  (relevantGroups.length + otherGroups.length) ? (
+                    <>
+                      <div className="fs-detail-heading">Your saved training routes</div>
+                      <div className="pathway-role-list">{[...relevantGroups, ...otherGroups].map(renderCard)}</div>
+                    </>
+                  ) : (
+                    <FavouritesEmpty noun="training routes" where={activeWorld} />
+                  )
                 ) : relevantGroups.length ? (
                   <>
-                    <div className="fs-detail-heading">Ways in for the pathways you liked</div>
+                    <div className="fs-detail-heading">Ways in for your favourite pathways</div>
                     <div className="pathway-role-list">{relevantGroups.map(renderCard)}</div>
                     {otherGroups.length ? (
                       <>
-                        <div className="nu-other-head">
-                          <div className="fs-detail-heading nu-other-head__title">Other pathways in this career world</div>
-                          <button
-                            type="button"
-                            className="nu-show-other"
-                            onClick={() => setShowOther((v) => !v)}
-                            aria-expanded={showOther}
-                          >
-                            {(showOther) ? 'Hide' : `Show ${otherGroups.length}`}
-                          </button>
-                        </div>
-                        {(showOther) ? (
+                        <OtherSectionHead
+                          title={`More pathways in ${activeWorld}`}
+                          count={otherGroups.length}
+                          open={showOther}
+                          onToggle={() => setShowOther((v) => !v)}
+                        />
+                        {showOther ? (
                           <div className="pathway-role-list">{otherGroups.map(renderCard)}</div>
                         ) : null}
                       </>
@@ -1158,7 +1171,10 @@ export default function NonUniversityPanel({ likedWorlds = [], likedPathwayTitle
                   </>
                 ) : (
                   <>
-                    <div className="fs-detail-heading">Ways into this career world</div>
+                    <div className="fs-detail-heading">Ways into {activeWorld}</div>
+                    <p className="fs-pathway-note">
+                      Like the pathways in this world that interest you on the Career Pathways tab, and their ways in will show here first.
+                    </p>
                     <div className="pathway-role-list">{otherGroups.map(renderCard)}</div>
                   </>
                 )}

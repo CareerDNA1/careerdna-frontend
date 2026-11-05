@@ -3016,6 +3016,14 @@ body:has(#results-root),
   #results-root .section-card { padding-left: 10px !important; padding-right: 10px !important; }
   #results-root .analysis-tabs-panel { padding-left: 0 !important; padding-right: 0 !important; }
 
+  /* One left line (5 Nov 2026): the intro above the card, the Back to profile
+     pill, the tab strip and the panel text all start 20px from the screen
+     edge (page 10 + card 10). The intro gets the card's 10px inset; the
+     sidebar drops its own 14px so the pill and tabs line up with the text. */
+  #results-root .section-intro { padding-left: 10px !important; padding-right: 10px !important; }
+  #results-root .analysis-tabs-sidebar { padding-left: 0 !important; }
+  #results-root .analysis-tabs-sidebar::before { left: 0 !important; }
+
   /* Cards: same 12px side padding everywhere. */
   #results-root .cw-accordion-item__head,
   #results-root .pathway-role-item__toggle { padding-left: 12px !important; padding-right: 12px !important; }

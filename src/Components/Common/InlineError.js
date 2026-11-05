@@ -37,7 +37,7 @@ export function StillWorkingNote({ active = true, afterMs = 8000, children, clas
     return () => clearTimeout(t);
   }, [active, afterMs]);
   if (!active || !show) return null;
-  const text = children || 'This can take a little longer the first time. Still working.';
+  const text = children || 'Still working on it.';
   // Inline: continues the loading sentence instead of starting a new paragraph.
   if (inline) {
     return <span className={`cdna-still-working cdna-still-working--inline${className ? ` ${className}` : ''}`} role="status" aria-live="polite"> {text}</span>;

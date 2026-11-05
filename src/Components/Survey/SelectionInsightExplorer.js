@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './SelectionInsightExplorer.css';
-import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank } from './ResultsFilter';
+import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank, isFavouritesOnly, FavouritesEmpty } from './ResultsFilter';
 import { CAREER_WORLD_DEFINITIONS, PATHWAY_DEFINITIONS } from '../../utils/selectionDefinitions';
 import { ARCHETYPE_DEFINITIONS, getArchetypeDefinition } from '../../utils/archetypeDefinitions';
 import SUBDIMENSION_DEFINITIONS from '../../utils/subdimensionDefinitions';
@@ -2191,6 +2191,7 @@ function DetailPanel({ item, onItemReaction, savedReactions = {}, nonUniByTitle 
             { isLiked: (p) => savedReactions[p?.id] === 'like' }
           );
           if (!visible.length) {
+            if (isFavouritesOnly(pathwayFilter)) return <FavouritesEmpty noun="pathways" where={item?.title || ''} />;
             return <p className="results-filter-empty">Nothing matches this filter. Try clearing a filter.</p>;
           }
           const strong = visible.filter((p) => bandRank(p?.signalLabel) !== 1);
@@ -2203,7 +2204,7 @@ function DetailPanel({ item, onItemReaction, savedReactions = {}, nonUniByTitle 
               {extra.length ? (
                 <>
                   <div className="nu-other-head">
-                    <div className="fs-detail-heading nu-other-head__title">Other pathways in this career world</div>
+                    <div className="fs-detail-heading nu-other-head__title">Lower matches in {item?.title || 'this career world'}</div>
                     <button
                       type="button"
                       className="nu-show-other"

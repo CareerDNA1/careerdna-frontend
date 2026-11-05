@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './FurtherStudyPanel.css';
 import { RoleAccordionItem } from './SelectionInsightExplorer';
 import PathwayPicker, { readRemembered } from './PathwayPicker';
-import { bandRank } from './ResultsFilter';
+import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank, FavouritesEmpty } from './ResultsFilter';
 import { getPathwayIcon } from '../../utils/iconMap';
 
 // Role Explorer (university flow): the individual job roles inside the career
@@ -15,6 +15,8 @@ export default function RoleExplorerPanel({ pathways = [], savedReactions = {}, 
   const [activeKey, setActiveKey] = useState('');
   // Single-open accordion: only one role card is open at a time.
   const [openRoleKey, setOpenRoleKey] = useState('');
+  // Same "Only my favourites" filter as the other tabs (5 Nov 2026).
+  const [roleFilter, setRoleFilter] = useState(emptyFilter());
 
   // Pathways with roles, sorted by match strength (Standout first) so the
   // default selection and the list order agree.
@@ -84,28 +86,52 @@ export default function RoleExplorerPanel({ pathways = [], savedReactions = {}, 
 
         <div ref={mainRef} className="selection-explorer__main selection-explorer__main--full">
           <article className="selection-detail-card">
-            <div className="fs-detail-heading">Roles within this pathway</div>
-            {Array.isArray(active.roles) && active.roles.length ? (
-              <div className="pathway-role-list">
-                {active.roles.map((role) => {
-                  const roleKey = role.id || role.title;
-                  return (
-                    <RoleAccordionItem
-                      key={roleKey}
-                      item={role}
-                      onItemReaction={onItemReaction}
-                      savedReactions={savedReactions}
-                      showGradJobs
-                      pathwayTitle={active.title}
-                      isOpen={openRoleKey === roleKey}
-                      onToggle={() => setOpenRoleKey((prev) => (prev === roleKey ? '' : roleKey))}
-                    />
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="fs-none">No roles mapped for this pathway yet.</p>
-            )}
+            {(() => {
+              const allRoles = Array.isArray(active.roles) ? active.roles : [];
+              const roles = applyResultsFilter(allRoles, roleFilter, { isLiked: (r) => Boolean(r?.id) && savedReactions[r.id] === 'like' });
+              const renderRoles = (list) => (
+                <div className="pathway-role-list">
+                  {list.map((role) => {
+                    const roleKey = role.id || role.title;
+                    return (
+                      <RoleAccordionItem
+                        key={roleKey}
+                        item={role}
+                        onItemReaction={onItemReaction}
+                        savedReactions={savedReactions}
+                        showGradJobs
+                        pathwayTitle={active.title}
+                        isOpen={openRoleKey === roleKey}
+                        onToggle={() => setOpenRoleKey((prev) => (prev === roleKey ? '' : roleKey))}
+                      />
+                    );
+                  })}
+                </div>
+              );
+              if (!allRoles.length) return <p className="fs-none">No roles mapped for this pathway yet.</p>;
+              return (
+                <>
+                  <div className="selection-explorer__toolbar">
+                    <ResultsFilterBar filter={roleFilter} onChange={setRoleFilter} groups={['favourites']} />
+                  </div>
+                  {roleFilter.favouritesOnly ? (
+                    roles.length ? (
+                      <>
+                        <div className="fs-detail-heading">Your saved roles</div>
+                        {renderRoles(roles)}
+                      </>
+                    ) : (
+                      <FavouritesEmpty noun="roles" where={active.title} />
+                    )
+                  ) : (
+                    <>
+                      <div className="fs-detail-heading">Roles within this pathway</div>
+                      {renderRoles(roles)}
+                    </>
+                  )}
+                </>
+              );
+            })()}
           </article>
         </div>
       </div>

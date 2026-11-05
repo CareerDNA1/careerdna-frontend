@@ -5,7 +5,7 @@ import { fetchFurtherStudy, peekFurtherStudyCache } from '../../utils/fetchFurth
 import { showSelectionTooltip, hideSelectionTooltip, PathwayReactionRow } from './SelectionInsightExplorer';
 import PathwayPicker, { readRemembered } from './PathwayPicker';
 import { getSubjectIcon, getCareerWorldIcon } from '../../utils/iconMap';
-import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank, OtherSectionHead } from './ResultsFilter';
+import ResultsFilterBar, { applyResultsFilter, emptyFilter, bandRank, OtherSectionHead, FavouritesEmpty } from './ResultsFilter';
 import { loadRankingSubjectIndex } from '../../utils/rankings';
 import InlineError, { StillWorkingNote } from '../Common/InlineError';
 import { friendlyError } from '../../utils/friendlyError';
@@ -141,8 +141,8 @@ export function RouteItem({ route, open = false, onToggle, reaction = '', onReac
                   </span>
                 ) : null}
               </span>
-              {Array.isArray(route.leadsTo) && route.leadsTo.length ? (
-                <span className="fs-leadsto">Leads to: {route.leadsTo.join(' \u00b7 ')}</span>
+              {route.secondary && route.homeWorld ? (
+                <span className="fs-leadsto">From {route.homeWorld}</span>
               ) : null}
             </span>
           </div>
@@ -372,7 +372,9 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
   // "Other degrees in this career world" starts collapsed (Show N / Hide);
   // closed again whenever another career world is picked.
   const [showOtherDegrees, setShowOtherDegrees] = useState(false);
-  useEffect(() => { setShowOtherDegrees(false); }, [activeKey]);
+  const [showRelatedDegrees, setShowRelatedDegrees] = useState(false);
+  const [pathwayChip, setPathwayChip] = useState('');
+  useEffect(() => { setShowOtherDegrees(false); setShowRelatedDegrees(false); setPathwayChip(''); }, [activeKey]);
   const [studyFilter, setStudyFilter] = useState(emptyFilter());
   const isDegreeLiked = (r) => savedReactions[r?.id || r?.title] === 'like';
 
@@ -513,15 +515,75 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
 
           <div ref={mainRef} className="selection-explorer__main selection-explorer__main--full">
             {active ? (() => {
-              const relevantAll = Array.isArray(active.relevantRoutes) ? active.relevantRoutes : [];
-              const otherAll = Array.isArray(active.otherRoutes)
-                ? active.otherRoutes
-                : (Array.isArray(active.routes) ? active.routes : []);
-              const relevant = applyResultsFilter(relevantAll, studyFilter, { isLiked: isDegreeLiked });
-              const other = applyResultsFilter(otherAll, studyFilter, { isLiked: isDegreeLiked });
-              const hasRelevant = relevant.length > 0;
-              const hasAny = relevant.length + other.length > 0;
-              const hasAnyUnfiltered = relevantAll.length + otherAll.length > 0;
+              // ONE rule for every career world (5 Nov 2026). Order: favourite
+              // pathways, more degrees in this world, degrees from other fields. Before, a world
+              // where pathways were liked listed degrees by pathway (mixing in
+              // other fields), and a world without liked pathways used an older
+              // cross-world "relevant" flag, so the two looked and behaved
+              // differently.
+              //  1. "Degrees for your <world> pathways": the main degrees of the
+              //     pathways you liked IN THIS WORLD, with chips to narrow to one
+              //     pathway. Only when you liked pathways here.
+              //  2. "From other fields": degrees mainly from another field that
+              //     can also lead into those pathways (closed by default).
+              //  3. "All degrees in <world>": every other degree whose home is
+              //     this world. Open when there is no list 1, closed otherwise.
+              const worldName = active.pathwayTitle || 'this career world';
+              const worldAllRaw = Array.isArray(active.routes)
+                ? active.routes
+                : [...(active.relevantRoutes || []), ...(active.otherRoutes || [])];
+              const pGroups = (Array.isArray(active.pathwayGroups) ? active.pathwayGroups : [])
+                .filter((g) => (g.primary || []).length || (g.adjacent || []).length);
+              const chip = pGroups.some((g) => g.pathwayTitle === pathwayChip) ? pathwayChip : '';
+              const shownGroups = chip ? pGroups.filter((g) => g.pathwayTitle === chip) : pGroups;
+              const keyOf = (r) => String(r.id || r.title);
+              const filterList = (list) => applyResultsFilter(list, studyFilter, { isLiked: isDegreeLiked });
+
+              // Main and other-field degrees for the chosen pathway(s). A degree
+              // that is a main route for any of them counts as main.
+              const mainMap = new Map(); const adjMap = new Map();
+              shownGroups.forEach((g) => (g.primary || []).forEach((r) => { if (!mainMap.has(keyOf(r))) mainMap.set(keyOf(r), r); }));
+              shownGroups.forEach((g) => (g.adjacent || []).forEach((r) => {
+                const k = keyOf(r);
+                if (!mainMap.has(k) && !adjMap.has(k)) adjMap.set(k, { ...r, secondary: true });
+              }));
+              const byPct = (a, b) => Number(b.signalPct || 0) - Number(a.signalPct || 0);
+              const mainList = filterList(Array.from(mainMap.values()).sort(byPct));
+              // An "other field" degree whose home is this world is not from
+              // another field: it belongs in list 3 instead.
+              const sameWorld = (r) => String(r.homeWorld || '').toLowerCase() === String(worldName).toLowerCase();
+              const adjList = filterList(Array.from(adjMap.values()).filter((r) => !sameWorld(r)).sort(byPct));
+
+              // List 3 excludes anything already shown above for ANY liked
+              // pathway of this world (not just the chosen chip), so a degree
+              // never appears twice as you switch chips.
+              const linkedKeys = new Set();
+              pGroups.forEach((g) => [...(g.primary || []), ...(g.adjacent || [])].forEach((r) => linkedKeys.add(keyOf(r))));
+              const restList = filterList(worldAllRaw.filter((r) => !linkedKeys.has(keyOf(r))).map((r) => ({ ...r, leadsTo: [] })));
+              const hasPathways = pGroups.length > 0;
+              const hasAnyUnfiltered = worldAllRaw.length > 0 || hasPathways;
+
+              const renderList = (list) => (
+                <div className="pathway-role-list">
+                  {list.map((r) => {
+                    const rk = keyOf(r);
+                    return (
+                      <RouteItem
+                        key={rk}
+                        route={r}
+                        open={openRouteKey === rk}
+                        onToggle={() => setOpenRouteKey((prev) => (prev === rk ? '' : rk))}
+                        reaction={savedReactions[r.id || r.title] || ''}
+                        onReact={(next) => handleRouteReact(r, next, chip || (pGroups[0] && pGroups[0].pathwayTitle) || '', active)}
+                        hasRankings={subjectHasRankings(r)}
+                        rankCount={subjectRankCount(r)}
+                      />
+                    );
+                  })}
+                </div>
+              );
+
+              const countFor = (g) => new Set((g.primary || []).map(keyOf)).size;
               return (
                 <article className="selection-detail-card">
                   {hasAnyUnfiltered ? (
@@ -530,118 +592,100 @@ export default function FurtherStudyPanel({ likedWorlds = [], likedPathwayTitles
                     </div>
                   ) : null}
 
-                  {(() => {
-                    const clustersRaw = Array.isArray(active.pathwayGroups) ? active.pathwayGroups : [];
-                    const renderList = (list) => (
-                      <div className="pathway-role-list">
-                        {list.map((r) => {
-                          const rk = String(r.id || r.title);
-                          return (
-                            <RouteItem
-                              key={rk}
-                              route={r}
-                              open={openRouteKey === rk}
-                              onToggle={() => setOpenRouteKey((prev) => (prev === rk ? '' : rk))}
-                              reaction={savedReactions[r.id || r.title] || ''}
-                              onReact={(next) => handleRouteReact(r, next, (Array.isArray(r.leadsTo) && r.leadsTo[0]) || '', active)}
-                              hasRankings={subjectHasRankings(r)}
-                              rankCount={subjectRankCount(r)}
-                            />
-                          );
-                        })}
-                      </div>
-                    );
-                    if (!hasAnyUnfiltered) {
-                      return <p className="fs-none">No degrees mapped for this world yet.</p>;
-                    }
-                    if (clustersRaw.length) {
-                      // De-duplicate into a single list; tag each degree with the
-                      // liked pathway(s) it leads to. Keeps the list short even when
-                      // many pathways are liked (a shared degree appears once).
-                      const byKey = new Map();
-                      clustersRaw.forEach((g) => {
-                        [...(g.primary || []), ...(g.adjacent || [])].forEach((r) => {
-                          const k = String(r.id || r.title);
-                          if (!byKey.has(k)) byKey.set(k, { ...r, leadsTo: [] });
-                          const entry = byKey.get(k);
-                          if (!entry.leadsTo.includes(g.pathwayTitle)) entry.leadsTo.push(g.pathwayTitle);
-                        });
+                  {!hasAnyUnfiltered ? (
+                    <p className="fs-none">No degrees mapped for this world yet.</p>
+                  ) : studyFilter.favouritesOnly ? (
+                    // "Only my favourites": just the degrees saved in this world,
+                    // as one plain list (no section headings or pathway chips),
+                    // or a short note when none are saved yet.
+                    (() => {
+                      const seenFav = new Set();
+                      const favList = [...mainList, ...restList, ...adjList].filter((r) => {
+                        const k = keyOf(r);
+                        if (seenFav.has(k)) return false;
+                        seenFav.add(k);
+                        return true;
                       });
-                      let relevantDeduped = applyResultsFilter(Array.from(byKey.values()), studyFilter, { isLiked: isDegreeLiked });
-                      relevantDeduped.sort((a, b) => (b.leadsTo.length - a.leadsTo.length) || (Number(b.signalPct || 0) - Number(a.signalPct || 0)));
-                      const inRel = new Set(relevantDeduped.map((r) => String(r.id || r.title)));
-                      // Every degree of this world that is not already listed above.
-                      // Uses the world's full list: a world degree marked "relevant"
-                      // only because it leads to a liked pathway in ANOTHER world
-                      // was in neither list before, so it was counted on the world
-                      // button but never shown (3 Nov 2026).
-                      const worldAll = Array.isArray(active.routes) ? active.routes : [...relevantAll, ...otherAll];
-                      const otherOnly = applyResultsFilter(worldAll, studyFilter, { isLiked: isDegreeLiked })
-                        .filter((r) => !inRel.has(String(r.id || r.title)));
-                      if (!relevantDeduped.length && !otherOnly.length) {
-                        return <p className="results-filter-empty">None of your favourites are in this list. Try clearing the filter.</p>;
-                      }
-                      return (
+                      return favList.length ? (
                         <>
-                          {relevantDeduped.length ? (
+                          <div className="fs-detail-heading">Your saved degrees</div>
+                          {renderList(favList)}
+                        </>
+                      ) : (
+<FavouritesEmpty noun="degrees" where={worldName} />
+                      );
+                    })()
+                  ) : (
+                    <>
+                      {hasPathways ? (
+                        <>
+                          <div className="fs-detail-heading">Degrees for your favourite pathways</div>
+                          {/* The liked pathways of this world as chips. None
+                              selected shows the degrees for all of them; tap one
+                              to narrow to it, tap it again to show all. */}
+                          <div className="fs-pathway-chips" role="group" aria-label="Your favourite pathways in this world">
+                            {pGroups.map((g) => (
+                              pGroups.length > 1 ? (
+                                <button
+                                  key={g.pathwayTitle}
+                                  type="button"
+                                  className={`fs-pathway-chip${chip === g.pathwayTitle ? ' is-on' : ''}`}
+                                  aria-pressed={chip === g.pathwayTitle}
+                                  onClick={() => setPathwayChip((prev) => (prev === g.pathwayTitle ? '' : g.pathwayTitle))}
+                                >
+                                  {g.pathwayTitle} <span className="fs-pathway-chip__n">{countFor(g)}</span>
+                                </button>
+                              ) : (
+                                <span key={g.pathwayTitle} className="fs-pathway-chip fs-pathway-chip--static">{g.pathwayTitle}</span>
+                              )
+                            ))}
+                          </div>
+                          {mainList.length ? renderList(mainList) : (
+                            <p className="results-filter-empty">None of your favourites are in this list. Try clearing the filter.</p>
+                          )}
+
+                          {restList.length ? (
                             <>
-                              <div className="fs-detail-heading">Degrees for the pathways you liked</div>
-                              {renderList(relevantDeduped)}
+                              <OtherSectionHead
+                                title={`More degrees in ${worldName}`}
+                                count={restList.length}
+                                open={showOtherDegrees}
+                                onToggle={() => setShowOtherDegrees((v) => !v)}
+                              />
+                              {showOtherDegrees ? renderList(restList) : null}
                             </>
                           ) : null}
-                          {otherOnly.length ? (
-                            relevantDeduped.length ? (
-                              <>
-                                <OtherSectionHead
-                                  title="Other degrees in this career world"
-                                  count={otherOnly.length}
-                                  open={showOtherDegrees}
-                                  onToggle={() => setShowOtherDegrees((v) => !v)}
-                                />
-                                {(showOtherDegrees) ? renderList(otherOnly) : null}
-                              </>
-                            ) : (
-                              <>
-                                <div className="fs-detail-heading">Degrees you could study for this career world</div>
-                                {renderList(otherOnly)}
-                              </>
-                            )
+
+                          {adjList.length ? (
+                            <>
+                              <OtherSectionHead
+                                title="Degrees from other fields"
+                                count={adjList.length}
+                                open={showRelatedDegrees}
+                                onToggle={() => setShowRelatedDegrees((v) => !v)}
+                              />
+                              {showRelatedDegrees ? (
+                                <>
+                                  <p className="fs-pathway-note">Degrees mainly for other careers that can also lead into {chip ? 'this pathway' : 'your favourite pathways'}.</p>
+                                  {renderList(adjList)}
+                                </>
+                              ) : null}
+                            </>
                           ) : null}
                         </>
-                      );
-                    }
-                    // Fallback (backend not yet sending pathwayGroups): show the
-                    // liked-pathway degrees first, then the rest of the world.
-                    if (!hasAny) {
-                      return <p className="results-filter-empty">None of your favourites are in this list. Try clearing the filter.</p>;
-                    }
-                    return (
-                      <>
-                        {relevant.length ? (
-                          <>
-                            <div className="fs-detail-heading">Degrees for the pathways you liked</div>
-                            {renderList(relevant)}
-                            {other.length ? (
-                              <>
-                                <OtherSectionHead
-                                  title="Other degrees in this career world"
-                                  count={other.length}
-                                  open={showOtherDegrees}
-                                  onToggle={() => setShowOtherDegrees((v) => !v)}
-                                />
-                                {(showOtherDegrees) ? renderList(other) : null}
-                              </>
-                            ) : null}
-                          </>
-                        ) : (
-                          <>
-                            <div className="fs-detail-heading">Degrees you could study for this career world</div>
-                            {other.length ? renderList(other) : null}
-                          </>
-                        )}
-                      </>
-                    );
-                  })()}
+                      ) : (
+                        <>
+                          <div className="fs-detail-heading">Degrees in {worldName}</div>
+                          <p className="fs-pathway-note">
+                            Like the pathways in this world that interest you on the Career Pathways tab, and their degrees will show here first.
+                          </p>
+                          {restList.length ? renderList(restList) : (
+                            <p className="results-filter-empty">None of your favourites are in this list. Try clearing the filter.</p>
+                          )}
+                        </>
+                      )}
+                    </>
+                  )}
                 </article>
               );
             })() : null}

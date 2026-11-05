@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './CareerWorldsAccordion.css';
-import ResultsFilterBar, { applyResultsFilter, emptyFilter } from './ResultsFilter';
+import ResultsFilterBar, { applyResultsFilter, emptyFilter, isFavouritesOnly, FavouritesEmpty } from './ResultsFilter';
 import { ThumbsUp, ThumbsDown, Smiley, SmileyMeh, BookmarkSimple } from 'phosphor-react';
 import { ItemPills, showSelectionTooltip, hideSelectionTooltip, getMatchTooltipBody, flashFavouriteNote } from './SelectionInsightExplorer';
 import { getCareerWorldIcon, getPathwayIcon } from '../../utils/iconMap';
@@ -531,7 +531,9 @@ export default function CareerWorldsAccordion({
             onReact={(next) => handleReact(world, next)}
           />
         );
-      }) : (
+      }) : isFavouritesOnly(filter) ? (
+        <FavouritesEmpty noun={itemType === 'career_world' ? 'career worlds' : itemType === 'role' ? 'roles' : 'pathways'} />
+      ) : (
         <p className="results-filter-empty">Nothing matches this filter. Try clearing a filter.</p>
       )}
     </section>

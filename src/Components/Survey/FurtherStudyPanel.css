@@ -507,3 +507,39 @@
     padding-right: 26px;
   }
 }
+
+/* Pathway chips above "Degrees for your <world> pathways" (5 Nov 2026):
+   All pathways, or one liked pathway at a time. Wrap on wide screens, one
+   swipeable row on phones. */
+.fs-pathway-chips {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin: 2px 0 14px;
+}
+.fs-pathway-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 34px; padding: 0 12px;
+  border: 1px solid #d7e3f5; border-radius: 999px;
+  background: #ffffff; color: #36506f;
+  font: inherit; font-size: 0.82rem; font-weight: 600; line-height: 1.2;
+  cursor: pointer; white-space: nowrap;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+.fs-pathway-chip:hover { border-color: #9fbcef; background: #f5f9ff; }
+.fs-pathway-chip:focus-visible { outline: 2px solid #2f6fed; outline-offset: 2px; }
+.fs-pathway-chip.is-on { background: #2f6fed; border-color: #2f6fed; color: #ffffff; }
+.fs-pathway-chip__n {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px;
+  background: #eef3fb; color: #4b6283; font-size: 0.72rem; font-weight: 700;
+}
+.fs-pathway-chip.is-on .fs-pathway-chip__n { background: rgba(255, 255, 255, 0.22); color: #ffffff; }
+.fs-pathway-note { margin: -4px 0 12px; font-size: 0.86rem; color: #5b6b80; line-height: 1.45; }
+@media (max-width: 640px) {
+  .fs-pathway-chips {
+    flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
+    margin-left: -2px; margin-right: -2px; padding: 0 2px 2px;
+  }
+  .fs-pathway-chips::-webkit-scrollbar { display: none; }
+}
+.fs-pathway-chip--static { cursor: default; }
+.fs-pathway-chip--static:hover { border-color: #d7e3f5; background: #ffffff; }
