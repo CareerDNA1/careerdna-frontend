@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { renderSafeMarkdown } from '../../utils/renderSafeMarkdown';
+import { highlightAdvisorTerms } from '../../utils/advisorTerms';
 import { PaperPlaneRight } from 'phosphor-react';
 import AdvisorAvatar from './AdvisorAvatar';
 import './CareerAdvisorChat.css';
@@ -574,7 +575,7 @@ export default function CareerAdvisorChat({ assessmentRunId, embedded = false, v
                       <>
                         <div
                           className="career-advisor-message-content career-advisor-markdown"
-                          dangerouslySetInnerHTML={renderSafeMarkdown(message.content)}
+                          dangerouslySetInnerHTML={{ __html: highlightAdvisorTerms(renderSafeMarkdown(message.content).__html) }}
                         />
                         {message.safeguarding ? (
                           <div className="career-advisor-helplines" role="note" aria-label="Where to get support">

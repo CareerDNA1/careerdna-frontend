@@ -1,0 +1,68 @@
+/* Landing Insights section: same heading pattern and light background as
+   "Why CareerDNA matters" (dark + blue words, gradient underline). */
+.insights-section {
+  position: relative;
+  width: 100%;
+  padding: clamp(48px, 5vw, 72px) clamp(20px, 5vw, 64px) clamp(36px, 4vw, 56px);
+  background:
+    radial-gradient(circle at 50% 2%, rgba(47, 128, 237, 0.10), transparent 38%),
+    linear-gradient(180deg, #f8fbff 0%, #ffffff 60%, #ffffff 100%);
+  scroll-margin-top: 96px;
+}
+.science-section + .insights-section { margin-top: 0; }
+.insights-section + .cta-section::before { content: none !important; display: none !important; }
+.insights-inner { max-width: 1180px; margin: 0 auto; }
+
+.insights-heading {
+  font-family: var(--cdna-font-sans);
+  font-size: var(--cdna-type-display-size);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.052em;
+  text-align: center;
+  color: #071a3d;
+  margin: 0 0 18px;
+}
+.insights-heading-dark { color: #071a3d; }
+.insights-heading-blue { color: var(--cdna-color-heading); }
+.insights-heading-line {
+  display: block; width: 176px; height: 2px; border-radius: 999px; margin: 14px auto 0;
+  background: linear-gradient(90deg, #2f80ed 0%, #8c7cff 55%, #ff3ea5 100%);
+  box-shadow: 0 0 18px rgba(47, 128, 237, 0.28);
+}
+.insights-lede {
+  margin: 0 auto 28px; max-width: 720px; text-align: center;
+  font-family: var(--cdna-font-sans);
+  font-size: var(--cdna-type-body-size, 1rem);
+  line-height: var(--cdna-type-body-line, 1.6);
+  color: var(--cdna-color-text, #4a5a70);
+}
+
+.insights-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.insights-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.insights-chip { border: 1px solid #d6deea; background: #fff; color: #243447; border-radius: 999px; padding: 7px 14px; font: inherit; font-size: 0.86rem; font-weight: 600; cursor: pointer; }
+.insights-chip:hover { border-color: #2f6fed; color: #2f6fed; }
+.insights-chip.is-on { background: #2f6fed; border-color: #2f6fed; color: #fff; }
+
+.insights-track {
+  display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 4px 2px 10px;
+}
+.insights-track::-webkit-scrollbar { display: none; }
+.insights-track .ins-cover { flex: 0 0 calc((100% - 32px) / 3); scroll-snap-align: start; min-height: 270px; text-decoration: none; }
+.insights-track .ins-cover .ins-cover__excerpt { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+.insights-more { display: flex; justify-content: center; margin-top: 18px; }
+.insights-all {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: #2f6fed; font-weight: 600; text-decoration: none; font-size: 0.95rem;
+  padding: 9px 18px; border-radius: 999px; background: rgba(47, 111, 237, 0.06); border: 1px solid rgba(47, 111, 237, 0.18);
+}
+.insights-all:hover, .insights-all:focus-visible { background: rgba(47, 111, 237, 0.12); }
+
+@media (max-width: 980px) { .insights-track .ins-cover { flex-basis: calc((100% - 16px) / 2); } }
+@media (max-width: 640px) {
+  .insights-track .ins-cover { flex-basis: 86%; min-height: 240px; }
+  .insights-bar .ins-arrows { display: none; }
+  .insights-bar { justify-content: center; }
+}

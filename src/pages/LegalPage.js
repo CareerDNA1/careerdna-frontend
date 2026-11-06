@@ -9,6 +9,8 @@ export const CAREERDNA_LEGAL_VERSION = '2026-10-05-v6';
 export const LEGAL_ENTITY = 'CareerDNA Ltd';
 export const LEGAL_ADDRESS = '35a Priory Road, London, NW6 4NN, United Kingdom';
 export const SUPPORT_EMAIL = 'support@mycareerdna.io';
+// ICO data protection register entry (public). Do not publish the ICO security number.
+export const ICO_REGISTRATION = 'ZC291872';
 // Where the Supabase project (accounts, results, advisor history) is hosted.
 export const DATA_REGION = 'the European Union (Ireland)';
 
@@ -141,7 +143,7 @@ export const LEGAL_COPY = {
       {
         heading: '1. Who we are',
         body:
-          'CareerDNA is run by ' + LEGAL_ENTITY + ', ' + LEGAL_ADDRESS + '. We are the data controller for the personal information processed through the platform, which means we decide how and why it is used and we are responsible for looking after it. Where a school, college or university gives you access to CareerDNA, it may also hold some responsibility for how the service is introduced to you; that organisation will tell you if so. You can contact us about anything in this notice at ' + SUPPORT_EMAIL + '.',
+          'CareerDNA is run by ' + LEGAL_ENTITY + ', ' + LEGAL_ADDRESS + '. We are the data controller for the personal information processed through the platform, which means we decide how and why it is used and we are responsible for looking after it. We are registered with the Information Commissioner’s Office (ICO) under registration number ' + ICO_REGISTRATION + ', and you can check our entry on the ICO’s public register at ico.org.uk. Where a school, college or university gives you access to CareerDNA, it may also hold some responsibility for how the service is introduced to you; that organisation will tell you if so. You can contact us about anything in this notice at ' + SUPPORT_EMAIL + '.',
       },
       {
         heading: '2. What we collect',

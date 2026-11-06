@@ -1575,3 +1575,6 @@
   transition: transform 0.42s cubic-bezier(0.3, 0.8, 0.3, 1), width 0.42s ease, background 0.42s ease, box-shadow 0.42s ease, opacity 0.42s ease;
 }
 .cdna-sugg__ghost.is-landing { background: #ffffff; color: #243447; box-shadow: none; opacity: 0.6; }
+
+/* CareerDNA terms (worlds, pathways, traits, profiles) in Advisor replies. */
+.career-advisor-markdown strong.cdna-term { color: #0f8a74; font-weight: 600; }

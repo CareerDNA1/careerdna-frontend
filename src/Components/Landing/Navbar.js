@@ -6,6 +6,7 @@ import logo from '../../Assets/images/logo-career-dna.png';
 import { useAuth } from '../../context/AuthContext';
 import { clearLocalUserState } from '../../utils/clearLocalUserState';
 import PricingModal from '../Common/PricingModal';
+import { getMyProfile } from '../../utils/profile';
 import '../Common/AccountNavbar.css';
 
 
@@ -68,6 +69,17 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
   const displayFirstName = getDisplayFirstName(user);
 
   const [pricingOpen, setPricingOpen] = useState(false);
+  // The signed-in person's real plan, so "Our plans" here behaves exactly like
+  // Manage account (developer accounts locked, current plan marked, no second
+  // subscription). Previously this was hard-coded to Starter for everyone.
+  const [planProfile, setPlanProfile] = useState(null);
+  useEffect(() => {
+    if (!user) { setPlanProfile(null); return undefined; }
+    if (!pricingOpen) return undefined;
+    let alive = true;
+    getMyProfile().then((p) => { if (alive) setPlanProfile(p || null); }).catch(() => {});
+    return () => { alive = false; };
+  }, [user, pricingOpen]);
   const [signOutConfirmOpen, setSignOutConfirmOpen] = useState(false);
 
   const toggleMenu = useCallback(() => setMenuOpen((prev) => !prev), [setMenuOpen]);
@@ -246,6 +258,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
           <li><ScrollLink to="dimensions" smooth duration={500} onClick={closeMenu}>Your Dimensions</ScrollLink></li>
           <li><ScrollLink to="archetypes" smooth duration={500} onClick={closeMenu}>Career Profiles</ScrollLink></li>
           <li><ScrollLink to="science" smooth duration={500} onClick={closeMenu}>The Science</ScrollLink></li>
+          <li><ScrollLink to="insights" smooth duration={500} onClick={closeMenu}>Insights</ScrollLink></li>
           <li><RouterLink to="/team" onClick={closeMenu}>Our Team</RouterLink></li>
           <li><RouterLink to="/trust-security" onClick={closeMenu}>Trust &amp; Security</RouterLink></li>
           <li><button type="button" className="nav-linklike" onClick={openPricing}>Our plans</button></li>
@@ -277,6 +290,7 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
             <li><ScrollLink to="dimensions" smooth duration={500} onClick={closeMenu}>Your Dimensions</ScrollLink></li>
             <li><ScrollLink to="archetypes" smooth duration={500} onClick={closeMenu}>Career Profiles</ScrollLink></li>
             <li><ScrollLink to="science" smooth duration={500} onClick={closeMenu}>The Science</ScrollLink></li>
+          <li><ScrollLink to="insights" smooth duration={500} onClick={closeMenu}>Insights</ScrollLink></li>
             <li><RouterLink to="/team" onClick={closeMenu}>Our Team</RouterLink></li>
             <li><RouterLink to="/trust-security" onClick={closeMenu}>Trust &amp; Security</RouterLink></li>
             <li><button type="button" className="nav-linklike" onClick={openPricing}>Our plans</button></li>
@@ -309,9 +323,18 @@ export default function Navbar({ menuOpen, setMenuOpen }) {
       <PricingModal
         isOpen={pricingOpen}
         onClose={() => setPricingOpen(false)}
-        currentPlan="free"
-        entitlement={{ plan: 'free', status: '' }}
-        onManageSubscription={() => {}}
+        currentPlan={(user && planProfile?.plan) || 'free'}
+        entitlement={user && planProfile ? {
+          plan: planProfile.plan || 'free',
+          status: planProfile.academic_status || '',
+          subscription_current_period_end: planProfile.subscription_current_period_end,
+          advisorPeriodEnd: planProfile.advisor_period_end,
+          cancelAtPeriodEnd: planProfile.cancel_at_period_end,
+          pendingPlanChange: planProfile.pending_plan_change,
+          pendingPlanChangeAt: planProfile.pending_plan_change_at,
+          pendingPlanPriceId: planProfile.pending_plan_price_id,
+        } : { plan: 'free', status: '' }}
+        onManageSubscription={() => { setPricingOpen(false); navigate('/profile?subscription=updated'); }}
         signedIn={!!user}
         onRequireSignIn={() => { setPricingOpen(false); navigate('/signup'); }}
       />

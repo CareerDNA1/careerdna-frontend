@@ -47,6 +47,8 @@ const SurveyQuestions = lazy(() => import('./pages/SurveyQuestions'));
 const ResultsPage = lazy(() => import('./pages/ResultsPage'));
 const SavedResultPage = lazy(() => import('./pages/SavedResultPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const InsightsIndexPage = lazy(() => import('./pages/InsightArticlePage'));
+const InsightArticlePage = lazy(() => import('./pages/InsightArticlePage').then((m) => ({ default: m.InsightArticlePage })));
 const OnboardingPage = lazy(() => import('./pages/OnboardingPage'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const RankingsModal = lazy(() => import('./Components/Rankings/RankingsModal'));
@@ -326,6 +328,8 @@ export default function App() {
         <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/team" element={<TeamPage />} />
+        <Route path="/insights" element={<InsightsIndexPage />} />
+        <Route path="/insights/:id" element={<InsightArticlePage />} />
         <Route path="/trust-security" element={<TrustSecurityPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />

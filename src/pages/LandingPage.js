@@ -7,6 +7,7 @@ import DimensionsSection from '../Components/Landing/DimensionsSection';
 import ArchetypesSection from '../Components/Landing/ArchetypesSection';
 import ScienceSection from '../Components/Landing/ScienceSection';
 import CtaSection from '../Components/Landing/CtaSection';
+import InsightsSection from '../Components/Landing/InsightsSection';
 
 export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -21,6 +22,7 @@ export default function LandingPage() {
         <DimensionsSection />
         <ArchetypesSection />
         <ScienceSection />
+        <InsightsSection />
         <CtaSection />
       </main>
     </div>
